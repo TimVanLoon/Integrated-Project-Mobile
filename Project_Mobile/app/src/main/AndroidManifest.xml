@@ -16,6 +16,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".DisplayMessageActvity"
+            android:parentActivityName=".MainActivity" />
+        <!--Intent filter to capture System Browser calling back to our app after Sign In-->
+        <activity
+            android:name="com.microsoft.identity.client.BrowserTabActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!--Add in your scheme/host from registered redirect URI-->
+                <!--By default, the scheme should be similar to 'msal[appId]' -->
+                <data android:scheme="msald3b60662-7768-4a50-b96f-eb1dfcc7ec8d"
+                    android:host="auth" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
