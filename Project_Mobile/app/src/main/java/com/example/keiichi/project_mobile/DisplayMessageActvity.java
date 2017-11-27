@@ -300,14 +300,12 @@ public class DisplayMessageActvity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        //Object[] heyboo = new Object[1];
-        //heyboo[1] = graphResponse.getJSONArray("value");
+
         JSONObject objectBoo = (JSONObject) heyboo.get(1);
         JSONObject bodyBoo = (JSONObject) objectBoo.get("body");
-        //heyboo.get(1).toString()
 
 
-
+        //Set the message body to textview and format from its HTML formatting
         graphText.setText(Html.fromHtml(bodyBoo.get("content").toString()));
 
         System.out.println(objectBoo.get("body"));
