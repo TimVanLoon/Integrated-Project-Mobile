@@ -9,7 +9,6 @@ import android.widget.EditText;
 import com.microsoft.identity.client.*;
 
 public class MainActivity extends AppCompatActivity {
-    public static final String TEST_MESSAGE = "heyboo";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,9 +18,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void login(View view){
         Intent intent = new Intent(this, DisplayMessageActvity.class);
-        EditText editText = (EditText) findViewById(R.id.editText3);
-        String message = editText.getText().toString();
-        intent.putExtra(TEST_MESSAGE, message);
         startActivity(intent);
 
     }
