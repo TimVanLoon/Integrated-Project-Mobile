@@ -45,7 +45,8 @@ import java.util.Map;
 public class ListMailsActvity extends AppCompatActivity {
 
     final static String CLIENT_ID = "d3b60662-7768-4a50-b96f-eb1dfcc7ec8d";
-    final static String SCOPES[] = {"https://graph.microsoft.com/Mail.Send"};
+    final static String SCOPES[] = {"https://graph.microsoft.com/Mail.Send","https://graph.microsoft.com/Mail.ReadWrite"};
+
     //final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me";
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/mailFolders('Inbox')/messages?$top=25";
     //final static String MSGRAPH_URL = "https://outlook.office365.com/api/v2.0/me/MailFolders('inbox')/messages";
@@ -195,6 +196,7 @@ public class ListMailsActvity extends AppCompatActivity {
             /* Successfully got a token, call graph now */
                 Log.d(TAG, "Successfully authenticated");
                 Log.d(TAG, "ID Token: " + authenticationResult.getIdToken());
+                Log.d(TAG, "Acces Token: " + authenticationResult.getAccessToken());
 
             /* Store the auth result */
                 authResult = authenticationResult;
@@ -312,6 +314,7 @@ public class ListMailsActvity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        assert mailJsonArray != null;
         JSONObject object = mailJsonArray.getJSONObject(1);
         System.out.println(object.get("from"));
 
@@ -324,8 +327,8 @@ public class ListMailsActvity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 Intent showMail = new Intent(ListMailsActvity.this,DisplayMailActivity.class);
                 try {
-                    assert finalMailJsonArray != null;
                     showMail.putExtra("mailObjext", finalMailJsonArray.getString(position));
+                    showMail.putExtra("accestoken",authResult.getAccessToken());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -383,6 +386,7 @@ public class ListMailsActvity extends AppCompatActivity {
     private void toSendMailActivity() {
         Intent intent = new Intent(this,SendMailActivity.class);
         intent.putExtra("accestoken",authResult.getAccessToken());
+
         startActivity(intent);
     }
 
