@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -36,14 +37,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DisplayMessageActvity extends AppCompatActivity {
+public class ListMailsActvity extends AppCompatActivity {
 
     final static String CLIENT_ID = "d3b60662-7768-4a50-b96f-eb1dfcc7ec8d";
-    final static String SCOPES[] = {"https://graph.microsoft.com/Mail.Read"};
+    final static String SCOPES[] = {"https://graph.microsoft.com/Mail.Send"};
     //final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me";
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/mailFolders('Inbox')/messages?$top=25";
     //final static String MSGRAPH_URL = "https://outlook.office365.com/api/v2.0/me/MailFolders('inbox')/messages";
@@ -56,6 +58,7 @@ public class DisplayMessageActvity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     // Button callGraphButton;
     Button signOutButton;
+    Button toSendMailActivity;
 
     /* Azure AD Variables */
     private PublicClientApplication sampleApp;
@@ -64,14 +67,20 @@ public class DisplayMessageActvity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_display_message_actvity);
+        setContentView(R.layout.activity_list_mails);
 
         mListview = (ListView) findViewById(R.id.ListViewMails);
-        //callGraphButton = (Button) findViewById(R.id.callGraph);
         signOutButton = (Button) findViewById(R.id.clearCache);
+        toSendMailActivity = (Button) findViewById(R.id.ButtonSendMail);
         addNotification();
 
 
+        toSendMailActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toSendMailActivity();
+            }
+        });
         signOutButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 onSignOutClicked();
@@ -115,6 +124,8 @@ public class DisplayMessageActvity extends AppCompatActivity {
 
     }
 
+
+
 //
 // App callbacks for MSAL
 // ======================
@@ -137,6 +148,9 @@ public class DisplayMessageActvity extends AppCompatActivity {
             public void onSuccess(AuthenticationResult authenticationResult) {
             /* Successfully got a token, call Graph now */
                 Log.d(TAG, "Successfully authenticated");
+
+                //Print auth result om te dubbel checken
+                System.out.println(Arrays.toString(authenticationResult.getScope()));
 
             /* Store the authResult */
                 authResult = authenticationResult;
@@ -298,11 +312,26 @@ public class DisplayMessageActvity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        System.out.println(mailJsonArray);
+        JSONObject object = mailJsonArray.getJSONObject(1);
+        System.out.println(object.get("from"));
 
 
         MailAdapter mailAdapter = new MailAdapter(this, mailJsonArray);
         mListview.setAdapter(mailAdapter);
+        final JSONArray finalMailJsonArray = mailJsonArray;
+        mListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Intent showMail = new Intent(ListMailsActvity.this,DisplayMailActivity.class);
+                try {
+                    assert finalMailJsonArray != null;
+                    showMail.putExtra("mailObjext", finalMailJsonArray.getString(position));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                startActivity(showMail);
+            }
+        });
 
     }
 
@@ -349,6 +378,12 @@ public class DisplayMessageActvity extends AppCompatActivity {
         //callGraphButton.setVisibility(View.VISIBLE);
         signOutButton.setVisibility(View.INVISIBLE);
         findViewById(R.id.welcome).setVisibility(View.INVISIBLE);
+    }
+
+    private void toSendMailActivity() {
+        Intent intent = new Intent(this,SendMailActivity.class);
+        intent.putExtra("accestoken",authResult.getAccessToken());
+        startActivity(intent);
     }
 
     private void addNotification() {
