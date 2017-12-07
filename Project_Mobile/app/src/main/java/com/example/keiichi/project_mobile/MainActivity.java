@@ -24,7 +24,6 @@ import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 import com.microsoft.identity.client.*;
 
 public class MainActivity extends AppCompatActivity {
-    public static final String TEST_MESSAGE = "heyboo";
 
     private int counter;
 
@@ -135,10 +134,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void login(View view){
-        Intent intent = new Intent(this, CalendarActivity.class);
-        EditText editText = (EditText) findViewById(R.id.editText3);
-        String message = editText.getText().toString();
-        intent.putExtra(TEST_MESSAGE, message);
+        Intent intent = new Intent(this, DisplayMessageActvity.class);
+
         startActivity(intent);
 
     }

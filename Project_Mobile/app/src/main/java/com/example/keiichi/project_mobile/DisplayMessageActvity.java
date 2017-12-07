@@ -1,9 +1,16 @@
 package com.example.keiichi.project_mobile;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.NotificationCompat;
+import android.text.Html;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -27,18 +34,22 @@ import com.microsoft.identity.client.MsalUiRequiredException;
 import com.microsoft.identity.client.PublicClientApplication;
 import com.microsoft.identity.client.User;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 public class DisplayMessageActvity extends AppCompatActivity {
 
         final static String CLIENT_ID = "d3b60662-7768-4a50-b96f-eb1dfcc7ec8d";
-        final static String SCOPES [] = {"https://graph.microsoft.com/User.Read"};
+        final static String SCOPES [] = {"https://graph.microsoft.com/Mail.Read"};
         //final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me";
         final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/messages";
+         final static String CHANNEL_ID = "my_channel_01";
 
 
     /* UI & Debugging Variables */
@@ -57,6 +68,9 @@ public class DisplayMessageActvity extends AppCompatActivity {
 
             callGraphButton = (Button) findViewById(R.id.callGraph);
             signOutButton = (Button) findViewById(R.id.clearCache);
+            addNotification();
+
+
 
             callGraphButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -247,7 +261,11 @@ public class DisplayMessageActvity extends AppCompatActivity {
             /* Successfully called graph, process data and send to UI */
                 Log.d(TAG, "Response: " + response.toString());
 
-                updateGraphUI(response);
+                try {
+                    updateGraphUI(response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -273,9 +291,24 @@ public class DisplayMessageActvity extends AppCompatActivity {
     }
 
     /* Sets the Graph response */
-    private void updateGraphUI(JSONObject graphResponse) {
+    private void updateGraphUI(JSONObject graphResponse) throws JSONException {
         TextView graphText = (TextView) findViewById(R.id.graphData);
-        graphText.setText(graphResponse.toString());
+        graphText.setMovementMethod(new ScrollingMovementMethod());
+        JSONArray heyboo = null;
+        try {
+            heyboo = (JSONArray) graphResponse.get("value");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject objectBoo = (JSONObject) heyboo.get(1);
+        JSONObject bodyBoo = (JSONObject) objectBoo.get("body");
+
+
+        //Set the message body to textview and format from its HTML formatting
+        graphText.setText(Html.fromHtml(bodyBoo.get("content").toString()));
+
+        System.out.println(objectBoo.get("body"));
     }
 
     /* Clears a user's tokens from the cache.
@@ -324,6 +357,23 @@ public class DisplayMessageActvity extends AppCompatActivity {
         findViewById(R.id.welcome).setVisibility(View.INVISIBLE);
         findViewById(R.id.graphData).setVisibility(View.INVISIBLE);
         ((TextView) findViewById(R.id.graphData)).setText("No Data");
+    }
+
+    private void addNotification(){
+        android.support.v4.app.NotificationCompat.Builder notification =
+                new NotificationCompat.Builder(this)
+                        .setContentTitle("Hey boo")
+                        .setContentText("Wanna cuddle?")
+                        .setSmallIcon(R.drawable.bootje);
+
+
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        notification.setContentIntent(contentIntent);
+
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(0, notification.build());
     }
 
 
