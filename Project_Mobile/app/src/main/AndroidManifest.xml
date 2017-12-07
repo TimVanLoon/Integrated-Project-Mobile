@@ -20,7 +20,8 @@
             android:name=".ListMailsActvity"
             android:parentActivityName=".MainActivity" />
         <!-- Intent filter to capture System Browser calling back to our app after Sign In -->
-        <activity android:name="com.microsoft.identity.client.BrowserTabActivity" >
+
+        <activity android:name="com.microsoft.identity.client.BrowserTabActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -34,9 +35,13 @@
                     android:scheme="msald3b60662-7768-4a50-b96f-eb1dfcc7ec8d" />
             </intent-filter>
         </activity>
+
         <activity android:name=".DisplayMailActivity" />
-        <activity android:name=".SendMailActivity" >
-        </activity>
+        <activity android:name=".SendMailActivity" />
+
+
+        <activity android:name=".CalendarActivity" />
+
     </application>
 
 </manifest>
