@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.NotificationCompat;
+import android.text.Layout;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -45,7 +46,7 @@ import java.util.Map;
 public class ListMailsActvity extends AppCompatActivity {
 
     final static String CLIENT_ID = "d3b60662-7768-4a50-b96f-eb1dfcc7ec8d";
-    final static String SCOPES[] = {"https://graph.microsoft.com/Mail.Send","https://graph.microsoft.com/Mail.ReadWrite"};
+    final static String SCOPES[] = {"https://graph.microsoft.com/Mail.Send", "https://graph.microsoft.com/Mail.ReadWrite"};
 
     //final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me";
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/mailFolders('Inbox')/messages?$top=25";
@@ -53,6 +54,7 @@ public class ListMailsActvity extends AppCompatActivity {
     final static String CHANNEL_ID = "my_channel_01";
 
     private ListView mListview;
+    private View mailLayout;
 
 
     /* UI & Debugging Variables */
@@ -73,6 +75,7 @@ public class ListMailsActvity extends AppCompatActivity {
         mListview = (ListView) findViewById(R.id.ListViewMails);
         signOutButton = (Button) findViewById(R.id.clearCache);
         toSendMailActivity = (Button) findViewById(R.id.ButtonSendMail);
+
         addNotification();
 
 
@@ -123,8 +126,8 @@ public class ListMailsActvity extends AppCompatActivity {
 
         onCallGraphClicked();
 
-    }
 
+    }
 
 
 //
@@ -325,16 +328,17 @@ public class ListMailsActvity extends AppCompatActivity {
         mListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Intent showMail = new Intent(ListMailsActvity.this,DisplayMailActivity.class);
+                Intent showMail = new Intent(ListMailsActvity.this, DisplayMailActivity.class);
                 try {
                     showMail.putExtra("mailObjext", finalMailJsonArray.getString(position));
-                    showMail.putExtra("accestoken",authResult.getAccessToken());
+                    showMail.putExtra("accestoken", authResult.getAccessToken());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
                 startActivity(showMail);
             }
         });
+
 
     }
 
@@ -384,8 +388,8 @@ public class ListMailsActvity extends AppCompatActivity {
     }
 
     private void toSendMailActivity() {
-        Intent intent = new Intent(this,SendMailActivity.class);
-        intent.putExtra("accestoken",authResult.getAccessToken());
+        Intent intent = new Intent(this, SendMailActivity.class);
+        intent.putExtra("accestoken", authResult.getAccessToken());
 
         startActivity(intent);
     }

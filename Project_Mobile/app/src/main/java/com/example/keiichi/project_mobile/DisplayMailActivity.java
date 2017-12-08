@@ -18,6 +18,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
@@ -26,9 +27,13 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
+
 public class DisplayMailActivity extends AppCompatActivity {
-    final private String URL_DELETE = ""; // TODO: 7/12/2017 URL DELETE TOEVOEGEN 
+    final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/"; // TODO: 7/12/2017 URL DELETE TOEVOEGEN
     private TextView mailBodyContent;
+    private TextView Subject;
     private JSONObject mail;
     private JSONObject body;
     private ImageButton deleteButton;
@@ -46,8 +51,6 @@ public class DisplayMailActivity extends AppCompatActivity {
         deleteButton = (ImageButton) findViewById(R.id.ButtonDelete);
 
 
-
-
         try {
             mail = new JSONObject(JsonString);
             body = mail.getJSONObject("body");
@@ -60,27 +63,29 @@ public class DisplayMailActivity extends AppCompatActivity {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                deleteMail();
+                try {
+                    deleteMail(mail);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
             }
         });
 
     }
 
-    private void deleteMail() {
+    private void deleteMail(JSONObject mail) throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        final JSONObject jsonObject = new JSONObject(buildJsonMail());
 
-        System.out.println(jsonObject.toString());
-
-        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_POSTADRESS, jsonObject,
-                new Response.Listener<JSONObject>() {
+        StringRequest objectRequest = new StringRequest(Request.Method.DELETE, URL_DELETE + mail.getString("id") ,
+                new Response.Listener<String>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        Toast.makeText(getApplicationContext(), "Mail send!", Toast.LENGTH_SHORT).show();
-                        System.out.println(response.toString());
+                    public void onResponse(String response) {
+                        Toast.makeText(getApplicationContext(), "Mail deleted!", Toast.LENGTH_SHORT).show();
+                        System.out.println(response);
                     }
+
 
                 }, new Response.ErrorListener() {
             @Override
@@ -92,7 +97,7 @@ public class DisplayMailActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + Acces_Token);
+                headers.put("Authorization", "Bearer " + ACCES_TOKEN);
 
                 return headers;
             }
@@ -102,5 +107,7 @@ public class DisplayMailActivity extends AppCompatActivity {
         queue.add(objectRequest);
 
     }
-    }
+
 }
+
+
