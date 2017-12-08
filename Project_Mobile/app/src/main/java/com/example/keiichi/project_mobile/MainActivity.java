@@ -30,9 +30,9 @@ public class MainActivity extends AppCompatActivity {
     private AdView mAdView;
 
     private Button loginButton;
-    private Button rewardButton;
+    // private Button rewardButton;
 
-    private RewardedVideoAd mRewardedVideoAd;
+    // private RewardedVideoAd mRewardedVideoAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         this.counter = 0;
 
         loginButton = (Button)findViewById(R.id.loginButton);
-        rewardButton = (Button)findViewById(R.id.adButton);
+        // rewardButton = (Button)findViewById(R.id.adButton);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
 
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        rewardButton.setOnClickListener(new View.OnClickListener() {
+        /* rewardButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v){
@@ -118,8 +118,18 @@ public class MainActivity extends AppCompatActivity {
 
         loadRewardedVideoAd();
 
+
+*/
     }
 
+    public void login(View view){
+        Intent intent = new Intent(this, DisplayMessageActvity.class);
+
+        startActivity(intent);
+
+    }
+
+    /*
     public void addToCounter(int aantal){
         this.counter = counter + aantal;
     }
@@ -133,13 +143,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void login(View view){
-        Intent intent = new Intent(this, DisplayMessageActvity.class);
+    */
 
-        startActivity(intent);
-
-    }
-
+    /*
     private void loadRewardedVideoAd() {
         mRewardedVideoAd.loadAd("ca-app-pub-6055872829043526/2682387409",
                 new AdRequest.Builder().build());
@@ -163,4 +169,6 @@ public class MainActivity extends AppCompatActivity {
         mRewardedVideoAd.destroy(this);
         super.onDestroy();
     }
+
+    */
 }
