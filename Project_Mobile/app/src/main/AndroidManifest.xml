@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.keiichi.project_mobile">
+    package="com.example.keiichi.project_mobile" >
 
     <application
         android:allowBackup="true"
@@ -8,8 +8,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        android:theme="@style/AppTheme" >
+        <activity android:name=".MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -17,10 +17,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DisplayMessageActvity"
+            android:name=".ListMailsActvity"
             android:parentActivityName=".MainActivity" />
         <!-- Intent filter to capture System Browser calling back to our app after Sign In -->
-        <activity android:name="com.microsoft.identity.client.BrowserTabActivity">
+        <activity android:name="com.microsoft.identity.client.BrowserTabActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -34,7 +34,9 @@
                     android:scheme="msald3b60662-7768-4a50-b96f-eb1dfcc7ec8d" />
             </intent-filter>
         </activity>
-        <activity android:name=".CalendarActivity"></activity>
+        <activity android:name=".DisplayMailActivity" />
+        <activity android:name=".SendMailActivity" >
+        </activity>
     </application>
 
 </manifest>

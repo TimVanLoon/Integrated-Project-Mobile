@@ -7,47 +7,39 @@
     tools:context="com.example.keiichi.project_mobile.MainActivity">
 
     <RelativeLayout
-        android:id="@+id/relativeLayout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="4dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0">
+        android:layout_width="373dp"
+        android:layout_height="502dp"
+        tools:layout_editor_absoluteX="6dp"
+        tools:layout_editor_absoluteY="4dp">
 
         <Button
-            android:id="@+id/loginButton"
+            android:id="@+id/button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/editText5"
+            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="35dp"
+            android:layout_marginBottom="77dp"
+            android:onClick="login"
             android:text="Login" />
 
         <EditText
             android:id="@+id/editText3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/editText5"
-            android:layout_alignStart="@+id/editText5"
             android:layout_marginBottom="62dp"
             android:ems="10"
-            android:inputType="textEmailAddress" />
+            android:inputType="textEmailAddress"
+            android:layout_above="@+id/editText5"
+            android:layout_alignStart="@+id/editText5" />
 
         <EditText
             android:id="@+id/editText5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
             android:ems="10"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
 
         <TextView
             android:id="@+id/textView4"
@@ -66,28 +58,6 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="15dp"
             android:text="Password" />
-
-        <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/adView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="14dp"
-            ads:adSize="BANNER"
-            ads:adUnitId="ca-app-pub-6055872829043526/9130453671">
-
-        </com.google.android.gms.ads.AdView>
-
-        <Button
-            android:id="@+id/adButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/adView"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="17dp"
-            android:text="WATCH AD" />
-
 
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

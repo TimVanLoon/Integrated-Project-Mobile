@@ -1,6 +1,3 @@
 <resources>
     <string name="app_name">Project_Mobile</string>
-    <string name="mail">Mail</string>
-    <string name="calendar">Calendar</string>
-    <string name="contacts">Contacts</string>
 </resources>
