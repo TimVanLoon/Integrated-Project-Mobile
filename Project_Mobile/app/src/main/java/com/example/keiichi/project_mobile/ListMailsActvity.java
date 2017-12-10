@@ -6,9 +6,13 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 // import android.support.v7.app.NotificationCompat;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -55,6 +59,8 @@ public class ListMailsActvity extends AppCompatActivity {
     private ListView mListview;
     private View mailLayout;
 
+    BottomNavigationView mBottomNav;
+
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -77,6 +83,35 @@ public class ListMailsActvity extends AppCompatActivity {
 
        // addNotification();
 
+        mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
+
+        Menu menu = mBottomNav.getMenu();
+        MenuItem menuItem = menu.getItem(0);
+        menuItem.setChecked(true);
+
+        mBottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                switch(item.getItemId()) {
+
+                    case R.id.action_calendar:
+                        Intent intentCalendar = new Intent(ListMailsActvity.this, CalendarActivity.class);
+                        startActivity(intentCalendar);
+                        break;
+                    case R.id.action_mail:
+
+                        break;
+                    case R.id.action_user:
+                        Intent intentUser = new Intent(ListMailsActvity.this, CalendarActivity.class);
+                        startActivity(intentUser);
+                        break;
+
+                }
+
+                return false;
+            }
+        });
 
         toSendMailActivity.setOnClickListener(new View.OnClickListener() {
             @Override

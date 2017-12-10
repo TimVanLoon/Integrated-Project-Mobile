@@ -16,7 +16,7 @@
         android:textColor="#3f3f3f"
         android:textSize="50px"
         android:visibility="invisible"
-        app:layout_constraintEnd_toStartOf="@+id/button"
+        app:layout_constraintEnd_toStartOf="@+id/button2"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -34,10 +34,11 @@
         android:orientation="vertical"
         app:layout_constraintGuide_begin="20dp" />
 
+
     <Button
         android:id="@+id/clearCache"
         android:layout_width="368dp"
-        android:layout_height="wrap_content"
+        android:layout_height="38dp"
         android:layout_marginBottom="16dp"
         android:background="#00a1f1"
         android:text="Sign Out"
@@ -71,4 +72,23 @@
         android:text="Button"
         app:layout_constraintBottom_toTopOf="@+id/ListViewMails"
         app:layout_constraintRight_toRightOf="parent" />
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/navigation"
+        android:layout_width="363dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:background="@drawable/white_grey_border_top"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:itemIconTint="@drawable/nav_item_color_state"
+        app:itemTextColor="@drawable/nav_item_color_state"
+        app:menu="@menu/my_navigation_items">
+
+    </android.support.design.widget.BottomNavigationView>
+
+
 </android.support.constraint.ConstraintLayout>

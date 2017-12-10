@@ -1,18 +1,22 @@
 package com.example.keiichi.project_mobile;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CalendarView;
 import android.widget.TextView;
+
+import java.util.List;
 
 public class CalendarActivity extends AppCompatActivity {
 
     CalendarView calendarView;
     TextView myDate;
-    BottomNavigationView bottomNavigationView;
+    BottomNavigationView mBottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,23 +25,35 @@ public class CalendarActivity extends AppCompatActivity {
 
         calendarView = (CalendarView) findViewById(R.id.calendarView);
         myDate = (TextView) findViewById(R.id.myDate);
-        bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(
-                new BottomNavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.action_mail:
+        mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
 
-                            case R.id.action_calendar:
+        Menu menu = mBottomNav.getMenu();
+        MenuItem menuItem = menu.getItem(1);
+        menuItem.setChecked(true);
 
-                            case R.id.action_user:
+        mBottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-                        }
-                        return true;
-                    }
-                });
+                switch(item.getItemId()) {
+
+                    case R.id.action_calendar:
+
+                        break;
+                    case R.id.action_mail:
+                        Intent intentMail = new Intent(CalendarActivity.this, ListMailsActvity.class);
+                        startActivity(intentMail);
+                        break;
+                    case R.id.action_user:
+
+                        break;
+
+                }
+
+                return false;
+            }
+        });
 
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
