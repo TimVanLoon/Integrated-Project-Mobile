@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -29,6 +30,8 @@ public class ContactsActivity extends AppCompatActivity {
 
     BottomNavigationView mBottomNav;
 
+    private ListView contactsListView;
+
     private String accessToken;
 
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts";
@@ -41,6 +44,8 @@ public class ContactsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
+
+        contactsListView = (ListView) findViewById(R.id.contactsListView);
 
         accessToken = getIntent().getStringExtra("AccessToken");
         callGraphAPI();
@@ -137,22 +142,18 @@ public class ContactsActivity extends AppCompatActivity {
 
         // Test de response
         System.out.println(graphResponse);
-        JSONArray eventsJsonArray = null;
+        JSONArray contactsJsonArray = null;
 
         // Haal de contacten binnen
         try {
-            eventsJsonArray = (JSONArray) graphResponse.get("value");
+            contactsJsonArray = (JSONArray) graphResponse.get("value");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        assert eventsJsonArray != null;
+        assert contactsJsonArray != null;
 
-        Intent intentCalendar = new Intent(ContactsActivity.this, ListEventsActivity.class);
-        intentCalendar.putExtra("EventsArray", eventsJsonArray.toString());
-        startActivity(intentCalendar);
-
-
-
+        ContactAdapter contactAdapter = new ContactAdapter(this, contactsJsonArray);
+        contactsListView.setAdapter(contactAdapter);
 
     }
 }
