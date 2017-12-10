@@ -87,10 +87,13 @@ public class CalendarActivity extends AppCompatActivity {
                         break;
                     case R.id.action_mail:
                         Intent intentMail = new Intent(CalendarActivity.this, ListMailsActvity.class);
+                        intentMail.putExtra("AccessToken", accessToken);
                         startActivity(intentMail);
                         break;
                     case R.id.action_user:
-
+                        Intent intentContacts = new Intent(CalendarActivity.this, ContactsActivity.class);
+                        intentContacts.putExtra("AccessToken", accessToken);
+                        startActivity(intentContacts);
                         break;
 
                 }

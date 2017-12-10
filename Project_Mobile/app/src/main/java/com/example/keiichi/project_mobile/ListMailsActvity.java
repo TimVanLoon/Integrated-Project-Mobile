@@ -106,8 +106,9 @@ public class ListMailsActvity extends AppCompatActivity {
 
                         break;
                     case R.id.action_user:
-                        Intent intentUser = new Intent(ListMailsActvity.this, CalendarActivity.class);
-                        startActivity(intentUser);
+                        Intent intentContacts = new Intent(ListMailsActvity.this, ContactsActivity.class);
+                        intentContacts.putExtra("AccessToken", accessToken);
+                        startActivity(intentContacts);
                         break;
 
                 }
