@@ -49,7 +49,7 @@ import java.util.Map;
 public class ListMailsActvity extends AppCompatActivity {
 
     final static String CLIENT_ID = "d3b60662-7768-4a50-b96f-eb1dfcc7ec8d";
-    final static String SCOPES[] = {"https://graph.microsoft.com/Mail.Send", "https://graph.microsoft.com/Mail.ReadWrite"};
+    final static String SCOPES[] = {"https://graph.microsoft.com/Mail.Send", "https://graph.microsoft.com/Mail.ReadWrite", "https://graph.microsoft.com/Calendars.ReadWrite", "https://graph.microsoft.com/Calendars.Read"};
 
     //final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me";
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/mailFolders('Inbox')/messages?$top=25";

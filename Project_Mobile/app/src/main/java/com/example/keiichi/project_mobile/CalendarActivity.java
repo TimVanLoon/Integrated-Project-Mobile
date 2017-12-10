@@ -40,7 +40,7 @@ public class CalendarActivity extends AppCompatActivity {
     BottomNavigationView mBottomNav;
     Button getEventsButton;
 
-    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/events";
+    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/events?$select=subject,body,bodyPreview,organizer,attendees,start,end,location";
 
     private String accessToken;
 
