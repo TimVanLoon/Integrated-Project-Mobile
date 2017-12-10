@@ -15,7 +15,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class EventAdapter extends BaseAdapter implements ListAdapter {
-    
     private final Context context;
     private final JSONArray values;
 
@@ -46,7 +45,7 @@ public class EventAdapter extends BaseAdapter implements ListAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater layoutInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = layoutInflater.inflate(R.layout.mail_items, parent, false);
+        View rowView = layoutInflater.inflate(R.layout.event_items, parent, false);
         TextView header = rowView.findViewById(R.id.previewBody);
         TextView preview = rowView.findViewById(R.id.header);
 
@@ -62,6 +61,7 @@ public class EventAdapter extends BaseAdapter implements ListAdapter {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
 
         return rowView;
 

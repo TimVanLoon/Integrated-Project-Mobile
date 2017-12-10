@@ -34,21 +34,9 @@ public class ListEventsActivity extends AppCompatActivity {
 
     private void fillEventsListView(JSONArray eventsArray){
 
-        MailAdapter mailAdapter = new MailAdapter(this, eventsArray);
-        eventsListView.setAdapter(mailAdapter);
-        final JSONArray finalMailJsonArray = eventsArray;
-        eventsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Intent showMail = new Intent(ListEventsActivity.this, DisplayMailActivity.class);
-                try {
-                    showMail.putExtra("mailObjext", finalMailJsonArray.getString(position));
-                    showMail.putExtra("accestoken", authResult.getAccessToken());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                startActivity(showMail);
-            }
-        });
+        EventAdapter eventAdapter = new EventAdapter(this, eventsArray);
+        eventsListView.setAdapter(eventAdapter);
+
+
     }
 }
