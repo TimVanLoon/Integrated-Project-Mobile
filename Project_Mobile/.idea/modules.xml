@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Project_Mobile.iml" filepath="$PROJECT_DIR$/Project_Mobile.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Users\eigenaar\Documents\GitHub\Integrated-Project-Mobille\Project_Mobile\app\app.iml" filepath="C:\Users\eigenaar\Documents\GitHub\Integrated-Project-Mobille\Project_Mobile\app\app.iml" />
     </modules>
   </component>
 </project>

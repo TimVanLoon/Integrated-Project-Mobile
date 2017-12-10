@@ -5,10 +5,9 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.app.NotificationCompat;
-import android.text.Layout;
+import android.support.v7.app.AppCompatActivity;
+// import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -76,7 +75,7 @@ public class ListMailsActvity extends AppCompatActivity {
         signOutButton = (Button) findViewById(R.id.clearCache);
         toSendMailActivity = (Button) findViewById(R.id.ButtonSendMail);
 
-        addNotification();
+       // addNotification();
 
 
         toSendMailActivity.setOnClickListener(new View.OnClickListener() {
@@ -394,6 +393,7 @@ public class ListMailsActvity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /*
     private void addNotification() {
         android.support.v4.app.NotificationCompat.Builder notification =
                 new NotificationCompat.Builder(this)
@@ -411,5 +411,6 @@ public class ListMailsActvity extends AppCompatActivity {
         manager.notify(0, notification.build());
     }
 
+*/
 
 }
