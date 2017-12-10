@@ -59,6 +59,8 @@ public class ListMailsActvity extends AppCompatActivity {
     private ListView mListview;
     private View mailLayout;
 
+    private String accessToken;
+
     BottomNavigationView mBottomNav;
 
 
@@ -97,6 +99,7 @@ public class ListMailsActvity extends AppCompatActivity {
 
                     case R.id.action_calendar:
                         Intent intentCalendar = new Intent(ListMailsActvity.this, CalendarActivity.class);
+                        intentCalendar.putExtra("AccessToken", accessToken);
                         startActivity(intentCalendar);
                         break;
                     case R.id.action_mail:
@@ -192,6 +195,9 @@ public class ListMailsActvity extends AppCompatActivity {
 
             /* Store the authResult */
                 authResult = authenticationResult;
+
+                // accesstoken in var steken
+                accessToken = authResult.getAccessToken();
 
             /* call graph */
                 callGraphAPI();
@@ -354,6 +360,7 @@ public class ListMailsActvity extends AppCompatActivity {
         assert mailJsonArray != null;
         JSONObject object = mailJsonArray.getJSONObject(1);
         System.out.println(object.get("from"));
+
 
 
         MailAdapter mailAdapter = new MailAdapter(this, mailJsonArray);

@@ -35,8 +35,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".DisplayMailActivity" />
-        <activity android:name=".SendMailActivity"></activity>
-        <activity android:name=".CalendarActivity"></activity>
+        <activity android:name=".SendMailActivity" />
+        <activity android:name=".CalendarActivity" />
+        <activity android:name=".ListEventsActivity"></activity>
     </application>
 
 </manifest>
