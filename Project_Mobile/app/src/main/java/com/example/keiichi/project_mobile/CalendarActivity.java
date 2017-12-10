@@ -44,10 +44,6 @@ public class CalendarActivity extends AppCompatActivity {
 
     private String accessToken;
 
-    /* Azure AD Variables */
-    private PublicClientApplication sampleApp;
-    private AuthenticationResult authResult;
-
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
 
