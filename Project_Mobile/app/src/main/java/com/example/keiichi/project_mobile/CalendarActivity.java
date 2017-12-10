@@ -111,6 +111,7 @@ public class CalendarActivity extends AppCompatActivity {
     /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
     private void callGraphAPI() {
         Log.d(TAG, "Starting volley request to graph");
+        Log.d(TAG, accessToken);
 
     /* Make sure we have a token to send to graph */
         if (accessToken == null) {
@@ -164,7 +165,7 @@ public class CalendarActivity extends AppCompatActivity {
     /* Sets the Graph response */
     private void updateGraphUI(JSONObject graphResponse) throws JSONException {
 
-        // Test de responnse
+        // Test de response
         System.out.println(graphResponse);
         JSONArray eventsJsonArray = null;
         // Haal de events binnen
@@ -174,8 +175,6 @@ public class CalendarActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         assert eventsJsonArray != null;
-        JSONObject object = eventsJsonArray.getJSONObject(1);
-        System.out.println(object.get("from"));
 
         Intent intentCalendar = new Intent(CalendarActivity.this, ListEventsActivity.class);
         intentCalendar.putExtra("EventsArray", eventsJsonArray.toString());
