@@ -147,7 +147,7 @@ public class CalendarActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + authResult.getAccessToken());
+                headers.put("Authorization", "Bearer " + accessToken);
                 return headers;
             }
         };
