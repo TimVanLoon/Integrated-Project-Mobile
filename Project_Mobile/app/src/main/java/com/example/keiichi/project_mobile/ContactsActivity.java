@@ -109,8 +109,7 @@ public class ContactsActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String s) {
-
-                contactAdapter.getFilter().filter(s);
+                //contactAdapter.getFilter().filter(s);
                 return false;
             }
         });
