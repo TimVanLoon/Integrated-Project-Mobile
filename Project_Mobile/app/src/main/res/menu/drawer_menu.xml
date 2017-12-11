@@ -20,7 +20,7 @@
 
     </group>
 
-    <item android:title="Feedback">
+    <item android:title="">
         <menu>
              <item
                 android:id="@+id/feedback"

@@ -10,4 +10,7 @@
     <string name="contactpersons">Contacts</string>
     <string name="skypeContacts">Skype-contacts</string>
     <string name="feedback">Feedback</string>
+
+    <string name="drawer_open">drawer open</string>
+    <string name="drawer_close">drawer close</string>
 </resources>
