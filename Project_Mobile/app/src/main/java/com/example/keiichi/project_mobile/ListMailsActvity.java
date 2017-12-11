@@ -6,18 +6,24 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 // import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
+
+import android.support.v7.app.NotificationCompat;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +53,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.android.volley.Request.Method.HEAD;
+
 public class ListMailsActvity extends AppCompatActivity {
 
     final static String CLIENT_ID = "d3b60662-7768-4a50-b96f-eb1dfcc7ec8d";
@@ -60,11 +68,11 @@ public class ListMailsActvity extends AppCompatActivity {
 
     //final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me";
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/mailFolders('Inbox')/messages?$top=25";
-    //final static String MSGRAPH_URL = "https://outlook.office365.com/api/v2.0/me/MailFolders('inbox')/messages";
     final static String CHANNEL_ID = "my_channel_01";
 
-    private ListView mListview;
+    private RecyclerView mListview;
     private View mailLayout;
+    private MailAdapter mailAdapter;
 
     private String accessToken;
 
@@ -86,9 +94,9 @@ public class ListMailsActvity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_mails);
 
-        mListview = (ListView) findViewById(R.id.ListViewMails);
-        signOutButton = (Button) findViewById(R.id.clearCache);
-        toSendMailActivity = (Button) findViewById(R.id.ButtonSendMail);
+        mListview = findViewById(R.id.ListViewMails);
+        signOutButton = findViewById(R.id.clearCache);
+        toSendMailActivity = findViewById(R.id.ButtonSendMail);
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
@@ -372,14 +380,22 @@ public class ListMailsActvity extends AppCompatActivity {
         JSONObject object = mailJsonArray.getJSONObject(1);
         System.out.println(object.get("from"));
 
-
-
-        MailAdapter mailAdapter = new MailAdapter(this, mailJsonArray);
-        mListview.setAdapter(mailAdapter);
         final JSONArray finalMailJsonArray = mailJsonArray;
-        mListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+        mailAdapter = new MailAdapter(finalMailJsonArray);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        mListview.setLayoutManager(layoutManager);
+        mListview.setItemAnimator(new DefaultItemAnimator());
+        mListview.addItemDecoration(new DividerItemDecoration(this,LinearLayoutManager.VERTICAL));
+
+
+
+        //set the adapter
+        mListview.setAdapter(mailAdapter);
+
+        mListview.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(),mListview, new ClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+            public void onClick(View view, int position) {
                 Intent showMail = new Intent(ListMailsActvity.this, DisplayMailActivity.class);
                 try {
                     showMail.putExtra("mailObjext", finalMailJsonArray.getString(position));
@@ -389,7 +405,14 @@ public class ListMailsActvity extends AppCompatActivity {
                 }
                 startActivity(showMail);
             }
-        });
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+
+            }
+        }));
+
 
 
     }
@@ -446,7 +469,7 @@ public class ListMailsActvity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    /*
+
     private void addNotification() {
         android.support.v4.app.NotificationCompat.Builder notification =
                 new NotificationCompat.Builder(this)
@@ -464,6 +487,11 @@ public class ListMailsActvity extends AppCompatActivity {
         manager.notify(0, notification.build());
     }
 
-*/
 
+
+    public interface ClickListener {
+        void onClick(View view, int position);
+
+        void onLongClick(View view, int position);
+    }
 }
