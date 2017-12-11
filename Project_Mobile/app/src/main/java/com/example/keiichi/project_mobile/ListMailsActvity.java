@@ -5,14 +5,20 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -47,7 +53,13 @@ import java.util.Map;
 public class ListMailsActvity extends AppCompatActivity {
 
     final static String CLIENT_ID = "d3b60662-7768-4a50-b96f-eb1dfcc7ec8d";
-    final static String SCOPES[] = {"https://graph.microsoft.com/Mail.Send", "https://graph.microsoft.com/Mail.ReadWrite"};
+    final static String SCOPES[] = {
+            "https://graph.microsoft.com/Mail.Send",
+            "https://graph.microsoft.com/Mail.ReadWrite",
+            "https://graph.microsoft.com/Calendars.ReadWrite",
+            "https://graph.microsoft.com/Calendars.Read",
+            "https://graph.microsoft.com/Contacts.Read",
+            "https://graph.microsoft.com/Calendars.ReadWrite"};
 
     //final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me";
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/mailFolders('Inbox')/messages?$top=25";
@@ -56,6 +68,10 @@ public class ListMailsActvity extends AppCompatActivity {
     private RecyclerView mListview;
     private View mailLayout;
     private MailAdapter mailAdapter;
+
+    private String accessToken;
+
+    BottomNavigationView mBottomNav;
 
 
     /* UI & Debugging Variables */
@@ -77,8 +93,42 @@ public class ListMailsActvity extends AppCompatActivity {
         signOutButton = findViewById(R.id.clearCache);
         toSendMailActivity = findViewById(R.id.ButtonSendMail);
 
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
+
         addNotification();
 
+        mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
+
+        Menu menu = mBottomNav.getMenu();
+        MenuItem menuItem = menu.getItem(0);
+        menuItem.setChecked(true);
+
+        mBottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                switch(item.getItemId()) {
+
+                    case R.id.action_calendar:
+                        Intent intentCalendar = new Intent(ListMailsActvity.this, CalendarActivity.class);
+                        intentCalendar.putExtra("AccessToken", accessToken);
+                        startActivity(intentCalendar);
+                        break;
+                    case R.id.action_mail:
+
+                        break;
+                    case R.id.action_user:
+                        Intent intentContacts = new Intent(ListMailsActvity.this, ContactsActivity.class);
+                        intentContacts.putExtra("AccessToken", accessToken);
+                        startActivity(intentContacts);
+                        break;
+
+                }
+
+                return false;
+            }
+        });
 
         toSendMailActivity.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,6 +209,9 @@ public class ListMailsActvity extends AppCompatActivity {
 
             /* Store the authResult */
                 authResult = authenticationResult;
+
+                // accesstoken in var steken
+                accessToken = authResult.getAccessToken();
 
             /* call graph */
                 callGraphAPI();
@@ -330,7 +383,7 @@ public class ListMailsActvity extends AppCompatActivity {
         mListview.setItemAnimator(new DefaultItemAnimator());
         mListview.addItemDecoration(new DividerItemDecoration(this,LinearLayoutManager.VERTICAL));
 
-        //set the adapter
+        //Set the adapter
         mListview.setAdapter(mailAdapter);
 
         mListview.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(),mListview, new ClickListener() {
@@ -409,6 +462,7 @@ public class ListMailsActvity extends AppCompatActivity {
         startActivity(intent);
     }
 
+
     private void addNotification() {
         android.support.v4.app.NotificationCompat.Builder notification =
                 new NotificationCompat.Builder(this)
@@ -425,6 +479,7 @@ public class ListMailsActvity extends AppCompatActivity {
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         manager.notify(0, notification.build());
     }
+
 
 
     public interface ClickListener {
