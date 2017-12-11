@@ -12,12 +12,9 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,12 +51,11 @@ public class ListMailsActvity extends AppCompatActivity {
 
     //final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me";
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/mailFolders('Inbox')/messages?$top=25";
-    //final static String MSGRAPH_URL = "https://outlook.office365.com/api/v2.0/me/MailFolders('inbox')/messages";
     final static String CHANNEL_ID = "my_channel_01";
 
     private RecyclerView mListview;
     private View mailLayout;
-    private TestAdapter testAdapter;
+    private MailAdapter mailAdapter;
 
 
     /* UI & Debugging Variables */
@@ -328,36 +324,18 @@ public class ListMailsActvity extends AppCompatActivity {
 
         final JSONArray finalMailJsonArray = mailJsonArray;
 
-        testAdapter = new TestAdapter(finalMailJsonArray);
+        mailAdapter = new MailAdapter(finalMailJsonArray);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         mListview.setLayoutManager(layoutManager);
         mListview.setItemAnimator(new DefaultItemAnimator());
         mListview.addItemDecoration(new DividerItemDecoration(this,LinearLayoutManager.VERTICAL));
 
         //set the adapter
-        mListview.setAdapter(testAdapter);
+        mListview.setAdapter(mailAdapter);
 
         mListview.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(),mListview, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Toast.makeText(getApplicationContext(), " hey boo! " + position,Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-
-
-            }
-        }));
-
-
-        /*MailAdapter mailAdapter = new MailAdapter(this, mailJsonArray);
-        mListview.setAdapter(mailAdapter);
-
-        final JSONArray finalMailJsonArray = mailJsonArray;
-        /*Listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 Intent showMail = new Intent(ListMailsActvity.this, DisplayMailActivity.class);
                 try {
                     showMail.putExtra("mailObjext", finalMailJsonArray.getString(position));
@@ -367,7 +345,14 @@ public class ListMailsActvity extends AppCompatActivity {
                 }
                 startActivity(showMail);
             }
-        });*/
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+
+            }
+        }));
+
 
 
     }
