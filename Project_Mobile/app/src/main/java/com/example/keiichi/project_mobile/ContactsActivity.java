@@ -8,8 +8,10 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -34,6 +36,8 @@ public class ContactsActivity extends AppCompatActivity {
 
     private ListView contactsListView;
 
+    SearchView searchView;
+
     private String accessToken;
 
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts";
@@ -49,7 +53,6 @@ public class ContactsActivity extends AppCompatActivity {
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
-
 
         contactsListView = (ListView) findViewById(R.id.contactsListView);
 
@@ -91,8 +94,25 @@ public class ContactsActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.my_action_bar_items, menu);
-        return true;
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.my_action_bar_items, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+
+                return false;
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -100,10 +120,7 @@ public class ContactsActivity extends AppCompatActivity {
 
         switch(item.getItemId()){
 
-            case R.id.action_search:
-                Toast.makeText(getBaseContext(), "Hey boo",
-                        Toast.LENGTH_LONG).show();
-                return true;
+
 
             case R.id.action_add:
 
