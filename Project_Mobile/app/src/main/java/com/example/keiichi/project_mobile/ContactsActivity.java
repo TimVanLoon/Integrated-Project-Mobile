@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -49,6 +50,7 @@ public class ContactsActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
+
         contactsListView = (ListView) findViewById(R.id.contactsListView);
 
         accessToken = getIntent().getStringExtra("AccessToken");
@@ -85,6 +87,33 @@ public class ContactsActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.my_action_bar_items, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+
+        switch(item.getItemId()){
+
+            case R.id.action_search:
+                Toast.makeText(getBaseContext(), "Hey boo",
+                        Toast.LENGTH_LONG).show();
+                return true;
+
+            case R.id.action_add:
+
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */

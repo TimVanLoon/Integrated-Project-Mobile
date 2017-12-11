@@ -25,7 +25,7 @@
         android:layout_marginTop="12dp"
         android:text="Mark Your Dates"
         android:textAlignment="center"
-        android:textColor="#000"
+        android:textColor="#FFF"
         android:textSize="23sp" />
 
     <LinearLayout
