@@ -38,6 +38,8 @@ public class ContactsActivity extends AppCompatActivity {
 
     SearchView searchView;
 
+    ContactAdapter contactAdapter;
+
     private String accessToken;
 
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts";
@@ -108,6 +110,7 @@ public class ContactsActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String s) {
 
+                contactAdapter.getFilter().filter(s);
                 return false;
             }
         });
@@ -202,7 +205,7 @@ public class ContactsActivity extends AppCompatActivity {
         }
         assert contactsJsonArray != null;
 
-        ContactAdapter contactAdapter = new ContactAdapter(this, contactsJsonArray);
+        contactAdapter = new ContactAdapter(this, contactsJsonArray);
         contactsListView.setAdapter(contactAdapter);
 
     }
