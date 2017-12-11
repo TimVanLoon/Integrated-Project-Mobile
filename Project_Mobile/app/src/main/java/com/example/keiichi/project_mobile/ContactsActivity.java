@@ -3,6 +3,7 @@ package com.example.keiichi.project_mobile;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -34,6 +35,8 @@ public class ContactsActivity extends AppCompatActivity {
 
     BottomNavigationView mBottomNav;
 
+    private DrawerLayout mDrawerLayout;
+
     private ListView contactsListView;
 
     SearchView searchView;
@@ -55,6 +58,9 @@ public class ContactsActivity extends AppCompatActivity {
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
 
         contactsListView = (ListView) findViewById(R.id.contactsListView);
 
