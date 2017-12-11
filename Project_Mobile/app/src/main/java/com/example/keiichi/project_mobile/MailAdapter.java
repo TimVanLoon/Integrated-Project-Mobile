@@ -1,73 +1,60 @@
 package com.example.keiichi.project_mobile;
 
-import android.content.Context;
-import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 /**
  * Created by Keiichi on 6/12/2017.
  */
 
-public class MailAdapter extends BaseAdapter implements ListAdapter {
-    private final Context context;
-    private final JSONArray values;
+public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> {
+    private JSONArray jsonArray;
 
-    public MailAdapter(Context context, JSONArray values) {
-        this.context = context;
-        this.values = values;
+    @Override
+    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.mail_items, parent,false);
+        return new MailAdapter.MyViewHolder(itemView);
     }
 
 
     @Override
-    public int getCount() {
-        return values.length();
-    }
-
-    @Override
-    public JSONObject getItem(int i) {
-        return values.optJSONObject(i);
-    }
-
-    @Override
-    public long getItemId(int i) {
-        JSONObject jsonObject = getItem(i);
-        return jsonObject.optLong("id");
-    }
-
-    @NonNull
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater layoutInflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = layoutInflater.inflate(R.layout.mail_items, parent, false);
-        TextView header = rowView.findViewById(R.id.previewBody);
-        TextView preview = rowView.findViewById(R.id.header);
-
-        JSONObject json_data = getItem(position);
-
+    public void onBindViewHolder(MailAdapter.MyViewHolder holder, int position) {
         try {
-            header.setText(json_data.getString("bodyPreview"));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        try {
-            preview.setText(json_data.getString("subject"));
+            JSONObject mailObject = jsonArray.getJSONObject(position);
+            holder.bodyPreview.setText(mailObject.getString("bodyPreview"));
+            holder.subject.setText(mailObject.getString("subject"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        return rowView;
+    }
+
+    @Override
+    public int getItemCount() {
+        return jsonArray.length();
+    }
+
+
+    public class MyViewHolder extends RecyclerView.ViewHolder{
+        public TextView subject,bodyPreview;
+        public MyViewHolder(View view){
+            super(view);
+            this.subject = view.findViewById(R.id.previewBody);
+            this.bodyPreview = view.findViewById(R.id.header);
+        }
 
     }
+
+    public MailAdapter(JSONArray jsonArray) {
+        this.jsonArray = jsonArray;
+    }
+
 }
