@@ -18,6 +18,7 @@
         </activity>
         <activity
             android:name=".ListMailsActvity"
+            android:label="Postvak IN"
             android:parentActivityName=".MainActivity" />
         <!-- Intent filter to capture System Browser calling back to our app after Sign In -->
         <activity android:name="com.microsoft.identity.client.BrowserTabActivity">
@@ -36,9 +37,13 @@
         </activity>
         <activity android:name=".DisplayMailActivity" />
         <activity android:name=".SendMailActivity" />
-        <activity android:name=".CalendarActivity" />
+        <activity
+            android:name=".CalendarActivity"
+            android:label="My Calendar"/>
         <activity android:name=".ListEventsActivity" />
-        <activity android:name=".ContactsActivity"></activity>
+        <activity
+            android:name=".ContactsActivity"
+            android:label="My Contacts"></activity>
     </application>
 
 </manifest>

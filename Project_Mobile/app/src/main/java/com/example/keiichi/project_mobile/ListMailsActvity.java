@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 // import android.support.v7.app.NotificationCompat;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -88,6 +89,9 @@ public class ListMailsActvity extends AppCompatActivity {
         mListview = (ListView) findViewById(R.id.ListViewMails);
         signOutButton = (Button) findViewById(R.id.clearCache);
         toSendMailActivity = (Button) findViewById(R.id.ButtonSendMail);
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
 
        // addNotification();
 
