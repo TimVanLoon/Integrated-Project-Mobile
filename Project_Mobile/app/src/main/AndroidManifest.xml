@@ -39,11 +39,12 @@
         <activity android:name=".SendMailActivity" />
         <activity
             android:name=".CalendarActivity"
-            android:label="My Calendar"/>
+            android:label="My Calendar" />
         <activity android:name=".ListEventsActivity" />
         <activity
             android:name=".ContactsActivity"
-            android:label="My Contacts"></activity>
+            android:label="My Contacts" />
+        <activity android:name=".AddContactActivity"></activity>
     </application>
 
 </manifest>

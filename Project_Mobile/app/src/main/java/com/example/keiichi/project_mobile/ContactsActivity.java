@@ -98,6 +98,10 @@ public class ContactsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu){
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.my_action_bar_items, menu);
+        MenuItem addItem = menu.findItem(R.id.action_add);
+
+
+
         MenuItem searchItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) searchItem.getActionView();
 
@@ -125,7 +129,9 @@ public class ContactsActivity extends AppCompatActivity {
 
 
             case R.id.action_add:
-
+                Intent intentAddContact = new Intent(ContactsActivity.this, AddContactActivity.class);
+                intentAddContact.putExtra("AccessToken", accessToken);
+                startActivity(intentAddContact);
                 return true;
 
             default:
