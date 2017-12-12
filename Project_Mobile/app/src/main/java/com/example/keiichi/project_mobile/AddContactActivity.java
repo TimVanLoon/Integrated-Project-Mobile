@@ -1,6 +1,5 @@
 package com.example.keiichi.project_mobile;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -53,8 +51,8 @@ public class AddContactActivity extends AppCompatActivity {
 
         accessToken = getIntent().getStringExtra("AccessToken");
 
-        // INITIALISEER ACTION BAR 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
+        // INITIALISEER ACTION BAR
+        myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
         // VOEG BACK BUTTONN TOE AAN ACTION BAR
@@ -72,7 +70,7 @@ public class AddContactActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.add_contact_navigation, menu);
+        inflater.inflate(R.menu.add_navigation, menu);
 
 
         return super.onCreateOptionsMenu(menu);

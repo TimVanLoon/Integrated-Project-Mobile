@@ -14,7 +14,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -121,7 +120,7 @@ public class ContactsActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.my_action_bar_items, menu);
+        inflater.inflate(R.menu.my_action_bar_items_contacts, menu);
         MenuItem addItem = menu.findItem(R.id.action_add);
 
 

@@ -43,10 +43,15 @@
         <activity android:name=".ListEventsActivity" />
         <activity
             android:name=".ContactsActivity"
-            android:label="My Contacts" />
+            android:label="My Contacts"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".AddContactActivity"
             android:label="Contact" />
+        <activity
+            android:name=".AddEventActivity"
+            android:label="New event"
+            />
     </application>
 
 </manifest>

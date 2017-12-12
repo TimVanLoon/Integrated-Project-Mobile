@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -33,6 +34,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class CalendarActivity extends AppCompatActivity {
 
@@ -109,6 +112,38 @@ public class CalendarActivity extends AppCompatActivity {
                 myDate.setText(date);
             }
         });
+    }
+
+    // VOEG ICONS TOE AAN DE ACTION BAR
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.my_action_bar_items_calendar, menu);
+
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    // METHODE VOOR DE CLICKABLE ICOONTJES IN DE ACTION BAR
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+
+        switch(item.getItemId()){
+
+            // WANNEER + ICON WORDT AANGEKLIKT
+            case R.id.action_add:
+
+                Intent intentAddEvent = new Intent(CalendarActivity.this, AddEventActivity.class);
+                intentAddEvent.putExtra("AccessToken", accessToken);
+                startActivity(intentAddEvent);
+
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */

@@ -26,4 +26,10 @@
     <string name="workTitle">Work</string>
     <string name="workInput">Company</string>
 
+    <string name="addEventTitle">Add an event</string>
+    <string name="eventTitle">Event</string>
+    <string name="locationTitle">Location</string>
+    <string name="startTitle">Start</string>
+    <string name="durationTitle">Duration</string>
+
 </resources>
