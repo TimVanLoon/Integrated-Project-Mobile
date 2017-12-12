@@ -13,17 +13,44 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
+import android.widget.Toast;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
+
 public class AddEventActivity extends AppCompatActivity {
 
-    EditText dateEvent;
-    EditText timeEvent;
+    final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/events";
+
+    private EditText dateEvent;
+    private EditText timeEvent;
+    private EditText eventInput;
+    private EditText locationInput;
+    private EditText durationInput;
+
+
     DatePickerDialog datePickerDialog;
 
     Toolbar myToolbar;
@@ -45,9 +72,13 @@ public class AddEventActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        // INITIALISEER DE DATE EN TIME PICKER TEKST INPUT
+        // INITIALISEER DE INPUT FIELDS
         dateEvent = (EditText) findViewById(R.id.dateEvent);
         timeEvent = (EditText) findViewById(R.id.timeEvent);
+        eventInput = (EditText) findViewById(R.id.eventInput);
+        locationInput = (EditText) findViewById(R.id.locationInput);
+        durationInput = (EditText) findViewById(R.id.durationInput);
+
 
         // ZET CLICK EVENT OP DE DATE INPUT
         dateEvent.setOnClickListener(new View.OnClickListener() {
@@ -66,12 +97,13 @@ public class AddEventActivity extends AppCompatActivity {
                             public void onDateSet(DatePicker view, int year,
                                                   int monthOfYear, int dayOfMonth) {
                                 // set day of month , month and year value in the edit text
-                                dateEvent.setText(dayOfMonth + "/"
-                                        + (monthOfYear + 1) + "/" + year);
+                                dateEvent.setText(year + "-"
+                                        + (monthOfYear + 1) + "-" + dayOfMonth);
 
                             }
                         }, mYear, mMonth, mDay);
                 datePickerDialog.show();
+
             }
         });
 
@@ -85,7 +117,21 @@ public class AddEventActivity extends AppCompatActivity {
                 mTimePicker = new TimePickerDialog(AddEventActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        timeEvent.setText(selectedHour + ":" + selectedMinute);
+
+                        /*
+                        String finalHour = "";
+                        String finalMinutes = "";
+
+                        if(selectedHour <10) {
+                            finalHour ="0"+ selectedHour;
+                        }
+                        else if(selectedMinute<10){
+                            finalMinutes ="0"+selectedMinute;
+                        }
+
+                        timeEvent.setText(finalHour + ":" + finalMinutes);
+                        */
+                        timeEvent.setText(String.format("%02d:%02d", selectedHour, selectedMinute));
                     }
                 }, hour, minute, true);//Yes 24 hour time
                 mTimePicker.setTitle("Select Time");
@@ -121,7 +167,27 @@ public class AddEventActivity extends AppCompatActivity {
 
             // WANNEER SAVE ICON WORDT AANGEKLIKT
             case R.id.action_save:
+                try {
+                    saveEvent();
 
+                    int DELAY_TIME=2000;
+
+                    //start your animation
+                    new Timer().schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            //this code will run after the delay time which is 2 seconds.
+                            Intent intentContacts = new Intent(AddEventActivity.this, CalendarActivity.class);
+                            intentContacts.putExtra("AccessToken", accessToken);
+                            startActivity(intentContacts);
+                        }
+                    }, DELAY_TIME);
+
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 return true;
 
             default:
@@ -130,4 +196,70 @@ public class AddEventActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    // POST REQUEST VOOR NIEWE EVENT
+    private void saveEvent() throws JSONException {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        final JSONObject jsonObject = new JSONObject(buildJsonEvent());
+
+        System.out.println(jsonObject.toString());
+
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_POSTADRESS, jsonObject,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Toast.makeText(getApplicationContext(), "Event saved!", Toast.LENGTH_SHORT).show();
+                        System.out.println(response.toString());
+                    }
+
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+
+                return headers;
+            }
+
+        };
+
+        queue.add(objectRequest);
+
+    }
+
+    // MAAK EVENT JSON OBJECT AAN OM MEE TE POSTEN
+    private String buildJsonEvent() {
+
+        String startDateString = dateEvent.getText().toString() + " " + timeEvent.getText().toString();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date startDate;
+        try {
+            startDate = df.parse(startDateString);
+            String newDateString = df.format(startDate);
+            System.out.println(newDateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+        JsonObjectBuilder eventFactory = Json.createObjectBuilder()
+                .add("subject", eventInput.getText().toString())
+                .add("start", Json.createObjectBuilder()
+                                .add("dateTime", dateEvent.getText().toString()+"T"+ timeEvent.getText().toString())
+                                .add("timeZone", "UTC"))
+                .add("end", Json.createObjectBuilder()
+                                .add("dateTime", "2018-12-12T20:16:30.033")
+                                .add("timeZone", "UTC"));
+
+        return eventFactory.build().toString();
+    }
+
+
 }

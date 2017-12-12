@@ -106,7 +106,7 @@
         </TextView>
 
         <EditText
-            android:id="@+id/workInput"
+            android:id="@+id/durationInput"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:layout_width="fill_parent">
