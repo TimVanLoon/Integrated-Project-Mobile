@@ -60,6 +60,8 @@ public class ContactsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
 
+
+
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
@@ -74,9 +76,10 @@ public class ContactsActivity extends AppCompatActivity {
         contactsListView = (ListView) findViewById(R.id.contactsListView);
 
         accessToken = getIntent().getStringExtra("AccessToken");
-        callGraphAPI();
 
         mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
+
+        callGraphAPI();
 
         Menu menu = mBottomNav.getMenu();
         MenuItem menuItem = menu.getItem(2);

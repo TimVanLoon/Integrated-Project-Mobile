@@ -1,5 +1,6 @@
 package com.example.keiichi.project_mobile;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,6 +26,8 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
@@ -42,10 +45,6 @@ public class AddContactActivity extends AppCompatActivity {
     private EditText emailInput;
     private EditText phoneInput;
 
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String phone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,15 +56,14 @@ public class AddContactActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         firstNameInput = (EditText) findViewById(R.id.firstNameInput);
         lastNameInput = (EditText) findViewById(R.id.lastNameInput);
         emailInput = (EditText) findViewById(R.id.emailInput);
         phoneInput = (EditText) findViewById(R.id.phoneInput);
 
-        firstName = firstNameInput.getText().toString();
-        lastName = lastNameInput.getText().toString();
-        email = emailInput.getText().toString();
-        phone = phoneInput.getText().toString();
     }
 
     @Override
@@ -82,9 +80,32 @@ public class AddContactActivity extends AppCompatActivity {
 
         switch(item.getItemId()){
 
+            case android.R.id.home:
+                Intent intentContacts = new Intent(AddContactActivity.this, ContactsActivity.class);
+                intentContacts.putExtra("AccessToken", accessToken);
+                startActivity(intentContacts);
+
+                return true;
+
             case R.id.action_save:
                 try {
                     saveContact();
+
+                    int DELAY_TIME=2000;
+
+                    //start your animation
+                    new Timer().schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            //this code will run after the delay time which is 2 seconds.
+                            Intent intentContacts = new Intent(AddContactActivity.this, ContactsActivity.class);
+                            intentContacts.putExtra("AccessToken", accessToken);
+                            startActivity(intentContacts);
+                        }
+                    }, DELAY_TIME);
+
+
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -135,27 +156,13 @@ public class AddContactActivity extends AppCompatActivity {
 
     private String buildJsonContact() {
 
-/*
-        JsonObjectBuilder factory = Json.createObjectBuilder()
-                .add("message", Json.createObjectBuilder().
-                        add("subject", Subject.getText().toString()).
-                        add("body", Json.createObjectBuilder().
-                                add("contentType", "Text").
-                                add("content", MailBody.getText().toString() + "\n\n\n\n Sent from PAPA STOP!\n\n Auw dat doet pijn...")).
-                        add("toRecipients", Json.createArrayBuilder().
-                                add(Json.createObjectBuilder().
-                                        add("emailAddress", Json.createObjectBuilder().
-                                                add("address", MailAdress.getText().toString()))))
-                );
-                */
-
         JsonObjectBuilder contactFactory = Json.createObjectBuilder()
                 .add("givenName", firstNameInput.getText().toString())
                 .add("surname", lastNameInput.getText().toString())
                 .add("emailAddresses", Json.createArrayBuilder()
                         .add(Json.createObjectBuilder()
                         .add("address", emailInput.getText().toString())
-                        .add("name", firstName +" " +lastName)))
+                        .add("name", firstNameInput.getText().toString() +" " +lastNameInput.getText().toString())))
                 .add("businessPhones", Json.createArrayBuilder()
                         .add(phoneInput.getText().toString()));
 
