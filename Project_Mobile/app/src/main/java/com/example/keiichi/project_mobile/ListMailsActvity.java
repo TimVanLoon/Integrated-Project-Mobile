@@ -56,6 +56,7 @@ public class ListMailsActvity extends AppCompatActivity {
             "https://graph.microsoft.com/Calendars.ReadWrite",
             "https://graph.microsoft.com/Calendars.Read",
             "https://graph.microsoft.com/Contacts.Read",
+            "https://graph.microsoft.com/Contacts.ReadWrite",
             "https://graph.microsoft.com/Calendars.ReadWrite"};
 
     //final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me";
