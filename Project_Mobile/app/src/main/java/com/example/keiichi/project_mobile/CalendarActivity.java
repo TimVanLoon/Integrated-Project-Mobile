@@ -6,6 +6,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.EventLog;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CalendarView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
@@ -38,6 +40,7 @@ public class CalendarActivity extends AppCompatActivity {
 
     CalendarView calendarView;
     TextView myDate;
+    ListView calendarListView;
     BottomNavigationView mBottomNav;
     Button getEventsButton;
 
@@ -61,8 +64,9 @@ public class CalendarActivity extends AppCompatActivity {
         accessToken = getIntent().getStringExtra("AccessToken");
 
         getEventsButton = (Button) findViewById(R.id.eventsButton);
-        calendarView = (CalendarView) findViewById(R.id.calendarView);
-        myDate = (TextView) findViewById(R.id.myDate);
+        //calendarView = (CalendarView) findViewById(R.id.calendarView);
+        //myDate = (TextView) findViewById(R.id.myDate);
+        calendarListView = (ListView) findViewById(R.id.calendarListView);
 
         mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
 
@@ -102,13 +106,15 @@ public class CalendarActivity extends AppCompatActivity {
             }
         });
 
-        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+       /* calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView calendarView, int i, int i1, int i2) {
                 String date = (i1 + 1) + "/" + i2 + "/" + i;
                 myDate.setText(date);
             }
-        });
+        });*/
+
+        callGraphAPI();
     }
 
     /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
@@ -179,9 +185,12 @@ public class CalendarActivity extends AppCompatActivity {
         }
         assert eventsJsonArray != null;
 
-        Intent intentCalendar = new Intent(CalendarActivity.this, ListEventsActivity.class);
+      /*  Intent intentCalendar = new Intent(CalendarActivity.this, ListEventsActivity.class);
         intentCalendar.putExtra("EventsArray", eventsJsonArray.toString());
-        startActivity(intentCalendar);
+        startActivity(intentCalendar);*/
+
+        EventAdapter eventAdapter = new EventAdapter(this, eventsJsonArray);
+        calendarListView.setAdapter(eventAdapter);
 
 
 
