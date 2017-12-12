@@ -13,4 +13,17 @@
 
     <string name="drawer_open">drawer open</string>
     <string name="drawer_close">drawer close</string>
+
+    <string name="save">Save</string>
+    <string name="addContactTitle">Add a contact</string>
+    <string name="nameTitle">Name</string>
+    <string name="nameInput">First name</string>
+    <string name="lastNameInput">Last name</string>
+    <string name="emailTitle">E-mail</string>
+    <string name="emailInput">E-mail</string>
+    <string name="phoneTitle">Phone</string>
+    <string name="phoneInput">Phone</string>
+    <string name="workTitle">Work</string>
+    <string name="workInput">Company</string>
+
 </resources>

@@ -36,6 +36,8 @@ public class ContactsActivity extends AppCompatActivity {
 
     BottomNavigationView mBottomNav;
 
+    Toolbar myToolbar;
+
     private DrawerLayout mDrawerLayout;
     ActionBarDrawerToggle actionBarDrawerToggle;
 
@@ -58,7 +60,7 @@ public class ContactsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
+        myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
