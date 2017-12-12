@@ -53,9 +53,11 @@ public class AddContactActivity extends AppCompatActivity {
 
         accessToken = getIntent().getStringExtra("AccessToken");
 
+        // INITIALISEER ACTION BAR 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
+        // VOEG BACK BUTTONN TOE AAN ACTION BAR
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -66,6 +68,7 @@ public class AddContactActivity extends AppCompatActivity {
 
     }
 
+    // VOEG ICONS TOE AAN DE ACTION BAR
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         MenuInflater inflater = getMenuInflater();
@@ -75,11 +78,13 @@ public class AddContactActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    // METHODE VOOR DE CLICKABLE ICOONTJES IN DE ACTION BAR
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
 
         switch(item.getItemId()){
 
+            // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
             case android.R.id.home:
                 Intent intentContacts = new Intent(AddContactActivity.this, ContactsActivity.class);
                 intentContacts.putExtra("AccessToken", accessToken);
@@ -87,6 +92,7 @@ public class AddContactActivity extends AppCompatActivity {
 
                 return true;
 
+            // WANNEER SAVE ICON WORDT AANGEKLIKT
             case R.id.action_save:
                 try {
                     saveContact();
@@ -118,6 +124,7 @@ public class AddContactActivity extends AppCompatActivity {
         }
     }
 
+    // POST REQUEST VOOR NIEWE CONTACTSPERSOON
     private void saveContact() throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
 
@@ -154,6 +161,7 @@ public class AddContactActivity extends AppCompatActivity {
 
     }
 
+    // MAAK CONTACT JSON OBJECT AAN OM MEE TE POSTEN
     private String buildJsonContact() {
 
         JsonObjectBuilder contactFactory = Json.createObjectBuilder()
