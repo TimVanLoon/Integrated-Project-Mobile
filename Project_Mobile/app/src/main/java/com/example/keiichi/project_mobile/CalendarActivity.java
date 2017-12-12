@@ -63,9 +63,7 @@ public class CalendarActivity extends AppCompatActivity {
 
         accessToken = getIntent().getStringExtra("AccessToken");
 
-        getEventsButton = (Button) findViewById(R.id.eventsButton);
-        //calendarView = (CalendarView) findViewById(R.id.calendarView);
-        //myDate = (TextView) findViewById(R.id.myDate);
+
         calendarListView = (ListView) findViewById(R.id.calendarListView);
 
         mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
