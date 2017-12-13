@@ -3,6 +3,7 @@ package com.example.keiichi.project_mobile;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,8 +13,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -44,9 +47,13 @@ public class ContactsActivity extends AppCompatActivity {
 
     SearchView searchView;
 
+    NavigationView contactNavigationView;
+
     ContactAdapter contactAdapter;
 
     private String accessToken;
+    private String userName;
+    private String userEmail;
 
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts";
 
@@ -75,10 +82,20 @@ public class ContactsActivity extends AppCompatActivity {
         contactsListView = (ListView) findViewById(R.id.contactsListView);
 
         accessToken = getIntent().getStringExtra("AccessToken");
+        userName = getIntent().getStringExtra("userName");
+        userEmail = getIntent().getStringExtra("userEmail");
 
         mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
 
         callGraphAPI();
+        System.out.println("gebruiker" + userName);
+
+        contactNavigationView = (NavigationView) findViewById(R.id.contactNavigationView);
+        View hView =  contactNavigationView.getHeaderView(0);
+        TextView nav_userName = (TextView)hView.findViewById(R.id.userName);
+        TextView nav_userEmail = (TextView)hView.findViewById(R.id.userEmail);
+        nav_userName.setText(userName);
+        nav_userEmail.setText(userEmail);
 
         Menu menu = mBottomNav.getMenu();
         MenuItem menuItem = menu.getItem(2);
@@ -93,11 +110,15 @@ public class ContactsActivity extends AppCompatActivity {
                     case R.id.action_calendar:
                         Intent intentCalendar = new Intent(ContactsActivity.this, CalendarActivity.class);
                         intentCalendar.putExtra("AccessToken", accessToken);
+                        intentCalendar.putExtra("userName", userName);
+                        intentCalendar.putExtra("userEmail", userEmail);
                         startActivity(intentCalendar);
                         break;
                     case R.id.action_mail:
                         Intent intentMail = new Intent(ContactsActivity.this, ListMailsActvity.class);
                         intentMail.putExtra("AccessToken", accessToken);
+                        intentMail.putExtra("userName", userName);
+                        intentMail.putExtra("userEmail", userEmail);
                         startActivity(intentMail);
                         break;
                     case R.id.action_user:

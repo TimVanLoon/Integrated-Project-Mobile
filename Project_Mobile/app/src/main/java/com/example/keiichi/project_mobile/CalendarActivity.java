@@ -47,6 +47,8 @@ public class CalendarActivity extends AppCompatActivity {
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/events?$select=subject,body,bodyPreview,organizer,attendees,start,end,location";
 
     private String accessToken;
+    private String userName;
+    private String userEmail;
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -62,6 +64,8 @@ public class CalendarActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
 
         accessToken = getIntent().getStringExtra("AccessToken");
+        userName = getIntent().getStringExtra("userName");
+        userEmail = getIntent().getStringExtra("userEmail");
 
         getEventsButton = (Button) findViewById(R.id.eventsButton);
         calendarView = (CalendarView) findViewById(R.id.calendarView);
@@ -91,11 +95,15 @@ public class CalendarActivity extends AppCompatActivity {
                     case R.id.action_mail:
                         Intent intentMail = new Intent(CalendarActivity.this, ListMailsActvity.class);
                         intentMail.putExtra("AccessToken", accessToken);
+                        intentMail.putExtra("userName", userName);
+                        intentMail.putExtra("userEmail", userEmail);
                         startActivity(intentMail);
                         break;
                     case R.id.action_user:
                         Intent intentContacts = new Intent(CalendarActivity.this, ContactsActivity.class);
                         intentContacts.putExtra("AccessToken", accessToken);
+                        intentContacts.putExtra("userName", userName);
+                        intentContacts.putExtra("userEmail", userEmail);
                         startActivity(intentContacts);
                         break;
 
