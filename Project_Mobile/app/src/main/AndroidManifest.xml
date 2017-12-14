@@ -44,6 +44,9 @@
         <activity
             android:name=".ContactsActivity"
             android:label="My Contacts"></activity>
+
+
+
     </application>
 
 </manifest>
