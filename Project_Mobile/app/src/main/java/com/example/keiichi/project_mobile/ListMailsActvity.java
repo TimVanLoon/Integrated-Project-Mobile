@@ -5,7 +5,9 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+
 
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -13,17 +15,26 @@ import android.support.v7.app.AppCompatActivity;
 // import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 
+
+import android.support.v4.widget.SwipeRefreshLayout;
+
 import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,7 +44,9 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.microsoft.identity.client.AuthenticationCallback;
 import com.microsoft.identity.client.AuthenticationResult;
@@ -48,6 +61,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -55,7 +69,48 @@ import java.util.Map;
 
 import static com.android.volley.Request.Method.HEAD;
 
-public class ListMailsActvity extends AppCompatActivity {
+public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+
+    private boolean multiSelect = false;
+    private boolean actionModeEnabled = false;
+    private ArrayList<Integer> selectedItems = new ArrayList<>();
+    private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            multiSelect = true;
+            actionModeEnabled = true;
+            menu.add("Delete");
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            try {
+                deleteMails(selectedItems);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            for (Integer integer : selectedItems) {
+                finalMailJsonArray.remove(integer);
+            }
+            actionModeEnabled = false;
+            actionMode.finish();
+            return true;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode actionMode) {
+            multiSelect = false;
+            selectedItems.clear();
+            mailAdapter.notifyDataSetChanged();
+
+        }
+    };
 
     final static String CLIENT_ID = "d3b60662-7768-4a50-b96f-eb1dfcc7ec8d";
     final static String SCOPES[] = {
@@ -68,11 +123,12 @@ public class ListMailsActvity extends AppCompatActivity {
             "https://graph.microsoft.com/Calendars.ReadWrite"};
 
     //final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me";
+    final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/mailFolders('Inbox')/messages?$top=25";
     final static String CHANNEL_ID = "my_channel_01";
 
-    private RecyclerView mListview;
-    private View mailLayout;
+    private RecyclerView recyclerView;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private MailAdapter mailAdapter;
 
     private String accessToken;
@@ -91,22 +147,26 @@ public class ListMailsActvity extends AppCompatActivity {
     /* Azure AD Variables */
     private PublicClientApplication sampleApp;
     private AuthenticationResult authResult;
+    private JSONArray finalMailJsonArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_mails);
 
-        mListview = findViewById(R.id.ListViewMails);
+        recyclerView = findViewById(R.id.ListViewMails);
         signOutButton = findViewById(R.id.clearCache);
         toSendMailActivity = findViewById(R.id.ButtonSendMail);
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(this);
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        Toolbar myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
-       // addNotification();
+        addNotification();
 
-        mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
+        mBottomNav = findViewById(R.id.navigation);
 
         Menu menu = mBottomNav.getMenu();
         MenuItem menuItem = menu.getItem(0);
@@ -116,7 +176,7 @@ public class ListMailsActvity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-                switch(item.getItemId()) {
+                switch (item.getItemId()) {
 
                     case R.id.action_calendar:
                         Intent intentCalendar = new Intent(ListMailsActvity.this, CalendarActivity.class);
@@ -186,8 +246,9 @@ public class ListMailsActvity extends AppCompatActivity {
         } catch (IndexOutOfBoundsException e) {
             Log.d(TAG, "User at this position does not exist: " + e.toString());
         }
-
-        onCallGraphClicked();
+        if (accessToken == null) {
+            onCallGraphClicked();
+        }
 
 
     }
@@ -390,39 +451,42 @@ public class ListMailsActvity extends AppCompatActivity {
         JSONObject object = mailJsonArray.getJSONObject(1);
         System.out.println(object.get("from"));
 
-        final JSONArray finalMailJsonArray = mailJsonArray;
-
-        mailAdapter = new MailAdapter(finalMailJsonArray);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-        mListview.setLayoutManager(layoutManager);
-        mListview.setItemAnimator(new DefaultItemAnimator());
-        mListview.addItemDecoration(new DividerItemDecoration(this,LinearLayoutManager.VERTICAL));
-
-
-
-        //set the adapter
-        mListview.setAdapter(mailAdapter);
-
-        mListview.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(),mListview, new ClickListener() {
+        this.finalMailJsonArray = mailJsonArray;
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(manager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        mailAdapter = new MailAdapter(this, finalMailJsonArray);
+        recyclerView.setAdapter(mailAdapter);
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Intent showMail = new Intent(ListMailsActvity.this, DisplayMailActivity.class);
-                try {
-                    showMail.putExtra("mailObjext", finalMailJsonArray.getString(position));
-                    showMail.putExtra("accestoken", authResult.getAccessToken());
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                if (actionModeEnabled) {
+                    selectedItem(position);
+                    Toast.makeText(getApplicationContext(), String.valueOf(position), Toast.LENGTH_SHORT).show();
+
+
+                } else {
+                    Intent showMail = new Intent(ListMailsActvity.this, DisplayMailActivity.class);
+                    try {
+                        showMail.putExtra("mailObjext", finalMailJsonArray.getString(position));
+                        showMail.putExtra("accestoken", authResult.getAccessToken());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    startActivity(showMail);
                 }
-                startActivity(showMail);
+
             }
 
             @Override
             public void onLongClick(View view, int position) {
-
+                Toast.makeText(getApplicationContext(), "hey long boo", Toast.LENGTH_SHORT).show();
+                view.startActionMode(actionModeCallback);
+                selectedItem(position);
 
             }
         }));
-
 
 
     }
@@ -497,6 +561,65 @@ public class ListMailsActvity extends AppCompatActivity {
         manager.notify(0, notification.build());
     }
 
+    @Override
+    public void onRefresh() {
+        swipeRefreshLayout.setRefreshing(true);
+        Toast.makeText(getApplicationContext(), "hey boo", Toast.LENGTH_SHORT).show();
+        swipeRefreshLayout.setRefreshing(false);
+
+
+    }
+
+    void selectedItem(Integer item) {
+        if (multiSelect) {
+            if (selectedItems.contains(item)) {
+                selectedItems.remove(item);
+                recyclerView.getChildAt(item).setBackgroundColor(Color.WHITE);
+            } else {
+                selectedItems.add(item);
+                recyclerView.getChildAt(item).setBackgroundColor(Color.LTGRAY);
+            }
+        }
+    }
+
+    private void deleteMails(ArrayList<Integer> selectedItems) throws JSONException {
+        this.selectedItems = selectedItems;
+
+        for (Integer integer : selectedItems) {
+            RequestQueue queue = Volley.newRequestQueue(this);
+            JSONObject mail = finalMailJsonArray.getJSONObject(integer);
+
+
+            StringRequest objectRequest = new StringRequest(Request.Method.DELETE, URL_DELETE + mail.getString("id"),
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Toast.makeText(getApplicationContext(), "Mail deleted!", Toast.LENGTH_SHORT).show();
+                            System.out.println(response);
+                        }
+
+
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyLog.e("Error: ", error.getMessage());
+                    error.printStackTrace();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("Authorization", "Bearer " + authResult.getAccessToken());
+
+                    return headers;
+                }
+
+            };
+
+            queue.add(objectRequest);
+        }
+
+    }
 
 
     public interface ClickListener {
@@ -504,4 +627,5 @@ public class ListMailsActvity extends AppCompatActivity {
 
         void onLongClick(View view, int position);
     }
+
 }
