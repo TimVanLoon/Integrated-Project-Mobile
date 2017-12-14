@@ -32,4 +32,10 @@
     <string name="startTitle">Start</string>
     <string name="durationTitle">Duration</string>
 
+    <string name="yourAgendas">Your agendas</string>
+    <string name="agenda">Agenda</string>
+    <string name="holidays">Holidays in Belgium</string>
+    <string name="birthdays">Bithdays</string>
+    <string name="otherAgendas">Other agendas</string>
+    <string name="peopleAgendas">Other peoples agendas</string>
 </resources>

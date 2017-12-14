@@ -3,6 +3,9 @@ package com.example.keiichi.project_mobile;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -53,7 +56,10 @@ public class CalendarActivity extends AppCompatActivity {
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    DrawerLayout mDrawerLayout;
+    ActionBarDrawerToggle actionBarDrawerToggle;
 
+    NavigationView calendarNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +72,20 @@ public class CalendarActivity extends AppCompatActivity {
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
+
+        calendarNavigationView = (NavigationView) findViewById(R.id.calendarNavigationView);
+        View hView =  calendarNavigationView.getHeaderView(0);
+        TextView nav_userName = (TextView)hView.findViewById(R.id.userName);
+        TextView nav_userEmail = (TextView)hView.findViewById(R.id.userEmail);
+        nav_userName.setText(userName);
+        nav_userEmail.setText(userEmail);
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, myToolbar, R.string.drawer_open,
+                R.string.drawer_close);
+
+        mDrawerLayout.setDrawerListener(actionBarDrawerToggle);
 
         getEventsButton = (Button) findViewById(R.id.eventsButton);
         calendarView = (CalendarView) findViewById(R.id.calendarView);
@@ -120,6 +140,12 @@ public class CalendarActivity extends AppCompatActivity {
                 myDate.setText(date);
             }
         });
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState){
+        super.onPostCreate(savedInstanceState);
+        actionBarDrawerToggle.syncState();
     }
 
     // VOEG ICONS TOE AAN DE ACTION BAR

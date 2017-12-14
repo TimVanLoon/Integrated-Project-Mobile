@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <CalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="wrap_content"
+            android:layout_height="320dp"
+            android:layout_above="@+id/eventsButton"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="28dp">
+
+        </CalendarView>
+
+        <item
+            android:id="@+id/yourAgendas"
+            android:title="@string/yourAgendas"
+            />
+
+        <item
+            android:id="@+id/agenda"
+            android:title="@string/agenda"
+            />
+
+        <item
+            android:id="@+id/holidays"
+            android:title="@string/holidays"
+            />
+
+        <item
+            android:id="@+id/birthdays"
+            android:title="@string/birthdays"
+            />
+
+        <item
+            android:id="@+id/otherAgendas"
+            android:title="@string/otherAgendas"
+            />
+
+        <item
+            android:id="@+id/peopleAgendas"
+            android:title="@string/peopleAgendas"
+            />
+
+
+    </group>
+
+    <item android:title="">
+        <menu>
+            <item
+                android:id="@+id/feedback"
+                android:title="@string/feedback"
+                android:icon="@drawable/ic_mail"
+                ></item>
+        </menu>
+    </item>
+
+</menu>
