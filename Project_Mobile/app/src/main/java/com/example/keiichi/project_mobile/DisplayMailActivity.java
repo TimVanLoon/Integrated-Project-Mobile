@@ -31,7 +31,7 @@ import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 
 public class DisplayMailActivity extends AppCompatActivity {
-    final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/"; // TODO: 7/12/2017 URL DELETE TOEVOEGEN
+    final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
     private TextView mailBodyContent;
     private TextView Subject;
     private JSONObject mail;
