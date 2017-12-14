@@ -3,11 +3,15 @@ package com.example.keiichi.project_mobile;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -33,6 +37,8 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class CalendarActivity extends AppCompatActivity {
 
@@ -44,11 +50,16 @@ public class CalendarActivity extends AppCompatActivity {
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/events?$select=subject,body,bodyPreview,organizer,attendees,start,end,location";
 
     private String accessToken;
+    private String userName;
+    private String userEmail;
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    DrawerLayout mDrawerLayout;
+    ActionBarDrawerToggle actionBarDrawerToggle;
 
+    NavigationView calendarNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +70,22 @@ public class CalendarActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
 
         accessToken = getIntent().getStringExtra("AccessToken");
+        userName = getIntent().getStringExtra("userName");
+        userEmail = getIntent().getStringExtra("userEmail");
+
+        calendarNavigationView = (NavigationView) findViewById(R.id.calendarNavigationView);
+        View hView =  calendarNavigationView.getHeaderView(0);
+        TextView nav_userName = (TextView)hView.findViewById(R.id.userName);
+        TextView nav_userEmail = (TextView)hView.findViewById(R.id.userEmail);
+        nav_userName.setText(userName);
+        nav_userEmail.setText(userEmail);
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, myToolbar, R.string.drawer_open,
+                R.string.drawer_close);
+
+        mDrawerLayout.setDrawerListener(actionBarDrawerToggle);
 
         getEventsButton = (Button) findViewById(R.id.eventsButton);
         calendarView = (CalendarView) findViewById(R.id.calendarView);
@@ -88,11 +115,15 @@ public class CalendarActivity extends AppCompatActivity {
                     case R.id.action_mail:
                         Intent intentMail = new Intent(CalendarActivity.this, ListMailsActvity.class);
                         intentMail.putExtra("AccessToken", accessToken);
+                        intentMail.putExtra("userName", userName);
+                        intentMail.putExtra("userEmail", userEmail);
                         startActivity(intentMail);
                         break;
                     case R.id.action_user:
                         Intent intentContacts = new Intent(CalendarActivity.this, ContactsActivity.class);
                         intentContacts.putExtra("AccessToken", accessToken);
+                        intentContacts.putExtra("userName", userName);
+                        intentContacts.putExtra("userEmail", userEmail);
                         startActivity(intentContacts);
                         break;
 
@@ -109,6 +140,44 @@ public class CalendarActivity extends AppCompatActivity {
                 myDate.setText(date);
             }
         });
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState){
+        super.onPostCreate(savedInstanceState);
+        actionBarDrawerToggle.syncState();
+    }
+
+    // VOEG ICONS TOE AAN DE ACTION BAR
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.my_action_bar_items_calendar, menu);
+
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    // METHODE VOOR DE CLICKABLE ICOONTJES IN DE ACTION BAR
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+
+        switch(item.getItemId()){
+
+            // WANNEER + ICON WORDT AANGEKLIKT
+            case R.id.action_add:
+
+                Intent intentAddEvent = new Intent(CalendarActivity.this, AddEventActivity.class);
+                intentAddEvent.putExtra("AccessToken", accessToken);
+                startActivity(intentAddEvent);
+
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */

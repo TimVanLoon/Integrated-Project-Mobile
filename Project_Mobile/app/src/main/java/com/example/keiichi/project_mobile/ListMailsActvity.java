@@ -64,6 +64,7 @@ public class ListMailsActvity extends AppCompatActivity {
             "https://graph.microsoft.com/Calendars.ReadWrite",
             "https://graph.microsoft.com/Calendars.Read",
             "https://graph.microsoft.com/Contacts.Read",
+            "https://graph.microsoft.com/Contacts.ReadWrite",
             "https://graph.microsoft.com/Calendars.ReadWrite"};
 
     //final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me";
@@ -75,6 +76,8 @@ public class ListMailsActvity extends AppCompatActivity {
     private MailAdapter mailAdapter;
 
     private String accessToken;
+    private String userName;
+    private String userEmail;
 
     BottomNavigationView mBottomNav;
 
@@ -118,6 +121,8 @@ public class ListMailsActvity extends AppCompatActivity {
                     case R.id.action_calendar:
                         Intent intentCalendar = new Intent(ListMailsActvity.this, CalendarActivity.class);
                         intentCalendar.putExtra("AccessToken", accessToken);
+                        intentCalendar.putExtra("userName", userName);
+                        intentCalendar.putExtra("userEmail", userEmail);
                         startActivity(intentCalendar);
                         break;
                     case R.id.action_mail:
@@ -126,6 +131,8 @@ public class ListMailsActvity extends AppCompatActivity {
                     case R.id.action_user:
                         Intent intentContacts = new Intent(ListMailsActvity.this, ContactsActivity.class);
                         intentContacts.putExtra("AccessToken", accessToken);
+                        intentContacts.putExtra("userName", userName);
+                        intentContacts.putExtra("userEmail", userEmail);
                         startActivity(intentContacts);
                         break;
 
@@ -215,8 +222,11 @@ public class ListMailsActvity extends AppCompatActivity {
             /* Store the authResult */
                 authResult = authenticationResult;
 
-                // accesstoken in var steken
+                // accesstoken en andere user vars in var steken
                 accessToken = authResult.getAccessToken();
+                userName = authResult.getUser().getName();
+                userEmail = authResult.getUser().getDisplayableId();
+
 
             /* call graph */
                 callGraphAPI();

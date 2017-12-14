@@ -6,32 +6,48 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Filterable;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+
+import android.widget.Filter;
+import android.widget.Filterable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ContactAdapter extends BaseAdapter implements ListAdapter {
+import java.util.ArrayList;
+import java.util.HashMap;
+
+public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterable{
 
     private final Context context;
-    private final JSONArray values;
+    //private final JSONArray values;
+
+    // Ongefilterde JSONArray
+    private JSONArray originalData = null;
+    // Gefilterde JSONArray
+    private JSONArray filteredData = null;
+
+    private ItemFilter mFilter = new ItemFilter();
+
 
     public ContactAdapter(Context context, JSONArray values) {
         this.context = context;
-        this.values = values;
+        this.originalData = values;
+        this.filteredData = values;
     }
 
 
     @Override
     public int getCount() {
-        return values.length();
+        return filteredData.length();
     }
 
     @Override
     public JSONObject getItem(int i) {
-        return values.optJSONObject(i);
+        return filteredData.optJSONObject(i);
     }
 
     @Override
@@ -60,4 +76,55 @@ public class ContactAdapter extends BaseAdapter implements ListAdapter {
         return rowView;
 
     }
+
+    @Override
+    public Filter getFilter() {
+        return mFilter;
+    }
+
+    private class ItemFilter extends Filter {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+
+            String filterString = constraint.toString().toLowerCase();
+
+            FilterResults results = new FilterResults();
+
+            final JSONArray list = originalData;
+
+            int count = list.length();
+            final ArrayList<String> nlist = new ArrayList<String>(count);
+
+            String filterableString ;
+
+            for (int i = 0; i < count; i++) {
+                try {
+                    filterableString = list.getJSONObject(i).toString();
+
+                    if (filterableString.toLowerCase().contains(filterString)) {
+                        nlist.add(filterableString);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            results.values = nlist;
+            results.count = nlist.size();
+
+            return results;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+
+            filteredData =  (JSONArray) results.values;
+            notifyDataSetChanged();
+        }
+
+    }
+
+
 }
+
