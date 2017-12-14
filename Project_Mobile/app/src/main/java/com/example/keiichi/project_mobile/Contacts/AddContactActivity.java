@@ -132,15 +132,19 @@ public class AddContactActivity extends AppCompatActivity {
     private void saveContact() throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
 
+        final JSONObject jsonObject = new JSONObject(buildJsonContact());
+
         Contact contact = new Contact();
         contact.setGivenName(firstNameInput.getText().toString());
         contact.setSurname(lastNameInput.getText().toString());
-
+        
         EmailAddress contactEmailAddress = new EmailAddress(firstNameInput.getText().toString() + " " + lastNameInput.getText().toString(), emailInput.getText().toString());
         List<EmailAddress> contactList = new ArrayList<>();
         contactList.add(contactEmailAddress);
 
         contact.setEmailAddresses(contactList);
+
+        System.out.println(jsonObject.toString());
 
         JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_POSTADRESS,new JSONObject(new Gson().toJson(contact)),
                 new Response.Listener<JSONObject>() {
@@ -171,4 +175,19 @@ public class AddContactActivity extends AppCompatActivity {
 
     }
 
+    // MAAK CONTACT JSON OBJECT AAN OM MEE TE POSTEN
+    private String buildJsonContact() {
+
+        JsonObjectBuilder contactFactory = Json.createObjectBuilder()
+                .add("givenName", firstNameInput.getText().toString())
+                .add("surname", lastNameInput.getText().toString())
+                .add("emailAddresses", Json.createArrayBuilder()
+                        .add(Json.createObjectBuilder()
+                        .add("address", emailInput.getText().toString())
+                        .add("name", firstNameInput.getText().toString() +" " +lastNameInput.getText().toString())))
+                .add("businessPhones", Json.createArrayBuilder()
+                        .add(phoneInput.getText().toString()));
+
+        return contactFactory.build().toString();
+    }
 }
