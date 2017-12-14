@@ -3,6 +3,7 @@ package com.example.keiichi.project_mobile.Mail;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -33,14 +34,17 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
+import jp.wasabeef.richeditor.RichEditor;
+
 public class SendMailActivity extends AppCompatActivity {
     final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/sendMail";
 
     private Button Sendmail;
     private TextView MailAdress;
     private TextView Subject;
-    private TextView MailBody;
+    private RichEditor MailBody;
     private String Acces_Token;
+    private RichEditor editor;
 
 
     @Override
@@ -48,10 +52,12 @@ public class SendMailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_mail);
 
+
+
         Sendmail = (Button) findViewById(R.id.ButtonSendMail);
         MailAdress = (TextView) findViewById(R.id.TextMailAdress);
         Subject = (TextView) findViewById(R.id.TextMailSubject);
-        MailBody = (TextView) findViewById(R.id.TextMailBody);
+        MailBody = (RichEditor) findViewById(R.id.TextMailBody);
         Intent intent = getIntent();
         Acces_Token = intent.getStringExtra("accestoken");
 
@@ -70,7 +76,7 @@ public class SendMailActivity extends AppCompatActivity {
     }
 
     private void SendMail() throws JSONException {
-        System.out.println(MailBody.getText());
+        System.out.println(MailBody.getHtml());
         RequestQueue queue = Volley.newRequestQueue(this);
 
         final JSONObject jsonObject = new JSONObject(buildJsonMail());
@@ -112,7 +118,7 @@ public class SendMailActivity extends AppCompatActivity {
                         add("subject", Subject.getText().toString()).
                         add("body", Json.createObjectBuilder().
                                 add("contentType", "Text").
-                                add("content", MailBody.getText().toString() + "\n\n\n\n Sent from PAPA STOP!\n\n Auw dat doet pijn...")).
+                                add("content", Html.fromHtml(MailBody.getHtml()) + "\n\n\n\n Sent from PAPA STOP!\n\n Auw dat doet pijn...")).
                         add("toRecipients", Json.createArrayBuilder().
                                 add(Json.createObjectBuilder().
                                         add("emailAddress", Json.createObjectBuilder().

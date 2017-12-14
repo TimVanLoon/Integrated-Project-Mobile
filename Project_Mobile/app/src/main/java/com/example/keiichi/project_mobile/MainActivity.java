@@ -9,6 +9,7 @@ import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 
 public class MainActivity extends AppCompatActivity {
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
