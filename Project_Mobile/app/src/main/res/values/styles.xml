@@ -7,6 +7,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
        <item name="colorAccent">@color/colorAccent</item>
 <<<<<<< HEAD
+<<<<<<< HEAD
    </style>
 
 
@@ -14,6 +15,9 @@
 =======
         <item name="android:statusBarColor">?android:attr/colorPrimary</item>
     </style>
+=======
+   </style>
+>>>>>>> parent of cdd0178... Merge branch 'master' of https://github.com/TimVanLoon/Integrated-Project-Mobille
 
 
 
