@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -80,6 +81,17 @@ public class ContactsActivity extends AppCompatActivity {
 
 
         contactsListView = (ListView) findViewById(R.id.contactsListView);
+
+        contactsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                Intent showContactDetails = new Intent(ContactsActivity.this, ContactsDetailsActivity.class);
+                showContactDetails.putExtra("accestoken", accessToken);
+                showContactDetails.putExtra("userName", userName);
+                showContactDetails.putExtra("userEmail", userEmail);
+                startActivity(showContactDetails);
+            }
+        });
 
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");

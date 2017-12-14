@@ -50,8 +50,8 @@
             android:label="Contact" />
         <activity
             android:name=".AddEventActivity"
-            android:label="New event"
-            />
+            android:label="New event" />
+        <activity android:name=".ContactsDetailsActivity"></activity>
     </application>
 
 </manifest>
