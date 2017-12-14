@@ -97,6 +97,11 @@ public class CalendarActivity extends AppCompatActivity {
         MenuItem menuItem = menu.getItem(1);
         menuItem.setChecked(true);
 
+        getEventsButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                callGraphAPI();
+            }
+        });
 
         mBottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
