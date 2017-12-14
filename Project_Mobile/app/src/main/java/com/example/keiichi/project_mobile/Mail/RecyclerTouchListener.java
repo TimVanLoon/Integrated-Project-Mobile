@@ -1,4 +1,4 @@
-package com.example.keiichi.project_mobile;
+package com.example.keiichi.project_mobile.Mail;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

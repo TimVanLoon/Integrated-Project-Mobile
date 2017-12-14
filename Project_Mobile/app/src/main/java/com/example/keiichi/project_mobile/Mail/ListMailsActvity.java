@@ -1,13 +1,20 @@
-package com.example.keiichi.project_mobile;
+package com.example.keiichi.project_mobile.Mail;
 
 import android.app.Activity;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+
+
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.v7.app.AppCompatActivity;
+// import android.support.v7.app.NotificationCompat;
+import android.support.v7.widget.Toolbar;
+
+
 import android.support.v4.widget.SwipeRefreshLayout;
+
 import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -17,6 +24,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -37,6 +45,10 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.Calendar.CalendarActivity;
+import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
+import com.example.keiichi.project_mobile.MainActivity;
+import com.example.keiichi.project_mobile.R;
 import com.microsoft.identity.client.AuthenticationCallback;
 import com.microsoft.identity.client.AuthenticationResult;
 import com.microsoft.identity.client.MsalClientException;
@@ -55,6 +67,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.android.volley.Request.Method.HEAD;
 
 public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -99,7 +113,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         }
     };
 
-
     final static String CLIENT_ID = "d3b60662-7768-4a50-b96f-eb1dfcc7ec8d";
     final static String SCOPES[] = {
             "https://graph.microsoft.com/Mail.Send",
@@ -107,6 +120,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             "https://graph.microsoft.com/Calendars.ReadWrite",
             "https://graph.microsoft.com/Calendars.Read",
             "https://graph.microsoft.com/Contacts.Read",
+            "https://graph.microsoft.com/Contacts.ReadWrite",
             "https://graph.microsoft.com/Calendars.ReadWrite"};
 
     //final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me";
@@ -119,6 +133,8 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     private MailAdapter mailAdapter;
 
     private String accessToken;
+    private String userName;
+    private String userEmail;
 
     BottomNavigationView mBottomNav;
 
@@ -166,6 +182,8 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                     case R.id.action_calendar:
                         Intent intentCalendar = new Intent(ListMailsActvity.this, CalendarActivity.class);
                         intentCalendar.putExtra("AccessToken", accessToken);
+                        intentCalendar.putExtra("userName", userName);
+                        intentCalendar.putExtra("userEmail", userEmail);
                         startActivity(intentCalendar);
                         break;
                     case R.id.action_mail:
@@ -174,6 +192,8 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                     case R.id.action_user:
                         Intent intentContacts = new Intent(ListMailsActvity.this, ContactsActivity.class);
                         intentContacts.putExtra("AccessToken", accessToken);
+                        intentContacts.putExtra("userName", userName);
+                        intentContacts.putExtra("userEmail", userEmail);
                         startActivity(intentContacts);
                         break;
 
@@ -264,8 +284,11 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             /* Store the authResult */
                 authResult = authenticationResult;
 
-                // accesstoken in var steken
+                // accesstoken en andere user vars in var steken
                 accessToken = authResult.getAccessToken();
+                userName = authResult.getUser().getName();
+                userEmail = authResult.getUser().getDisplayableId();
+
 
             /* call graph */
                 callGraphAPI();
@@ -563,12 +586,12 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     private void deleteMails(ArrayList<Integer> selectedItems) throws JSONException {
         this.selectedItems = selectedItems;
 
-        for(Integer integer: selectedItems){
+        for (Integer integer : selectedItems) {
             RequestQueue queue = Volley.newRequestQueue(this);
             JSONObject mail = finalMailJsonArray.getJSONObject(integer);
 
 
-            StringRequest objectRequest = new StringRequest(Request.Method.DELETE, URL_DELETE + mail.getString("id") ,
+            StringRequest objectRequest = new StringRequest(Request.Method.DELETE, URL_DELETE + mail.getString("id"),
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
