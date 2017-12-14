@@ -14,11 +14,11 @@
 
     <!-- The navigation drawer -->
     <android.support.design.widget.NavigationView
-        android:id="@+id/contactNavigationView"
+        android:id="@+id/navigationView"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:menu="@menu/drawer_menu_contacts"
+        app:menu="@menu/drawer_menu"
         app:headerLayout="@layout/navigation_drawer_header"/>
 
 <android.support.constraint.ConstraintLayout
@@ -27,7 +27,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.keiichi.project_mobile.Contacts.ContactsActivity">
+    tools:context="com.example.keiichi.project_mobile.ContactsActivity">
+
+
+
 
 
     <android.support.v7.widget.Toolbar

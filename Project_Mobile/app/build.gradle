@@ -45,9 +45,21 @@ dependencies {
     // Include the gson dependency
     compile('com.google.code.gson:gson:2.3.1')
 
+<<<<<<< HEAD
     compile 'com.github.bumptech.glide:glide:3.7.0'
+=======
+<<<<<<< HEAD
+    compile 'com.pusher:pusher-java-client:1.5.0'
+    compile 'com.google.firebase:firebase-messaging:11.6.2'
+=======
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+>>>>>>> cdd0178b5710967fa761be5ba5c81a4a9ab23a30
+>>>>>>> parent of 03c685e... Revert "Push Notifications"
 
     //Richtext
     compile 'jp.wasabeef:richeditor-android:1.2.2'
 
 }
+
+
+apply plugin: 'com.google.gms.google-services'

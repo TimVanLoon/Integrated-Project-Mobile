@@ -1,10 +1,25 @@
 package com.example.keiichi.project_mobile;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.pusher.client.Pusher;
+import com.pusher.client.PusherOptions;
+import com.pusher.client.channel.Channel;
+import com.pusher.client.channel.SubscriptionEventListener;
+=======
+>>>>>>> parent of 03c685e... Revert "Push Notifications"
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 
 public class MainActivity extends AppCompatActivity {
@@ -16,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Intent intent = new Intent(this, ListMailsActvity.class);
         startActivity(intent);
+
+
+
     }
 
     public void login(View view){
@@ -23,4 +41,5 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
 
     }
+
 }
