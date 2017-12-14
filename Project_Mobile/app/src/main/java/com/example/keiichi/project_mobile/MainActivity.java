@@ -1,15 +1,11 @@
 package com.example.keiichi.project_mobile;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -25,6 +21,8 @@ import com.pusher.client.channel.SubscriptionEventListener;
 >>>>>>> parent of 03c685e... Revert "Push Notifications"
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 
+=======
+>>>>>>> parent of c0185d6... Push Notifications
 public class MainActivity extends AppCompatActivity {
 
 
@@ -34,9 +32,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Intent intent = new Intent(this, ListMailsActvity.class);
         startActivity(intent);
-
-
-
     }
 
     public void login(View view){
@@ -44,5 +39,4 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
 
     }
-
 }

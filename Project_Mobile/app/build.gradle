@@ -47,6 +47,7 @@ dependencies {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     compile 'com.github.bumptech.glide:glide:3.7.0'
 =======
 <<<<<<< HEAD
@@ -61,11 +62,10 @@ dependencies {
 >>>>>>> parent of 03c685e... Revert "Push Notifications"
 =======
 >>>>>>> parent of 03c685e... Revert "Push Notifications"
+=======
+>>>>>>> parent of c0185d6... Push Notifications
 
     //Richtext
     compile 'jp.wasabeef:richeditor-android:1.2.2'
 
 }
-
-
-apply plugin: 'com.google.gms.google-services'
