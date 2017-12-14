@@ -1,4 +1,4 @@
-package com.example.keiichi.project_mobile;
+package com.example.keiichi.project_mobile.Contacts;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +18,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;

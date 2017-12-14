@@ -1,4 +1,4 @@
-package com.example.keiichi.project_mobile;
+package com.example.keiichi.project_mobile.Contacts;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import android.widget.Filter;
 import android.widget.Filterable;
+
+import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;

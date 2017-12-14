@@ -1,4 +1,4 @@
-package com.example.keiichi.project_mobile;
+package com.example.keiichi.project_mobile.Mail;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+
+import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;

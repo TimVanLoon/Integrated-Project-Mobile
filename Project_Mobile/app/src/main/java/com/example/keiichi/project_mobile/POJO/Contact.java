@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class Contact{
 
+    private Contact[] contact;
     private String assistantName;
     private String birthday;
     private String[] categories;
@@ -13,9 +14,9 @@ public class Contact{
     private String createdDateTime;
     private String department;
     private String displayName;
-    // private emailAddresses;
+    private EmailAddress[] emailAddresses;
     private String fileAs;
-    //private flag;
+    private FollowupFlag flag;
     private String gender;
     private String generation;
     private String givenName;
@@ -30,17 +31,25 @@ public class Contact{
     private String officeLocation;
     private String parentFolderId;
     private String personalNotes;
-    // private phones;
-    // private postalAddresses;
+    private Phone[] phones;
+    private PhysicalAddress[] postalAddresses;
     private String profession;
     private String spouseName;
     private String surname;
     private String title;
-    // private websites;
+    private Website[] websites;
     private Date weddingAnniversary;
     private String yomiCompanyName;
     private String yomiGivenName;
     private String yomiSurname;
+
+    public Contact[] getContacts() {
+        return contact;
+    }
+
+    public void setValue(Contact[] events) {
+        this.contact = events;
+    }
 
     public String getAssistantName() {
         return assistantName;
@@ -296,5 +305,53 @@ public class Contact{
 
     public void setYomiSurname(String yomiSurname) {
         this.yomiSurname = yomiSurname;
+    }
+
+    public Contact[] getContact() {
+        return contact;
+    }
+
+    public void setContact(Contact[] contact) {
+        this.contact = contact;
+    }
+
+    public EmailAddress[] getEmailAddresses() {
+        return emailAddresses;
+    }
+
+    public void setEmailAddresses(EmailAddress[] emailAddresses) {
+        this.emailAddresses = emailAddresses;
+    }
+
+    public FollowupFlag getFlag() {
+        return flag;
+    }
+
+    public void setFlag(FollowupFlag flag) {
+        this.flag = flag;
+    }
+
+    public Phone[] getPhones() {
+        return phones;
+    }
+
+    public void setPhones(Phone[] phones) {
+        this.phones = phones;
+    }
+
+    public PhysicalAddress[] getPostalAddresses() {
+        return postalAddresses;
+    }
+
+    public void setPostalAddresses(PhysicalAddress[] postalAddresses) {
+        this.postalAddresses = postalAddresses;
+    }
+
+    public Website[] getWebsites() {
+        return websites;
+    }
+
+    public void setWebsites(Website[] websites) {
+        this.websites = websites;
     }
 }

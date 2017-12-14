@@ -1,4 +1,4 @@
-package com.example.keiichi.project_mobile;
+package com.example.keiichi.project_mobile.Calendar;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -14,9 +14,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.SearchView;
+import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
@@ -27,6 +26,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
+import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
+import com.example.keiichi.project_mobile.MainActivity;
+import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,42 +38,45 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ContactsActivity extends AppCompatActivity {
+public class CalendarActivity extends AppCompatActivity {
 
+    CalendarView calendarView;
+    TextView myDate;
     BottomNavigationView mBottomNav;
+    Button getEventsButton;
 
-    Toolbar myToolbar;
-
-    private DrawerLayout mDrawerLayout;
-    ActionBarDrawerToggle actionBarDrawerToggle;
-
-    private ListView contactsListView;
-
-    SearchView searchView;
-
-    NavigationView contactNavigationView;
-
-    ContactAdapter contactAdapter;
+    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/events?$select=subject,body,bodyPreview,organizer,attendees,start,end,location";
 
     private String accessToken;
     private String userName;
     private String userEmail;
 
-    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts";
-
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    DrawerLayout mDrawerLayout;
+    ActionBarDrawerToggle actionBarDrawerToggle;
+
+    NavigationView calendarNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_contacts);
+        setContentView(R.layout.activity_calendar);
 
-
-
-        myToolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
+
+        accessToken = getIntent().getStringExtra("AccessToken");
+        userName = getIntent().getStringExtra("userName");
+        userEmail = getIntent().getStringExtra("userEmail");
+
+        calendarNavigationView = (NavigationView) findViewById(R.id.calendarNavigationView);
+        View hView =  calendarNavigationView.getHeaderView(0);
+        TextView nav_userName = (TextView)hView.findViewById(R.id.userName);
+        TextView nav_userEmail = (TextView)hView.findViewById(R.id.userEmail);
+        nav_userName.setText(userName);
+        nav_userEmail.setText(userEmail);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -79,39 +85,21 @@ public class ContactsActivity extends AppCompatActivity {
 
         mDrawerLayout.setDrawerListener(actionBarDrawerToggle);
 
-
-        contactsListView = (ListView) findViewById(R.id.contactsListView);
-
-        contactsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Intent showContactDetails = new Intent(ContactsActivity.this, ContactsDetailsActivity.class);
-                showContactDetails.putExtra("accestoken", accessToken);
-                showContactDetails.putExtra("userName", userName);
-                showContactDetails.putExtra("userEmail", userEmail);
-                startActivity(showContactDetails);
-            }
-        });
-
-        accessToken = getIntent().getStringExtra("AccessToken");
-        userName = getIntent().getStringExtra("userName");
-        userEmail = getIntent().getStringExtra("userEmail");
+        getEventsButton = (Button) findViewById(R.id.eventsButton);
+        calendarView = (CalendarView) findViewById(R.id.calendarView);
+        myDate = (TextView) findViewById(R.id.myDate);
 
         mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
 
-        callGraphAPI();
-        System.out.println("gebruiker" + userName);
-
-        contactNavigationView = (NavigationView) findViewById(R.id.contactNavigationView);
-        View hView =  contactNavigationView.getHeaderView(0);
-        TextView nav_userName = (TextView)hView.findViewById(R.id.userName);
-        TextView nav_userEmail = (TextView)hView.findViewById(R.id.userEmail);
-        nav_userName.setText(userName);
-        nav_userEmail.setText(userEmail);
-
         Menu menu = mBottomNav.getMenu();
-        MenuItem menuItem = menu.getItem(2);
+        MenuItem menuItem = menu.getItem(1);
         menuItem.setChecked(true);
+
+        getEventsButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                callGraphAPI();
+            }
+        });
 
         mBottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -120,26 +108,34 @@ public class ContactsActivity extends AppCompatActivity {
                 switch(item.getItemId()) {
 
                     case R.id.action_calendar:
-                        Intent intentCalendar = new Intent(ContactsActivity.this, CalendarActivity.class);
-                        intentCalendar.putExtra("AccessToken", accessToken);
-                        intentCalendar.putExtra("userName", userName);
-                        intentCalendar.putExtra("userEmail", userEmail);
-                        startActivity(intentCalendar);
+
                         break;
                     case R.id.action_mail:
-                        Intent intentMail = new Intent(ContactsActivity.this, ListMailsActvity.class);
+                        Intent intentMail = new Intent(CalendarActivity.this, ListMailsActvity.class);
                         intentMail.putExtra("AccessToken", accessToken);
                         intentMail.putExtra("userName", userName);
                         intentMail.putExtra("userEmail", userEmail);
                         startActivity(intentMail);
                         break;
                     case R.id.action_user:
-
+                        Intent intentContacts = new Intent(CalendarActivity.this, ContactsActivity.class);
+                        intentContacts.putExtra("AccessToken", accessToken);
+                        intentContacts.putExtra("userName", userName);
+                        intentContacts.putExtra("userEmail", userEmail);
+                        startActivity(intentContacts);
                         break;
 
                 }
 
                 return false;
+            }
+        });
+
+        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+            @Override
+            public void onSelectedDayChange(@NonNull CalendarView calendarView, int i, int i1, int i2) {
+                String date = (i1 + 1) + "/" + i2 + "/" + i;
+                myDate.setText(date);
             }
         });
     }
@@ -150,44 +146,29 @@ public class ContactsActivity extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
     }
 
+    // VOEG ICONS TOE AAN DE ACTION BAR
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.my_action_bar_items_contacts, menu);
-        MenuItem addItem = menu.findItem(R.id.action_add);
+        inflater.inflate(R.menu.my_action_bar_items_calendar, menu);
 
-
-
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        searchView = (SearchView) searchItem.getActionView();
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                //contactAdapter.getFilter().filter(s);
-                return false;
-            }
-        });
 
         return super.onCreateOptionsMenu(menu);
     }
 
+    // METHODE VOOR DE CLICKABLE ICOONTJES IN DE ACTION BAR
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
 
         switch(item.getItemId()){
 
-
-
+            // WANNEER + ICON WORDT AANGEKLIKT
             case R.id.action_add:
-                Intent intentAddContact = new Intent(ContactsActivity.this, AddContactActivity.class);
-                intentAddContact.putExtra("AccessToken", accessToken);
-                startActivity(intentAddContact);
+
+                Intent intentAddEvent = new Intent(CalendarActivity.this, AddEventActivity.class);
+                intentAddEvent.putExtra("AccessToken", accessToken);
+                startActivity(intentAddEvent);
+
                 return true;
 
             default:
@@ -256,18 +237,21 @@ public class ContactsActivity extends AppCompatActivity {
 
         // Test de response
         System.out.println(graphResponse);
-        JSONArray contactsJsonArray = null;
-
-        // Haal de contacten binnen
+        JSONArray eventsJsonArray = null;
+        // Haal de events binnen
         try {
-            contactsJsonArray = (JSONArray) graphResponse.get("value");
+            eventsJsonArray = (JSONArray) graphResponse.get("value");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        assert contactsJsonArray != null;
+        assert eventsJsonArray != null;
 
-        contactAdapter = new ContactAdapter(this, contactsJsonArray);
-        contactsListView.setAdapter(contactAdapter);
+        Intent intentCalendar = new Intent(CalendarActivity.this, ListEventsActivity.class);
+        intentCalendar.putExtra("EventsArray", eventsJsonArray.toString());
+        startActivity(intentCalendar);
+
+
+
 
     }
 }
