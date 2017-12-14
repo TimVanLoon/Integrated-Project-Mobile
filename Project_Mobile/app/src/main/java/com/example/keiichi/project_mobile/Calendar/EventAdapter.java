@@ -1,4 +1,4 @@
-package com.example.keiichi.project_mobile;
+package com.example.keiichi.project_mobile.Calendar;
 
 
 import android.content.Context;
@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+
+import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;

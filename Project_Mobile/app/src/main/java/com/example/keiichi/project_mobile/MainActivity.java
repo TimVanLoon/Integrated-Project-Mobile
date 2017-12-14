@@ -10,13 +10,18 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+<<<<<<< HEAD
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.pusher.client.Pusher;
 import com.pusher.client.PusherOptions;
 import com.pusher.client.channel.Channel;
 import com.pusher.client.channel.SubscriptionEventListener;
+=======
+import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
+>>>>>>> cdd0178b5710967fa761be5ba5c81a4a9ab23a30
 
 public class MainActivity extends AppCompatActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

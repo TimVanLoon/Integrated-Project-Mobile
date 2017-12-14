@@ -1,4 +1,4 @@
-package com.example.keiichi.project_mobile;
+package com.example.keiichi.project_mobile.Mail;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +20,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,7 +32,7 @@ import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 
 public class DisplayMailActivity extends AppCompatActivity {
-    final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/"; // TODO: 7/12/2017 URL DELETE TOEVOEGEN
+    final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
     private TextView mailBodyContent;
     private TextView Subject;
     private JSONObject mail;

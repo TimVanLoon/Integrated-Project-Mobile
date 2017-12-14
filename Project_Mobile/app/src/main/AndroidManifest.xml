@@ -17,7 +17,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ListMailsActvity"
+            android:name=".Mail.ListMailsActvity"
             android:label="Postvak IN"
             android:parentActivityName=".MainActivity" />
         <!-- Intent filter to capture System Browser calling back to our app after Sign In -->
@@ -35,18 +35,31 @@
                     android:scheme="msald3b60662-7768-4a50-b96f-eb1dfcc7ec8d" />
             </intent-filter>
         </activity>
-        <activity android:name=".DisplayMailActivity" />
-        <activity android:name=".SendMailActivity" />
+        <activity android:name=".Mail.DisplayMailActivity" />
+        <activity android:name=".Mail.SendMailActivity" />
         <activity
-            android:name=".CalendarActivity"
-            android:label="My Calendar"/>
-        <activity android:name=".ListEventsActivity" />
+            android:name=".Calendar.CalendarActivity"
+            android:label="My Calendar" />
+        <activity android:name=".Calendar.ListEventsActivity" />
         <activity
+<<<<<<< HEAD
             android:name=".ContactsActivity"
             android:label="My Contacts"></activity>
 
 
 
+=======
+            android:name=".Contacts.ContactsActivity"
+            android:label="My Contacts"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".Contacts.AddContactActivity"
+            android:label="Contact" />
+        <activity
+            android:name=".Calendar.AddEventActivity"
+            android:label="New event" />
+        <activity android:name=".Contacts.ContactsDetailsActivity"></activity>
+>>>>>>> cdd0178b5710967fa761be5ba5c81a4a9ab23a30
     </application>
 
 </manifest>

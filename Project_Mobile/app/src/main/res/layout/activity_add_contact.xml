@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.keiichi.project_mobile.Contacts.AddContactActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="50dp">
+        <!--Put form controls here-->
+
+        <TextView
+            android:id="@+id/addContactTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/addContactTitle"
+            android:textStyle="bold"
+            android:textSize="15pt">
+        </TextView>
+
+        <TextView
+            android:id="@+id/nameTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/nameTitle"
+            android:textStyle="bold"
+            android:textSize="10pt">
+        </TextView>
+
+        <EditText
+            android:id="@+id/firstNameInput"
+            android:layout_height="wrap_content"
+            android:hint="@string/nameInput"
+            android:inputType="textPersonName"
+            android:layout_width="fill_parent">
+        </EditText>
+        <EditText
+            android:id="@+id/lastNameInput"
+            android:layout_height="wrap_content"
+            android:hint="@string/lastNameInput"
+            android:inputType="textPersonName"
+            android:layout_width="fill_parent">
+        </EditText>
+
+        <TextView
+            android:id="@+id/emailTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/emailTitle"
+            android:textStyle="bold"
+            android:textSize="10pt">
+        </TextView>
+
+        <EditText
+            android:id="@+id/emailInput"
+            android:layout_height="wrap_content"
+            android:hint="@string/emailInput"
+            android:inputType="textPersonName"
+            android:layout_width="fill_parent">
+        </EditText>
+
+        <TextView
+            android:id="@+id/phoneTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/phoneTitle"
+            android:textStyle="bold"
+            android:textSize="10pt">
+        </TextView>
+
+        <EditText
+            android:id="@+id/phoneInput"
+            android:layout_height="wrap_content"
+            android:hint="@string/phoneInput"
+            android:inputType="textPersonName"
+            android:layout_width="fill_parent">
+        </EditText>
+
+        <TextView
+            android:id="@+id/workTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/workTitle"
+            android:textStyle="bold"
+            android:textSize="10pt">
+        </TextView>
+
+        <EditText
+            android:id="@+id/workInput"
+            android:layout_height="wrap_content"
+            android:hint="@string/workInput"
+            android:inputType="textPersonName"
+            android:layout_width="fill_parent">
+        </EditText>
+
+
+    </android.support.v7.widget.LinearLayoutCompat>
+
+</android.support.constraint.ConstraintLayout>

@@ -19,6 +19,7 @@ android {
     }
 }
 
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -33,16 +34,26 @@ dependencies {
     }
     compile 'com.android.volley:volley:1.1.0-rc2'
     compile group: 'org.glassfish', name: 'javax.json', version: '1.0.4'
-    compile 'com.github.manuelpeinado.multichoiceadapter:multichoiceadapter-abc:3.0.0'
+
+    // RecyclerView
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
+
     // Include the sdk as a dependency
     compile('com.microsoft.graph:msgraph-sdk-android:1.2.+')
+    compile 'com.microsoft.graph:msa-auth-for-android-adapter:0.9.+'
 
     // Include the gson dependency
     compile('com.google.code.gson:gson:2.3.1')
 
+<<<<<<< HEAD
     compile 'com.pusher:pusher-java-client:1.5.0'
     compile 'com.google.firebase:firebase-messaging:11.6.2'
+=======
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+>>>>>>> cdd0178b5710967fa761be5ba5c81a4a9ab23a30
 
+    //Richtext
+    compile 'jp.wasabeef:richeditor-android:1.2.2'
 
 }
 
