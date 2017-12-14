@@ -28,6 +28,24 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.example.keiichi.project_mobile.Calendar.CalendarActivity">
+<<<<<<< HEAD
+=======
+
+    <ListView
+        android:id="@+id/calendarListView"
+        android:layout_width="444dp"
+        android:layout_height="514dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/toolbar"
+        app:layout_constraintBottom_toTopOf="@+id/navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="1.0" />
+>>>>>>> parent of b7af8e7... Revert
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"

@@ -6,6 +6,7 @@
     <string name="search">Search</string>
     <string name="add">Add</string>
     <string name="searchbar">SearchBar</string>
+
     <string name="myContacts">My contacts</string>
     <string name="contactpersons">Contacts</string>
     <string name="skypeContacts">Skype-contacts</string>
@@ -13,4 +14,34 @@
 
     <string name="drawer_open">drawer open</string>
     <string name="drawer_close">drawer close</string>
+
+    <string name="save">Save</string>
+    <string name="addContactTitle">Add a contact</string>
+    <string name="nameTitle">Name</string>
+    <string name="nameInput">First name</string>
+    <string name="lastNameInput">Last name</string>
+    <string name="emailTitle">E-mail</string>
+    <string name="emailInput">E-mail</string>
+    <string name="phoneTitle">Phone</string>
+    <string name="phoneInput">Phone</string>
+    <string name="workTitle">Work</string>
+    <string name="workInput">Company</string>
+
+    <string name="addEventTitle">Add an event</string>
+    <string name="eventTitle">Event</string>
+    <string name="locationTitle">Location</string>
+    <string name="startTitle">Start</string>
+    <string name="durationTitle">Duration</string>
+
+    <string name="yourAgendas">Your agendas</string>
+    <string name="agenda">Agenda</string>
+    <string name="holidays">Holidays in Belgium</string>
+    <string name="birthdays">Bithdays</string>
+    <string name="otherAgendas">Other agendas</string>
+    <string name="peopleAgendas">Other peoples agendas</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="action_search">Search</string>
+    <string name="action_delete">Delete</string>
+
 </resources>
