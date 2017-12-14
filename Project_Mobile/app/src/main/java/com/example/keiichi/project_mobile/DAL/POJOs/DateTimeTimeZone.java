@@ -1,23 +1,23 @@
-package com.example.keiichi.project_mobile.POJO;
+package com.example.keiichi.project_mobile.DAL.POJOs;
 
 
 import java.util.Date;
 
 public class DateTimeTimeZone {
 
-    private Date dateTime;
+    private String dateTime;
     private String timeZone;
 
-    public DateTimeTimeZone(Date dateTime, String timeZone) {
+    public DateTimeTimeZone(String dateTime, String timeZone) {
         this.dateTime = dateTime;
         this.timeZone = timeZone;
     }
 
-    public Date getDateTime() {
+    public String getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(Date dateTime) {
+    public void setDateTime(String dateTime) {
         this.dateTime = dateTime;
     }
 

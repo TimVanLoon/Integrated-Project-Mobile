@@ -1,7 +1,6 @@
-package com.example.keiichi.project_mobile.POJO;
+package com.example.keiichi.project_mobile.DAL.POJOs;
 
 
-import java.time.LocalDate;
 import java.util.Date;
 
 public class RecurrenceRange {

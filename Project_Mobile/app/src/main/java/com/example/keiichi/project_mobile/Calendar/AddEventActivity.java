@@ -23,7 +23,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.DAL.POJOs.DateTimeTimeZone;
+import com.example.keiichi.project_mobile.DAL.POJOs.Event;
+import com.example.keiichi.project_mobile.DAL.POJOs.Location;
 import com.example.keiichi.project_mobile.R;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -204,9 +208,15 @@ public class AddEventActivity extends AppCompatActivity {
 
         final JSONObject jsonObject = new JSONObject(buildJsonEvent());
 
+        Event event = new Event();
+        event.setSubject(eventInput.getText().toString());
+        event.setLocation(new Location(locationInput.getText().toString()));
+        event.setStart(new DateTimeTimeZone(dateEvent.getText().toString()+"T"+ timeEvent.getText().toString(), "UTC"));
+        event.setEnd(new DateTimeTimeZone("2018-12-12T20:16:30.033", "UTC"));
+
         System.out.println(jsonObject.toString());
 
-        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_POSTADRESS, jsonObject,
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_POSTADRESS, new JSONObject(new Gson().toJson(event)),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

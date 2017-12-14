@@ -18,12 +18,17 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
+import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.R;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -129,9 +134,19 @@ public class AddContactActivity extends AppCompatActivity {
 
         final JSONObject jsonObject = new JSONObject(buildJsonContact());
 
+        Contact contact = new Contact();
+        contact.setGivenName(firstNameInput.getText().toString());
+        contact.setSurname(lastNameInput.getText().toString());
+        
+        EmailAddress contactEmailAddress = new EmailAddress(firstNameInput.getText().toString() + " " + lastNameInput.getText().toString(), emailInput.getText().toString());
+        List<EmailAddress> contactList = new ArrayList<>();
+        contactList.add(contactEmailAddress);
+
+        contact.setEmailAddresses(contactList);
+
         System.out.println(jsonObject.toString());
 
-        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_POSTADRESS, jsonObject,
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_POSTADRESS,new JSONObject(new Gson().toJson(contact)),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

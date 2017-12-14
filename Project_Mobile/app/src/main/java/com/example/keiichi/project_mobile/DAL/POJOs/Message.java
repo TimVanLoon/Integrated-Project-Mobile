@@ -1,7 +1,5 @@
-package com.example.keiichi.project_mobile.POJO;
+package com.example.keiichi.project_mobile.DAL.POJOs;
 
-
-import android.content.ClipData;
 
 public class Message {
 
