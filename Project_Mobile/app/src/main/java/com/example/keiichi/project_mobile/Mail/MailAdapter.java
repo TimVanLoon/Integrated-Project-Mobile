@@ -26,7 +26,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import helper.FlipAnimator;
@@ -62,7 +65,10 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
             JSONObject emailAddress = sender.getJSONObject("emailAddress");
 
             //Data weergeven
-            holder.timestamp.setText(mailObject.getString("receivedDateTime"));
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            SimpleDateFormat output = new SimpleDateFormat("HH:mm");
+            Date d = sdf.parse(mailObject.getString("receivedDateTime"));
+            holder.timestamp.setText(output.format(d));
             holder.from.setText(emailAddress.getString("name"));
             holder.message.setText(mailObject.getString("bodyPreview"));
             holder.subject.setText(mailObject.getString("subject"));
@@ -77,6 +83,8 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
             //set onlcik events
 
         } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
             e.printStackTrace();
         }
 
