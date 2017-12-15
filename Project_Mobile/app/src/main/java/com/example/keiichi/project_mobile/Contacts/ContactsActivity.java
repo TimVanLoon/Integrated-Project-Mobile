@@ -275,7 +275,7 @@ public class ContactsActivity extends AppCompatActivity {
     private void updateGraphUI(JSONObject graphResponse) throws JSONException {
 
         // Test de response
-        System.out.println(graphResponse);
+        System.out.println(" de response: " + graphResponse);
         JSONArray contactsJsonArray = null;
 
         // Haal de contacten binnen
@@ -296,6 +296,7 @@ public class ContactsActivity extends AppCompatActivity {
 
             System.out.println("robin van hoof: " + contacts);
 
+            /*
             //DE CONTACT LIJST SORTEREN OP ALFABETISCHE VOLGORDE VAN NAMEN
             JSONArray sortedContactArray = new JSONArray();
             List<Contact> jsonValues = new ArrayList<Contact>();
@@ -319,7 +320,7 @@ public class ContactsActivity extends AppCompatActivity {
         }
         assert contactsJsonArray != null;
 
-        contactAdapter = new ContactAdapter(this, contactsJsonArray);
+        contactAdapter = new ContactAdapter(this, contactsJsonArray );
         contactsListView.setAdapter(contactAdapter);
 
     }

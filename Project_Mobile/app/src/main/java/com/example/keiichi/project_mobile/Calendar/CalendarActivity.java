@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
@@ -26,16 +27,25 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.Contacts.ContactAdapter;
 import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
+import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
+import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CalendarActivity extends AppCompatActivity {
@@ -43,13 +53,16 @@ public class CalendarActivity extends AppCompatActivity {
     CalendarView calendarView;
     TextView myDate;
     BottomNavigationView mBottomNav;
-    Button getEventsButton;
+    SearchView searchView;
 
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/events?$select=subject,body,bodyPreview,organizer,attendees,start,end,location";
 
     private String accessToken;
     private String userName;
     private String userEmail;
+    private JSONArray eventsArray;
+    private List<Event> events = new ArrayList<>();
+    EventAdapter eventAdapter;
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -85,21 +98,17 @@ public class CalendarActivity extends AppCompatActivity {
 
         mDrawerLayout.setDrawerListener(actionBarDrawerToggle);
 
-        getEventsButton = (Button) findViewById(R.id.eventsButton);
         calendarView = (CalendarView) findViewById(R.id.calendarView);
         myDate = (TextView) findViewById(R.id.myDate);
 
         mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
 
+        // callGraphAPI();
+
         Menu menu = mBottomNav.getMenu();
         MenuItem menuItem = menu.getItem(1);
         menuItem.setChecked(true);
 
-        getEventsButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                callGraphAPI();
-            }
-        });
 
         mBottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -149,9 +158,25 @@ public class CalendarActivity extends AppCompatActivity {
     // VOEG ICONS TOE AAN DE ACTION BAR
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
+
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.my_action_bar_items_calendar, menu);
 
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                //contactAdapter.getFilter().filter(s);
+                return false;
+            }
+        });
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -161,6 +186,21 @@ public class CalendarActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
 
         switch(item.getItemId()){
+
+            case R.id.action_listEvents:
+
+                callGraphAPI();
+
+                /*
+                Intent intentListEvents = new Intent(CalendarActivity.this, ListEventsActivity.class);
+                intentListEvents.putExtra("AccessToken", accessToken);
+                intentListEvents.putExtra("userName", userName);
+                intentListEvents.putExtra("userEmail", userEmail);
+                intentListEvents.putExtra("EventsArray", eventsArray.toString());
+                startActivity(intentListEvents);
+
+*/
+                return true;
 
             // WANNEER + ICON WORDT AANGEKLIKT
             case R.id.action_add:
@@ -237,8 +277,9 @@ public class CalendarActivity extends AppCompatActivity {
     /* Sets the Graph response */
     private void updateGraphUI(JSONObject graphResponse) throws JSONException {
 
+        /*
         // Test de response
-        System.out.println(graphResponse);
+        //  System.out.println(graphResponse);
         JSONArray eventsJsonArray = null;
         // Haal de events binnen
         try {
@@ -248,12 +289,42 @@ public class CalendarActivity extends AppCompatActivity {
         }
         assert eventsJsonArray != null;
 
-        Intent intentCalendar = new Intent(CalendarActivity.this, ListEventsActivity.class);
-        intentCalendar.putExtra("EventsArray", eventsJsonArray.toString());
-        startActivity(intentCalendar);
+        eventsArray = eventsJsonArray;
 
+        */
 
+        // Test de response
+        System.out.println(" de response: " + graphResponse);
+        JSONArray eventsJsonArray = null;
 
+        // Haal de contacten binnen
+        try {
+            eventsJsonArray = (JSONArray) graphResponse.get("value");
 
+            JSONObject eventList = graphResponse;
+            System.out.println("branko: " + eventList);
+
+            JSONArray eventArray = eventList.getJSONArray("value");
+
+            System.out.println("keffin :" + eventArray);
+            // VUL POJO
+            Type listType = new TypeToken<List<Event>>() {
+            }.getType();
+
+            // events = new Gson().fromJson(String.valueOf(eventArray), listType);
+
+            System.out.println("robin van hoof: " + events);
+
+            Intent listEventsIntent = new Intent(CalendarActivity.this, ListEventsActivity.class);
+            //Bundle args = new Bundle();
+            // args.putSerializable("eventsArrayList", (Serializable)events);
+            // listEventsIntent.putExtra("eventList", args);
+            listEventsIntent.putExtra("EventsArray", eventsJsonArray.toString());
+
+            startActivity(listEventsIntent);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,14 +1,19 @@
 package com.example.keiichi.project_mobile.DAL.POJOs;
 
 
+import android.os.Parcelable;
 
-public class Event {
+import java.io.Serializable;
+import java.util.Calendar;
+import java.util.List;
 
-    private Event[] event;
+public class Event{
+
+    private List<Event> instances;
     private Attendee[] attendees;
     private ItemBody body;
     private String bodyPreview;
-    private String[] categories;
+    private List<String> categories;
     private String changeKey;
     private String createdDateTime;
     private DateTimeTimeZone end;
@@ -22,7 +27,6 @@ public class Event {
     private boolean isReminderOn;
     private String lastModifiedDateTime;
     private Location location;
-    private Location[] locations;
     private String onlineMeetingUrl;
     private Recipient organizer;
     private String originalEndTimeZone;
@@ -39,15 +43,40 @@ public class Event {
     private String subject;
     private String type;
     private String webLink;
+    private List<Attachment> attachments;
+    private Calendar calendar;
+    private Extension extension;
 
-
-
-    public Event[] getEvent() {
-        return event;
+    public List<Event> getInstances() {
+        return instances;
     }
 
-    public void setEvent(Event[] event) {
-        this.event = event;
+    public void setInstances(List<Event> instances) {
+        this.instances = instances;
+    }
+
+    public List<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<Attachment> attachments) {
+        this.attachments = attachments;
+    }
+
+    public Calendar getCalendar() {
+        return calendar;
+    }
+
+    public void setCalendar(Calendar calendar) {
+        this.calendar = calendar;
+    }
+
+    public Extension getExtension() {
+        return extension;
+    }
+
+    public void setExtension(Extension extension) {
+        this.extension = extension;
     }
 
     public String getBodyPreview() {
@@ -58,11 +87,11 @@ public class Event {
         this.bodyPreview = bodyPreview;
     }
 
-    public String[] getCategories() {
+    public List<String> getCategories() {
         return categories;
     }
 
-    public void setCategories(String[] categories) {
+    public void setCategories(List<String> categories) {
         this.categories = categories;
     }
 
@@ -272,14 +301,6 @@ public class Event {
 
     public void setLocation(Location location) {
         this.location = location;
-    }
-
-    public Location[] getLocations() {
-        return locations;
-    }
-
-    public void setLocations(Location[] locations) {
-        this.locations = locations;
     }
 
     public Recipient getOrganizer() {

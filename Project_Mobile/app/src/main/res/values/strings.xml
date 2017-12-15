@@ -77,4 +77,6 @@
 
     <string name="genderTitle">Gender</string>
     <string name="gender">Gender</string>
+
+    <string name="listEvents">listEvents</string>
 </resources>
