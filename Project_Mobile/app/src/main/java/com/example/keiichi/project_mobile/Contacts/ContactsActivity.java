@@ -28,15 +28,21 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.Calendar.CalendarActivity;
+import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ContactsActivity extends AppCompatActivity {
@@ -55,6 +61,9 @@ public class ContactsActivity extends AppCompatActivity {
     NavigationView contactNavigationView;
 
     ContactAdapter contactAdapter;
+
+    private List<Contact> contacts = new ArrayList<>();
+
 
     private String accessToken;
     private String userName;
@@ -265,6 +274,22 @@ public class ContactsActivity extends AppCompatActivity {
         // Haal de contacten binnen
         try {
             contactsJsonArray = (JSONArray) graphResponse.get("value");
+
+            JSONObject contactList = graphResponse;
+            JSONArray contactArray = contactList.getJSONArray("value");
+            // VUL POJO
+            Type listType = new TypeToken<List<Contact>>() {
+            }.getType();
+
+            contacts = new Gson().fromJson(String.valueOf(contacts), listType);
+
+            contactAdapter = new ContactAdapter(this, contactArray);
+            contactsListView.setAdapter(contactAdapter);
+
+
+
+
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
