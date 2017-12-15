@@ -13,6 +13,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
     private String accessToken;
     private String userName;
     private String userEmail;
+    private String givenName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,8 +23,9 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
+        givenName = getIntent().getStringExtra("givenName");
 
         TextView headerUserName = (TextView) findViewById(R.id.headerUserName);
-        headerUserName.setText(userName);
+        headerUserName.setText(givenName);
     }
 }

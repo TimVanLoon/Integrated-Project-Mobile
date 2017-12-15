@@ -18,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -98,11 +99,14 @@ public class ContactsActivity extends AppCompatActivity {
         contactsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                onContactClicked(position);
+                /*
                 Intent showContactDetails = new Intent(ContactsActivity.this, ContactsDetailsActivity.class);
                 showContactDetails.putExtra("accestoken", accessToken);
                 showContactDetails.putExtra("userName", userName);
                 showContactDetails.putExtra("userEmail", userEmail);
                 startActivity(showContactDetails);
+                */
             }
         });
 
@@ -276,12 +280,18 @@ public class ContactsActivity extends AppCompatActivity {
             contactsJsonArray = (JSONArray) graphResponse.get("value");
 
             JSONObject contactList = graphResponse;
+            System.out.println("branko: " + contactList);
+
             JSONArray contactArray = contactList.getJSONArray("value");
+
+            System.out.println("keffin :" + contactArray);
             // VUL POJO
             Type listType = new TypeToken<List<Contact>>() {
             }.getType();
 
-            contacts = new Gson().fromJson(String.valueOf(contacts), listType);
+            contacts = new Gson().fromJson(String.valueOf(contactArray), listType);
+
+            System.out.println("robin van hoof: " + contacts);
 
             contactAdapter = new ContactAdapter(this, contactArray);
             contactsListView.setAdapter(contactAdapter);
@@ -298,5 +308,21 @@ public class ContactsActivity extends AppCompatActivity {
         contactAdapter = new ContactAdapter(this, contactsJsonArray);
         contactsListView.setAdapter(contactAdapter);
 
+    }
+
+    public void onContactClicked(int position){
+
+        System.out.println("jannick baats: " + contacts);
+
+        if(contacts.size() != 0){
+            Contact contact = contacts.get(position);
+            System.out.println("geraak ik hier? " + contact);
+            Intent showContactDetails = new Intent(ContactsActivity.this, ContactsDetailsActivity.class);
+            showContactDetails.putExtra("givenName", contact.getGivenName());
+            startActivity(showContactDetails);
+
+        } else {
+            Toast.makeText(getApplicationContext(), "Empty contact list!", Toast.LENGTH_SHORT).show();
+        }
     }
 }
