@@ -61,5 +61,17 @@
     <string name="countryName">Country</string>
 
     <string name="notesTitle">Notes</string>
+    <string name="personalNotes">Notes...</string>
 
+    <string name="nickNameTitle">Nickname</string>
+    <string name="nickName">Nickname</string>
+
+    <string name="spouseNameTitle">Spouse</string>
+    <string name="spouseName">Spouse Name</string>
+
+    <string name="birthdayTitle">Birthday</string>
+    <string name="birthday">Birthday</string>
+
+    <string name="webpageTitle">Webpage</string>
+    <string name="webpage">Webpage</string>
 </resources>
