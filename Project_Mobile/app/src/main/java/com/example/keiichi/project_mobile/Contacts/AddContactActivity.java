@@ -29,6 +29,8 @@ import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -66,10 +68,6 @@ public class AddContactActivity extends AppCompatActivity {
     private EditText nickName;
     private EditText spouseName;
     private EditText birthday;
-    private EditText webpage;
-    private EditText gender;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,8 +103,6 @@ public class AddContactActivity extends AppCompatActivity {
         nickName = (EditText) findViewById(R.id.nickName);
         spouseName = (EditText) findViewById(R.id.spouseName);
         birthday = (EditText) findViewById(R.id.birthday);
-        webpage = (EditText) findViewById(R.id.webpage);
-        gender = (EditText) findViewById(R.id.gender);
 
     }
 
@@ -189,18 +185,13 @@ public class AddContactActivity extends AppCompatActivity {
         if(!emailInput.getText().toString().isEmpty()){
             EmailAddress contactEmail = new EmailAddress(emailInput.getText().toString());
             List<EmailAddress> listEmails = new ArrayList<>();
+            listEmails.add(contactEmail);
             contact.setEmailAddresses(listEmails);
-        }
-
-        if(!gender.getText().toString().isEmpty()){
-            contact.setGender(gender.getText().toString());
         }
 
 
         if(!phoneInput.getText().toString().isEmpty()){
-            Phone contactPhone = new Phone(phoneInput.getText().toString());
-            List<Phone> listPhones = new ArrayList<>();
-            contact.setPhones(listPhones);
+            contact.setMobilePhone(phoneInput.getText().toString());
         }
 
 
@@ -230,10 +221,7 @@ public class AddContactActivity extends AppCompatActivity {
 
         if(!streetName.getText().toString().isEmpty()){
             PhysicalAddress contactPhysicalAddress = new PhysicalAddress(streetName.getText().toString(), cityName.getText().toString(), stateName.getText().toString(), countryName.getText().toString(), postalCode.getText().toString());
-            List<PhysicalAddress> listPhysicalAddresses = new ArrayList<>();
-            listPhysicalAddresses.add(contactPhysicalAddress);
-
-            contact.setPostalAddresses(listPhysicalAddresses);
+            contact.setHomeAddress(contactPhysicalAddress);
         }
 
         if(!nickName.getText().toString().isEmpty()){
@@ -248,20 +236,13 @@ public class AddContactActivity extends AppCompatActivity {
             contact.setBirthday(birthday.getText().toString());
         }
 
-        if(!webpage.getText().toString().isEmpty()){
-
-            Website website = new Website(webpage.getText().toString());
-            List<Website> listWebsites = new ArrayList<>();
-            listWebsites.add(website);
-
-            contact.setWebsites(listWebsites);
-        }
-
 
         if(!personalNotes.getText().toString().isEmpty()){
             contact.setPersonalNotes(personalNotes.getText().toString());
         }
 
+        JSONObject testObject = new JSONObject(new Gson().toJson(contact));
+        System.out.println("wanna cuddle?" +contact);
 
         JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_POSTADRESS,new JSONObject(new Gson().toJson(contact)),
                 new Response.Listener<JSONObject>() {

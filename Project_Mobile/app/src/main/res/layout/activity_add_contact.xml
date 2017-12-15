@@ -93,23 +93,6 @@
             android:layout_width="fill_parent">
         </EditText>
 
-        <TextView
-            android:id="@+id/genderTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/genderTitle"
-            android:textStyle="bold"
-            android:textSize="10pt">
-        </TextView>
-
-        <EditText
-            android:id="@+id/gender"
-            android:layout_height="wrap_content"
-            android:hint="@string/gender"
-            android:inputType="textPersonName"
-            android:layout_width="fill_parent">
-        </EditText>
-
 
         <TextView
             android:id="@+id/workTitle"
@@ -268,25 +251,6 @@
             android:inputType="textPersonName"
             android:layout_width="fill_parent">
         </EditText>
-
-        <TextView
-            android:id="@+id/webpageTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/webpageTitle"
-            android:textStyle="bold"
-            android:textSize="10pt">
-        </TextView>
-
-        <EditText
-            android:id="@+id/webpage"
-            android:layout_height="wrap_content"
-            android:hint="@string/webpage"
-            android:inputType="textPersonName"
-            android:layout_width="fill_parent">
-        </EditText>
-
-
 
         <TextView
             android:id="@+id/notesTitle"

@@ -23,7 +23,7 @@
     <string name="emailTitle">E-mail</string>
     <string name="emailInput">E-mail</string>
     <string name="phoneTitle">Phone</string>
-    <string name="phoneInput">Company Phone</string>
+    <string name="phoneInput">Mobile Phone</string>
     <string name="workTitle">Work</string>
     <string name="workInput">Company</string>
 
