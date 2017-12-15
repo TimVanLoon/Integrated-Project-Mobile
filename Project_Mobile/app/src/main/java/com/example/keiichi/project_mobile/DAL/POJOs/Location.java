@@ -1,4 +1,4 @@
-package com.example.keiichi.project_mobile.POJO;
+package com.example.keiichi.project_mobile.DAL.POJOs;
 
 
 public class Location {
@@ -8,11 +8,8 @@ public class Location {
     private GeoCoordinates coordinates;
     private String locationEmailAddress;
 
-    public Location(String displayName, PhysicalAddress address, GeoCoordinates coordinates, String locationEmailAddress) {
+    public Location(String displayName) {
         this.displayName = displayName;
-        this.address = address;
-        this.coordinates = coordinates;
-        this.locationEmailAddress = locationEmailAddress;
     }
 
     public String getDisplayName() {

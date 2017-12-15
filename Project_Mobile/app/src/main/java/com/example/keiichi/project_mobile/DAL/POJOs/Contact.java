@@ -1,6 +1,7 @@
-package com.example.keiichi.project_mobile.POJO;
+package com.example.keiichi.project_mobile.DAL.POJOs;
 
 import java.util.Date;
+import java.util.List;
 
 public class Contact{
 
@@ -14,7 +15,7 @@ public class Contact{
     private String createdDateTime;
     private String department;
     private String displayName;
-    private EmailAddress[] emailAddresses;
+    private List<EmailAddress> emailAddresses;
     private String fileAs;
     private FollowupFlag flag;
     private String gender;
@@ -315,11 +316,11 @@ public class Contact{
         this.contact = contact;
     }
 
-    public EmailAddress[] getEmailAddresses() {
+    public List<EmailAddress> getEmailAddresses() {
         return emailAddresses;
     }
 
-    public void setEmailAddresses(EmailAddress[] emailAddresses) {
+    public void setEmailAddresses(List<EmailAddress> emailAddresses) {
         this.emailAddresses = emailAddresses;
     }
 

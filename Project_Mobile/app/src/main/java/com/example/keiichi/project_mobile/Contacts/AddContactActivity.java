@@ -18,12 +18,17 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
+import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.R;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -127,11 +132,17 @@ public class AddContactActivity extends AppCompatActivity {
     private void saveContact() throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        final JSONObject jsonObject = new JSONObject(buildJsonContact());
+        Contact contact = new Contact();
+        contact.setGivenName(firstNameInput.getText().toString());
+        contact.setSurname(lastNameInput.getText().toString());
 
-        System.out.println(jsonObject.toString());
+        EmailAddress contactEmailAddress = new EmailAddress(firstNameInput.getText().toString() + " " + lastNameInput.getText().toString(), emailInput.getText().toString());
+        List<EmailAddress> contactList = new ArrayList<>();
+        contactList.add(contactEmailAddress);
 
-        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_POSTADRESS, jsonObject,
+        contact.setEmailAddresses(contactList);
+
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_POSTADRESS,new JSONObject(new Gson().toJson(contact)),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -160,19 +171,4 @@ public class AddContactActivity extends AppCompatActivity {
 
     }
 
-    // MAAK CONTACT JSON OBJECT AAN OM MEE TE POSTEN
-    private String buildJsonContact() {
-
-        JsonObjectBuilder contactFactory = Json.createObjectBuilder()
-                .add("givenName", firstNameInput.getText().toString())
-                .add("surname", lastNameInput.getText().toString())
-                .add("emailAddresses", Json.createArrayBuilder()
-                        .add(Json.createObjectBuilder()
-                        .add("address", emailInput.getText().toString())
-                        .add("name", firstNameInput.getText().toString() +" " +lastNameInput.getText().toString())))
-                .add("businessPhones", Json.createArrayBuilder()
-                        .add(phoneInput.getText().toString()));
-
-        return contactFactory.build().toString();
-    }
 }
