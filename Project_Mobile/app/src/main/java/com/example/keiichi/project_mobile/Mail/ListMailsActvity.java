@@ -11,6 +11,9 @@ import android.os.Bundle;
 
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 // import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
@@ -75,6 +78,10 @@ import static com.android.volley.Request.Method.HEAD;
 
 public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
+    NavigationView mailNavigationView;
+    private DrawerLayout mDrawerLayout;
+    private Toolbar myToolbar;
+    private ActionBarDrawerToggle actionBarDrawerToggle;
     private boolean multiSelect = false;
     private boolean actionModeEnabled = false;
     private ArrayList<Integer> selectedItems = new ArrayList<>();
@@ -164,13 +171,26 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(this);
 
-
-        Toolbar myToolbar = findViewById(R.id.toolbar);
+        myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, myToolbar, R.string.drawer_open,
+                R.string.drawer_close);
+
+        mDrawerLayout.setDrawerListener(actionBarDrawerToggle);
 
         addNotification();
 
         mBottomNav = findViewById(R.id.navigation);
+
+        mailNavigationView = (NavigationView) findViewById(R.id.mailNavigationView);
+        View hView =  mailNavigationView.getHeaderView(0);
+        TextView nav_userName = (TextView)hView.findViewById(R.id.userName);
+        TextView nav_userEmail = (TextView)hView.findViewById(R.id.userEmail);
+        nav_userName.setText(userName);
+        nav_userEmail.setText(userEmail);
 
         Menu menu = mBottomNav.getMenu();
         MenuItem menuItem = menu.getItem(0);
@@ -255,6 +275,13 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         }
 
 
+    }
+
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState){
+        super.onPostCreate(savedInstanceState);
+        actionBarDrawerToggle.syncState();
     }
 
 

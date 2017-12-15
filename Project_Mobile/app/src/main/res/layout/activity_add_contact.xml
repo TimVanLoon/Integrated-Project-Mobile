@@ -15,6 +15,10 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <android.support.v7.widget.LinearLayoutCompat
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -99,14 +103,116 @@
         </TextView>
 
         <EditText
-            android:id="@+id/workInput"
+            android:id="@+id/jobTitle"
             android:layout_height="wrap_content"
-            android:hint="@string/workInput"
+            android:hint="@string/jobTitle"
             android:inputType="textPersonName"
             android:layout_width="fill_parent">
         </EditText>
 
+        <EditText
+            android:id="@+id/department"
+            android:layout_height="wrap_content"
+            android:hint="@string/department"
+            android:inputType="textPersonName"
+            android:layout_width="fill_parent">
+        </EditText>
+
+        <EditText
+            android:id="@+id/companyName"
+            android:layout_height="wrap_content"
+            android:hint="@string/companyName"
+            android:inputType="textPersonName"
+            android:layout_width="fill_parent">
+        </EditText>
+
+        <EditText
+            android:id="@+id/officeLocation"
+            android:layout_height="wrap_content"
+            android:hint="@string/officeLocation"
+            android:inputType="textPersonName"
+            android:layout_width="fill_parent">
+        </EditText>
+
+        <EditText
+            android:id="@+id/manager"
+            android:layout_height="wrap_content"
+            android:hint="@string/manager"
+            android:inputType="textPersonName"
+            android:layout_width="fill_parent">
+        </EditText>
+
+        <EditText
+            android:id="@+id/assistantName"
+            android:layout_height="wrap_content"
+            android:hint="@string/assistantName"
+            android:inputType="textPersonName"
+            android:layout_width="fill_parent">
+        </EditText>
+
+        <TextView
+            android:id="@+id/addressTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/addressTitle"
+            android:textStyle="bold"
+            android:textSize="10pt">
+        </TextView>
+
+        <EditText
+            android:id="@+id/streetName"
+            android:layout_height="wrap_content"
+            android:hint="@string/streetName"
+            android:inputType="textPersonName"
+            android:layout_width="fill_parent">
+        </EditText>
+
+        <EditText
+            android:id="@+id/postalCode"
+            android:layout_height="wrap_content"
+            android:hint="@string/postalCode"
+            android:inputType="textPersonName"
+            android:layout_width="fill_parent">
+        </EditText>
+
+        <EditText
+            android:id="@+id/cityName"
+            android:layout_height="wrap_content"
+            android:hint="@string/cityName"
+            android:inputType="textPersonName"
+            android:layout_width="fill_parent">
+        </EditText>
+
+        <EditText
+            android:id="@+id/stateName"
+            android:layout_height="wrap_content"
+            android:hint="@string/stateName"
+            android:inputType="textPersonName"
+            android:layout_width="fill_parent">
+        </EditText>
+
+        <EditText
+            android:id="@+id/countryName"
+            android:layout_height="wrap_content"
+            android:hint="@string/countryName"
+            android:inputType="textPersonName"
+            android:layout_width="fill_parent">
+        </EditText>
+
+        <TextView
+            android:id="@+id/notesTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/notesTitle"
+            android:textStyle="bold"
+            android:textSize="10pt">
+        </TextView>
+
+
+
+
 
     </android.support.v7.widget.LinearLayoutCompat>
 
+    </android.support.v4.widget.NestedScrollView>
 </android.support.constraint.ConstraintLayout>
