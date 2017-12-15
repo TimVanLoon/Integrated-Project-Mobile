@@ -17,7 +17,7 @@
 
     <string name="save">Save</string>
     <string name="addContactTitle">Add a contact</string>
-    <string name="nameTitle">Name</string>
+    <string name="nameTitle">Name*</string>
     <string name="nameInput">First name</string>
     <string name="lastNameInput">Last name</string>
     <string name="emailTitle">E-mail</string>
@@ -74,4 +74,7 @@
 
     <string name="webpageTitle">Webpage</string>
     <string name="webpage">Webpage</string>
+
+    <string name="genderTitle">Gender</string>
+    <string name="gender">Gender</string>
 </resources>

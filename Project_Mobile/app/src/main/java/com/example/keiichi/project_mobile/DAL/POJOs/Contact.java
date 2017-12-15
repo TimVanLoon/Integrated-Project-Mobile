@@ -32,13 +32,13 @@ public class Contact{
     private String officeLocation;
     private String parentFolderId;
     private String personalNotes;
-    private Phone[] phones;
-    private PhysicalAddress[] postalAddresses;
+    private List<Phone> phones;
+    private List<PhysicalAddress> postalAddresses;
     private String profession;
     private String spouseName;
     private String surname;
     private String title;
-    private Website[] websites;
+    private List<Website> websites;
     private Date weddingAnniversary;
     private String yomiCompanyName;
     private String yomiGivenName;
@@ -332,27 +332,27 @@ public class Contact{
         this.flag = flag;
     }
 
-    public Phone[] getPhones() {
+    public List<Phone> getPhones() {
         return phones;
     }
 
-    public void setPhones(Phone[] phones) {
+    public void setPhones(List<Phone> phones) {
         this.phones = phones;
     }
 
-    public PhysicalAddress[] getPostalAddresses() {
+    public List<PhysicalAddress> getPostalAddresses() {
         return postalAddresses;
     }
 
-    public void setPostalAddresses(PhysicalAddress[] postalAddresses) {
+    public void setPostalAddresses(List<PhysicalAddress> postalAddresses) {
         this.postalAddresses = postalAddresses;
     }
 
-    public Website[] getWebsites() {
+    public List<Website> getWebsites() {
         return websites;
     }
 
-    public void setWebsites(Website[] websites) {
+    public void setWebsites(List<Website> websites) {
         this.websites = websites;
     }
 }
