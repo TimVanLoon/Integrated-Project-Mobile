@@ -42,6 +42,7 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -204,6 +205,8 @@ public class ContactsActivity extends AppCompatActivity {
             case R.id.action_add:
                 Intent intentAddContact = new Intent(ContactsActivity.this, AddContactActivity.class);
                 intentAddContact.putExtra("AccessToken", accessToken);
+                intentAddContact.putExtra("userName", userName);
+                intentAddContact.putExtra("userEmail", userEmail);
                 startActivity(intentAddContact);
                 return true;
 
@@ -292,6 +295,17 @@ public class ContactsActivity extends AppCompatActivity {
             contacts = new Gson().fromJson(String.valueOf(contactArray), listType);
 
             System.out.println("robin van hoof: " + contacts);
+
+            //DE CONTACT LIJST SORTEREN OP ALFABETISCHE VOLGORDE VAN NAMEN
+            JSONArray sortedContactArray = new JSONArray();
+            List<Contact> jsonValues = new ArrayList<Contact>();
+            /*
+            for (int i = 0; i < contactArray.length(); i++) {
+                jsonValues.add(contactArray.getJSONObject(i));
+            }
+            */
+
+
 
             contactAdapter = new ContactAdapter(this, contactArray);
             contactsListView.setAdapter(contactAdapter);

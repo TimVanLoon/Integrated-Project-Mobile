@@ -44,11 +44,7 @@ import javax.json.JsonObjectBuilder;
 public class AddContactActivity extends AppCompatActivity {
 
     final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/contacts";
-
-    private String accessToken;
-
     Toolbar myToolbar;
-
     private EditText firstNameInput;
     private EditText lastNameInput;
     private EditText emailInput;
@@ -68,6 +64,9 @@ public class AddContactActivity extends AppCompatActivity {
     private EditText nickName;
     private EditText spouseName;
     private EditText birthday;
+    private String userName;
+    private String userEmail;
+    private String accessToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +74,8 @@ public class AddContactActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_contact);
 
         accessToken = getIntent().getStringExtra("AccessToken");
+        userName = getIntent().getStringExtra("userName");
+        userEmail = getIntent().getStringExtra("userEmail");
 
         // INITIALISEER ACTION BAR
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -126,6 +127,8 @@ public class AddContactActivity extends AppCompatActivity {
             case android.R.id.home:
                 Intent intentContacts = new Intent(AddContactActivity.this, ContactsActivity.class);
                 intentContacts.putExtra("AccessToken", accessToken);
+                intentContacts.putExtra("userName", userName);
+                intentContacts.putExtra("userEmail", userEmail);
                 startActivity(intentContacts);
 
                 return true;

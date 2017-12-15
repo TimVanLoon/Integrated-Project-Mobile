@@ -167,6 +167,8 @@ public class CalendarActivity extends AppCompatActivity {
 
                 Intent intentAddEvent = new Intent(CalendarActivity.this, AddEventActivity.class);
                 intentAddEvent.putExtra("AccessToken", accessToken);
+                intentAddEvent.putExtra("userName", userName);
+                intentAddEvent.putExtra("userEmail", userEmail);
                 startActivity(intentAddEvent);
 
                 return true;
