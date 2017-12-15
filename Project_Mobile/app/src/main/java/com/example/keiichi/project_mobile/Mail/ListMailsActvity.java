@@ -270,9 +270,9 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         } catch (IndexOutOfBoundsException e) {
             Log.d(TAG, "User at this position does not exist: " + e.toString());
         }
-        if (accessToken == null) {
+
             onCallGraphClicked();
-        }
+
 
 
     }
@@ -472,52 +472,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         //beetje kloten met mails
         System.out.println(graphResponse);
         JSONArray mailJsonArray = null;
-        //haal mails binnen
-        try {
-            mailJsonArray = (JSONArray) graphResponse.get("value");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        assert mailJsonArray != null;
-        JSONObject object = mailJsonArray.getJSONObject(1);
-        System.out.println(object.get("from"));
-
-        this.finalMailJsonArray = mailJsonArray;
-        RecyclerView.LayoutManager manager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(manager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        mailAdapter = new MailAdapter(this, finalMailJsonArray);
-        recyclerView.setAdapter(mailAdapter);
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                if (actionModeEnabled) {
-                    selectedItem(position);
-                    Toast.makeText(getApplicationContext(), String.valueOf(position), Toast.LENGTH_SHORT).show();
-
-
-                } else {
-                    Intent showMail = new Intent(ListMailsActvity.this, DisplayMailActivity.class);
-                    try {
-                        showMail.putExtra("mailObjext", finalMailJsonArray.getString(position));
-                        showMail.putExtra("accestoken", authResult.getAccessToken());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    startActivity(showMail);
-                }
-
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-                Toast.makeText(getApplicationContext(), "hey long boo", Toast.LENGTH_SHORT).show();
-                view.startActionMode(actionModeCallback);
-                selectedItem(position);
-
-            }
-        }));
+        getMails(finalMailJsonArray,graphResponse);
 
 
     }
@@ -649,6 +604,53 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
             queue.add(objectRequest);
         }
+
+    }
+
+    private void getMails(JSONArray mailJsonArray, JSONObject graphResponse ) throws JSONException {
+        //haal mails binnen
+
+            mailJsonArray = (JSONArray) graphResponse.get("value");
+
+        assert mailJsonArray != null;
+        JSONObject object = mailJsonArray.getJSONObject(1);
+        System.out.println(object.get("from"));
+
+        this.finalMailJsonArray = mailJsonArray;
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(manager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        mailAdapter = new MailAdapter(this, finalMailJsonArray);
+        recyclerView.setAdapter(mailAdapter);
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                if (actionModeEnabled) {
+                    selectedItem(position);
+                    Toast.makeText(getApplicationContext(), String.valueOf(position), Toast.LENGTH_SHORT).show();
+
+
+                } else {
+                    Intent showMail = new Intent(ListMailsActvity.this, DisplayMailActivity.class);
+                    try {
+                        showMail.putExtra("mailObjext", finalMailJsonArray.getString(position));
+                        showMail.putExtra("accestoken", authResult.getAccessToken());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    startActivity(showMail);
+                }
+
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+                view.startActionMode(actionModeCallback);
+                selectedItem(position);
+
+            }
+        }));
 
     }
 
