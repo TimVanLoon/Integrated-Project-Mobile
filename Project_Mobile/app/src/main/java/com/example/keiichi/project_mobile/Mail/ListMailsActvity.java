@@ -80,6 +80,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
     NavigationView mailNavigationView;
     private DrawerLayout mDrawerLayout;
+    private String test;
     private Toolbar myToolbar;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private boolean multiSelect = false;
@@ -134,6 +135,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             "https://graph.microsoft.com/Calendars.ReadWrite"};
 
     //final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me";
+    final private String PHOTO_REQUEST = "https://graph.microsoft.com/beta/me/photo/$value";
     final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/mailFolders('Inbox')/messages?$top=25";
     final static String CHANNEL_ID = "my_channel_01";
@@ -322,6 +324,8 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
             /* call graph */
                 callGraphAPI();
+                callGrapAPIForProfilePicture();
+                System.out.println("hey boo : "+ test);
 
             /* update the UI to post call Graph state */
                 updateSuccessUI();
@@ -362,14 +366,8 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                 Log.d(TAG, "ID Token: " + authenticationResult.getIdToken());
                 Log.d(TAG, "Acces Token: " + authenticationResult.getAccessToken());
 
-            /* Store the auth result */
-                authResult = authenticationResult;
 
-            /* call Graph */
-                callGraphAPI();
 
-            /* update the UI to post call Graph state */
-                updateSuccessUI();
             }
 
             @Override
@@ -652,6 +650,59 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             }
         }));
 
+    }
+
+    /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
+    private void callGrapAPIForProfilePicture() {
+        Log.d(TAG, "Starting volley request to graph");
+        Log.d(TAG, accessToken);
+
+    /* Make sure we have a token to send to graph */
+        if (accessToken == null) {
+            return;
+        }
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        JSONObject parameters = new JSONObject();
+
+        try {
+            parameters.put("key", "value");
+        } catch (Exception e) {
+            Log.d(TAG, "Failed to put parameters: " + e.toString());
+        }
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, PHOTO_REQUEST,
+                parameters, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+            /* Successfully called graph, process data and send to UI */
+                Log.d(TAG, "Response: " + response.toString());
+
+                    test = response.toString();
+
+                    System.out.println("foto: " + response);
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d(TAG, "Error: " + error.toString());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+                return headers;
+            }
+        };
+
+        Log.d(TAG, "Adding HTTP GET to Queue, Request: " + request.toString());
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                3000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(request);
     }
 
 
