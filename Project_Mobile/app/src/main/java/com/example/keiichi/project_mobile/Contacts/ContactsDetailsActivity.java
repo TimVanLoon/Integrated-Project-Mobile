@@ -1,6 +1,7 @@
 package com.example.keiichi.project_mobile.Contacts;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.provider.ContactsContract;
 import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
@@ -50,7 +51,9 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         phoneButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                Toast.makeText(getApplicationContext(), "Call!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:" + phoneNumber));
+                startActivity(intent);
             }
         });
 
@@ -71,7 +74,10 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         smsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                Toast.makeText(getApplicationContext(), "Text!", Toast.LENGTH_SHORT).show();
+                Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                sendIntent.setData(Uri.parse("sms:"));
+                sendIntent.putExtra("address", phoneNumber);
+                startActivity(sendIntent);
             }
         });
         // INITIALISEER ACTION BAR
