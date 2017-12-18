@@ -185,6 +185,9 @@ public class AddContactActivity extends AppCompatActivity {
         contact.setGivenName(firstNameInput.getText().toString());
         contact.setSurname(lastNameInput.getText().toString());
 
+        String displayName = firstNameInput.getText().toString() + " " + lastNameInput.getText().toString();
+        contact.setDisplayName(displayName);
+
         if(!emailInput.getText().toString().isEmpty()){
             EmailAddress contactEmail = new EmailAddress(emailInput.getText().toString());
             List<EmailAddress> listEmails = new ArrayList<>();
