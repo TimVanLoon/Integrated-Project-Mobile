@@ -70,9 +70,33 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         phoneNumber = getIntent().getStringExtra("userPhone");
         emailList = (List<EmailAddress>)getIntent().getSerializableExtra("emailList");
 
-        if(emailList != null){
+        if(!emailList.isEmpty()){
             emailAddress = emailList.get(0).getAddress();
+
+            mailButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+
+                    Intent sendMail = new Intent(ContactsDetailsActivity.this, SendMailActivity.class);
+                    sendMail.putExtra("AccessToken", accessToken);
+                    sendMail.putExtra("userName", userName);
+                    sendMail.putExtra("userEmail", userEmail);
+                    sendMail.putExtra("emailAddress", emailAddress);
+                    startActivity(sendMail);
+                }
+            });
         }
+        else {
+
+            mailButton.setColorFilter(Color.GRAY);
+
+            mailButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+
+                    Toast.makeText(getApplicationContext(), "No E-mail Address found!", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
 
         if (phoneNumber.equals("")){
             smsButton.setColorFilter(Color.GRAY);
@@ -81,14 +105,14 @@ public class ContactsDetailsActivity extends AppCompatActivity {
             phoneButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
 
-                    Toast.makeText(getApplicationContext(), "No phone number found!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "No Phone Number found!", Toast.LENGTH_SHORT).show();
                 }
             });
 
             smsButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
 
-                    Toast.makeText(getApplicationContext(), "No phone number found!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "No Phone Number found!", Toast.LENGTH_SHORT).show();
                 }
             });
         } else{
@@ -121,17 +145,6 @@ public class ContactsDetailsActivity extends AppCompatActivity {
             }
         });
 
-        mailButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-                Intent sendMail = new Intent(ContactsDetailsActivity.this, SendMailActivity.class);
-                sendMail.putExtra("AccessToken", accessToken);
-                sendMail.putExtra("userName", userName);
-                sendMail.putExtra("userEmail", userEmail);
-                sendMail.putExtra("emailAddress", emailAddress);
-                startActivity(sendMail);
-            }
-        });
 
         TextView headerDisplayName = (TextView) findViewById(R.id.displayName);
         headerDisplayName.setText(displayName);
