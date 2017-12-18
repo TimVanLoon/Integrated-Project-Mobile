@@ -1,6 +1,7 @@
 package com.example.keiichi.project_mobile.Contacts;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.support.design.widget.NavigationView;
@@ -48,15 +49,6 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         email = (TextView) findViewById(R.id.userEmail);
         userPhone = (TextView) findViewById(R.id.userPhone);
 
-        phoneButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-                Intent intent = new Intent(Intent.ACTION_DIAL);
-                intent.setData(Uri.parse("tel:" + phoneNumber));
-                startActivity(intent);
-            }
-        });
-
         calendarButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
@@ -71,15 +63,6 @@ public class ContactsDetailsActivity extends AppCompatActivity {
             }
         });
 
-        smsButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-                Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-                sendIntent.setData(Uri.parse("sms:"));
-                sendIntent.putExtra("address", phoneNumber);
-                startActivity(sendIntent);
-            }
-        });
         // INITIALISEER ACTION BAR
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
@@ -94,6 +77,45 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         givenName = getIntent().getStringExtra("givenName");
         displayName = getIntent().getStringExtra("displayName");
         phoneNumber = getIntent().getStringExtra("userPhone");
+
+        if (phoneNumber.equals("")){
+            smsButton.setColorFilter(Color.GRAY);
+            phoneButton.setColorFilter(Color.GRAY);
+
+            phoneButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+
+                    Toast.makeText(getApplicationContext(), "No phone number found!", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            smsButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+
+                    Toast.makeText(getApplicationContext(), "No phone number found!", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else{
+
+            phoneButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+
+                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                    intent.setData(Uri.parse("tel:" + phoneNumber));
+                    startActivity(intent);
+                }
+            });
+
+            smsButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+
+                    Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                    sendIntent.setData(Uri.parse("sms:"));
+                    sendIntent.putExtra("address", phoneNumber);
+                    startActivity(sendIntent);
+                }
+            });
+        }
 
         TextView headerDisplayName = (TextView) findViewById(R.id.displayName);
         headerDisplayName.setText(displayName);
