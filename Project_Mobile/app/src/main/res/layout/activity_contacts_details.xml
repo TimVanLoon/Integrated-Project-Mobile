@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,11 +8,99 @@
     tools:context="com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity"
     >
 
-    <include
-        layout="@layout/header_contact_details"
-        android:layout_alignParentTop="true"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
-        />
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/header_contact_details"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        app:layout_constraintStart_toStartOf="@+id/givenName"
+        tools:layout_editor_absoluteY="56dp" />
+
+    <ImageButton
+        android:id="@+id/mailButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/calendarButton"
+        android:layout_marginBottom="300dp"
+        android:layout_marginStart="16dp"
+        android:layout_toStartOf="@+id/calendarButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_mail" />
+
+    <ImageButton
+        android:id="@+id/calendarButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/givenName"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="220dp"
+        android:layout_toStartOf="@+id/phoneButton"
+        app:layout_constraintStart_toEndOf="@+id/mailButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_calendar" />
+
+    <ImageButton
+        android:id="@+id/phoneButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/imageView"
+        android:layout_below="@+id/givenName"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="220dp"
+        app:layout_constraintEnd_toStartOf="@+id/smsButton"
+        app:layout_constraintHorizontal_bias="0.576"
+        app:layout_constraintStart_toEndOf="@+id/calendarButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_phone" />
+
+    <ImageButton
+        android:id="@+id/smsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/givenName"
+        android:layout_marginEnd="36dp"
+        android:layout_marginTop="220dp"
+        android:layout_toEndOf="@+id/phoneButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_sms" />
+
+    <TextView
+        android:id="@+id/givenName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="144dp"
+        android:layout_marginTop="160dp"
+        android:text="TextView"
+        android:textSize="22dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/toolbar" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="156dp"
+        android:layout_marginTop="80dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/toolbar"
+        app:srcCompat="@mipmap/ic_keffin_round" />
 
 </android.support.constraint.ConstraintLayout>

@@ -81,7 +81,7 @@ public class AddContactActivity extends AppCompatActivity {
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
-        // VOEG BACK BUTTONN TOE AAN ACTION BAR
+        // VOEG BACK BUTTON TOE AAN ACTION BAR
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 

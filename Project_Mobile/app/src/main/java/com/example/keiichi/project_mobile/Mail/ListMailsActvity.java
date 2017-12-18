@@ -37,6 +37,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -79,6 +80,7 @@ import static com.android.volley.Request.Method.HEAD;
 public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     NavigationView mailNavigationView;
+    private ImageView userPicture;
     private DrawerLayout mDrawerLayout;
     private String test;
     private Toolbar myToolbar;
@@ -135,7 +137,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             "https://graph.microsoft.com/Calendars.ReadWrite"};
 
     //final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me";
-    final private String PHOTO_REQUEST = "https://graph.microsoft.com/v1.0/me/photo/$value";
     final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/mailFolders('Inbox')/messages?$top=25";
     final static String CHANNEL_ID = "my_channel_01";
@@ -167,6 +168,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_mails);
 
+        userPicture = (ImageView) findViewById(R.id.userPicture);
         recyclerView = findViewById(R.id.ListViewMails);
         signOutButton = findViewById(R.id.clearCache);
         toSendMailActivity = findViewById(R.id.ButtonSendMail);
@@ -324,7 +326,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
             /* call graph */
                 callGraphAPI();
-                callGrapAPIForProfilePicture();
+                //callGrapAPIForProfilePicture();
                 System.out.println("hey boo : "+ test);
 
             /* update the UI to post call Graph state */
@@ -670,14 +672,15 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         } catch (Exception e) {
             Log.d(TAG, "Failed to put parameters: " + e.toString());
         }
+
+        String PHOTO_REQUEST = "https://graph.microsoft.com/v1.0/users/"+ userEmail +"/photo/$value";
+
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, PHOTO_REQUEST,
                 parameters, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
             /* Successfully called graph, process data and send to UI */
-                Log.d(TAG, "Response: " + response.toString());
-
-                    test = response.toString();
+                Log.d(TAG, "Response: " + response);
 
                     System.out.println("foto: " + response);
 
@@ -711,5 +714,4 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
         void onLongClick(View view, int position);
     }
-
 }
