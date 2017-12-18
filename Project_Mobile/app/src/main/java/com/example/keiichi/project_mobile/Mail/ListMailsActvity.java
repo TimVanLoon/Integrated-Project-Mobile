@@ -135,7 +135,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             "https://graph.microsoft.com/Calendars.ReadWrite"};
 
     //final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me";
-    final private String PHOTO_REQUEST = "https://graph.microsoft.com/beta/me/photo/$value";
+    final private String PHOTO_REQUEST = "https://graph.microsoft.com/v1.0/me/photo/$value";
     final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/mailFolders('Inbox')/messages?$top=25";
     final static String CHANNEL_ID = "my_channel_01";

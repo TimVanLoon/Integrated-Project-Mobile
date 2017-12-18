@@ -1,6 +1,8 @@
 package com.example.keiichi.project_mobile.Contacts;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
@@ -15,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -315,6 +318,7 @@ public class ContactsActivity extends AppCompatActivity {
 
 
 
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -340,4 +344,5 @@ public class ContactsActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Empty contact list!", Toast.LENGTH_SHORT).show();
         }
     }
+
 }
