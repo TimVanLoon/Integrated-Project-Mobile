@@ -26,10 +26,13 @@ public class ContactsDetailsActivity extends AppCompatActivity {
     private String userEmail;
     private String givenName;
     private String displayName;
+    private String phoneNumber;
     private ImageButton phoneButton;
     private ImageButton calendarButton;
     private ImageButton mailButton;
     private ImageButton smsButton;
+    private TextView email;
+    private TextView userPhone;
     Toolbar myToolbar;
 
     @Override
@@ -41,6 +44,8 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         calendarButton = (ImageButton) findViewById(R.id.calendarButton);
         mailButton = (ImageButton) findViewById(R.id.mailButton);
         smsButton = (ImageButton) findViewById(R.id.smsButton);
+        email = (TextView) findViewById(R.id.userEmail);
+        userPhone = (TextView) findViewById(R.id.userPhone);
 
         phoneButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -82,9 +87,12 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         userEmail = getIntent().getStringExtra("userEmail");
         givenName = getIntent().getStringExtra("givenName");
         displayName = getIntent().getStringExtra("displayName");
+        phoneNumber = getIntent().getStringExtra("userPhone");
 
         TextView headerDisplayName = (TextView) findViewById(R.id.displayName);
         headerDisplayName.setText(displayName);
+        email.setText(userEmail);
+        userPhone.setText(phoneNumber);
     }
 
     // METHODE VOOR DE CLICKABLE ICOONTJES IN DE ACTION BAR
