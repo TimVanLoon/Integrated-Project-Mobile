@@ -44,6 +44,7 @@ public class SendMailActivity extends AppCompatActivity {
     private TextView Subject;
     private RichEditor MailBody;
     private String Acces_Token;
+    private String emailAddress;
     private RichEditor editor;
 
 
@@ -60,6 +61,11 @@ public class SendMailActivity extends AppCompatActivity {
         MailBody = (RichEditor) findViewById(R.id.TextMailBody);
         Intent intent = getIntent();
         Acces_Token = intent.getStringExtra("accestoken");
+        emailAddress = intent.getStringExtra("emailAddress");
+
+        if (emailAddress != null){
+            MailAdress.setText(emailAddress);
+        }
 
         Sendmail.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -43,6 +43,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -344,6 +345,11 @@ public class ContactsActivity extends AppCompatActivity {
             }
             showContactDetails.putExtra("AccessToken", accessToken);
             showContactDetails.putExtra("userName", userName);
+
+            if(contact.getEmailAddresses() != null){
+                showContactDetails.putExtra("emailList",(Serializable) contact.getEmailAddresses());
+            }
+
             showContactDetails.putExtra("userEmail", userEmail);
             startActivity(showContactDetails);
 

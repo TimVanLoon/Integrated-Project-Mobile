@@ -14,10 +14,13 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
+import com.example.keiichi.project_mobile.Mail.SendMailActivity;
 import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONException;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -29,12 +32,14 @@ public class ContactsDetailsActivity extends AppCompatActivity {
     private String givenName;
     private String displayName;
     private String phoneNumber;
+    private String emailAddress;
     private ImageButton phoneButton;
     private ImageButton calendarButton;
     private ImageButton mailButton;
     private ImageButton smsButton;
     private TextView email;
     private TextView userPhone;
+    private List<EmailAddress> emailList;
     Toolbar myToolbar;
 
     @Override
@@ -48,20 +53,6 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         smsButton = (ImageButton) findViewById(R.id.smsButton);
         email = (TextView) findViewById(R.id.userEmail);
         userPhone = (TextView) findViewById(R.id.userPhone);
-
-        calendarButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-                Toast.makeText(getApplicationContext(), "Plan!", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        mailButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-                Toast.makeText(getApplicationContext(), "Mail!", Toast.LENGTH_SHORT).show();
-            }
-        });
 
         // INITIALISEER ACTION BAR
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -77,6 +68,11 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         givenName = getIntent().getStringExtra("givenName");
         displayName = getIntent().getStringExtra("displayName");
         phoneNumber = getIntent().getStringExtra("userPhone");
+        emailList = (List<EmailAddress>)getIntent().getSerializableExtra("emailList");
+
+        if(emailList != null){
+            emailAddress = emailList.get(0).getAddress();
+        }
 
         if (phoneNumber.equals("")){
             smsButton.setColorFilter(Color.GRAY);
@@ -116,6 +112,26 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                 }
             });
         }
+
+
+        calendarButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                Toast.makeText(getApplicationContext(), "Plan!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        mailButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                Intent sendMail = new Intent(ContactsDetailsActivity.this, SendMailActivity.class);
+                sendMail.putExtra("AccessToken", accessToken);
+                sendMail.putExtra("userName", userName);
+                sendMail.putExtra("userEmail", userEmail);
+                sendMail.putExtra("emailAddress", emailAddress);
+                startActivity(sendMail);
+            }
+        });
 
         TextView headerDisplayName = (TextView) findViewById(R.id.displayName);
         headerDisplayName.setText(displayName);
