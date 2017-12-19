@@ -19,8 +19,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Push.setSenderId("{SenderId}");
         AppCenter.start(getApplication(), "0dad3b08-3653-41ea-9c9b-689e0d88fbcf",
                 Analytics.class, Crashes.class, Push.class);
+
 
         Intent intent = new Intent(this, ListMailsActvity.class);
         startActivity(intent);
