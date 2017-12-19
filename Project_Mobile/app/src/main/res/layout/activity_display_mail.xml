@@ -9,8 +9,8 @@
 
     <TextView
         android:id="@+id/mailBody"
-        android:layout_width="350dp"
-        android:layout_height="247dp"
+        android:layout_width="match_parent"
+        android:layout_height="412dp"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="4dp"
         android:layout_marginTop="148dp"
@@ -57,68 +57,16 @@
             app:srcCompat="@android:drawable/sym_action_email" />
     </LinearLayout>
 
-    <HorizontalScrollView
-        android:layout_width="352dp"
-        android:layout_height="22dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="216dp"
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="342dp"
+        android:layout_height="116dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/button3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Button" />
-
-            <Button
-                android:id="@+id/button4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Button" />
-
-            <Button
-                android:id="@+id/button5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Button" />
-
-            <Button
-                android:id="@+id/button6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Button" />
-
-            <Button
-                android:id="@+id/button7"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Button" />
-
-            <Button
-                android:id="@+id/button8"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Button" />
-
-            <Button
-                android:id="@+id/button9"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Button" />
-        </LinearLayout>
-    </HorizontalScrollView>
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

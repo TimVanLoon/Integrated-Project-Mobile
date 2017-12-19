@@ -7,6 +7,7 @@ import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +41,7 @@ public class SendMailActivity extends AppCompatActivity {
     final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/sendMail";
 
     private Button Sendmail;
+    private ImageButton ButtonBold;
     private TextView MailAdress;
     private TextView Subject;
     private RichEditor MailBody;
@@ -54,12 +56,19 @@ public class SendMailActivity extends AppCompatActivity {
 
 
 
-        Sendmail = (Button) findViewById(R.id.ButtonSendMail);
-        MailAdress = (TextView) findViewById(R.id.TextMailAdress);
-        Subject = (TextView) findViewById(R.id.TextMailSubject);
-        MailBody = (RichEditor) findViewById(R.id.TextMailBody);
+        Sendmail = findViewById(R.id.ButtonSendMail);
+        MailAdress = findViewById(R.id.TextMailAdress);
+        Subject = findViewById(R.id.TextMailSubject);
+        MailBody = findViewById(R.id.editor);
         Intent intent = getIntent();
         Acces_Token = intent.getStringExtra("accestoken");
+        ButtonBold = findViewById(R.id.action_bold);
+        ButtonBold.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MailBody.setBold();
+            }
+        });
 
         Sendmail.setOnClickListener(new View.OnClickListener() {
             @Override
