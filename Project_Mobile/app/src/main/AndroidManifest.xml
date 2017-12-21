@@ -36,7 +36,8 @@
                     android:scheme="msald3b60662-7768-4a50-b96f-eb1dfcc7ec8d" />
             </intent-filter>
         </activity>
-        <activity android:name=".Mail.DisplayMailActivity" />
+        <activity android:name=".Mail.DisplayMailActivity"
+            android:launchMode="singleInstance"/>
         <activity android:name=".Mail.SendMailActivity"
             android:windowSoftInputMode="adjustPan"/>
         <activity
