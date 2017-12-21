@@ -32,6 +32,7 @@ import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 
 public class DisplayMailActivity extends AppCompatActivity {
+
     final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
     private TextView mailBodyContent;
     private TextView Subject;
@@ -44,18 +45,20 @@ public class DisplayMailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_mail);
-        mailBodyContent = (TextView) findViewById(R.id.mailBody);
+        mailBodyContent = findViewById(R.id.mailBody);
         mailBodyContent.setMovementMethod(new ScrollingMovementMethod());
         Intent intent = getIntent();
         String JsonString = intent.getStringExtra("mailObjext");
         ACCES_TOKEN = intent.getStringExtra("accestoken");
-        deleteButton = (ImageButton) findViewById(R.id.ButtonDelete);
+        deleteButton = findViewById(R.id.ButtonDelete);
+
 
 
         try {
             mail = new JSONObject(JsonString);
             body = mail.getJSONObject("body");
             mailBodyContent.setText(Html.fromHtml(body.getString("content")));
+            updateMail(mail);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -107,6 +110,50 @@ public class DisplayMailActivity extends AppCompatActivity {
 
         queue.add(objectRequest);
 
+    }
+
+    private void updateMail(JSONObject mail) throws JSONException {
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        JSONObject body = new JSONObject(buildupdateJsonMail());
+
+
+
+        System.out.println(mail.toString());
+
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.PATCH, URL_DELETE + mail.getString("id"), body,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        System.out.println(response.toString());
+                    }
+
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + ACCES_TOKEN);
+
+
+                return headers;
+            }
+
+        };
+
+        queue.add(objectRequest);
+    }
+
+    private String buildupdateJsonMail() {
+        JsonObjectBuilder factory = Json.createObjectBuilder()
+                .add("isRead", true);
+        return factory.build().toString();
     }
 
 }

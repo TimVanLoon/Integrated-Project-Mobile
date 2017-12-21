@@ -26,10 +26,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 
 import android.util.Log;
 import android.view.ActionMode;
@@ -75,8 +71,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.android.volley.Request.Method.HEAD;
-
 public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     NavigationView mailNavigationView;
@@ -120,6 +114,10 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         @Override
         public void onDestroyActionMode(ActionMode actionMode) {
             multiSelect = false;
+            for (Integer item : selectedItems) {
+                recyclerView.getChildAt(item).setBackgroundColor(Color.TRANSPARENT);
+            }
+
             selectedItems.clear();
             mailAdapter.notifyDataSetChanged();
 
@@ -137,10 +135,17 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             "https://graph.microsoft.com/Calendars.ReadWrite"};
 
     //final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me";
+
+    final private String URL_MAIL = "https://graph.microsoft.com/v1.0/me/messages/";
+
+    final private String PHOTO_REQUEST = "https://graph.microsoft.com/v1.0/me/photo/$value";
+
     final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
+
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/mailFolders('Inbox')/messages?$top=25";
     final static String CHANNEL_ID = "my_channel_01";
 
+    private JSONObject graphResponse;
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private MailAdapter mailAdapter;
@@ -178,7 +183,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, myToolbar, R.string.drawer_open,
                 R.string.drawer_close);
@@ -189,10 +194,10 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
         mBottomNav = findViewById(R.id.navigation);
 
-        mailNavigationView = (NavigationView) findViewById(R.id.mailNavigationView);
-        View hView =  mailNavigationView.getHeaderView(0);
-        TextView nav_userName = (TextView)hView.findViewById(R.id.userName);
-        TextView nav_userEmail = (TextView)hView.findViewById(R.id.userEmail);
+        mailNavigationView = findViewById(R.id.mailNavigationView);
+        View hView = mailNavigationView.getHeaderView(0);
+        TextView nav_userName = hView.findViewById(R.id.userName);
+        TextView nav_userEmail = hView.findViewById(R.id.userEmail);
         nav_userName.setText(userName);
         nav_userEmail.setText(userEmail);
 
@@ -275,15 +280,14 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             Log.d(TAG, "User at this position does not exist: " + e.toString());
         }
 
-            onCallGraphClicked();
-
+        onCallGraphClicked();
 
 
     }
 
 
     @Override
-    protected void onPostCreate(Bundle savedInstanceState){
+    protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         actionBarDrawerToggle.syncState();
     }
@@ -471,8 +475,8 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
         //beetje kloten met mails
         System.out.println(graphResponse);
-        JSONArray mailJsonArray = null;
-        getMails(finalMailJsonArray,graphResponse);
+        this.graphResponse = graphResponse;
+        getMails(finalMailJsonArray, graphResponse);
 
 
     }
@@ -550,7 +554,11 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     @Override
     public void onRefresh() {
         swipeRefreshLayout.setRefreshing(true);
-        Toast.makeText(getApplicationContext(), "hey boo", Toast.LENGTH_SHORT).show();
+        try {
+            getMails(finalMailJsonArray, graphResponse);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         swipeRefreshLayout.setRefreshing(false);
 
 
@@ -560,10 +568,10 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         if (multiSelect) {
             if (selectedItems.contains(item)) {
                 selectedItems.remove(item);
-                recyclerView.getChildAt(item).setBackgroundColor(Color.WHITE);
+                recyclerView.getChildAt(item).setBackgroundColor(Color.TRANSPARENT);
             } else {
                 selectedItems.add(item);
-                recyclerView.getChildAt(item).setBackgroundColor(Color.LTGRAY);
+                recyclerView.getChildAt(item).setBackgroundColor(Color.WHITE);
             }
         }
     }
@@ -576,7 +584,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             JSONObject mail = finalMailJsonArray.getJSONObject(integer);
 
 
-            StringRequest objectRequest = new StringRequest(Request.Method.DELETE, URL_DELETE + mail.getString("id"),
+            StringRequest objectRequest = new StringRequest(Request.Method.DELETE, URL_MAIL + mail.getString("id"),
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
@@ -607,10 +615,10 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
     }
 
-    private void getMails(JSONArray mailJsonArray, JSONObject graphResponse ) throws JSONException {
+    private void getMails(JSONArray mailJsonArray, JSONObject graphResponse) throws JSONException {
         //haal mails binnen
 
-            mailJsonArray = (JSONArray) graphResponse.get("value");
+        mailJsonArray = (JSONArray) graphResponse.get("value");
 
         assert mailJsonArray != null;
         JSONObject object = mailJsonArray.getJSONObject(1);
@@ -648,6 +656,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             public void onLongClick(View view, int position) {
                 view.startActionMode(actionModeCallback);
                 selectedItem(position);
+
 
             }
         }));
