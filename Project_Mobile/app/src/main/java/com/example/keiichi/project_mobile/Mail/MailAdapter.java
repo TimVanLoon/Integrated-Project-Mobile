@@ -4,6 +4,7 @@ package com.example.keiichi.project_mobile.Mail;
 import android.content.Context;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -19,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.keiichi.project_mobile.R;
 
@@ -49,6 +51,13 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
 
     private static int currentSelectedIndex = -1;
 
+    MailAdapter(Context context, JSONArray jsonArray) {
+        this.jsonArray = jsonArray;
+        this.mContext = context;
+        this.selectedItems = new SparseBooleanArray();
+        animeationItemsIndex = new SparseBooleanArray();
+    }
+
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
@@ -60,6 +69,7 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
         try {
             //Mail objecten ophalen
+
             JSONObject mailObject = jsonArray.getJSONObject(position);
             JSONObject sender = mailObject.getJSONObject("from");
             JSONObject emailAddress = sender.getJSONObject("emailAddress");
@@ -72,6 +82,10 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
             holder.from.setText(emailAddress.getString("name"));
             holder.message.setText(mailObject.getString("bodyPreview"));
             holder.subject.setText(mailObject.getString("subject"));
+            if(!mailObject.getBoolean("isRead")){
+                holder.from.setTextColor(Color.WHITE);
+            }
+
 
             //eerste letter van 'from' tonen
             holder.iconText.setText(emailAddress.getString("name").substring(0, 1));
@@ -81,6 +95,7 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
             holder.itemView.setActivated(selectedItems.get(position, false));
 
             //set onlcik events
+
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -162,16 +177,15 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
 
     }
 
-    MailAdapter(Context context, JSONArray jsonArray) {
-        this.jsonArray = jsonArray;
-        this.mContext = context;
-        this.selectedItems = new SparseBooleanArray();
-        animeationItemsIndex = new SparseBooleanArray();
+
+
+
+    public interface ClickListener {
+        void onClick(View view, int position);
+
+        void onLongClick(View view, int position);
     }
 
-    public int getSelectedItemCount() {
-        return selectedItems.size();
-    }
 
 
 }
