@@ -1,6 +1,8 @@
 package com.example.keiichi.project_mobile.Contacts;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
@@ -15,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -42,6 +45,7 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -204,6 +208,8 @@ public class ContactsActivity extends AppCompatActivity {
             case R.id.action_add:
                 Intent intentAddContact = new Intent(ContactsActivity.this, AddContactActivity.class);
                 intentAddContact.putExtra("AccessToken", accessToken);
+                intentAddContact.putExtra("userName", userName);
+                intentAddContact.putExtra("userEmail", userEmail);
                 startActivity(intentAddContact);
                 return true;
 
@@ -272,7 +278,7 @@ public class ContactsActivity extends AppCompatActivity {
     private void updateGraphUI(JSONObject graphResponse) throws JSONException {
 
         // Test de response
-        System.out.println(graphResponse);
+        System.out.println(" de response: " + graphResponse);
         JSONArray contactsJsonArray = null;
 
         // Haal de contacten binnen
@@ -293,8 +299,21 @@ public class ContactsActivity extends AppCompatActivity {
 
             System.out.println("robin van hoof: " + contacts);
 
+            /*
+            //DE CONTACT LIJST SORTEREN OP ALFABETISCHE VOLGORDE VAN NAMEN
+            JSONArray sortedContactArray = new JSONArray();
+            List<Contact> jsonValues = new ArrayList<Contact>();
+            /*
+            for (int i = 0; i < contactArray.length(); i++) {
+                jsonValues.add(contactArray.getJSONObject(i));
+            }
+            */
+
+
+
             contactAdapter = new ContactAdapter(this, contactArray);
             contactsListView.setAdapter(contactAdapter);
+
 
 
 
@@ -305,7 +324,7 @@ public class ContactsActivity extends AppCompatActivity {
         }
         assert contactsJsonArray != null;
 
-        contactAdapter = new ContactAdapter(this, contactsJsonArray);
+        contactAdapter = new ContactAdapter(this, contactsJsonArray );
         contactsListView.setAdapter(contactAdapter);
 
     }
@@ -325,4 +344,5 @@ public class ContactsActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Empty contact list!", Toast.LENGTH_SHORT).show();
         }
     }
+
 }

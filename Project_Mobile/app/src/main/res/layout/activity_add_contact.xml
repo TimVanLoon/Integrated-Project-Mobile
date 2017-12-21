@@ -93,6 +93,7 @@
             android:layout_width="fill_parent">
         </EditText>
 
+
         <TextView
             android:id="@+id/workTitle"
             android:layout_width="wrap_content"
@@ -199,6 +200,58 @@
             android:layout_width="fill_parent">
         </EditText>
 
+
+        <TextView
+            android:id="@+id/nickNameTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/nickNameTitle"
+            android:textStyle="bold"
+            android:textSize="10pt">
+        </TextView>
+
+        <EditText
+            android:id="@+id/nickName"
+            android:layout_height="wrap_content"
+            android:hint="@string/nickName"
+            android:inputType="textPersonName"
+            android:layout_width="fill_parent">
+        </EditText>
+
+        <TextView
+            android:id="@+id/spouseNameTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/spouseNameTitle"
+            android:textStyle="bold"
+            android:textSize="10pt">
+        </TextView>
+
+        <EditText
+            android:id="@+id/spouseName"
+            android:layout_height="wrap_content"
+            android:hint="@string/spouseName"
+            android:inputType="textPersonName"
+            android:layout_width="fill_parent">
+        </EditText>
+
+        <TextView
+            android:id="@+id/birthdayTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/birthdayTitle"
+            android:textStyle="bold"
+            android:textSize="10pt">
+        </TextView>
+
+        <EditText
+            android:id="@+id/birthday"
+            android:layout_height="wrap_content"
+            android:hint="@string/birthday"
+            android:inputType="textPersonName"
+            android:layout_width="fill_parent">
+        </EditText>
+
         <TextView
             android:id="@+id/notesTitle"
             android:layout_width="wrap_content"
@@ -208,9 +261,13 @@
             android:textSize="10pt">
         </TextView>
 
-
-
-
+        <EditText
+            android:id="@+id/personalNotes"
+            android:layout_height="200dp"
+            android:hint="@string/personalNotes"
+            android:inputType="textPersonName"
+            android:layout_width="fill_parent">
+        </EditText>
 
     </android.support.v7.widget.LinearLayoutCompat>
 

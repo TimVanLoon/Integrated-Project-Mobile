@@ -17,13 +17,13 @@
 
     <string name="save">Save</string>
     <string name="addContactTitle">Add a contact</string>
-    <string name="nameTitle">Name</string>
+    <string name="nameTitle">Name*</string>
     <string name="nameInput">First name</string>
     <string name="lastNameInput">Last name</string>
     <string name="emailTitle">E-mail</string>
     <string name="emailInput">E-mail</string>
     <string name="phoneTitle">Phone</string>
-    <string name="phoneInput">Company Phone</string>
+    <string name="phoneInput">Mobile Phone</string>
     <string name="workTitle">Work</string>
     <string name="workInput">Company</string>
 
@@ -61,5 +61,22 @@
     <string name="countryName">Country</string>
 
     <string name="notesTitle">Notes</string>
+    <string name="personalNotes">Notes...</string>
 
+    <string name="nickNameTitle">Nickname</string>
+    <string name="nickName">Nickname</string>
+
+    <string name="spouseNameTitle">Spouse</string>
+    <string name="spouseName">Spouse Name</string>
+
+    <string name="birthdayTitle">Birthday</string>
+    <string name="birthday">Birthday</string>
+
+    <string name="webpageTitle">Webpage</string>
+    <string name="webpage">Webpage</string>
+
+    <string name="genderTitle">Gender</string>
+    <string name="gender">Gender</string>
+
+    <string name="listEvents">listEvents</string>
 </resources>

@@ -1,12 +1,15 @@
 package com.example.keiichi.project_mobile.Contacts;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
@@ -70,6 +73,8 @@ public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterab
 
         try {
             name.setText(json_data.getString("givenName"));
+
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

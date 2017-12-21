@@ -54,7 +54,8 @@ public class AddEventActivity extends AppCompatActivity {
     private EditText eventInput;
     private EditText locationInput;
     private EditText durationInput;
-
+    private String userName;
+    private String userEmail;
 
     DatePickerDialog datePickerDialog;
 
@@ -68,6 +69,8 @@ public class AddEventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_event);
 
         accessToken = getIntent().getStringExtra("AccessToken");
+        userName = getIntent().getStringExtra("userName");
+        userEmail = getIntent().getStringExtra("userEmail");
 
         // INITIALISEER ACTION BAR
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -164,9 +167,11 @@ public class AddEventActivity extends AppCompatActivity {
 
             // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
             case android.R.id.home:
-                Intent intentContacts = new Intent(AddEventActivity.this, CalendarActivity.class);
-                intentContacts.putExtra("AccessToken", accessToken);
-                startActivity(intentContacts);
+                Intent intentCalendar = new Intent(AddEventActivity.this, CalendarActivity.class);
+                intentCalendar.putExtra("AccessToken", accessToken);
+                intentCalendar.putExtra("userName", userName);
+                intentCalendar.putExtra("userEmail", userEmail);
+                startActivity(intentCalendar);
 
                 return true;
 

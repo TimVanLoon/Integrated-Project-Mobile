@@ -5,14 +5,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ListView;
 
+import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ListEventsActivity extends AppCompatActivity {
 
     private ListView eventsListView;
+    private List<Event> events = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +28,8 @@ public class ListEventsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String eventsArrayInString = intent.getStringExtra("EventsArray");
+       // Bundle args = intent.getBundleExtra("eventList");
+        //events = (ArrayList<Event>) args.getSerializable("eventsArrayList");
 
         try {
             JSONArray eventsArray = new JSONArray(eventsArrayInString);

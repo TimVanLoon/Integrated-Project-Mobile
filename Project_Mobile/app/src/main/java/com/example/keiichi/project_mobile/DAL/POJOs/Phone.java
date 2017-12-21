@@ -6,9 +6,8 @@ public class Phone {
     private String type;
 
 
-    public Phone(String number, String type) {
+    public Phone(String number) {
         this.number = number;
-        this.type = type;
     }
 
     public String getNumber() {

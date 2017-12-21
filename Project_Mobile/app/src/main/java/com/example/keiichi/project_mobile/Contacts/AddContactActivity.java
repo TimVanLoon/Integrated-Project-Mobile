@@ -20,12 +20,17 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
+import com.example.keiichi.project_mobile.DAL.POJOs.Phone;
+import com.example.keiichi.project_mobile.DAL.POJOs.PhysicalAddress;
+import com.example.keiichi.project_mobile.DAL.POJOs.Website;
 import com.example.keiichi.project_mobile.R;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,16 +44,29 @@ import javax.json.JsonObjectBuilder;
 public class AddContactActivity extends AppCompatActivity {
 
     final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/contacts";
-
-    private String accessToken;
-
     Toolbar myToolbar;
-
     private EditText firstNameInput;
     private EditText lastNameInput;
     private EditText emailInput;
     private EditText phoneInput;
-
+    private EditText jobTitle;
+    private EditText department;
+    private EditText companyName;
+    private EditText officeLocation;
+    private EditText manager;
+    private EditText assistantName;
+    private EditText streetName;
+    private EditText postalCode;
+    private EditText cityName;
+    private EditText stateName;
+    private EditText countryName;
+    private EditText personalNotes;
+    private EditText nickName;
+    private EditText spouseName;
+    private EditText birthday;
+    private String userName;
+    private String userEmail;
+    private String accessToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +74,8 @@ public class AddContactActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_contact);
 
         accessToken = getIntent().getStringExtra("AccessToken");
+        userName = getIntent().getStringExtra("userName");
+        userEmail = getIntent().getStringExtra("userEmail");
 
         // INITIALISEER ACTION BAR
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -69,6 +89,21 @@ public class AddContactActivity extends AppCompatActivity {
         lastNameInput = (EditText) findViewById(R.id.lastNameInput);
         emailInput = (EditText) findViewById(R.id.emailInput);
         phoneInput = (EditText) findViewById(R.id.phoneInput);
+        jobTitle = (EditText) findViewById(R.id.jobTitle);
+        department = (EditText) findViewById(R.id.department);
+        companyName = (EditText) findViewById(R.id.companyName);
+        officeLocation = (EditText) findViewById(R.id.officeLocation);
+        manager = (EditText) findViewById(R.id.manager);
+        assistantName = (EditText) findViewById(R.id.assistantName);
+        streetName = (EditText) findViewById(R.id.streetName);
+        postalCode = (EditText) findViewById(R.id.postalCode);
+        cityName = (EditText) findViewById(R.id.cityName);
+        stateName = (EditText) findViewById(R.id.stateName);
+        countryName = (EditText) findViewById(R.id.countryName);
+        personalNotes = (EditText) findViewById(R.id.personalNotes);
+        nickName = (EditText) findViewById(R.id.nickName);
+        spouseName = (EditText) findViewById(R.id.spouseName);
+        birthday = (EditText) findViewById(R.id.birthday);
 
     }
 
@@ -92,34 +127,48 @@ public class AddContactActivity extends AppCompatActivity {
             case android.R.id.home:
                 Intent intentContacts = new Intent(AddContactActivity.this, ContactsActivity.class);
                 intentContacts.putExtra("AccessToken", accessToken);
+                intentContacts.putExtra("userName", userName);
+                intentContacts.putExtra("userEmail", userEmail);
                 startActivity(intentContacts);
 
                 return true;
 
             // WANNEER SAVE ICON WORDT AANGEKLIKT
             case R.id.action_save:
-                try {
-                    saveContact();
 
-                    int DELAY_TIME=2000;
 
-                    //start your animation
-                    new Timer().schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            //this code will run after the delay time which is 2 seconds.
-                            Intent intentContacts = new Intent(AddContactActivity.this, ContactsActivity.class);
-                            intentContacts.putExtra("AccessToken", accessToken);
-                            startActivity(intentContacts);
+                    System.out.println("papa auw:" + firstNameInput.getText().toString());
+
+                    if(firstNameInput.getText().toString().isEmpty()&& lastNameInput.getText().toString().isEmpty()){
+                        Toast.makeText(getApplicationContext(), "Required fields are empty!", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        try {
+                            saveContact();
+
+                            int DELAY_TIME=2000;
+
+                            //start your animation
+                            new Timer().schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    //this code will run after the delay time which is 2 seconds.
+                                    Intent intentContacts = new Intent(AddContactActivity.this, ContactsActivity.class);
+                                    intentContacts.putExtra("AccessToken", accessToken);
+                                    startActivity(intentContacts);
+                                }
+                            }, DELAY_TIME);
+
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    }, DELAY_TIME);
+                        return true;
+
+                    }
 
 
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                return true;
 
             default:
                 // If we got here, the user's action was not recognized.
@@ -136,11 +185,67 @@ public class AddContactActivity extends AppCompatActivity {
         contact.setGivenName(firstNameInput.getText().toString());
         contact.setSurname(lastNameInput.getText().toString());
 
-        EmailAddress contactEmailAddress = new EmailAddress(firstNameInput.getText().toString() + " " + lastNameInput.getText().toString(), emailInput.getText().toString());
-        List<EmailAddress> contactList = new ArrayList<>();
-        contactList.add(contactEmailAddress);
+        if(!emailInput.getText().toString().isEmpty()){
+            EmailAddress contactEmail = new EmailAddress(emailInput.getText().toString());
+            List<EmailAddress> listEmails = new ArrayList<>();
+            listEmails.add(contactEmail);
+            contact.setEmailAddresses(listEmails);
+        }
 
-        contact.setEmailAddresses(contactList);
+
+        if(!phoneInput.getText().toString().isEmpty()){
+            contact.setMobilePhone(phoneInput.getText().toString());
+        }
+
+
+        if(!jobTitle.getText().toString().isEmpty()){
+            contact.setJobTitle(jobTitle.getText().toString());
+        }
+
+        if(!department.getText().toString().isEmpty()){
+            contact.setDepartment(department.getText().toString());
+        }
+
+        if(!companyName.getText().toString().isEmpty()){
+            contact.setCompanyName(companyName.getText().toString());
+        }
+
+        if(!officeLocation.getText().toString().isEmpty()){
+            contact.setOfficeLocation(officeLocation.getText().toString());
+        }
+
+        if(!manager.getText().toString().isEmpty()){
+            contact.setManager(manager.getText().toString());
+        }
+
+        if(!assistantName.getText().toString().isEmpty()){
+            contact.setAssistantName(assistantName.getText().toString());
+        }
+
+        if(!streetName.getText().toString().isEmpty()){
+            PhysicalAddress contactPhysicalAddress = new PhysicalAddress(streetName.getText().toString(), cityName.getText().toString(), stateName.getText().toString(), countryName.getText().toString(), postalCode.getText().toString());
+            contact.setHomeAddress(contactPhysicalAddress);
+        }
+
+        if(!nickName.getText().toString().isEmpty()){
+            contact.setNickName(nickName.getText().toString());
+        }
+
+        if(!spouseName.getText().toString().isEmpty()){
+            contact.setSpouseName(spouseName.getText().toString());
+        }
+
+        if(!birthday.getText().toString().isEmpty()){
+            contact.setBirthday(birthday.getText().toString());
+        }
+
+
+        if(!personalNotes.getText().toString().isEmpty()){
+            contact.setPersonalNotes(personalNotes.getText().toString());
+        }
+
+        JSONObject testObject = new JSONObject(new Gson().toJson(contact));
+        System.out.println("wanna cuddle?" +contact);
 
         JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_POSTADRESS,new JSONObject(new Gson().toJson(contact)),
                 new Response.Listener<JSONObject>() {

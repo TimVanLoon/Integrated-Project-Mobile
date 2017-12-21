@@ -8,6 +8,9 @@ public class Contact{
     private Contact[] contact;
     private String assistantName;
     private String birthday;
+    private PhysicalAddress businessAddress;
+    private String businessHomePage;
+    private List<String> businessPhones;
     private String[] categories;
     private String changeKey;
     private String[] children;
@@ -17,10 +20,10 @@ public class Contact{
     private String displayName;
     private List<EmailAddress> emailAddresses;
     private String fileAs;
-    private FollowupFlag flag;
-    private String gender;
     private String generation;
     private String givenName;
+    private PhysicalAddress homeAddress;
+    private List<String> homePhones;
     private String id;
     private String[] imAddresses;
     private String initials;
@@ -28,21 +31,51 @@ public class Contact{
     private String lastModifiedDateTime;
     private String manager;
     private String middleName;
+    private String mobilePhone;
     private String nickName;
     private String officeLocation;
     private String parentFolderId;
     private String personalNotes;
-    private Phone[] phones;
-    private PhysicalAddress[] postalAddresses;
     private String profession;
     private String spouseName;
     private String surname;
     private String title;
-    private Website[] websites;
-    private Date weddingAnniversary;
     private String yomiCompanyName;
     private String yomiGivenName;
     private String yomiSurname;
+    private ProfilePhoto profilePhoto;
+
+    public PhysicalAddress getHomeAddress() {
+        return homeAddress;
+    }
+
+    public void setHomeAddress(PhysicalAddress homeAddress) {
+        this.homeAddress = homeAddress;
+    }
+
+    public List<String> getHomePhones() {
+        return homePhones;
+    }
+
+    public void setHomePhones(List<String> homePhones) {
+        this.homePhones = homePhones;
+    }
+
+    public String getMobilePhone() {
+        return mobilePhone;
+    }
+
+    public void setMobilePhone(String mobilePhone) {
+        this.mobilePhone = mobilePhone;
+    }
+
+    public ProfilePhoto getProfilePhoto() {
+        return profilePhoto;
+    }
+
+    public void setProfilePhoto(ProfilePhoto profilePhoto) {
+        this.profilePhoto = profilePhoto;
+    }
 
     public Contact[] getContacts() {
         return contact;
@@ -54,6 +87,30 @@ public class Contact{
 
     public String getAssistantName() {
         return assistantName;
+    }
+
+    public PhysicalAddress getBusinessAddress() {
+        return businessAddress;
+    }
+
+    public void setBusinessAddress(PhysicalAddress businessAddress) {
+        this.businessAddress = businessAddress;
+    }
+
+    public String getBusinessHomePage() {
+        return businessHomePage;
+    }
+
+    public void setBusinessHomePage(String businessHomePage) {
+        this.businessHomePage = businessHomePage;
+    }
+
+    public List<String> getBusinessPhones() {
+        return businessPhones;
+    }
+
+    public void setBusinessPhones(List<String> businessPhones) {
+        this.businessPhones = businessPhones;
     }
 
     public void setAssistantName(String assistantName) {
@@ -130,14 +187,6 @@ public class Contact{
 
     public void setFileAs(String fileAs) {
         this.fileAs = fileAs;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
     }
 
     public String getGeneration() {
@@ -276,14 +325,6 @@ public class Contact{
         this.title = title;
     }
 
-    public Date getWeddingAnniversary() {
-        return weddingAnniversary;
-    }
-
-    public void setWeddingAnniversary(Date weddingAnniversary) {
-        this.weddingAnniversary = weddingAnniversary;
-    }
-
     public String getYomiCompanyName() {
         return yomiCompanyName;
     }
@@ -324,35 +365,4 @@ public class Contact{
         this.emailAddresses = emailAddresses;
     }
 
-    public FollowupFlag getFlag() {
-        return flag;
-    }
-
-    public void setFlag(FollowupFlag flag) {
-        this.flag = flag;
-    }
-
-    public Phone[] getPhones() {
-        return phones;
-    }
-
-    public void setPhones(Phone[] phones) {
-        this.phones = phones;
-    }
-
-    public PhysicalAddress[] getPostalAddresses() {
-        return postalAddresses;
-    }
-
-    public void setPostalAddresses(PhysicalAddress[] postalAddresses) {
-        this.postalAddresses = postalAddresses;
-    }
-
-    public Website[] getWebsites() {
-        return websites;
-    }
-
-    public void setWebsites(Website[] websites) {
-        this.websites = websites;
-    }
 }
