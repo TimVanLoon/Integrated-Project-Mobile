@@ -43,6 +43,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -75,6 +76,8 @@ public class ContactsActivity extends AppCompatActivity {
     private String userEmail;
 
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts";
+    final static String MSGRAPH_URL_FOTO = "https://graph.microsoft.com/v1.0/users/";
+    final static String MSGRAPH_URL_FOTO2 = "/photo/$value";
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -84,7 +87,6 @@ public class ContactsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
-
 
 
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -120,9 +122,6 @@ public class ContactsActivity extends AppCompatActivity {
 
         mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
 
-        callGraphAPI();
-        System.out.println("gebruiker" + userName);
-
         contactNavigationView = (NavigationView) findViewById(R.id.contactNavigationView);
         View hView =  contactNavigationView.getHeaderView(0);
         TextView nav_userName = (TextView)hView.findViewById(R.id.userName);
@@ -133,6 +132,9 @@ public class ContactsActivity extends AppCompatActivity {
         Menu menu = mBottomNav.getMenu();
         MenuItem menuItem = menu.getItem(2);
         menuItem.setChecked(true);
+
+        callGraphAPI();
+        getProfilePhotos();
 
         mBottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -278,7 +280,6 @@ public class ContactsActivity extends AppCompatActivity {
     private void updateGraphUI(JSONObject graphResponse) throws JSONException {
 
         // Test de response
-        System.out.println(" de response: " + graphResponse);
         JSONArray contactsJsonArray = null;
 
         // Haal de contacten binnen
@@ -286,18 +287,15 @@ public class ContactsActivity extends AppCompatActivity {
             contactsJsonArray = (JSONArray) graphResponse.get("value");
 
             JSONObject contactList = graphResponse;
-            System.out.println("branko: " + contactList);
 
             JSONArray contactArray = contactList.getJSONArray("value");
 
-            System.out.println("keffin :" + contactArray);
             // VUL POJO
             Type listType = new TypeToken<List<Contact>>() {
             }.getType();
 
             contacts = new Gson().fromJson(String.valueOf(contactArray), listType);
 
-            System.out.println("robin van hoof: " + contacts);
 
             /*
             //DE CONTACT LIJST SORTEREN OP ALFABETISCHE VOLGORDE VAN NAMEN
@@ -331,18 +329,94 @@ public class ContactsActivity extends AppCompatActivity {
 
     public void onContactClicked(int position){
 
-        System.out.println("jannick baats: " + contacts);
 
         if(contacts.size() != 0){
             Contact contact = contacts.get(position);
-            System.out.println("geraak ik hier? " + contact);
+
             Intent showContactDetails = new Intent(ContactsActivity.this, ContactsDetailsActivity.class);
             showContactDetails.putExtra("givenName", contact.getGivenName());
+            showContactDetails.putExtra("displayName", contact.getDisplayName());
+
+            if(contact.getMobilePhone() == null){
+                showContactDetails.putExtra("userPhone", "");
+            }
+            else {
+                showContactDetails.putExtra("userPhone", contact.getMobilePhone());
+            }
+            showContactDetails.putExtra("AccessToken", accessToken);
+            showContactDetails.putExtra("userName", userName);
+
+            if(contact.getEmailAddresses() != null){
+                showContactDetails.putExtra("emailList",(Serializable) contact.getEmailAddresses());
+            }
+
+            showContactDetails.putExtra("userEmail", userEmail);
             startActivity(showContactDetails);
 
         } else {
             Toast.makeText(getApplicationContext(), "Empty contact list!", Toast.LENGTH_SHORT).show();
         }
     }
+
+    public void getProfilePhotos(){
+        Log.d(TAG, "Starting volley request to graph");
+        Log.d(TAG, accessToken);
+
+    /* Make sure we have a token to send to graph */
+        if (accessToken == null) {
+            return;
+        }
+
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        JSONObject parameters = new JSONObject();
+
+        try {
+            parameters.put("key", "value");
+        } catch (Exception e) {
+            Log.d(TAG, "Failed to put parameters: " + e.toString());
+        }
+
+        // The preferred idiom for iterating over collections and arrays
+        for (Contact c : contacts) {
+
+            String emailAddress = c.getEmailAddresses().toString();
+
+            String PHOTO_URL = MSGRAPH_URL_FOTO + emailAddress + MSGRAPH_URL_FOTO2;
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, PHOTO_URL,
+                    parameters, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+            /* Successfully called graph, process data and send to UI */
+                    Log.d(TAG, "Response fotos: " + response.toString());
+
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d(TAG, "Error: " + error.toString());
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("Authorization", "Bearer " + accessToken);
+                    return headers;
+                }
+            };
+
+            Log.d(TAG, "Adding HTTP GET to Queue, Request: " + request.toString());
+
+            request.setRetryPolicy(new DefaultRetryPolicy(
+                    3000,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            queue.add(request);
+        }
+        }
+
+
 
 }

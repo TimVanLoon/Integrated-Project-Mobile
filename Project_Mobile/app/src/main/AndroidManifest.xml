@@ -53,7 +53,9 @@
         <activity
             android:name=".Calendar.AddEventActivity"
             android:label="New event" />
-        <activity android:name=".Contacts.ContactsDetailsActivity"></activity>
+        <activity
+            android:name=".Contacts.ContactsDetailsActivity"
+            android:label="Contact Details"/>
     </application>
 
 </manifest>

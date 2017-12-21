@@ -81,7 +81,7 @@ public class AddContactActivity extends AppCompatActivity {
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
-        // VOEG BACK BUTTONN TOE AAN ACTION BAR
+        // VOEG BACK BUTTON TOE AAN ACTION BAR
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -184,6 +184,9 @@ public class AddContactActivity extends AppCompatActivity {
         Contact contact = new Contact();
         contact.setGivenName(firstNameInput.getText().toString());
         contact.setSurname(lastNameInput.getText().toString());
+
+        String displayName = firstNameInput.getText().toString() + " " + lastNameInput.getText().toString();
+        contact.setDisplayName(displayName);
 
         if(!emailInput.getText().toString().isEmpty()){
             EmailAddress contactEmail = new EmailAddress(emailInput.getText().toString());
