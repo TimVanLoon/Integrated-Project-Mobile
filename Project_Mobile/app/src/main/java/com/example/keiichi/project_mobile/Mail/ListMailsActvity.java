@@ -563,10 +563,10 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         if (multiSelect) {
             if (selectedItems.contains(item)) {
                 selectedItems.remove(item);
-                recyclerView.getChildAt(item).setBackgroundColor(Color.WHITE);
+                recyclerView.getChildAt(item).setBackgroundColor(Color.TRANSPARENT);
             } else {
                 selectedItems.add(item);
-                recyclerView.getChildAt(item).setBackgroundColor(Color.TRANSPARENT);
+                recyclerView.getChildAt(item).setBackgroundColor(Color.WHITE);
             }
         }
     }
