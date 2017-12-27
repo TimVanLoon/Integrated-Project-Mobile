@@ -31,7 +31,9 @@ import org.json.JSONObject;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +65,6 @@ public class AddContactActivity extends AppCompatActivity {
     private EditText personalNotes;
     private EditText nickName;
     private EditText spouseName;
-    private EditText birthday;
     private String userName;
     private String userEmail;
     private String accessToken;
@@ -103,7 +104,6 @@ public class AddContactActivity extends AppCompatActivity {
         personalNotes = (EditText) findViewById(R.id.personalNotes);
         nickName = (EditText) findViewById(R.id.nickName);
         spouseName = (EditText) findViewById(R.id.spouseName);
-        birthday = (EditText) findViewById(R.id.birthday);
 
     }
 
@@ -238,9 +238,6 @@ public class AddContactActivity extends AppCompatActivity {
             contact.setSpouseName(spouseName.getText().toString());
         }
 
-        if(!birthday.getText().toString().isEmpty()){
-            contact.setBirthday(birthday.getText().toString());
-        }
 
 
         if(!personalNotes.getText().toString().isEmpty()){
