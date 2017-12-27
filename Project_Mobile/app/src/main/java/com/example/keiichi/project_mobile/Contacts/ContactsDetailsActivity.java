@@ -42,7 +42,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
     private TextView email;
     private TextView userPhone;
     private List<EmailAddress> emailList;
-    Toolbar myToolbar;
+    private Toolbar myToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,7 +158,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.add_navigation, menu);
+        inflater.inflate(R.menu.edit_navigation, menu);
 
 
         return super.onCreateOptionsMenu(menu);
@@ -177,6 +177,15 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                 intentContacts.putExtra("userName", userName);
                 intentContacts.putExtra("userEmail", userEmail);
                 startActivity(intentContacts);
+
+                return true;
+
+            case R.id.action_edit:
+                Intent intentEditContact = new Intent(ContactsDetailsActivity.this, EditContact.class);
+                intentEditContact.putExtra("AccessToken", accessToken);
+                intentEditContact.putExtra("userName", userName);
+                intentEditContact.putExtra("userEmail", userEmail);
+                startActivity(intentEditContact);
 
                 return true;
 
