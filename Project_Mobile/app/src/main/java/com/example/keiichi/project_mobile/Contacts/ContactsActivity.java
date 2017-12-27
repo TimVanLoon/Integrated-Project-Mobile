@@ -46,6 +46,7 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -75,7 +76,7 @@ public class ContactsActivity extends AppCompatActivity {
     private String userName;
     private String userEmail;
 
-    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts";
+    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts?$orderBy=displayName";
     final static String MSGRAPH_URL_FOTO = "https://graph.microsoft.com/v1.0/users/";
     final static String MSGRAPH_URL_FOTO2 = "/photo/$value";
 
@@ -290,22 +291,49 @@ public class ContactsActivity extends AppCompatActivity {
 
             JSONArray contactArray = contactList.getJSONArray("value");
 
+            System.out.println("test response: " + contactArray);
+
+            JSONArray sortedContactArray = new JSONArray();
+
+            /*
+            List<JSONObject> jsonValues = new ArrayList<JSONObject>();
+            for (int i = 0; i < contactArray.length(); i++) {
+                jsonValues.add(contactArray.getJSONObject(i));
+            }
+
+            Collections.sort( jsonValues, new Comparator<JSONObject>() {
+                // Sort by displayname
+                private static final String KEY_NAME = "displayName";
+
+                @Override
+                public int compare(JSONObject a, JSONObject b) {
+                    String valA = new String();
+                    String valB = new String();
+
+                    try {
+                        valA = (String) a.get(KEY_NAME);
+                        valB = (String) b.get(KEY_NAME);
+                    }
+                    catch (JSONException e) {
+                        //do something
+                    }
+
+                    return valA.compareTo(valB);
+                }
+            });
+
+            for (int i = 0; i < contactArray.length(); i++) {
+                sortedContactArray.put(jsonValues.get(i));
+            }
+            */
+
+
             // VUL POJO
             Type listType = new TypeToken<List<Contact>>() {
             }.getType();
 
             contacts = new Gson().fromJson(String.valueOf(contactArray), listType);
 
-
-            /*
-            //DE CONTACT LIJST SORTEREN OP ALFABETISCHE VOLGORDE VAN NAMEN
-            JSONArray sortedContactArray = new JSONArray();
-            List<Contact> jsonValues = new ArrayList<Contact>();
-            /*
-            for (int i = 0; i < contactArray.length(); i++) {
-                jsonValues.add(contactArray.getJSONObject(i));
-            }
-            */
 
 
 

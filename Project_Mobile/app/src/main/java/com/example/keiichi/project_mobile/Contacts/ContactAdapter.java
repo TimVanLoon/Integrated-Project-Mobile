@@ -72,7 +72,7 @@ public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterab
         JSONObject json_data = getItem(position);
 
         try {
-            name.setText(json_data.getString("givenName"));
+            name.setText(json_data.getString("displayName"));
 
 
         } catch (JSONException e) {
