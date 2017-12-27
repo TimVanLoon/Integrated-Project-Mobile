@@ -76,7 +76,7 @@ public class ContactsActivity extends AppCompatActivity {
     private String userName;
     private String userEmail;
 
-    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts?$orderBy=displayName";
+    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts?$orderBy=displayName&$top=500&$count=true";
     final static String MSGRAPH_URL_FOTO = "https://graph.microsoft.com/v1.0/users/";
     final static String MSGRAPH_URL_FOTO2 = "/photo/$value";
 
