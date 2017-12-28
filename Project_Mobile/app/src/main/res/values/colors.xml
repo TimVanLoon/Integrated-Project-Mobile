@@ -8,7 +8,7 @@
     <color name="colorGrey">#c3c3c3 </color>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#000</color>
     <color name="contact_name">#333333</color>
     <color name="contact_number">#8c8c8c</color>
     <color name="from">#000000</color>
