@@ -18,7 +18,7 @@
 
     <string name="save">Save</string>
     <string name="addContactTitle">Add a contact</string>
-    <string name="nameTitle">Name*</string>
+    <string name="nameTitle">Name</string>
     <string name="nameInput">First name</string>
     <string name="lastNameInput">Last name</string>
     <string name="emailTitle">E-mail</string>
@@ -80,4 +80,7 @@
     <string name="gender">Gender</string>
 
     <string name="listEvents">listEvents</string>
+
+    <string name="firstNameTitle">First name *</string>
+    <string name="lastNameTitle">Last name *</string>
 </resources>

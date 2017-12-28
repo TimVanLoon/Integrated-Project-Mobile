@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:text="@string/addContactTitle"
             android:textStyle="bold"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="15dp"
             android:layout_marginTop="10dp"
             android:textColor="@color/black"
             android:textSize="15pt">
@@ -45,8 +45,18 @@
             android:layout_height="wrap_content"
             android:text="@string/nameTitle"
             android:textColor="@color/black"
-            android:layout_marginLeft="10dp"
-            android:textSize="10pt">
+            android:layout_marginLeft="15dp"
+            android:textSize="13pt">
+        </TextView>
+
+        <TextView
+            android:id="@+id/firstNameTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/firstNameTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
         </TextView>
 
         <EditText
@@ -59,11 +69,22 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:background="@drawable/edit_text_style"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="80dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
             android:layout_marginBottom="10dp"
             android:layout_width="fill_parent">
         </EditText>
+
+        <TextView
+            android:id="@+id/lastNameTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lastNameTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
+        </TextView>
+
         <EditText
             android:id="@+id/lastNameInput"
             android:layout_height="37dp"
@@ -74,8 +95,8 @@
             android:inputType="textCapSentences|textPersonName"
             android:textColor="@color/black"
             android:background="@drawable/edit_text_style"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="80dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
             android:layout_marginBottom="10dp"
             android:layout_width="fill_parent">
         </EditText>
@@ -85,7 +106,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/emailTitle"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="15dp"
             android:textColor="@color/black"
             android:textSize="10pt">
         </TextView>
@@ -100,8 +121,8 @@
             android:inputType="textCapSentences|textPersonName"
             android:textColor="@color/black"
             android:background="@drawable/edit_text_style"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="80dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
             android:layout_marginBottom="10dp"
             android:layout_width="fill_parent">
         </EditText>
@@ -111,7 +132,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/phoneTitle"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="15dp"
             android:textColor="@color/black"
             android:textSize="10pt">
         </TextView>
@@ -126,8 +147,8 @@
             android:inputType="textCapSentences|textPersonName"
             android:textColor="@color/black"
             android:background="@drawable/edit_text_style"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="80dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
             android:layout_marginBottom="10dp"
             android:layout_width="fill_parent">
         </EditText>
@@ -138,7 +159,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/workTitle"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="15dp"
             android:textColor="@color/black"
             android:textSize="10pt">
         </TextView>
@@ -152,8 +173,8 @@
             android:paddingRight="10dp"
             android:inputType="textCapSentences|textPersonName"
             android:textColor="@color/black"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="80dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/edit_text_style"
             android:layout_width="fill_parent">
@@ -167,9 +188,9 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:inputType="textCapSentences|textPersonName"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="15dp"
             android:textColor="@color/black"
-            android:layout_marginRight="80dp"
+            android:layout_marginRight="72dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/edit_text_style"
             android:layout_width="fill_parent">
@@ -183,8 +204,8 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:textColor="@color/black"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="80dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/edit_text_style"
             android:inputType="textCapSentences|textPersonName"
@@ -199,8 +220,8 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:textColor="@color/black"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="80dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
             android:layout_marginBottom="10dp"
             android:inputType="textCapSentences|textPersonName"
             android:background="@drawable/edit_text_style"
@@ -216,8 +237,8 @@
             android:paddingRight="10dp"
             android:inputType="textCapSentences|textPersonName"
             android:textColor="@color/black"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="80dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/edit_text_style"
             android:layout_width="fill_parent">
@@ -232,8 +253,8 @@
             android:paddingRight="10dp"
             android:inputType="textCapSentences|textPersonName"
             android:textColor="@color/black"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="80dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/edit_text_style"
             android:layout_width="fill_parent">
@@ -244,7 +265,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/addressTitle"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="15dp"
             android:textColor="@color/black"
             android:textSize="10pt">
         </TextView>
@@ -258,8 +279,8 @@
             android:paddingRight="10dp"
             android:inputType="textPersonName"
             android:textColor="@color/black"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="80dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/edit_text_style"
             android:layout_width="fill_parent">
@@ -273,8 +294,8 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:textColor="@color/black"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="80dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/edit_text_style"
             android:inputType="textCapSentences|textPersonName"
@@ -289,8 +310,8 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:textColor="@color/black"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="80dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/edit_text_style"
             android:inputType="textCapSentences|textPersonName"
@@ -305,8 +326,8 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:textColor="@color/black"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="80dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/edit_text_style"
             android:inputType="textCapSentences|textPersonName"
@@ -321,8 +342,8 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:textColor="@color/black"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="80dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/edit_text_style"
             android:inputType="textCapSentences|textPersonName"
@@ -335,7 +356,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/nickNameTitle"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="15dp"
             android:textColor="@color/black"
             android:textSize="10pt">
         </TextView>
@@ -348,8 +369,8 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:textColor="@color/black"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="80dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/edit_text_style"
             android:inputType="textCapSentences|textPersonName"
@@ -361,7 +382,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/spouseNameTitle"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="15dp"
             android:textColor="@color/black"
             android:textSize="10pt">
         </TextView>
@@ -374,8 +395,8 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:textColor="@color/black"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="80dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/edit_text_style"
             android:inputType="textCapSentences|textPersonName"
@@ -388,7 +409,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/notesTitle"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="15dp"
             android:textColor="@color/black"
             android:textSize="10pt">
         </TextView>
@@ -401,8 +422,8 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:textColor="@color/black"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="80dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/edit_text_style"
             android:inputType="textCapSentences|textMultiLine"
