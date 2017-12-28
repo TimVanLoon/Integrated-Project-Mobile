@@ -9,19 +9,22 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.R;
 
-import org.json.JSONException;
+import java.io.Serializable;
+import java.util.List;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-public class EditContact extends AppCompatActivity {
+public class EditContactActivity extends AppCompatActivity {
 
     private Toolbar myToolbar;
     private String userName;
     private String userEmail;
     private String accessToken;
+    private String displayName;
+    private String phoneNumber;
+    private String givenName;
+    private List<EmailAddress> emailList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +34,12 @@ public class EditContact extends AppCompatActivity {
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
+        givenName = getIntent().getStringExtra("givenName");
+        displayName = getIntent().getStringExtra("displayName");
+        phoneNumber = getIntent().getStringExtra("userPhone");
+        emailList = (List<EmailAddress>)getIntent().getSerializableExtra("emailList");
+
+        System.out.println("test list 2: " + emailList);
 
         // INITIALISEER ACTION BAR
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -59,20 +68,30 @@ public class EditContact extends AppCompatActivity {
 
             // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
             case android.R.id.home:
-                Intent intentContactDetails = new Intent(EditContact.this, ContactsDetailsActivity.class);
+                Intent intentContactDetails = new Intent(EditContactActivity.this, ContactsDetailsActivity.class);
                 intentContactDetails.putExtra("AccessToken", accessToken);
                 intentContactDetails.putExtra("userName", userName);
                 intentContactDetails.putExtra("userEmail", userEmail);
+                intentContactDetails.putExtra("givenName", givenName);
+                intentContactDetails.putExtra("displayName", displayName);
+                intentContactDetails.putExtra("userPhone", phoneNumber);
+                intentContactDetails.putExtra("emailList",(Serializable) emailList);
+
                 startActivity(intentContactDetails);
 
                 return true;
 
             // WANNEER SAVE ICON WORDT AANGEKLIKT
             case R.id.action_save:
-                Intent intentContactDetailsSaved = new Intent(EditContact.this, ContactsDetailsActivity.class);
+                Intent intentContactDetailsSaved = new Intent(EditContactActivity.this, ContactsDetailsActivity.class);
                 intentContactDetailsSaved.putExtra("AccessToken", accessToken);
                 intentContactDetailsSaved.putExtra("userName", userName);
                 intentContactDetailsSaved.putExtra("userEmail", userEmail);
+                intentContactDetailsSaved.putExtra("givenName", givenName);
+                intentContactDetailsSaved.putExtra("displayName", displayName);
+                intentContactDetailsSaved.putExtra("userPhone", phoneNumber);
+                intentContactDetailsSaved.putExtra("emailList",(Serializable) emailList);
+
                 startActivity(intentContactDetailsSaved);
 
                 Toast.makeText(getApplicationContext(), "Contact edited", Toast.LENGTH_SHORT).show();

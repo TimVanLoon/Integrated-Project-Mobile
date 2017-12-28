@@ -3,8 +3,6 @@ package com.example.keiichi.project_mobile.Contacts;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
-import android.provider.ContactsContract;
-import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -20,11 +18,8 @@ import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.Mail.SendMailActivity;
 import com.example.keiichi.project_mobile.R;
 
-import org.json.JSONException;
-
+import java.io.Serializable;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class ContactsDetailsActivity extends AppCompatActivity {
 
@@ -35,13 +30,13 @@ public class ContactsDetailsActivity extends AppCompatActivity {
     private String displayName;
     private String phoneNumber;
     private String emailAddress;
+    private List<EmailAddress> emailList;
     private ImageButton phoneButton;
     private ImageButton calendarButton;
     private ImageButton mailButton;
     private ImageButton smsButton;
     private TextView email;
     private TextView userPhone;
-    private List<EmailAddress> emailList;
     private Toolbar myToolbar;
 
     @Override
@@ -71,6 +66,9 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         displayName = getIntent().getStringExtra("displayName");
         phoneNumber = getIntent().getStringExtra("userPhone");
         emailList = (List<EmailAddress>)getIntent().getSerializableExtra("emailList");
+
+        System.out.println("test list : " + emailList.toString());
+
 
         if(!emailList.isEmpty()){
             emailAddress = emailList.get(0).getAddress();
@@ -176,15 +174,25 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                 intentContacts.putExtra("AccessToken", accessToken);
                 intentContacts.putExtra("userName", userName);
                 intentContacts.putExtra("userEmail", userEmail);
+                intentContacts.putExtra("givenName", givenName);
+                intentContacts.putExtra("displayName", displayName);
+                intentContacts.putExtra("userPhone", phoneNumber);
+                intentContacts.putExtra("emailList",(Serializable) emailList);
+
                 startActivity(intentContacts);
 
                 return true;
 
             case R.id.action_edit:
-                Intent intentEditContact = new Intent(ContactsDetailsActivity.this, EditContact.class);
+                Intent intentEditContact = new Intent(ContactsDetailsActivity.this, EditContactActivity.class);
                 intentEditContact.putExtra("AccessToken", accessToken);
                 intentEditContact.putExtra("userName", userName);
                 intentEditContact.putExtra("userEmail", userEmail);
+                intentEditContact.putExtra("givenName", givenName);
+                intentEditContact.putExtra("displayName", displayName);
+                intentEditContact.putExtra("userPhone", phoneNumber);
+                intentEditContact.putExtra("emailList",(Serializable) emailList);
+
                 startActivity(intentEditContact);
 
                 return true;

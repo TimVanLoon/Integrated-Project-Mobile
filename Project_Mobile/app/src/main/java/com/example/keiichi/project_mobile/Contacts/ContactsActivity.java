@@ -33,6 +33,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.Calendar.CalendarActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
+import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
@@ -71,7 +72,7 @@ public class ContactsActivity extends AppCompatActivity {
 
     private List<Contact> contacts = new ArrayList<>();
 
-
+    private List<EmailAddress> emailList;
     private String accessToken;
     private String userName;
     private String userEmail;
@@ -371,14 +372,16 @@ public class ContactsActivity extends AppCompatActivity {
             else {
                 showContactDetails.putExtra("userPhone", contact.getMobilePhone());
             }
-            showContactDetails.putExtra("AccessToken", accessToken);
-            showContactDetails.putExtra("userName", userName);
 
             if(contact.getEmailAddresses() != null){
                 showContactDetails.putExtra("emailList",(Serializable) contact.getEmailAddresses());
             }
 
             showContactDetails.putExtra("userEmail", userEmail);
+            showContactDetails.putExtra("AccessToken", accessToken);
+            showContactDetails.putExtra("userName", userName);
+
+
             startActivity(showContactDetails);
 
         } else {
