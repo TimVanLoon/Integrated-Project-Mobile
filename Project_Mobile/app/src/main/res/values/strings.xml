@@ -94,4 +94,6 @@
     <string name="cityNameTitle">City</string>
     <string name="stateTitle">State</string>
     <string name="countryTitle">Country/region</string>
+
+    <string name="editContactTitle">Edit contact</string>
 </resources>
