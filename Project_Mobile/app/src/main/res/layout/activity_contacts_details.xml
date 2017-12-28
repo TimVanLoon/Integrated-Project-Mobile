@@ -153,13 +153,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/emailTitle"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
                 android:textStyle="bold"
+                android:textSize="8pt"
                 android:textColor="@color/black" />
 
             <TextView
                 android:id="@+id/userEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
                 android:text="userEmail"
                 android:textColor="@color/black" />
 
@@ -167,6 +171,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Mobile Phone"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:textSize="8pt"
                 android:textStyle="bold"
                 android:textColor="@color/black" />
 
@@ -175,7 +182,64 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="userPhone"
+                android:layout_marginLeft="15dp"
                 android:textColor="@color/black" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Nickname"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:textSize="8pt"
+                android:textStyle="bold"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/nickname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="nickname"
+                android:layout_marginLeft="15dp"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Spouse"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:textSize="8pt"
+                android:textStyle="bold"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/spouse"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="spouse"
+                android:layout_marginLeft="15dp"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Notes"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:textSize="8pt"
+                android:textStyle="bold"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:id="@+id/notes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="notes"
+                android:layout_marginLeft="15dp"
+                android:textColor="@color/black" />
+
+
         </LinearLayout>
     </ScrollView>
 

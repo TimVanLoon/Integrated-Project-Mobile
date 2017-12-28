@@ -30,6 +30,9 @@ public class ContactsDetailsActivity extends AppCompatActivity {
     private String displayName;
     private String phoneNumber;
     private String emailAddress;
+    private String notes;
+    private String nickname;
+    private String spouse;
     private List<EmailAddress> emailList;
     private ImageButton phoneButton;
     private ImageButton calendarButton;
@@ -37,6 +40,9 @@ public class ContactsDetailsActivity extends AppCompatActivity {
     private ImageButton smsButton;
     private TextView email;
     private TextView userPhone;
+    private TextView notesText;
+    private TextView spouseText;
+    private TextView nicknameText;
     private Toolbar myToolbar;
 
     @Override
@@ -50,6 +56,9 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         smsButton = (ImageButton) findViewById(R.id.smsButton);
         email = (TextView) findViewById(R.id.userEmail);
         userPhone = (TextView) findViewById(R.id.userPhone);
+        notesText = (TextView) findViewById(R.id.notes);
+        nicknameText = (TextView) findViewById(R.id.nickname);
+        spouseText = (TextView) findViewById(R.id.spouse);
 
         // INITIALISEER ACTION BAR
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -66,12 +75,17 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         displayName = getIntent().getStringExtra("displayName");
         phoneNumber = getIntent().getStringExtra("userPhone");
         emailList = (List<EmailAddress>)getIntent().getSerializableExtra("emailList");
+        notes = getIntent().getStringExtra("notes");
+        nickname = getIntent().getStringExtra("nickname");
+        spouse = getIntent().getStringExtra("spouse");
 
         System.out.println("test list : " + emailList.toString());
 
 
         if(!emailList.isEmpty()){
             emailAddress = emailList.get(0).getAddress();
+
+            email.setText(emailAddress);
 
             mailButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -138,6 +152,8 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         }
 
 
+
+
         calendarButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
@@ -148,8 +164,10 @@ public class ContactsDetailsActivity extends AppCompatActivity {
 
         TextView headerDisplayName = (TextView) findViewById(R.id.displayName);
         headerDisplayName.setText(displayName);
-        email.setText(userEmail);
         userPhone.setText(phoneNumber);
+        notesText.setText(notes);
+        spouseText.setText(spouse);
+        nicknameText.setText(nickname);
     }
 
     // VOEG ICONS TOE AAN DE ACTION BAR

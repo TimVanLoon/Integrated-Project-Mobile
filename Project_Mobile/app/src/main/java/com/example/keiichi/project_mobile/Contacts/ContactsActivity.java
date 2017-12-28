@@ -377,6 +377,27 @@ public class ContactsActivity extends AppCompatActivity {
                 showContactDetails.putExtra("emailList",(Serializable) contact.getEmailAddresses());
             }
 
+            if(contact.getPersonalNotes() != null){
+                showContactDetails.putExtra("notes", contact.getPersonalNotes());
+            }
+            else {
+                showContactDetails.putExtra("notes", "");
+            }
+
+            if(contact.getSpouseName() != null){
+                showContactDetails.putExtra("spouse", contact.getSpouseName());
+            }
+            else {
+                showContactDetails.putExtra("spouse", "");
+            }
+
+            if(contact.getNickName() != null){
+                showContactDetails.putExtra("nickname", contact.getNickName());
+            }
+            else {
+                showContactDetails.putExtra("nickname", "");
+            }
+
             showContactDetails.putExtra("userEmail", userEmail);
             showContactDetails.putExtra("AccessToken", accessToken);
             showContactDetails.putExtra("userName", userName);

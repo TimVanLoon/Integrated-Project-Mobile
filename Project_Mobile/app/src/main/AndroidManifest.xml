@@ -63,7 +63,7 @@
         <activity
             android:name=".Contacts.EditContactActivity"
             android:label="Edit Contact"
-                    ></activity>
+            android:windowSoftInputMode="adjustResize"/>
     </application>
 
 </manifest>
