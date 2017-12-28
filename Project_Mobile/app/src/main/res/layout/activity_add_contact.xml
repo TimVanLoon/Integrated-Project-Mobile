@@ -106,6 +106,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/emailTitle"
+            android:layout_marginTop="20dp"
             android:layout_marginLeft="15dp"
             android:textColor="@color/black"
             android:textSize="10pt">
@@ -132,6 +133,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/phoneTitle"
+            android:layout_marginTop="20dp"
             android:layout_marginLeft="15dp"
             android:textColor="@color/black"
             android:textSize="10pt">
@@ -160,14 +162,24 @@
             android:layout_height="wrap_content"
             android:text="@string/workTitle"
             android:layout_marginLeft="15dp"
+            android:layout_marginTop="20dp"
             android:textColor="@color/black"
             android:textSize="10pt">
         </TextView>
 
-        <EditText
+        <TextView
             android:id="@+id/jobTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/jobTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
+        </TextView>
+
+        <EditText
+            android:id="@+id/jobInput"
             android:layout_height="37dp"
-            android:hint="@string/jobTitle"
             android:textSize="12dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
@@ -179,6 +191,16 @@
             android:background="@drawable/edit_text_style"
             android:layout_width="fill_parent">
         </EditText>
+
+        <TextView
+            android:id="@+id/departmentTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/departmentTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
+        </TextView>
 
         <EditText
             android:id="@+id/department"
@@ -196,6 +218,16 @@
             android:layout_width="fill_parent">
         </EditText>
 
+        <TextView
+            android:id="@+id/companyNameTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/companyNameTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
+        </TextView>
+
         <EditText
             android:id="@+id/companyName"
             android:layout_height="37dp"
@@ -211,6 +243,16 @@
             android:inputType="textCapSentences|textPersonName"
             android:layout_width="fill_parent">
         </EditText>
+
+        <TextView
+            android:id="@+id/officeLocationTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/officeLocationTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
+        </TextView>
 
         <EditText
             android:id="@+id/officeLocation"
@@ -228,6 +270,16 @@
             android:layout_width="fill_parent">
         </EditText>
 
+        <TextView
+            android:id="@+id/managerTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/managerTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
+        </TextView>
+
         <EditText
             android:id="@+id/manager"
             android:layout_height="37dp"
@@ -243,6 +295,16 @@
             android:background="@drawable/edit_text_style"
             android:layout_width="fill_parent">
         </EditText>
+
+        <TextView
+            android:id="@+id/assistantTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/assistantTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
+        </TextView>
 
         <EditText
             android:id="@+id/assistantName"
@@ -265,9 +327,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/addressTitle"
+            android:layout_marginTop="20dp"
             android:layout_marginLeft="15dp"
             android:textColor="@color/black"
             android:textSize="10pt">
+        </TextView>
+
+        <TextView
+            android:id="@+id/streetNameTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/streetNameTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
         </TextView>
 
         <EditText
@@ -286,6 +359,16 @@
             android:layout_width="fill_parent">
         </EditText>
 
+        <TextView
+            android:id="@+id/postalCodeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/postalCodeTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
+        </TextView>
+
         <EditText
             android:id="@+id/postalCode"
             android:layout_height="37dp"
@@ -301,6 +384,16 @@
             android:inputType="textCapSentences|textPersonName"
             android:layout_width="fill_parent">
         </EditText>
+
+        <TextView
+            android:id="@+id/cityNameTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cityNameTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
+        </TextView>
 
         <EditText
             android:id="@+id/cityName"
@@ -318,6 +411,16 @@
             android:layout_width="fill_parent">
         </EditText>
 
+        <TextView
+            android:id="@+id/stateTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stateTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
+        </TextView>
+
         <EditText
             android:id="@+id/stateName"
             android:layout_height="37dp"
@@ -333,6 +436,16 @@
             android:inputType="textCapSentences|textPersonName"
             android:layout_width="fill_parent">
         </EditText>
+
+        <TextView
+            android:id="@+id/countryTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/countryTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
+        </TextView>
 
         <EditText
             android:id="@+id/countryName"
@@ -356,6 +469,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/nickNameTitle"
+            android:layout_marginTop="20dp"
             android:layout_marginLeft="15dp"
             android:textColor="@color/black"
             android:textSize="10pt">
@@ -382,6 +496,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/spouseNameTitle"
+            android:layout_marginTop="20dp"
             android:layout_marginLeft="15dp"
             android:textColor="@color/black"
             android:textSize="10pt">
@@ -409,6 +524,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/notesTitle"
+            android:layout_marginTop="20dp"
             android:layout_marginLeft="15dp"
             android:textColor="@color/black"
             android:textSize="10pt">

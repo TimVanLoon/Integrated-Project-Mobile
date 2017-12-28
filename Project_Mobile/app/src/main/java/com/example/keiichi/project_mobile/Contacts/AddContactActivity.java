@@ -90,7 +90,7 @@ public class AddContactActivity extends AppCompatActivity {
         lastNameInput = (EditText) findViewById(R.id.lastNameInput);
         emailInput = (EditText) findViewById(R.id.emailInput);
         phoneInput = (EditText) findViewById(R.id.phoneInput);
-        jobTitle = (EditText) findViewById(R.id.jobTitle);
+        jobTitle = (EditText) findViewById(R.id.jobInput);
         department = (EditText) findViewById(R.id.department);
         companyName = (EditText) findViewById(R.id.companyName);
         officeLocation = (EditText) findViewById(R.id.officeLocation);

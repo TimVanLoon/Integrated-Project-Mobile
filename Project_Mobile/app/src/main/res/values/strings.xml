@@ -47,12 +47,6 @@
     <string name="action_search">Search</string>
     <string name="action_delete">Delete</string>
 
-    <string name="jobTitle">Job Title</string>
-    <string name="department">Department</string>
-    <string name="companyName">Company Name</string>
-    <string name="officeLocation">Office Location</string>
-    <string name="manager">Manager</string>
-    <string name="assistantName">Assistant Name</string>
 
     <string name="addressTitle">Address</string>
     <string name="streetName">Street</string>
@@ -83,4 +77,21 @@
 
     <string name="firstNameTitle">First name *</string>
     <string name="lastNameTitle">Last name *</string>
+    <string name="emailTitleInput">E-mail</string>
+    <string name="jobTitle">Job title</string>
+    <string name="department">Department</string>
+    <string name="companyName">Company Name</string>
+    <string name="officeLocation">Office Location</string>
+    <string name="manager">Manager</string>
+    <string name="assistantName">Assistant Name</string>
+    <string name="departmentTitle">Department</string>
+    <string name="companyNameTitle">Company</string>
+    <string name="officeLocationTitle">Office location</string>
+    <string name="managerTitle">Manager</string>
+    <string name="assistantTitle">Assistant</string>
+    <string name="streetNameTitle">Street</string>
+    <string name="postalCodeTitle">Postal code</string>
+    <string name="cityNameTitle">City</string>
+    <string name="stateTitle">State</string>
+    <string name="countryTitle">Country/region</string>
 </resources>
