@@ -106,7 +106,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/emailTitle"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="30dp"
             android:layout_marginLeft="15dp"
             android:textColor="@color/black"
             android:textSize="10pt">
@@ -133,7 +133,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/phoneTitle"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="30dp"
             android:layout_marginLeft="15dp"
             android:textColor="@color/black"
             android:textSize="10pt">
@@ -162,7 +162,7 @@
             android:layout_height="wrap_content"
             android:text="@string/workTitle"
             android:layout_marginLeft="15dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="30dp"
             android:textColor="@color/black"
             android:textSize="10pt">
         </TextView>
@@ -327,7 +327,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/addressTitle"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="30dp"
             android:layout_marginLeft="15dp"
             android:textColor="@color/black"
             android:textSize="10pt">
@@ -469,7 +469,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/nickNameTitle"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="30dp"
             android:layout_marginLeft="15dp"
             android:textColor="@color/black"
             android:textSize="10pt">
@@ -496,7 +496,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/spouseNameTitle"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="30dp"
             android:layout_marginLeft="15dp"
             android:textColor="@color/black"
             android:textSize="10pt">
@@ -524,7 +524,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/notesTitle"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="30dp"
             android:layout_marginLeft="15dp"
             android:textColor="@color/black"
             android:textSize="10pt">
@@ -539,8 +539,8 @@
             android:paddingRight="10dp"
             android:textColor="@color/black"
             android:layout_marginLeft="15dp"
-            android:layout_marginRight="72dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="20dp"
             android:background="@drawable/edit_text_style"
             android:inputType="textCapSentences|textMultiLine"
             android:maxLength="2000"

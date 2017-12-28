@@ -52,7 +52,8 @@
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".Contacts.AddContactActivity"
-            android:label="Contact" />
+            android:label="Contact"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".Calendar.AddEventActivity"
             android:label="New event" />
