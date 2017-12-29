@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Filter;
 import android.widget.Filterable;
 
+import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONArray;
@@ -24,22 +25,23 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterable{
+public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterable {
 
     private final Context context;
     //private final JSONArray values;
 
     // Ongefilterde JSONArray
-    private JSONArray originalData = null;
+    private List<Contact> originalData = null;
     // Gefilterde JSONArray
-    private JSONArray filteredData = null;
+    private List<Contact> filteredData = null;
 
     private ItemFilter mFilter = new ItemFilter();
 
-
-    public ContactAdapter(Context context, JSONArray values) {
+    public ContactAdapter(Context context, List<Contact> values) {
         this.context = context;
+
         this.originalData = values;
         this.filteredData = values;
     }
@@ -47,18 +49,17 @@ public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterab
 
     @Override
     public int getCount() {
-        return filteredData.length();
+        return filteredData.size();
     }
 
     @Override
-    public JSONObject getItem(int i) {
-        return filteredData.optJSONObject(i);
+    public Contact getItem(int i) {
+        return filteredData.get(i);
     }
 
     @Override
     public long getItemId(int i) {
-        JSONObject jsonObject = getItem(i);
-        return jsonObject.optLong("id");
+        return i;
     }
 
     @NonNull
@@ -69,22 +70,15 @@ public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterab
         View rowView = layoutInflater.inflate(R.layout.contact_items, parent, false);
         TextView name = rowView.findViewById(R.id.contactName);
 
-        JSONObject json_data = getItem(position);
+        Contact contact = getItem(position);
 
-        try {
-            name.setText(json_data.getString("displayName"));
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        name.setText(contact.getDisplayName());
 
 
         return rowView;
 
     }
 
-    @Override
     public Filter getFilter() {
         return mFilter;
     }
@@ -97,22 +91,17 @@ public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterab
 
             FilterResults results = new FilterResults();
 
-            final JSONArray list = originalData;
+            final List<Contact> list = originalData;
 
-            int count = list.length();
-            final ArrayList<String> nlist = new ArrayList<String>(count);
+            int count = list.size();
+            final List<Contact> nlist = new ArrayList<Contact>(count);
 
-            String filterableString ;
+            Contact filterableContact ;
 
             for (int i = 0; i < count; i++) {
-                try {
-                    filterableString = list.getJSONObject(i).toString();
-
-                    if (filterableString.toLowerCase().contains(filterString)) {
-                        nlist.add(filterableString);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                filterableContact = list.get(i);
+                if (filterableContact.getDisplayName().contains(filterString) || filterableContact.getDisplayName().startsWith(filterString )) {
+                    nlist.add(filterableContact);
                 }
             }
 
@@ -124,13 +113,14 @@ public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterab
 
         @SuppressWarnings("unchecked")
         @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-
-            filteredData =  (JSONArray) results.values;
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults)
+        {
+            filteredData = (List<Contact>) filterResults.values;
             notifyDataSetChanged();
         }
 
     }
+
 
 
 }

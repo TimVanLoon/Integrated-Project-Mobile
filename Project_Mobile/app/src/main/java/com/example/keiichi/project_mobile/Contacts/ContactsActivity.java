@@ -190,14 +190,18 @@ public class ContactsActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                return false;
+                contactAdapter.getFilter().filter(s);
+
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-                //contactAdapter.getFilter().filter(s);
-                return false;
+                contactAdapter.getFilter().filter(s);
+
+                return true;
             }
+
         });
 
         return super.onCreateOptionsMenu(menu);
@@ -339,7 +343,7 @@ public class ContactsActivity extends AppCompatActivity {
 
 
 
-            contactAdapter = new ContactAdapter(this, contactArray);
+            contactAdapter = new ContactAdapter(this, contacts);
             contactsListView.setAdapter(contactAdapter);
 
 
@@ -352,7 +356,7 @@ public class ContactsActivity extends AppCompatActivity {
         }
         assert contactsJsonArray != null;
 
-        contactAdapter = new ContactAdapter(this, contactsJsonArray );
+        contactAdapter = new ContactAdapter(this, contacts );
         contactsListView.setAdapter(contactAdapter);
 
     }
