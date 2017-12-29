@@ -257,6 +257,22 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                 intentContacts.putExtra("displayName", displayName);
                 intentContacts.putExtra("userPhone", phoneNumber);
                 intentContacts.putExtra("emailList",(Serializable) emailList);
+                intentContacts.putExtra("notes", notes);
+                intentContacts.putExtra("nickname", nickname);
+                intentContacts.putExtra("spouse", spouse);
+                intentContacts.putExtra("street", street);
+                intentContacts.putExtra("postalcode", postalCode);
+                intentContacts.putExtra("city", city);
+                intentContacts.putExtra("state", state);
+                intentContacts.putExtra("country", country);
+                intentContacts.putExtra("job", job);
+                intentContacts.putExtra("department", department);
+                intentContacts.putExtra("company", company);
+                intentContacts.putExtra("office", office);
+                intentContacts.putExtra("manager", manager);
+                intentContacts.putExtra("assistant", assistant);
+                intentContacts.putExtra("firstname", firstName);
+                intentContacts.putExtra("lastname", lastName);
 
                 startActivity(intentContacts);
 
@@ -271,6 +287,22 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                 intentEditContact.putExtra("displayName", displayName);
                 intentEditContact.putExtra("userPhone", phoneNumber);
                 intentEditContact.putExtra("emailList",(Serializable) emailList);
+                intentEditContact.putExtra("notes", notes);
+                intentEditContact.putExtra("nickname", nickname);
+                intentEditContact.putExtra("spouse", spouse);
+                intentEditContact.putExtra("street", street);
+                intentEditContact.putExtra("postalcode", postalCode);
+                intentEditContact.putExtra("city", city);
+                intentEditContact.putExtra("state", state);
+                intentEditContact.putExtra("country", country);
+                intentEditContact.putExtra("job", job);
+                intentEditContact.putExtra("department", department);
+                intentEditContact.putExtra("company", company);
+                intentEditContact.putExtra("office", office);
+                intentEditContact.putExtra("manager", manager);
+                intentEditContact.putExtra("assistant", assistant);
+                intentEditContact.putExtra("firstname", firstName);
+                intentEditContact.putExtra("lastname", lastName);
 
                 startActivity(intentEditContact);
 
