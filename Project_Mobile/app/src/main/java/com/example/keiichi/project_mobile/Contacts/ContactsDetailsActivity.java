@@ -287,6 +287,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                 intentEditContact.putExtra("displayName", displayName);
                 intentEditContact.putExtra("userPhone", phoneNumber);
                 intentEditContact.putExtra("emailList",(Serializable) emailList);
+                intentEditContact.putExtra("email", emailAddress);
                 intentEditContact.putExtra("notes", notes);
                 intentEditContact.putExtra("nickname", nickname);
                 intentEditContact.putExtra("spouse", spouse);

@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
@@ -40,7 +41,26 @@ public class EditContactActivity extends AppCompatActivity {
     private String assistant;
     private String firstName;
     private String lastName;
+    private String email;
     private List<EmailAddress> emailList;
+    private EditText firstNameInput;
+    private EditText lastNameInput;
+    private EditText emailInput;
+    private EditText phoneInput;
+    private EditText jobTitleInput;
+    private EditText departmentInput;
+    private EditText companyNameInput;
+    private EditText officeLocationInput;
+    private EditText managerInput;
+    private EditText assistantNameInput;
+    private EditText streetNameInput;
+    private EditText postalCodeInput;
+    private EditText cityNameInput;
+    private EditText stateNameInput;
+    private EditText countryNameInput;
+    private EditText personalNotesInput;
+    private EditText nickNameInput;
+    private EditText spouseNameInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +74,7 @@ public class EditContactActivity extends AppCompatActivity {
         displayName = getIntent().getStringExtra("displayName");
         phoneNumber = getIntent().getStringExtra("userPhone");
         emailList = (List<EmailAddress>)getIntent().getSerializableExtra("emailList");
+        email = getIntent().getStringExtra("email");
         notes = getIntent().getStringExtra("notes");
         nickname = getIntent().getStringExtra("nickname");
         spouse = getIntent().getStringExtra("spouse");
@@ -71,7 +92,44 @@ public class EditContactActivity extends AppCompatActivity {
         firstName = getIntent().getStringExtra("firstname");
         lastName = getIntent().getStringExtra("lastname");
 
-        System.out.println("test list 2: " + emailList);
+        firstNameInput = (EditText) findViewById(R.id.firstNameInput);
+        lastNameInput = (EditText) findViewById(R.id.lastNameInput);
+        emailInput = (EditText) findViewById(R.id.emailInput);
+        phoneInput = (EditText) findViewById(R.id.phoneInput);
+        jobTitleInput = (EditText) findViewById(R.id.jobInput);
+        departmentInput = (EditText) findViewById(R.id.department);
+        companyNameInput = (EditText) findViewById(R.id.companyName);
+        officeLocationInput = (EditText) findViewById(R.id.officeLocation);
+        managerInput = (EditText) findViewById(R.id.manager);
+        assistantNameInput = (EditText) findViewById(R.id.assistantName);
+        streetNameInput = (EditText) findViewById(R.id.streetName);
+        postalCodeInput = (EditText) findViewById(R.id.postalCode);
+        cityNameInput = (EditText) findViewById(R.id.cityName);
+        stateNameInput = (EditText) findViewById(R.id.stateName);
+        countryNameInput = (EditText) findViewById(R.id.countryName);
+        personalNotesInput = (EditText) findViewById(R.id.personalNotes);
+        nickNameInput = (EditText) findViewById(R.id.nickName);
+        spouseNameInput = (EditText) findViewById(R.id.spouseName);
+
+        // VUL INPUTS MET DATA VAN CONTACT
+        firstNameInput.setText(firstName);
+        lastNameInput.setText(lastName);
+        emailInput.setText(email);
+        phoneInput.setText(phoneNumber);
+        jobTitleInput.setText(job);
+        departmentInput.setText(department);
+        companyNameInput.setText(company);
+        officeLocationInput.setText(office);
+        managerInput.setText(manager);
+        assistantNameInput.setText(assistant);
+        streetNameInput.setText(street);
+        postalCodeInput.setText(postalCode);
+        cityNameInput.setText(city);
+        stateNameInput.setText(state);
+        countryNameInput.setText(country);
+        personalNotesInput.setText(notes);
+        nickNameInput.setText(nickname);
+        spouseNameInput.setText(spouse);
 
         // INITIALISEER ACTION BAR
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
