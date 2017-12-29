@@ -70,6 +70,11 @@ public class ContactsDetailsActivity extends AppCompatActivity {
     private TextView assisantText;
     private TextView firstNameText;
     private TextView lastNameText;
+    private TextView addressTitle;
+    private TextView spouseTitle;
+    private TextView notesTitle;
+    private TextView nicknameTitle;
+    private TextView workTitle;
     private Toolbar myToolbar;
 
     @Override
@@ -97,6 +102,11 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         assisantText = (TextView) findViewById(R.id.assistantDetails);
         firstNameText = (TextView) findViewById(R.id.firstName);
         lastNameText = (TextView) findViewById(R.id.lastName);
+        addressTitle = (TextView) findViewById(R.id.addressTitle);
+        spouseTitle = (TextView) findViewById(R.id.spouseTitle);
+        notesTitle = (TextView) findViewById(R.id.notesTitle);
+        nicknameTitle = (TextView) findViewById(R.id.nicknameTitle);
+        workTitle = (TextView) findViewById(R.id.workTitle);
 
         // INITIALISEER ACTION BAR
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -150,6 +160,8 @@ public class ContactsDetailsActivity extends AppCompatActivity {
             });
         }
         else {
+            email.setText("(Empty)");
+            email.setTextColor(Color.parseColor("#F4E7D7"));
 
             mailButton.setColorFilter(Color.GRAY);
 
@@ -214,21 +226,119 @@ public class ContactsDetailsActivity extends AppCompatActivity {
 
         TextView headerDisplayName = (TextView) findViewById(R.id.displayName);
         headerDisplayName.setText(displayName);
-        userPhone.setText(phoneNumber);
-        notesText.setText(notes);
-        spouseText.setText(spouse);
-        nicknameText.setText(nickname);
-        streetText.setText(street);
-        locationText.setText(postalCode + " " + city + " " + state);
-        countryText.setText(country);
-        jobText.setText("Job: " + job);
-        departmentText.setText("Department: " +department);
-        companyText.setText("Company: " + company);
-        officeText.setText("Office: " + office);
-        managerText.setText("Manager: " + manager);
-        assisantText.setText("Assistant: " +assistant);
-        firstNameText.setText(firstName);
-        lastNameText.setText(lastName);
+
+        if (!phoneNumber.equals("")){
+            userPhone.setText(phoneNumber);
+        } else {
+            userPhone.setText("(Empty)");
+            userPhone.setTextColor(Color.parseColor("#F4E7D7"));
+        }
+
+        if(!notes.equals("")){
+            notesText.setText(notes);
+        } else {
+            notesText.setVisibility(View.GONE);
+            notesTitle.setVisibility(View.GONE);
+        }
+
+        if(!spouse.equals("")){
+            spouseText.setText(spouse);
+        } else {
+            spouseText.setVisibility(View.GONE);
+            spouseTitle.setVisibility(View.GONE);
+        }
+
+        if(!nickname.equals("")){
+            nicknameText.setText(nickname);
+        } else {
+            nicknameText.setVisibility(View.GONE);
+            nicknameTitle.setVisibility(View.GONE);
+        }
+
+
+        if(street.equals("") && postalCode.equals("") && city.equals("") && state.equals("") && country.equals("")){
+            addressTitle.setVisibility(View.GONE);
+        }
+
+
+        if(!street.equals("")){
+            streetText.setText(street);
+        } else {
+            streetText.setVisibility(View.GONE);
+        }
+
+        if(postalCode.equals("") && city.equals("") && state.equals("")){
+            locationText.setVisibility(View.GONE);
+        } else if (postalCode.equals("") && city.equals("") ){
+            locationText.setText(state);
+        } else if (postalCode.equals("")){
+            locationText.setText(city + " " + state);
+        } else if (city.equals("")){
+            locationText.setText(postalCode + " " + state);
+        } else if (state.equals("")){
+            locationText.setText(postalCode + " " + city);
+        }
+
+        if(!country.equals("")){
+            countryText.setText(country);
+        } else {
+            countryText.setVisibility(View.GONE);
+        }
+
+
+        if(job.equals("") && department.equals("") && company.equals("") && office.equals("") && manager.equals("") && assistant.equals("")){
+            workTitle.setVisibility(View.GONE);
+        }
+
+        if(!job.equals("")){
+            jobText.setText(job);
+        } else {
+            jobText.setVisibility(View.GONE);
+        }
+
+        if(!department.equals("")){
+            departmentText.setText(department);
+        } else {
+            departmentText.setVisibility(View.GONE);
+        }
+
+        if(!company.equals("")){
+            companyText.setText(company);
+        } else {
+            companyText.setVisibility(View.GONE);
+        }
+
+        if(!office.equals("")){
+            officeText.setText(office);
+        } else {
+            officeText.setVisibility(View.GONE);
+            officeText.setVisibility(View.GONE);
+        }
+
+        if(!manager.equals("")){
+            managerText.setText(manager);
+        } else {
+            managerText.setVisibility(View.GONE);
+        }
+
+        if(!assistant.equals("")){
+            assisantText.setText(assistant);
+        } else {
+            assisantText.setVisibility(View.GONE);
+        }
+
+        if(!firstName.equals("")){
+            firstNameText.setText(firstName);
+        } else {
+            firstNameText.setVisibility(View.GONE);
+        }
+
+        if(!lastName.equals("")){
+            lastNameText.setText(lastName);
+        } else {
+            lastNameText.setVisibility(View.GONE);
+        }
+
     }
 
     // VOEG ICONS TOE AAN DE ACTION BAR

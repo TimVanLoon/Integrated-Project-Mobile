@@ -222,6 +222,7 @@
                 android:textColor="@color/black" />
 
             <TextView
+                android:id="@+id/workTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Work"
@@ -276,6 +277,7 @@
                 android:textColor="@color/black" />
 
             <TextView
+                android:id="@+id/addressTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Home Address"
@@ -311,6 +313,7 @@
 
 
             <TextView
+                android:id="@+id/nicknameTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Nickname"
@@ -329,6 +332,7 @@
                 android:textColor="@color/black" />
 
             <TextView
+                android:id="@+id/spouseTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Spouse"
@@ -347,6 +351,7 @@
                 android:textColor="@color/black" />
 
             <TextView
+                android:id="@+id/notesTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Notes"

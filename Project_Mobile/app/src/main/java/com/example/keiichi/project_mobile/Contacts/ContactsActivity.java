@@ -402,26 +402,38 @@ public class ContactsActivity extends AppCompatActivity {
 
             if(contact.getJobTitle() != null){
                 showContactDetails.putExtra("job", contact.getJobTitle());
+            } else {
+                showContactDetails.putExtra("job", "");
             }
 
             if(contact.getDepartment() != null){
                 showContactDetails.putExtra("department", contact.getDepartment());
+            } else {
+                showContactDetails.putExtra("department", "");
             }
 
             if(contact.getCompanyName() != null){
                 showContactDetails.putExtra("company", contact.getCompanyName());
+            } else {
+                showContactDetails.putExtra("company", "");
             }
 
             if(contact.getOfficeLocation() != null) {
                 showContactDetails.putExtra("office", contact.getOfficeLocation());
+            } else {
+                showContactDetails.putExtra("office", "");
             }
 
             if(contact.getManager() != null){
                 showContactDetails.putExtra("manager", contact.getManager());
+            } else {
+                showContactDetails.putExtra("manager", "");
             }
 
             if(contact.getAssistantName() != null){
                 showContactDetails.putExtra("assistant", contact.getAssistantName());
+            } else {
+                showContactDetails.putExtra("assistant", "");
             }
 
             if(contact.getHomeAddress() != null){
@@ -430,6 +442,32 @@ public class ContactsActivity extends AppCompatActivity {
                 showContactDetails.putExtra("city",contact.getHomeAddress().getCity());
                 showContactDetails.putExtra("state",contact.getHomeAddress().getState());
                 showContactDetails.putExtra("country",contact.getHomeAddress().getCountryOrRegion());
+            } else {
+                showContactDetails.putExtra("street", "");
+                showContactDetails.putExtra("postalcode","");
+                showContactDetails.putExtra("city","");
+                showContactDetails.putExtra("state", "");
+                showContactDetails.putExtra("country", "");
+            }
+
+            if(contact.getHomeAddress().getStreet() == null){
+                showContactDetails.putExtra("street", "");
+            }
+
+            if(contact.getHomeAddress().getPostalCode() == null){
+                showContactDetails.putExtra("postalcode", "");
+            }
+
+            if(contact.getHomeAddress().getCity() == null){
+                showContactDetails.putExtra("city", "");
+            }
+
+            if(contact.getHomeAddress().getState() == null){
+                showContactDetails.putExtra("state", "");
+            }
+
+            if(contact.getHomeAddress().getCountryOrRegion() == null){
+                showContactDetails.putExtra("country", "");
             }
 
             if(contact.getGivenName() != null){

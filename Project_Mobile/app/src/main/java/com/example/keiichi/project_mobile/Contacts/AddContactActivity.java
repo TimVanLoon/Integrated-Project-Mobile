@@ -174,6 +174,8 @@ public class AddContactActivity extends AppCompatActivity {
                                             //this code will run after the delay time which is 2 seconds.
                                             Intent intentContacts = new Intent(AddContactActivity.this, ContactsActivity.class);
                                             intentContacts.putExtra("AccessToken", accessToken);
+                                            intentContacts.putExtra("userName", userName);
+                                            intentContacts.putExtra("userEmail", userEmail);
                                             startActivity(intentContacts);
                                         }
                                     }, DELAY_TIME);
