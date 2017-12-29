@@ -48,6 +48,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
     private String assistant;
     private String firstName;
     private String lastName;
+    private String id;
     private List<EmailAddress> emailList;
     private ImageButton phoneButton;
     private ImageButton calendarButton;
@@ -128,6 +129,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         assistant = getIntent().getStringExtra("assistant");
         firstName = getIntent().getStringExtra("firstname");
         lastName = getIntent().getStringExtra("lastname");
+        id = getIntent().getStringExtra("id");
 
         System.out.println("test list : " + emailList.toString());
 
@@ -304,6 +306,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                 intentEditContact.putExtra("assistant", assistant);
                 intentEditContact.putExtra("firstname", firstName);
                 intentEditContact.putExtra("lastname", lastName);
+                intentEditContact.putExtra("id", id);
 
                 startActivity(intentEditContact);
 

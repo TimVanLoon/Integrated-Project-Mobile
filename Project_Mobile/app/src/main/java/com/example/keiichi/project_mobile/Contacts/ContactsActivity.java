@@ -366,6 +366,7 @@ public class ContactsActivity extends AppCompatActivity {
             Intent showContactDetails = new Intent(ContactsActivity.this, ContactsDetailsActivity.class);
             showContactDetails.putExtra("givenName", contact.getGivenName());
             showContactDetails.putExtra("displayName", contact.getDisplayName());
+            showContactDetails.putExtra("id", contact.getId());
 
             if(contact.getMobilePhone() == null){
                 showContactDetails.putExtra("userPhone", "");

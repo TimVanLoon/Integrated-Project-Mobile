@@ -136,9 +136,6 @@ public class AddContactActivity extends AppCompatActivity {
             // WANNEER SAVE ICON WORDT AANGEKLIKT
             case R.id.action_save:
 
-
-                    System.out.println("papa auw:" + firstNameInput.getText().toString());
-
                     if(firstNameInput.getText().toString().isEmpty()&& lastNameInput.getText().toString().isEmpty()){
                         Toast.makeText(getApplicationContext(), "Required fields are empty!", Toast.LENGTH_SHORT).show();
                     }
