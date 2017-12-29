@@ -119,7 +119,7 @@
                 android:textSize="12dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:inputType="textCapSentences|textPersonName"
+                android:inputType="textPersonName"
                 android:textColor="@color/black"
                 android:background="@drawable/edit_text_style"
                 android:layout_marginLeft="15dp"

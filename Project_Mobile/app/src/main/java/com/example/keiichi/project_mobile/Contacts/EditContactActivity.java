@@ -188,6 +188,7 @@ public class EditContactActivity extends AppCompatActivity {
                 intentContactDetails.putExtra("displayName", displayName);
                 intentContactDetails.putExtra("userPhone", phoneNumber);
                 intentContactDetails.putExtra("emailList",(Serializable) emailList);
+                intentContactDetails.putExtra("email", email);
                 intentContactDetails.putExtra("notes", notes);
                 intentContactDetails.putExtra("nickname", nickname);
                 intentContactDetails.putExtra("spouse", spouse);
@@ -219,18 +220,47 @@ public class EditContactActivity extends AppCompatActivity {
                     try {
                         updateContact();
 
+
                         int DELAY_TIME=2000;
 
-                        //start your animation
+                        // TIMER VOOR DE UPDATE
                         new Timer().schedule(new TimerTask() {
                             @Override
                             public void run() {
+
                                 //this code will run after the delay time which is 2 seconds.
-                                Intent intentContacts = new Intent(EditContactActivity.this, ContactsDetailsActivity.class);
-                                intentContacts.putExtra("AccessToken", accessToken);
-                                startActivity(intentContacts);
+                                Intent intentContactDetailsSaved = new Intent(EditContactActivity.this, ContactsDetailsActivity.class);
+                                intentContactDetailsSaved.putExtra("AccessToken", accessToken);
+                                intentContactDetailsSaved.putExtra("userName", userName);
+                                intentContactDetailsSaved.putExtra("userEmail", userEmail);
+                                intentContactDetailsSaved.putExtra("givenName", givenName);
+                                intentContactDetailsSaved.putExtra("displayName", displayName);
+                                intentContactDetailsSaved.putExtra("userPhone", phoneNumber);
+                                intentContactDetailsSaved.putExtra("emailList",(Serializable) emailList);
+                                intentContactDetailsSaved.putExtra("notes", notes);
+                                intentContactDetailsSaved.putExtra("nickname", nickname);
+                                intentContactDetailsSaved.putExtra("spouse", spouse);
+                                intentContactDetailsSaved.putExtra("street", street);
+                                intentContactDetailsSaved.putExtra("postalcode", postalCode);
+                                intentContactDetailsSaved.putExtra("city", city);
+                                intentContactDetailsSaved.putExtra("state", state);
+                                intentContactDetailsSaved.putExtra("country", country);
+                                intentContactDetailsSaved.putExtra("job", job);
+                                intentContactDetailsSaved.putExtra("department", department);
+                                intentContactDetailsSaved.putExtra("company", company);
+                                intentContactDetailsSaved.putExtra("office", office);
+                                intentContactDetailsSaved.putExtra("manager", manager);
+                                intentContactDetailsSaved.putExtra("assistant", assistant);
+                                intentContactDetailsSaved.putExtra("firstname", firstName);
+                                intentContactDetailsSaved.putExtra("lastname", lastName);
+                                intentContactDetailsSaved.putExtra("id", id);
+
+                                startActivity(intentContactDetailsSaved);
+
+
                             }
                         }, DELAY_TIME);
+
 
 
 
@@ -241,39 +271,6 @@ public class EditContactActivity extends AppCompatActivity {
 
                 }
 
-                Intent intentContactDetailsSaved = new Intent(EditContactActivity.this, ContactsDetailsActivity.class);
-                intentContactDetailsSaved.putExtra("AccessToken", accessToken);
-                intentContactDetailsSaved.putExtra("userName", userName);
-                intentContactDetailsSaved.putExtra("userEmail", userEmail);
-                intentContactDetailsSaved.putExtra("givenName", givenName);
-                intentContactDetailsSaved.putExtra("displayName", displayName);
-                intentContactDetailsSaved.putExtra("userPhone", phoneNumber);
-                intentContactDetailsSaved.putExtra("emailList",(Serializable) emailList);
-                intentContactDetailsSaved.putExtra("notes", notes);
-                intentContactDetailsSaved.putExtra("nickname", nickname);
-                intentContactDetailsSaved.putExtra("spouse", spouse);
-                intentContactDetailsSaved.putExtra("street", street);
-                intentContactDetailsSaved.putExtra("postalcode", postalCode);
-                intentContactDetailsSaved.putExtra("city", city);
-                intentContactDetailsSaved.putExtra("state", state);
-                intentContactDetailsSaved.putExtra("country", country);
-                intentContactDetailsSaved.putExtra("job", job);
-                intentContactDetailsSaved.putExtra("department", department);
-                intentContactDetailsSaved.putExtra("company", company);
-                intentContactDetailsSaved.putExtra("office", office);
-                intentContactDetailsSaved.putExtra("manager", manager);
-                intentContactDetailsSaved.putExtra("assistant", assistant);
-                intentContactDetailsSaved.putExtra("firstname", firstName);
-                intentContactDetailsSaved.putExtra("lastname", lastName);
-                intentContactDetailsSaved.putExtra("id", id);
-
-
-                startActivity(intentContactDetailsSaved);
-
-                Toast.makeText(getApplicationContext(), "Contact edited", Toast.LENGTH_SHORT).show();
-
-                return true;
-
 
             default:
                 // If we got here, the user's action was not recognized.
@@ -282,75 +279,95 @@ public class EditContactActivity extends AppCompatActivity {
         }
     }
 
-    // POST REQUEST VOOR NIEWE CONTACTSPERSOON
+    // PATCH REQUEST VOOR UPDATE CONTACTPERSOON
     private void updateContact() throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
 
         Contact contact = new Contact();
-        contact.setGivenName(firstNameInput.getText().toString());
-        contact.setSurname(lastNameInput.getText().toString());
 
-        String displayName = firstNameInput.getText().toString() + " " + lastNameInput.getText().toString();
-        contact.setDisplayName(displayName);
+        contact.setGivenName(firstNameInput.getText().toString());
+        givenName = firstNameInput.getText().toString();
+        firstName = firstNameInput.getText().toString();
+
+        contact.setSurname(lastNameInput.getText().toString());
+        lastName = lastNameInput.getText().toString();
+
+        String displayname = firstNameInput.getText().toString() + " " + lastNameInput.getText().toString();
+        displayName = firstNameInput.getText().toString() + " " + lastNameInput.getText().toString();
+        contact.setDisplayName(displayname);
 
         if(!emailInput.getText().toString().isEmpty()){
             EmailAddress contactEmail = new EmailAddress(emailInput.getText().toString());
             List<EmailAddress> listEmails = new ArrayList<>();
             listEmails.add(contactEmail);
             contact.setEmailAddresses(listEmails);
+            emailList = listEmails;
         }
 
 
         if(!phoneInput.getText().toString().isEmpty()){
             contact.setMobilePhone(phoneInput.getText().toString());
+            phoneNumber = phoneInput.getText().toString();
         }
 
 
         if(!jobTitleInput.getText().toString().isEmpty()){
             contact.setJobTitle(jobTitleInput.getText().toString());
+            job = jobTitleInput.getText().toString();
         }
 
         if(!departmentInput.getText().toString().isEmpty()){
             contact.setDepartment(departmentInput.getText().toString());
+            department = departmentInput.getText().toString();
         }
 
         if(!companyNameInput.getText().toString().isEmpty()){
             contact.setCompanyName(companyNameInput.getText().toString());
+            company = companyNameInput.getText().toString();
         }
 
         if(!officeLocationInput.getText().toString().isEmpty()){
             contact.setOfficeLocation(officeLocationInput.getText().toString());
+            office = officeLocationInput.getText().toString();
         }
 
         if(!managerInput.getText().toString().isEmpty()){
             contact.setManager(managerInput.getText().toString());
+            manager = managerInput.getText().toString();
         }
 
         if(!assistantNameInput.getText().toString().isEmpty()){
             contact.setAssistantName(assistantNameInput.getText().toString());
+            assistant = assistantNameInput.getText().toString();
         }
 
         if(!streetNameInput.getText().toString().isEmpty()){
             PhysicalAddress contactPhysicalAddress = new PhysicalAddress(streetNameInput.getText().toString(), cityNameInput.getText().toString(), stateNameInput.getText().toString(), countryNameInput.getText().toString(), postalCodeInput.getText().toString());
             contact.setHomeAddress(contactPhysicalAddress);
+            street = streetNameInput.getText().toString();
+            postalCode = postalCodeInput.getText().toString();
+            city = cityNameInput.getText().toString();
+            state = stateNameInput.getText().toString();
+            country = countryNameInput.getText().toString();
         }
 
         if(!nickNameInput.getText().toString().isEmpty()){
             contact.setNickName(nickNameInput.getText().toString());
+            nickname = nickNameInput.getText().toString();
         }
 
         if(!spouseNameInput.getText().toString().isEmpty()){
             contact.setSpouseName(spouseNameInput.getText().toString());
+            spouse = spouseNameInput.getText().toString();
         }
-
-
 
         if(!personalNotesInput.getText().toString().isEmpty()){
             contact.setPersonalNotes(personalNotesInput.getText().toString());
+            notes = personalNotesInput.getText().toString();
         }
 
         System.out.println("wanna cuddle?" +contact);
-        
+
         String postAddress = URL_POSTADRESS + id;
 
         JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.PATCH, postAddress,new JSONObject(new Gson().toJson(contact)),

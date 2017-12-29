@@ -113,6 +113,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         displayName = getIntent().getStringExtra("displayName");
         phoneNumber = getIntent().getStringExtra("userPhone");
         emailList = (List<EmailAddress>)getIntent().getSerializableExtra("emailList");
+        emailAddress = getIntent().getStringExtra("email");
         notes = getIntent().getStringExtra("notes");
         nickname = getIntent().getStringExtra("nickname");
         spouse = getIntent().getStringExtra("spouse");
@@ -130,9 +131,6 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         firstName = getIntent().getStringExtra("firstname");
         lastName = getIntent().getStringExtra("lastname");
         id = getIntent().getStringExtra("id");
-
-        System.out.println("test list : " + emailList.toString());
-
 
         if(!emailList.isEmpty()){
             emailAddress = emailList.get(0).getAddress();
