@@ -213,63 +213,88 @@ public class EditContactActivity extends AppCompatActivity {
 
             // WANNEER SAVE ICON WORDT AANGEKLIKT
             case R.id.action_save:
-                if(firstNameInput.getText().toString().isEmpty()&& lastNameInput.getText().toString().isEmpty()){
+                if(firstNameInput.getText().toString().isEmpty()|| lastNameInput.getText().toString().isEmpty() ){
+                    if (!emailInput.getText().toString().isEmpty() && !emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+")) {
+                        emailInput.setError("Invalid Email Address!");
+                    }
+
+                    if(!phoneInput.getText().toString().isEmpty() && !isValidMobile(phoneInput.getText().toString())){
+                        phoneInput.setError("Invalid phone number!");
+                    }
+
+                    if(firstNameInput.getText().toString().isEmpty()){
+                        firstNameInput.setError("Required field!");
+                    }
+                    if(lastNameInput.getText().toString().isEmpty()){
+                        lastNameInput.setError("Required field!");
+                    }
+
                     Toast.makeText(getApplicationContext(), "Required fields are empty!", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    try {
-                        updateContact();
+
+                    if (!emailInput.getText().toString().isEmpty() && !emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+")) {
+                        emailInput.setError("Invalid Email Address!");
+
+                        if(!phoneInput.getText().toString().isEmpty() && !isValidMobile(phoneInput.getText().toString())){
+                            phoneInput.setError("Invalid phone number!");
+                        }
+
+                    } else {
+
+                        if(!phoneInput.getText().toString().isEmpty() && !isValidMobile(phoneInput.getText().toString())){
+                            phoneInput.setError("Invalid phone number!");
+                        }else {
+                            try {
+                                updateContact();
+
+                                int DELAY_TIME=2000;
+
+                                //start your animation
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        //this code will run after the delay time which is 2 seconds.
+                                        Intent intentContactDetailsSaved = new Intent(EditContactActivity.this, ContactsDetailsActivity.class);
+                                        intentContactDetailsSaved.putExtra("AccessToken", accessToken);
+                                        intentContactDetailsSaved.putExtra("userName", userName);
+                                        intentContactDetailsSaved.putExtra("userEmail", userEmail);
+                                        intentContactDetailsSaved.putExtra("givenName", givenName);
+                                        intentContactDetailsSaved.putExtra("displayName", displayName);
+                                        intentContactDetailsSaved.putExtra("userPhone", phoneNumber);
+                                        intentContactDetailsSaved.putExtra("emailList",(Serializable) emailList);
+                                        intentContactDetailsSaved.putExtra("notes", notes);
+                                        intentContactDetailsSaved.putExtra("nickname", nickname);
+                                        intentContactDetailsSaved.putExtra("spouse", spouse);
+                                        intentContactDetailsSaved.putExtra("street", street);
+                                        intentContactDetailsSaved.putExtra("postalcode", postalCode);
+                                        intentContactDetailsSaved.putExtra("city", city);
+                                        intentContactDetailsSaved.putExtra("state", state);
+                                        intentContactDetailsSaved.putExtra("country", country);
+                                        intentContactDetailsSaved.putExtra("job", job);
+                                        intentContactDetailsSaved.putExtra("department", department);
+                                        intentContactDetailsSaved.putExtra("company", company);
+                                        intentContactDetailsSaved.putExtra("office", office);
+                                        intentContactDetailsSaved.putExtra("manager", manager);
+                                        intentContactDetailsSaved.putExtra("assistant", assistant);
+                                        intentContactDetailsSaved.putExtra("firstname", firstName);
+                                        intentContactDetailsSaved.putExtra("lastname", lastName);
+                                        intentContactDetailsSaved.putExtra("id", id);
+
+                                        startActivity(intentContactDetailsSaved);
+                                    }
+                                }, DELAY_TIME);
 
 
-                        int DELAY_TIME=2000;
-
-                        // TIMER VOOR DE UPDATE
-                        new Timer().schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-
-                                //this code will run after the delay time which is 2 seconds.
-                                Intent intentContactDetailsSaved = new Intent(EditContactActivity.this, ContactsDetailsActivity.class);
-                                intentContactDetailsSaved.putExtra("AccessToken", accessToken);
-                                intentContactDetailsSaved.putExtra("userName", userName);
-                                intentContactDetailsSaved.putExtra("userEmail", userEmail);
-                                intentContactDetailsSaved.putExtra("givenName", givenName);
-                                intentContactDetailsSaved.putExtra("displayName", displayName);
-                                intentContactDetailsSaved.putExtra("userPhone", phoneNumber);
-                                intentContactDetailsSaved.putExtra("emailList",(Serializable) emailList);
-                                intentContactDetailsSaved.putExtra("notes", notes);
-                                intentContactDetailsSaved.putExtra("nickname", nickname);
-                                intentContactDetailsSaved.putExtra("spouse", spouse);
-                                intentContactDetailsSaved.putExtra("street", street);
-                                intentContactDetailsSaved.putExtra("postalcode", postalCode);
-                                intentContactDetailsSaved.putExtra("city", city);
-                                intentContactDetailsSaved.putExtra("state", state);
-                                intentContactDetailsSaved.putExtra("country", country);
-                                intentContactDetailsSaved.putExtra("job", job);
-                                intentContactDetailsSaved.putExtra("department", department);
-                                intentContactDetailsSaved.putExtra("company", company);
-                                intentContactDetailsSaved.putExtra("office", office);
-                                intentContactDetailsSaved.putExtra("manager", manager);
-                                intentContactDetailsSaved.putExtra("assistant", assistant);
-                                intentContactDetailsSaved.putExtra("firstname", firstName);
-                                intentContactDetailsSaved.putExtra("lastname", lastName);
-                                intentContactDetailsSaved.putExtra("id", id);
-
-                                startActivity(intentContactDetailsSaved);
-
-
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        }, DELAY_TIME);
-
-
-
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                            return true;
+                        }
                     }
-                    return true;
 
                 }
+
 
 
             default:
@@ -398,5 +423,9 @@ public class EditContactActivity extends AppCompatActivity {
 
         queue.add(objectRequest);
 
+    }
+
+    private boolean isValidMobile(String phone) {
+        return android.util.Patterns.PHONE.matcher(phone).matches();
     }
 }

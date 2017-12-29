@@ -20,28 +20,21 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
-import com.example.keiichi.project_mobile.DAL.POJOs.Phone;
 import com.example.keiichi.project_mobile.DAL.POJOs.PhysicalAddress;
-import com.example.keiichi.project_mobile.DAL.POJOs.Website;
 import com.example.keiichi.project_mobile.R;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import javax.json.Json;
-import javax.json.JsonObjectBuilder;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AddContactActivity extends AppCompatActivity {
 
@@ -68,6 +61,7 @@ public class AddContactActivity extends AppCompatActivity {
     private String userName;
     private String userEmail;
     private String accessToken;
+    private boolean isValidEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,32 +130,61 @@ public class AddContactActivity extends AppCompatActivity {
             // WANNEER SAVE ICON WORDT AANGEKLIKT
             case R.id.action_save:
 
-                    if(firstNameInput.getText().toString().isEmpty()&& lastNameInput.getText().toString().isEmpty()){
+                    if(firstNameInput.getText().toString().isEmpty()|| lastNameInput.getText().toString().isEmpty() ){
+                        if (!emailInput.getText().toString().isEmpty() && !emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+")) {
+                            emailInput.setError("Invalid Email Address!");
+                        }
+
+                        if(!phoneInput.getText().toString().isEmpty() && !isValidMobile(phoneInput.getText().toString())){
+                            phoneInput.setError("Invalid phone number!");
+                        }
+
+                        if(firstNameInput.getText().toString().isEmpty()){
+                            firstNameInput.setError("Required field!");
+                        }
+                        if(lastNameInput.getText().toString().isEmpty()){
+                            lastNameInput.setError("Required field!");
+                        }
+
                         Toast.makeText(getApplicationContext(), "Required fields are empty!", Toast.LENGTH_SHORT).show();
                     }
                     else {
-                        try {
-                            saveContact();
 
-                            int DELAY_TIME=2000;
+                        if (!emailInput.getText().toString().isEmpty() && !emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+")) {
+                            emailInput.setError("Invalid Email Address!");
 
-                            //start your animation
-                            new Timer().schedule(new TimerTask() {
-                                @Override
-                                public void run() {
-                                    //this code will run after the delay time which is 2 seconds.
-                                    Intent intentContacts = new Intent(AddContactActivity.this, ContactsActivity.class);
-                                    intentContacts.putExtra("AccessToken", accessToken);
-                                    startActivity(intentContacts);
+                            if(!phoneInput.getText().toString().isEmpty() && !isValidMobile(phoneInput.getText().toString())){
+                                phoneInput.setError("Invalid phone number!");
+                            }
+
+                        } else {
+
+                            if(!phoneInput.getText().toString().isEmpty() && !isValidMobile(phoneInput.getText().toString())){
+                                phoneInput.setError("Invalid phone number!");
+                            } else {
+                                try {
+                                    saveContact();
+
+                                    int DELAY_TIME=2000;
+
+                                    //start your animation
+                                    new Timer().schedule(new TimerTask() {
+                                        @Override
+                                        public void run() {
+                                            //this code will run after the delay time which is 2 seconds.
+                                            Intent intentContacts = new Intent(AddContactActivity.this, ContactsActivity.class);
+                                            intentContacts.putExtra("AccessToken", accessToken);
+                                            startActivity(intentContacts);
+                                        }
+                                    }, DELAY_TIME);
+
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
                                 }
-                            }, DELAY_TIME);
-
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        return true;
+                                return true;
+                            }
+                            }
 
                     }
 
@@ -185,12 +208,16 @@ public class AddContactActivity extends AppCompatActivity {
         String displayName = firstNameInput.getText().toString() + " " + lastNameInput.getText().toString();
         contact.setDisplayName(displayName);
 
-        if(!emailInput.getText().toString().isEmpty()){
+        if (!emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+")) {
+            emailInput.setError("Invalid Email Address");
+        }
+        else {
             EmailAddress contactEmail = new EmailAddress(emailInput.getText().toString());
             List<EmailAddress> listEmails = new ArrayList<>();
             listEmails.add(contactEmail);
             contact.setEmailAddresses(listEmails);
         }
+
 
 
         if(!phoneInput.getText().toString().isEmpty()){
@@ -241,9 +268,6 @@ public class AddContactActivity extends AppCompatActivity {
             contact.setPersonalNotes(personalNotes.getText().toString());
         }
 
-        JSONObject testObject = new JSONObject(new Gson().toJson(contact));
-        System.out.println("wanna cuddle?" +contact);
-
         JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_POSTADRESS,new JSONObject(new Gson().toJson(contact)),
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -271,6 +295,11 @@ public class AddContactActivity extends AppCompatActivity {
 
         queue.add(objectRequest);
 
+    }
+
+
+    private boolean isValidMobile(String phone) {
+        return android.util.Patterns.PHONE.matcher(phone).matches();
     }
 
 }
