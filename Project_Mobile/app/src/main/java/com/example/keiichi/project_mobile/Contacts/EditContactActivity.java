@@ -250,7 +250,6 @@ public class EditContactActivity extends AppCompatActivity {
 
                                 int DELAY_TIME=2000;
 
-                                //start your animation
                                 new Timer().schedule(new TimerTask() {
                                     @Override
                                     public void run() {

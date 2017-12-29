@@ -1,8 +1,10 @@
 package com.example.keiichi.project_mobile.Contacts;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -14,17 +16,37 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
+import com.example.keiichi.project_mobile.DAL.POJOs.PhysicalAddress;
 import com.example.keiichi.project_mobile.Mail.SendMailActivity;
 import com.example.keiichi.project_mobile.R;
+import com.google.gson.Gson;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ContactsDetailsActivity extends AppCompatActivity {
 
+    final private String URL_POSTADRESS = "https://graph.microsoft.com/beta/me/contacts/";
     private String accessToken;
     private String userName;
     private String userEmail;
@@ -76,6 +98,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
     private TextView nicknameTitle;
     private TextView workTitle;
     private Toolbar myToolbar;
+    private  AlertDialog.Builder builder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -339,6 +362,68 @@ public class ContactsDetailsActivity extends AppCompatActivity {
             lastNameText.setVisibility(View.GONE);
         }
 
+        builder = new AlertDialog.Builder(ContactsDetailsActivity.this);
+        builder.setCancelable(true);
+        builder.setTitle("Delete Contact");
+        builder.setMessage("Are you sure you want to delete this contact?");
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                try {
+                    deleteContact();
+
+                    int DELAY_TIME=2000;
+
+                    new Timer().schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            //this code will run after the delay time which is 2 seconds.
+                            Intent intentContacts = new Intent(ContactsDetailsActivity.this, ContactsActivity.class);
+                            intentContacts.putExtra("AccessToken", accessToken);
+                            intentContacts.putExtra("userName", userName);
+                            intentContacts.putExtra("userEmail", userEmail);
+                            intentContacts.putExtra("givenName", givenName);
+                            intentContacts.putExtra("displayName", displayName);
+                            intentContacts.putExtra("userPhone", phoneNumber);
+                            intentContacts.putExtra("emailList",(Serializable) emailList);
+                            intentContacts.putExtra("notes", notes);
+                            intentContacts.putExtra("nickname", nickname);
+                            intentContacts.putExtra("spouse", spouse);
+                            intentContacts.putExtra("street", street);
+                            intentContacts.putExtra("postalcode", postalCode);
+                            intentContacts.putExtra("city", city);
+                            intentContacts.putExtra("state", state);
+                            intentContacts.putExtra("country", country);
+                            intentContacts.putExtra("job", job);
+                            intentContacts.putExtra("department", department);
+                            intentContacts.putExtra("company", company);
+                            intentContacts.putExtra("office", office);
+                            intentContacts.putExtra("manager", manager);
+                            intentContacts.putExtra("assistant", assistant);
+                            intentContacts.putExtra("firstname", firstName);
+                            intentContacts.putExtra("lastname", lastName);
+
+                            startActivity(intentContacts);
+
+
+                        }
+                    }, DELAY_TIME);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
     }
 
     // VOEG ICONS TOE AAN DE ACTION BAR
@@ -346,7 +431,6 @@ public class ContactsDetailsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu){
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.edit_navigation, menu);
-
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -388,6 +472,12 @@ public class ContactsDetailsActivity extends AppCompatActivity {
 
                 return true;
 
+            case R.id.action_delete:
+
+                builder.show();
+
+                return true;
+
             case R.id.action_edit:
                 Intent intentEditContact = new Intent(ContactsDetailsActivity.this, EditContactActivity.class);
                 intentEditContact.putExtra("AccessToken", accessToken);
@@ -425,5 +515,40 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    // PATCH REQUEST VOOR UPDATE CONTACTPERSOON
+    private void deleteContact() throws JSONException {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        String postAddress = URL_POSTADRESS + id;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.DELETE, postAddress,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Toast.makeText(getApplicationContext(), "Contact deleted!", Toast.LENGTH_SHORT).show();
+                    }
+
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+                headers.put("Content-Type", "application/json; charset=utf-8");
+
+                return headers;
+            }
+
+        };
+
+        queue.add(stringRequest);
+
     }
 }
