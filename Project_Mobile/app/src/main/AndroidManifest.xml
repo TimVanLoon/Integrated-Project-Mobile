@@ -59,7 +59,8 @@
             android:label="New event" />
         <activity
             android:name=".Contacts.ContactsDetailsActivity"
-            android:label="Contact Details" />
+            android:label="Contact Details"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".Contacts.EditContactActivity"
             android:label="Edit Contact"

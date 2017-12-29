@@ -18,6 +18,8 @@ import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.Mail.SendMailActivity;
 import com.example.keiichi.project_mobile.R;
 
+import org.w3c.dom.Text;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -33,6 +35,19 @@ public class ContactsDetailsActivity extends AppCompatActivity {
     private String notes;
     private String nickname;
     private String spouse;
+    private String street;
+    private String postalCode;
+    private String city;
+    private String state;
+    private String country;
+    private String job;
+    private String department;
+    private String company;
+    private String office;
+    private String manager;
+    private String assistant;
+    private String firstName;
+    private String lastName;
     private List<EmailAddress> emailList;
     private ImageButton phoneButton;
     private ImageButton calendarButton;
@@ -43,6 +58,17 @@ public class ContactsDetailsActivity extends AppCompatActivity {
     private TextView notesText;
     private TextView spouseText;
     private TextView nicknameText;
+    private TextView streetText;
+    private TextView locationText;
+    private TextView countryText;
+    private TextView jobText;
+    private TextView departmentText;
+    private TextView companyText;
+    private TextView officeText;
+    private TextView managerText;
+    private TextView assisantText;
+    private TextView firstNameText;
+    private TextView lastNameText;
     private Toolbar myToolbar;
 
     @Override
@@ -59,6 +85,17 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         notesText = (TextView) findViewById(R.id.notes);
         nicknameText = (TextView) findViewById(R.id.nickname);
         spouseText = (TextView) findViewById(R.id.spouse);
+        streetText = (TextView) findViewById(R.id.street);
+        locationText = (TextView) findViewById(R.id.location);
+        countryText = (TextView) findViewById(R.id.country);
+        jobText = (TextView) findViewById(R.id.jobDetails);
+        departmentText = (TextView) findViewById(R.id.departmentDetails);
+        companyText = (TextView) findViewById(R.id.companyDetails);
+        officeText = (TextView) findViewById(R.id.officeDetails);
+        managerText = (TextView) findViewById(R.id.managerDetails);
+        assisantText = (TextView) findViewById(R.id.assistantDetails);
+        firstNameText = (TextView) findViewById(R.id.firstName);
+        lastNameText = (TextView) findViewById(R.id.lastName);
 
         // INITIALISEER ACTION BAR
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -78,6 +115,19 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         notes = getIntent().getStringExtra("notes");
         nickname = getIntent().getStringExtra("nickname");
         spouse = getIntent().getStringExtra("spouse");
+        street = getIntent().getStringExtra("street");
+        postalCode = getIntent().getStringExtra("postalcode");
+        city = getIntent().getStringExtra("city");
+        state = getIntent().getStringExtra("state");
+        country = getIntent().getStringExtra("country");
+        job = getIntent().getStringExtra("job");
+        department = getIntent().getStringExtra("department");
+        company = getIntent().getStringExtra("company");
+        office = getIntent().getStringExtra("office");
+        manager = getIntent().getStringExtra("manager");
+        assistant = getIntent().getStringExtra("assistant");
+        firstName = getIntent().getStringExtra("firstname");
+        lastName = getIntent().getStringExtra("lastname");
 
         System.out.println("test list : " + emailList.toString());
 
@@ -168,6 +218,17 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         notesText.setText(notes);
         spouseText.setText(spouse);
         nicknameText.setText(nickname);
+        streetText.setText(street);
+        locationText.setText(postalCode + " " + city + " " + state);
+        countryText.setText(country);
+        jobText.setText("Job: " + job);
+        departmentText.setText("Department: " +department);
+        companyText.setText("Company: " + company);
+        officeText.setText("Office: " + office);
+        managerText.setText("Manager: " + manager);
+        assisantText.setText("Assistant: " +assistant);
+        firstNameText.setText(firstName);
+        lastNameText.setText(lastName);
     }
 
     // VOEG ICONS TOE AAN DE ACTION BAR

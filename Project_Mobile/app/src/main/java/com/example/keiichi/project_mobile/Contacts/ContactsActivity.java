@@ -34,6 +34,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.Calendar.CalendarActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
+import com.example.keiichi.project_mobile.DAL.POJOs.PhysicalAddress;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
@@ -396,6 +397,46 @@ public class ContactsActivity extends AppCompatActivity {
             }
             else {
                 showContactDetails.putExtra("nickname", "");
+            }
+
+            if(contact.getJobTitle() != null){
+                showContactDetails.putExtra("job", contact.getJobTitle());
+            }
+
+            if(contact.getDepartment() != null){
+                showContactDetails.putExtra("department", contact.getDepartment());
+            }
+
+            if(contact.getCompanyName() != null){
+                showContactDetails.putExtra("company", contact.getCompanyName());
+            }
+
+            if(contact.getOfficeLocation() != null) {
+                showContactDetails.putExtra("office", contact.getOfficeLocation());
+            }
+
+            if(contact.getManager() != null){
+                showContactDetails.putExtra("manager", contact.getManager());
+            }
+
+            if(contact.getAssistantName() != null){
+                showContactDetails.putExtra("assistant", contact.getAssistantName());
+            }
+
+            if(contact.getHomeAddress() != null){
+                showContactDetails.putExtra("street",contact.getHomeAddress().getStreet());
+                showContactDetails.putExtra("postalcode",contact.getHomeAddress().getPostalCode());
+                showContactDetails.putExtra("city",contact.getHomeAddress().getCity());
+                showContactDetails.putExtra("state",contact.getHomeAddress().getState());
+                showContactDetails.putExtra("country",contact.getHomeAddress().getCountryOrRegion());
+            }
+
+            if(contact.getGivenName() != null){
+                showContactDetails.putExtra("firstname",contact.getGivenName());
+            }
+
+            if(contact.getSurname() != null){
+                showContactDetails.putExtra("lastname",contact.getSurname());
             }
 
             showContactDetails.putExtra("userEmail", userEmail);
