@@ -47,7 +47,7 @@ import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
-    final static int DELAY_TIME=3000;
+    final static int DELAY_TIME=2000;
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/mailFolders('Inbox')/messages?$top=25";
     private String accessToken;
     private String userName;
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                //this code will run after the delay time which is 3 seconds.
+                //this code will run after the delay time which is 2 seconds.
                 onCallGraphClicked();
 
             }
