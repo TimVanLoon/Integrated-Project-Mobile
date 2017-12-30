@@ -12,6 +12,8 @@
         android:layout_alignStart="@+id/userEmail"
         android:layout_marginTop="17dp"
         android:width="200dp"
+        android:textSize="15dp"
+        android:textColor="@color/black"
         android:textStyle="bold" />
 
     <TextView
@@ -21,15 +23,28 @@
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/userName"
         android:layout_marginEnd="14dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/black"
         android:width="200dp" />
 
     <ImageView
         android:id="@+id/userPicture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="20dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="18dp"
-        app:srcCompat="@drawable/bg_circle" />
+        android:layout_marginStart="10dp"
+        />
+
+    <ImageView
+        android:id="@+id/settingsIcon"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="25dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_settings"
+        android:layout_marginRight="10dp"
+        />
 </RelativeLayout>

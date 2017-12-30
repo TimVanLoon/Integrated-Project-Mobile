@@ -38,6 +38,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -253,6 +255,19 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
 
         callGraphAPI();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.mailNavigationView);
+        View navView =  navigationView.getHeaderView(0);
+        ImageView userPicture = (ImageView)navView.findViewById(R.id.userPicture);
+
+        ColorGenerator generator = ColorGenerator.MATERIAL;
+
+        int color2 = generator.getColor(userName.substring(0,1));
+
+        TextDrawable drawable = TextDrawable.builder()
+                .buildRound(userName.substring(0,1), color2); // radius in px
+
+        userPicture.setImageDrawable(drawable);
 
     }
 

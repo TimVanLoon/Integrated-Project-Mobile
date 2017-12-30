@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -86,7 +87,6 @@ public class ContactsActivity extends AppCompatActivity {
     private String userName;
     private String userEmail;
     private String id;
-    private ImageView userPicture;
 
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts?$orderBy=displayName&$top=500&$count=true";
     final static String MSGRAPH_URL_FOTO = "https://graph.microsoft.com/beta/me/contacts/";
@@ -103,7 +103,6 @@ public class ContactsActivity extends AppCompatActivity {
 
 
         profilePicture = (ImageView) findViewById(R.id.profilePicture);
-        userPicture = (ImageView) findViewById(R.id.userPicture);
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
@@ -183,6 +182,19 @@ public class ContactsActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.contactNavigationView);
+        View navView =  navigationView.getHeaderView(0);
+        ImageView userPicture = (ImageView)navView.findViewById(R.id.userPicture);
+
+        ColorGenerator generator = ColorGenerator.MATERIAL;
+
+        int color2 = generator.getColor(userName.substring(0,1));
+
+        TextDrawable drawable = TextDrawable.builder()
+                .buildRound(userName.substring(0,1), color2); // radius in px
+
+        userPicture.setImageDrawable(drawable);
 
     }
 
