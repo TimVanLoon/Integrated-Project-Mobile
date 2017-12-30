@@ -47,7 +47,9 @@
         <activity
             android:name=".Calendar.CalendarActivity"
             android:label="My Calendar" />
-        <activity android:name=".Calendar.ListEventsActivity" />
+        <activity
+            android:name=".Calendar.ListEventsActivity"
+            android:label="My Events"/>
         <activity
             android:name=".Contacts.ContactsActivity"
             android:label="My Contacts"
