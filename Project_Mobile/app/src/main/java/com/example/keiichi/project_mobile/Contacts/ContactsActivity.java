@@ -16,6 +16,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -112,14 +114,14 @@ public class ContactsActivity extends AppCompatActivity {
         contactsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+
+                // Start an alpha animation for clicked item
+                Animation animation1 = new AlphaAnimation(0.3f, 1.0f);
+                animation1.setDuration(4000);
+                view.startAnimation(animation1);
+
                 onContactClicked(position);
-                /*
-                Intent showContactDetails = new Intent(ContactsActivity.this, ContactsDetailsActivity.class);
-                showContactDetails.putExtra("accestoken", accessToken);
-                showContactDetails.putExtra("userName", userName);
-                showContactDetails.putExtra("userEmail", userEmail);
-                startActivity(showContactDetails);
-                */
+
             }
         });
 
