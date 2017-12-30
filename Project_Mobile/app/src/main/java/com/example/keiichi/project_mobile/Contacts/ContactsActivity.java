@@ -186,6 +186,8 @@ public class ContactsActivity extends AppCompatActivity {
         MenuItem searchItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) searchItem.getActionView();
 
+        searchView.setQueryHint("Search by name...");
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
