@@ -137,7 +137,6 @@ public class ContactsActivity extends AppCompatActivity {
         menuItem.setChecked(true);
 
         callGraphAPI();
-        getProfilePhotos();
 
         mBottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override

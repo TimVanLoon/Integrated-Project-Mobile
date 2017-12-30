@@ -180,6 +180,10 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(this);
 
+        accessToken = getIntent().getStringExtra("AccessToken");
+        userName = getIntent().getStringExtra("userName");
+        userEmail = getIntent().getStringExtra("userEmail");
+
         myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
@@ -247,41 +251,8 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             }
         });
 
-  /* Configure your sample app and save state for this activity */
-        sampleApp = null;
-        if (sampleApp == null) {
-            sampleApp = new PublicClientApplication(
-                    this.getApplicationContext(),
-                    CLIENT_ID);
-        }
 
-  /* Attempt to get a user and acquireTokenSilent
-   * If this fails we do an interactive request
-   */
-        List<User> users = null;
-
-        try {
-            users = sampleApp.getUsers();
-
-            if (users != null && users.size() == 1) {
-          /* We have 1 user */
-
-                sampleApp.acquireTokenSilentAsync(SCOPES, users.get(0), getAuthSilentCallback());
-            } else {
-          /* We have no user */
-
-          /* Let's do an interactive request */
-                sampleApp.acquireToken(this, SCOPES, getAuthInteractiveCallback());
-            }
-        } catch (MsalClientException e) {
-            Log.d(TAG, "MSAL Exception Generated while getting users: " + e.toString());
-
-        } catch (IndexOutOfBoundsException e) {
-            Log.d(TAG, "User at this position does not exist: " + e.toString());
-        }
-
-        onCallGraphClicked();
-
+        callGraphAPI();
 
     }
 
@@ -293,123 +264,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     }
 
 
-//
-// App callbacks for MSAL
-// ======================
-// getActivity() - returns activity so we can acquireToken within a callback
-// getAuthSilentCallback() - callback defined to handle acquireTokenSilent() case
-// getAuthInteractiveCallback() - callback defined to handle acquireToken() case
-//
-
-    public Activity getActivity() {
-        return this;
-    }
-
-    /* Callback method for acquireTokenSilent calls
-     * Looks if tokens are in the cache (refreshes if necessary and if we don't forceRefresh)
-     * else errors that we need to do an interactive request.
-     */
-    private AuthenticationCallback getAuthSilentCallback() {
-        return new AuthenticationCallback() {
-            @Override
-            public void onSuccess(AuthenticationResult authenticationResult) {
-            /* Successfully got a token, call Graph now */
-                Log.d(TAG, "Successfully authenticated");
-
-                //Print auth result om te dubbel checken
-                System.out.println(Arrays.toString(authenticationResult.getScope()));
-
-            /* Store the authResult */
-                authResult = authenticationResult;
-
-                // accesstoken en andere user vars in var steken
-                accessToken = authResult.getAccessToken();
-                userName = authResult.getUser().getName();
-                userEmail = authResult.getUser().getDisplayableId();
-
-
-            /* call graph */
-                callGraphAPI();
-                //callGrapAPIForProfilePicture();
-                System.out.println("hey boo : "+ test);
-
-            /* update the UI to post call Graph state */
-                updateSuccessUI();
-            }
-
-            @Override
-            public void onError(MsalException exception) {
-            /* Failed to acquireToken */
-                Log.d(TAG, "Authentication failed: " + exception.toString());
-
-                if (exception instanceof MsalClientException) {
-                /* Exception inside MSAL, more info inside MsalError.java */
-                } else if (exception instanceof MsalServiceException) {
-                /* Exception when communicating with the STS, likely config issue */
-                } else if (exception instanceof MsalUiRequiredException) {
-                /* Tokens expired or no session, retry with interactive */
-                }
-            }
-
-            @Override
-            public void onCancel() {
-            /* User canceled the authentication */
-                Log.d(TAG, "User cancelled login.");
-            }
-        };
-    }
-
-
-    /* Callback used for interactive request.  If succeeds we use the access
-         * token to call the Microsoft Graph. Does not check cache
-         */
-    private AuthenticationCallback getAuthInteractiveCallback() {
-        return new AuthenticationCallback() {
-            @Override
-            public void onSuccess(AuthenticationResult authenticationResult) {
-            /* Successfully got a token, call graph now */
-                Log.d(TAG, "Successfully authenticated");
-                Log.d(TAG, "ID Token: " + authenticationResult.getIdToken());
-                Log.d(TAG, "Acces Token: " + authenticationResult.getAccessToken());
-
-
-
-            }
-
-            @Override
-            public void onError(MsalException exception) {
-            /* Failed to acquireToken */
-                Log.d(TAG, "Authentication failed: " + exception.toString());
-
-                if (exception instanceof MsalClientException) {
-                /* Exception inside MSAL, more info inside MsalError.java */
-                } else if (exception instanceof MsalServiceException) {
-                /* Exception when communicating with the STS, likely config issue */
-                }
-            }
-
-            @Override
-            public void onCancel() {
-            /* User canceled the authentication */
-                Log.d(TAG, "User cancelled login.");
-            }
-        };
-    }
-
-    /* Set the UI for successful token acquisition data */
-    private void updateSuccessUI() {
-        signOutButton.setVisibility(View.VISIBLE);
-        findViewById(R.id.welcome).setVisibility(View.VISIBLE);
-        ((TextView) findViewById(R.id.welcome)).setText("Welcome, " +
-                authResult.getUser().getName());
-    }
-
-    /* Use MSAL to acquireToken for the end-user
-     * Callback will call Graph api w/ access token & update UI
-     */
-    private void onCallGraphClicked() {
-        sampleApp.acquireToken(getActivity(), SCOPES, getAuthInteractiveCallback());
-    }
 
     /* Handles the redirect from the System Browser */
     @Override
@@ -422,7 +276,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         Log.d(TAG, "Starting volley request to graph");
 
     /* Make sure we have a token to send to graph */
-        if (authResult.getAccessToken() == null) {
+        if (accessToken == null) {
             return;
         }
 
@@ -456,7 +310,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + authResult.getAccessToken());
+                headers.put("Authorization", "Bearer " +accessToken);
                 return headers;
             }
         };
@@ -528,7 +382,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
     private void toSendMailActivity() {
         Intent intent = new Intent(this, SendMailActivity.class);
-        intent.putExtra("accestoken", authResult.getAccessToken());
+        intent.putExtra("accestoken", accessToken);
 
         startActivity(intent);
     }
@@ -603,7 +457,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
                     Map<String, String> headers = new HashMap<>();
-                    headers.put("Authorization", "Bearer " + authResult.getAccessToken());
+                    headers.put("Authorization", "Bearer " + accessToken);
 
                     return headers;
                 }
@@ -643,7 +497,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                     Intent showMail = new Intent(ListMailsActvity.this, DisplayMailActivity.class);
                     try {
                         showMail.putExtra("mailObjext", finalMailJsonArray.getString(position));
-                        showMail.putExtra("accestoken", authResult.getAccessToken());
+                        showMail.putExtra("accestoken", accessToken);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -661,60 +515,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             }
         }));
 
-    }
-
-    /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
-    private void callGrapAPIForProfilePicture() {
-        Log.d(TAG, "Starting volley request to graph");
-        Log.d(TAG, accessToken);
-
-    /* Make sure we have a token to send to graph */
-        if (accessToken == null) {
-            return;
-        }
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-        JSONObject parameters = new JSONObject();
-
-        try {
-            parameters.put("key", "value");
-        } catch (Exception e) {
-            Log.d(TAG, "Failed to put parameters: " + e.toString());
-        }
-
-        String PHOTO_REQUEST = "https://graph.microsoft.com/v1.0/users/"+ userEmail +"/photo/$value";
-
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, PHOTO_REQUEST,
-                parameters, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-            /* Successfully called graph, process data and send to UI */
-                Log.d(TAG, "Response: " + response);
-
-                    System.out.println("foto: " + response);
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, "Error: " + error.toString());
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + accessToken);
-                return headers;
-            }
-        };
-
-        Log.d(TAG, "Adding HTTP GET to Queue, Request: " + request.toString());
-
-        request.setRetryPolicy(new DefaultRetryPolicy(
-                3000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        queue.add(request);
     }
 
 
