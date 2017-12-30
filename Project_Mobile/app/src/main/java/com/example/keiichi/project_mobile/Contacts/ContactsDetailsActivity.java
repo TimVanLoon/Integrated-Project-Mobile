@@ -13,9 +13,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -97,6 +100,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
     private TextView notesTitle;
     private TextView nicknameTitle;
     private TextView workTitle;
+    private ImageView profilePic;
     private Toolbar myToolbar;
     private  AlertDialog.Builder builder;
 
@@ -130,6 +134,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         notesTitle = (TextView) findViewById(R.id.notesTitle);
         nicknameTitle = (TextView) findViewById(R.id.nicknameTitle);
         workTitle = (TextView) findViewById(R.id.workTitle);
+        profilePic = (ImageView) findViewById(R.id.profilePic);
 
         // INITIALISEER ACTION BAR
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -165,7 +170,18 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         lastName = getIntent().getStringExtra("lastname");
         id = getIntent().getStringExtra("id");
 
-        System.out.println("test id: " + id);
+        ColorGenerator generator = ColorGenerator.MATERIAL;
+
+        int color2 = generator.getColor(displayName.substring(0,1));
+
+        TextDrawable drawable1 = TextDrawable.builder()
+                .beginConfig()
+                .width(50)  // width in px
+                .height(50) // height in px
+                .endConfig()
+                .buildRect(displayName.substring(0,1), color2);
+
+        profilePic.setImageDrawable(drawable1);
 
         if(!emailList.isEmpty()){
             emailAddress = emailList.get(0).getAddress();
