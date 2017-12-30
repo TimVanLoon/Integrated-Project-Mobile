@@ -96,4 +96,6 @@
     <string name="countryTitle">Country/region</string>
 
     <string name="editContactTitle">Edit contact</string>
+
+    <string name="loadingTitle">Starting uMail...</string>
 </resources>

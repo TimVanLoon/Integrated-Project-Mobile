@@ -22,5 +22,6 @@
     <color name="bg_circle_default">#666666</color>
     <color name="background_contact_details_header">#353535</color>
     <color name="action_bar">#086D9C</color>
+    <color name="loadingScreenBg">#086D9C</color>
     <color name="emptyField">#F4E7D7</color>
 </resources>

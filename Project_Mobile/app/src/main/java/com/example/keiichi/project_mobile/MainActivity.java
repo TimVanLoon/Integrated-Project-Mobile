@@ -13,6 +13,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.Contacts.AddContactActivity;
+import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
 import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.push.Push;
 import com.microsoft.appcenter.analytics.Analytics;
@@ -40,14 +42,16 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
+    final static int DELAY_TIME=3000;
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/mailFolders('Inbox')/messages?$top=25";
     private String accessToken;
     private String userName;
     private String userEmail;
-    private Button loginButton;
 
     final static String CLIENT_ID = "d3b60662-7768-4a50-b96f-eb1dfcc7ec8d";
     final static String SCOPES[] = {
@@ -71,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        loginButton = (Button) findViewById(R.id.loginButton);
 
         Push.setSenderId("{SenderId}");
         AppCenter.start(getApplication(), "0dad3b08-3653-41ea-9c9b-689e0d88fbcf",
@@ -114,18 +117,20 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "User at this position does not exist: " + e.toString());
         }
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                //this code will run after the delay time which is 3 seconds.
                 onCallGraphClicked();
 
-                Intent loginIntent = new Intent(MainActivity.this, ListMailsActvity.class);
-                loginIntent.putExtra("AccessToken", accessToken);
-                loginIntent.putExtra("userName", userName);
-                loginIntent.putExtra("userEmail", userEmail);
-
-                startActivity(loginIntent);
             }
-        });
+        }, DELAY_TIME);
+
+
+
+
+
 
     }
 
@@ -233,6 +238,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         sampleApp.handleInteractiveRequestRedirect(requestCode, resultCode, data);
+
+        Intent loginIntent = new Intent(MainActivity.this, ListMailsActvity.class);
+        loginIntent.putExtra("AccessToken", accessToken);
+        loginIntent.putExtra("userName", userName);
+        loginIntent.putExtra("userEmail", userEmail);
+
+        startActivity(loginIntent);
     }
 
     /* Set the UI for successful token acquisition data */
@@ -240,66 +252,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
-    private void callGraphAPI() {
-        Log.d(TAG, "Starting volley request to graph");
-
-    /* Make sure we have a token to send to graph */
-        if (authResult.getAccessToken() == null) {
-            return;
-        }
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-        JSONObject parameters = new JSONObject();
-
-        try {
-            parameters.put("key", "value");
-        } catch (Exception e) {
-            Log.d(TAG, "Failed to put parameters: " + e.toString());
-        }
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, MSGRAPH_URL,
-                parameters, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-            /* Successfully called graph, process data and send to UI */
-                Log.d(TAG, "Response: " + response.toString());
-
-                try {
-                    updateGraphUI(response);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, "Error: " + error.toString());
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + authResult.getAccessToken());
-                return headers;
-            }
-        };
-
-        Log.d(TAG, "Adding HTTP GET to Queue, Request: " + request.toString());
-
-        request.setRetryPolicy(new DefaultRetryPolicy(
-                3000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        queue.add(request);
-    }
 
 
-    /* Sets the Graph response */
-    private void updateGraphUI(JSONObject graphResponse) throws JSONException {
 
-        //beetje kloten met mails
-        System.out.println(graphResponse);
-
-
-    }
 }
