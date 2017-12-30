@@ -132,6 +132,7 @@ public class CalendarActivity extends AppCompatActivity {
                         intentMail.putExtra("AccessToken", accessToken);
                         intentMail.putExtra("userName", userName);
                         intentMail.putExtra("userEmail", userEmail);
+
                         startActivity(intentMail);
                         break;
                     case R.id.action_user:
@@ -139,6 +140,7 @@ public class CalendarActivity extends AppCompatActivity {
                         intentContacts.putExtra("AccessToken", accessToken);
                         intentContacts.putExtra("userName", userName);
                         intentContacts.putExtra("userEmail", userEmail);
+
                         startActivity(intentContacts);
                         break;
 
@@ -205,17 +207,15 @@ public class CalendarActivity extends AppCompatActivity {
 
             case R.id.action_listEvents:
 
-                callGraphAPI();
 
-                /*
                 Intent intentListEvents = new Intent(CalendarActivity.this, ListEventsActivity.class);
                 intentListEvents.putExtra("AccessToken", accessToken);
                 intentListEvents.putExtra("userName", userName);
                 intentListEvents.putExtra("userEmail", userEmail);
-                intentListEvents.putExtra("EventsArray", eventsArray.toString());
+
                 startActivity(intentListEvents);
 
-*/
+
                 return true;
 
             // WANNEER + ICON WORDT AANGEKLIKT
@@ -225,6 +225,7 @@ public class CalendarActivity extends AppCompatActivity {
                 intentAddEvent.putExtra("AccessToken", accessToken);
                 intentAddEvent.putExtra("userName", userName);
                 intentAddEvent.putExtra("userEmail", userEmail);
+
                 startActivity(intentAddEvent);
 
                 return true;
@@ -236,111 +237,7 @@ public class CalendarActivity extends AppCompatActivity {
         }
     }
 
-    /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
-    private void callGraphAPI() {
-        Log.d(TAG, "Starting volley request to graph");
-        Log.d(TAG, accessToken);
 
-    /* Make sure we have a token to send to graph */
-        if (accessToken == null) {
-            return;
-        }
 
-        RequestQueue queue = Volley.newRequestQueue(this);
-        JSONObject parameters = new JSONObject();
 
-        try {
-            parameters.put("key", "value");
-        } catch (Exception e) {
-            Log.d(TAG, "Failed to put parameters: " + e.toString());
-        }
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, MSGRAPH_URL,
-                parameters, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-            /* Successfully called graph, process data and send to UI */
-                Log.d(TAG, "Response: " + response.toString());
-
-                try {
-                    updateGraphUI(response);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, "Error: " + error.toString());
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + accessToken);
-                return headers;
-            }
-        };
-
-        Log.d(TAG, "Adding HTTP GET to Queue, Request: " + request.toString());
-
-        request.setRetryPolicy(new DefaultRetryPolicy(
-                3000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        queue.add(request);
-    }
-
-    /* Sets the Graph response */
-    private void updateGraphUI(JSONObject graphResponse) throws JSONException {
-
-        /*
-        // Test de response
-        //  System.out.println(graphResponse);
-        JSONArray eventsJsonArray = null;
-        // Haal de events binnen
-        try {
-            eventsJsonArray = (JSONArray) graphResponse.get("value");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        assert eventsJsonArray != null;
-
-        eventsArray = eventsJsonArray;
-
-        */
-
-        // Test de response
-        System.out.println(" de response: " + graphResponse);
-        JSONArray eventsJsonArray = null;
-
-        // Haal de contacten binnen
-        try {
-            eventsJsonArray = (JSONArray) graphResponse.get("value");
-
-            JSONObject eventList = graphResponse;
-            System.out.println("branko: " + eventList);
-
-            JSONArray eventArray = eventList.getJSONArray("value");
-
-            System.out.println("keffin :" + eventArray);
-            // VUL POJO
-            Type listType = new TypeToken<List<Event>>() {
-            }.getType();
-
-            // events = new Gson().fromJson(String.valueOf(eventArray), listType);
-
-            System.out.println("robin van hoof: " + events);
-
-            Intent listEventsIntent = new Intent(CalendarActivity.this, ListEventsActivity.class);
-            //Bundle args = new Bundle();
-            // args.putSerializable("eventsArrayList", (Serializable)events);
-            // listEventsIntent.putExtra("eventList", args);
-            listEventsIntent.putExtra("EventsArray", eventsJsonArray.toString());
-
-            startActivity(listEventsIntent);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
 }

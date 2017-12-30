@@ -37,9 +37,9 @@ public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterab
     private final Context context;
     //private final JSONArray values;
 
-    // Ongefilterde JSONArray
+    // Ongefilterde list
     private List<Contact> originalData = null;
-    // Gefilterde JSONArray
+    // Gefilterde list
     private List<Contact> filteredData = null;
 
     private CustomFilter mFilter = new CustomFilter();
@@ -102,7 +102,7 @@ public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterab
     }
 
     private class CustomFilter extends Filter {
-        // called when adpater filter method is called
+        // called when adapter filter method is called
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             constraint = constraint.toString().toLowerCase();
