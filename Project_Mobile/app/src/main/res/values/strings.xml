@@ -98,4 +98,6 @@
     <string name="editContactTitle">Edit contact</string>
 
     <string name="loadingTitle">Starting uMail...</string>
+
+    <string name="appName">uMail</string>
 </resources>

@@ -165,6 +165,8 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         lastName = getIntent().getStringExtra("lastname");
         id = getIntent().getStringExtra("id");
 
+        System.out.println("test id: " + id);
+
         if(!emailList.isEmpty()){
             emailAddress = emailList.get(0).getAddress();
 
@@ -467,6 +469,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                 intentContacts.putExtra("assistant", assistant);
                 intentContacts.putExtra("firstname", firstName);
                 intentContacts.putExtra("lastname", lastName);
+                intentContacts.putExtra("id", id);
 
                 startActivity(intentContacts);
 

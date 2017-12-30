@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/previewBody"
         android:layout_alignParentRight="true"
+        android:textColor="@color/black"
         android:layout_alignParentTop="true"
         android:layout_alignWithParentIfMissing="true"
         android:gravity="center_vertical"

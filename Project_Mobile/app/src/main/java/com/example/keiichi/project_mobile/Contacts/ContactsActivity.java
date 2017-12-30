@@ -29,7 +29,9 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.Calendar.CalendarActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
@@ -77,9 +79,11 @@ public class ContactsActivity extends AppCompatActivity {
     private String accessToken;
     private String userName;
     private String userEmail;
+    private String id;
+    private ImageView userPicture;
 
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts?$orderBy=displayName&$top=500&$count=true";
-    final static String MSGRAPH_URL_FOTO = "https://graph.microsoft.com/v1.0/users/";
+    final static String MSGRAPH_URL_FOTO = "https://graph.microsoft.com/beta/me/contacts/";
     final static String MSGRAPH_URL_FOTO2 = "/photo/$value";
 
     /* UI & Debugging Variables */
@@ -91,7 +95,7 @@ public class ContactsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
 
-
+        userPicture = (ImageView) findViewById(R.id.userPicture);
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
@@ -122,6 +126,9 @@ public class ContactsActivity extends AppCompatActivity {
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
+        id = getIntent().getStringExtra("id");
+
+        getProfilePhotos();
 
         mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
 
@@ -167,6 +174,7 @@ public class ContactsActivity extends AppCompatActivity {
                 return false;
             }
         });
+
     }
 
     @Override
@@ -301,38 +309,6 @@ public class ContactsActivity extends AppCompatActivity {
             System.out.println("test response: " + contactArray);
 
             JSONArray sortedContactArray = new JSONArray();
-
-            /*
-            List<JSONObject> jsonValues = new ArrayList<JSONObject>();
-            for (int i = 0; i < contactArray.length(); i++) {
-                jsonValues.add(contactArray.getJSONObject(i));
-            }
-
-            Collections.sort( jsonValues, new Comparator<JSONObject>() {
-                // Sort by displayname
-                private static final String KEY_NAME = "displayName";
-
-                @Override
-                public int compare(JSONObject a, JSONObject b) {
-                    String valA = new String();
-                    String valB = new String();
-
-                    try {
-                        valA = (String) a.get(KEY_NAME);
-                        valB = (String) b.get(KEY_NAME);
-                    }
-                    catch (JSONException e) {
-                        //do something
-                    }
-
-                    return valA.compareTo(valB);
-                }
-            });
-
-            for (int i = 0; i < contactArray.length(); i++) {
-                sortedContactArray.put(jsonValues.get(i));
-            }
-            */
 
 
             // VUL POJO
@@ -497,6 +473,7 @@ public class ContactsActivity extends AppCompatActivity {
 
     public void getProfilePhotos(){
         Log.d(TAG, "Starting volley request to graph");
+        System.out.println("auw papa");
         Log.d(TAG, accessToken);
 
     /* Make sure we have a token to send to graph */
@@ -514,45 +491,47 @@ public class ContactsActivity extends AppCompatActivity {
             Log.d(TAG, "Failed to put parameters: " + e.toString());
         }
 
-        // The preferred idiom for iterating over collections and arrays
-        for (Contact c : contacts) {
+        String contactId = id;
 
-            String emailAddress = c.getEmailAddresses().toString();
+        String PHOTO_URL = "https://graph.microsoft.com/beta/me/photo/$value";
 
-            String PHOTO_URL = MSGRAPH_URL_FOTO + emailAddress + MSGRAPH_URL_FOTO2;
 
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, PHOTO_URL,
-                    parameters, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
+        StringRequest request = new StringRequest(Request.Method.GET, PHOTO_URL,
+                new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
             /* Successfully called graph, process data and send to UI */
-                    Log.d(TAG, "Response fotos: " + response.toString());
+                System.out.println("Response fotos: " + response);
 
+                System.out.println("papa aaauwwwwwwwwwww: " +response.getClass().getName());
 
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.d(TAG, "Error: " + error.toString());
-                }
-            }) {
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<>();
-                    headers.put("Authorization", "Bearer " + accessToken);
-                    return headers;
-                }
-            };
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d(TAG, "Error: " + error.toString());
+                System.out.println("papa stop");
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+                return headers;
+            }
+        };
 
-            Log.d(TAG, "Adding HTTP GET to Queue, Request: " + request.toString());
+        Log.d(TAG, "Adding HTTP GET to Queue, Request: " + request.toString());
 
-            request.setRetryPolicy(new DefaultRetryPolicy(
-                    3000,
-                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            queue.add(request);
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                3000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        queue.add(request);
         }
-        }
+
+
 
 
 

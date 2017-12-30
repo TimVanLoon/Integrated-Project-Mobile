@@ -5,11 +5,14 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launchmail"
-        android:label="@string/app_name"
+        android:label="@string/appName"
         android:roundIcon="@mipmap/ic_launchmail_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/LaunchTheme"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,7 +22,8 @@
         <activity
             android:name=".Mail.ListMailsActvity"
             android:label="Postvak IN"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            />
 
         <!-- Intent filter to capture System Browser calling back to our app after Sign In -->
         <activity android:name="com.microsoft.identity.client.BrowserTabActivity">
@@ -49,7 +53,8 @@
         <activity
             android:name=".Contacts.ContactsActivity"
             android:label="My Contacts"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustPan"
+            android:theme="@style/ContactsTheme"/>
         <activity
             android:name=".Contacts.AddContactActivity"
             android:label="Add Contact"
