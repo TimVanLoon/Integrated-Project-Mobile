@@ -3,6 +3,7 @@ package com.example.keiichi.project_mobile.Contacts;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,8 @@ import android.widget.TextView;
 import android.widget.Filter;
 import android.widget.Filterable;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.R;
 
@@ -29,6 +32,8 @@ import java.util.List;
 
 public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterable {
 
+    private TextDrawable drawable;
+    private ImageView profilePicture;
     private final Context context;
     //private final JSONArray values;
 
@@ -70,10 +75,20 @@ public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterab
         View rowView = layoutInflater.inflate(R.layout.contact_items, parent, false);
         TextView name = rowView.findViewById(R.id.contactName);
 
+        profilePicture = (ImageView)rowView.findViewById(R.id.profilePicture);
+
         Contact contact = getItem(position);
 
         name.setText(contact.getDisplayName());
 
+        ColorGenerator generator = ColorGenerator.MATERIAL;
+
+        int color2 = generator.getColor(contact.getDisplayName().substring(0,1));
+
+        TextDrawable drawable1 = TextDrawable.builder()
+                .buildRoundRect(contact.getDisplayName().substring(0,1), color2, 3); // radius in px
+
+        profilePicture.setImageDrawable(drawable1);
 
         return rowView;
 

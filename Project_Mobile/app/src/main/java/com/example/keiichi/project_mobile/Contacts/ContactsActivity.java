@@ -3,6 +3,7 @@ package com.example.keiichi.project_mobile.Contacts;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
@@ -25,6 +26,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amulyakhare.textdrawable.TextDrawable;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -64,6 +66,8 @@ public class ContactsActivity extends AppCompatActivity {
 
     Toolbar myToolbar;
 
+    private TextDrawable drawable;
+    private ImageView profilePicture;
     private DrawerLayout mDrawerLayout;
     ActionBarDrawerToggle actionBarDrawerToggle;
 
@@ -97,6 +101,8 @@ public class ContactsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
 
+
+        profilePicture = (ImageView) findViewById(R.id.profilePicture);
         userPicture = (ImageView) findViewById(R.id.userPicture);
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
@@ -124,6 +130,7 @@ public class ContactsActivity extends AppCompatActivity {
 
             }
         });
+
 
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
