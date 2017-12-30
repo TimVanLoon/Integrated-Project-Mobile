@@ -1,6 +1,7 @@
 package com.example.keiichi.project_mobile.Calendar;
 
 import android.content.Intent;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
@@ -37,6 +38,7 @@ import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
+import com.example.keiichi.project_mobile.SettingsActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -101,8 +103,11 @@ public class CalendarActivity extends AppCompatActivity {
 
         mDrawerLayout.setDrawerListener(actionBarDrawerToggle);
 
+        actionBarDrawerToggle.syncState();
+        //mDrawerLayout.bringToFront();
+        //mDrawerLayout.requestLayout();
+
         calendarView = (CalendarView) findViewById(R.id.calendarView);
-        myDate = (TextView) findViewById(R.id.myDate);
 
         mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
 
@@ -143,17 +148,12 @@ public class CalendarActivity extends AppCompatActivity {
             }
         });
 
-        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-            @Override
-            public void onSelectedDayChange(@NonNull CalendarView calendarView, int i, int i1, int i2) {
-                String date = (i1 + 1) + "/" + i2 + "/" + i;
-                myDate.setText(date);
-            }
-        });
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.calendarNavigationView);
         View navView =  navigationView.getHeaderView(0);
         ImageView userPicture = (ImageView)navView.findViewById(R.id.userPicture);
+        ImageView settingsIcon = (ImageView)navView.findViewById(R.id.settingsIcon);
+
 
         ColorGenerator generator = ColorGenerator.MATERIAL;
 

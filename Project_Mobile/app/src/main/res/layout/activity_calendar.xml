@@ -18,6 +18,11 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:textColor="@color/black"
+        app:itemTextColor="@color/black"
+        app:itemIconTint="@color/black"
+        android:clickable="true"
+        android:focusable="true"
         app:menu="@menu/drawer_menu_calendar"
         app:headerLayout="@layout/navigation_drawer_header"/>
 
@@ -38,27 +43,6 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-    <TextView
-        android:id="@+id/myDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="12dp"
-        android:text="Mark Your Dates"
-        android:textAlignment="center"
-        android:textColor="#FFF"
-        android:textSize="23sp" />
-
-    <LinearLayout
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="44dp"
-        android:layout_marginTop="48dp"
-        android:background="@drawable/bg_calen"
-        android:id="@+id/linearLayout">
-
-    </LinearLayout>
 
 
     <android.support.design.widget.BottomNavigationView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -75,15 +59,7 @@
 
     </android.support.design.widget.BottomNavigationView>
 
-    <CalendarView
-        android:id="@+id/calendarView"
-        android:layout_width="wrap_content"
-        android:layout_height="320dp"
-        android:layout_above="@+id/eventsButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="28dp">
 
-    </CalendarView>
 
 </RelativeLayout>
 </android.support.v4.widget.DrawerLayout>

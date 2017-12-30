@@ -42,6 +42,8 @@
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_marginTop="25dp"
+        android:clickable="true"
+        android:focusable="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:src="@drawable/ic_settings"
