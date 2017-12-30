@@ -37,7 +37,7 @@ public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterab
     // Gefilterde JSONArray
     private List<Contact> filteredData = null;
 
-    private ItemFilter mFilter = new ItemFilter();
+    private CustomFilter mFilter = new CustomFilter();
 
     public ContactAdapter(Context context, List<Contact> values) {
         this.context = context;
@@ -80,47 +80,52 @@ public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterab
     }
 
     public Filter getFilter() {
+        // return mFilter;
+        if (mFilter == null)
+            mFilter = new CustomFilter();
         return mFilter;
     }
 
-    private class ItemFilter extends Filter {
+    private class CustomFilter extends Filter {
+        // called when adpater filter method is called
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-
-            String filterString = constraint.toString().toLowerCase();
-
-            FilterResults results = new FilterResults();
-
-            final List<Contact> list = originalData;
-
-            int count = list.size();
-            final List<Contact> nlist = new ArrayList<Contact>(count);
-
-            Contact filterableContact ;
-
-            for (int i = 0; i < count; i++) {
-                filterableContact = list.get(i);
-                if (filterableContact.getDisplayName().contains(filterString) || filterableContact.getDisplayName().startsWith(filterString )) {
-                    nlist.add(filterableContact);
+            constraint = constraint.toString().toLowerCase();
+            FilterResults result = new FilterResults();
+            if (constraint != null && constraint.toString().length() > 0) {
+                List<Contact> filt = new ArrayList<Contact>(); //filtered list
+                for (int i = 0; i < originalData.size(); i++) {
+                    Contact c = originalData.get(i);
+                    if (c.getDisplayName().toLowerCase().contains(constraint)) {
+                        filt.add(c); //add only items which matches
+                    }
+                }
+                result.count = filt.size();
+                result.values = filt;
+            } else { // return original list
+                synchronized (this) {
+                    result.values = originalData;
+                    result.count = originalData.size();
                 }
             }
-
-            results.values = nlist;
-            results.count = nlist.size();
-
-            return results;
+            return result;
         }
 
-        @SuppressWarnings("unchecked")
         @Override
-        protected void publishResults(CharSequence charSequence, FilterResults filterResults)
-        {
-            filteredData = (List<Contact>) filterResults.values;
-            notifyDataSetChanged();
+        protected void publishResults(CharSequence constraint,
+                                      FilterResults results) {
+            if (results != null) {
+                setList((List<Contact>) results.values); // notify data set changed
+            } else {
+                setList((List<Contact>) originalData);
+            }
         }
-
     }
 
+    public void setList(List<Contact> data) {
+        filteredData = data; // set the adapter list to data
+        ContactAdapter.this.notifyDataSetChanged(); // notify data set change
+    }
 
 
 }
