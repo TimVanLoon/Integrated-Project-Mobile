@@ -93,7 +93,9 @@ public class EventAdapter extends BaseAdapter implements ListAdapter, Filterable
         protected FilterResults performFiltering(CharSequence constraint) {
             constraint = constraint.toString().toLowerCase();
             FilterResults result = new FilterResults();
+
             if (constraint != null && constraint.toString().length() > 0) {
+
                 List<Event> filt = new ArrayList<Event>(); //filtered list
                 for (int i = 0; i < originalData.size(); i++) {
                     Event e = originalData.get(i);

@@ -105,7 +105,7 @@ public class ListEventsActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String s) {
-
+                eventAdapter.getFilter().filter(s);
 
                 return true;
             }
