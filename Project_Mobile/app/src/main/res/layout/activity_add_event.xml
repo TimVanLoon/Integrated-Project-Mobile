@@ -15,51 +15,79 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <android.support.v7.widget.LinearLayoutCompat
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:background="@color/colorWhite"
         android:paddingTop="50dp">
         <!--Put form controls here-->
 
         <TextView
-            android:id="@+id/addEventTitle"
+            android:id="@+id/addContactTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/addEventTitle"
             android:textStyle="bold"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/black"
             android:textSize="15pt">
         </TextView>
 
         <TextView
-            android:id="@+id/nameTitle"
+            android:id="@+id/firstNameTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/eventTitle"
-            android:textStyle="bold"
-            android:textSize="10pt">
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
         </TextView>
 
         <EditText
             android:id="@+id/eventInput"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
+            android:layout_height="37dp"
+            android:hint="@string/nameInput"
+            android:inputType="textCapSentences|textPersonName"
+            android:textColor="@color/black"
+            android:textSize="12dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:background="@drawable/edit_text_style"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
+            android:layout_marginBottom="20dp"
             android:layout_width="fill_parent">
         </EditText>
 
         <TextView
-            android:id="@+id/emailTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/locationTitle"
-            android:textStyle="bold"
-            android:textSize="10pt">
-        </TextView>
+        android:id="@+id/locationTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/locationTitle"
+        android:textColor="@color/black"
+        android:layout_marginLeft="15dp"
+        android:textSize="7pt">
+    </TextView>
 
         <EditText
             android:id="@+id/locationInput"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
+            android:layout_height="37dp"
+            android:hint="@string/nameInput"
+            android:inputType="textCapSentences|textPersonName"
+            android:textColor="@color/black"
+            android:textSize="12dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:background="@drawable/edit_text_style"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
+            android:layout_marginBottom="20dp"
             android:layout_width="fill_parent">
         </EditText>
 
@@ -68,51 +96,79 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/startTitle"
-            android:textStyle="bold"
-            android:textSize="10pt">
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
         </TextView>
 
         <EditText
             android:id="@+id/dateEvent"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:hint="Select Date..."
-            android:padding="15dp"
-            android:textColor="#897"
-            android:textColorHint="#FFF"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:layout_height="37dp"
+            android:hint="@string/nameInput"
+            android:inputType="textCapSentences|textPersonName"
+            android:textColor="@color/black"
+            android:textSize="12dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:background="@drawable/edit_text_style"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
+            android:layout_marginBottom="20dp"
+            android:layout_width="fill_parent">
+        </EditText>
 
         <EditText
             android:id="@+id/timeEvent"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:hint="Select Time..."
-            android:padding="15dp"
-            android:textColor="#897"
-            android:textColorHint="#FFF"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:layout_height="37dp"
+            android:hint="@string/nameInput"
+            android:inputType="textCapSentences|textPersonName"
+            android:textColor="@color/black"
+            android:textSize="12dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:background="@drawable/edit_text_style"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
+            android:layout_marginBottom="20dp"
+            android:layout_width="fill_parent">
+        </EditText>
+
 
         <TextView
             android:id="@+id/durationTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/durationTitle"
-            android:textStyle="bold"
-            android:textSize="10pt">
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
         </TextView>
 
         <EditText
             android:id="@+id/durationInput"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
+            android:layout_height="37dp"
+            android:hint="@string/nameInput"
+            android:inputType="textCapSentences|textPersonName"
+            android:textColor="@color/black"
+            android:textSize="12dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:background="@drawable/edit_text_style"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
+            android:layout_marginBottom="20dp"
             android:layout_width="fill_parent">
         </EditText>
 
 
+
+
+
+
+
+
     </android.support.v7.widget.LinearLayoutCompat>
+
+    </android.support.v4.widget.NestedScrollView>
 
 </android.support.constraint.ConstraintLayout>
