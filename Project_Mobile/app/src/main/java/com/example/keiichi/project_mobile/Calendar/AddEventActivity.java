@@ -56,6 +56,10 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/events";
 
     private String [] DURATIONSPINNERLIST = {"0 Minutes", "15 Minutes", "30 Minutes", "45 Minutes", "1 Hour", "90 Minutes", " 2 Hours", "Entire day"};
+    private String [] REMINDERSPINNERLIST = {"0 Minutes", "15 Minutes", "30 Minutes", "45 Minutes", "1 Hour", "90 Minutes", " 2 Hours", "3 Hours", "4 Hours", "8 Hours", "12 Hours",
+                                                "1 Day", "2 Days", "3 Days", "1 Week", "2 Weeks"};
+    private String [] DISPLAYASSPINNERLIST = {"Available", "Works somewhere else", "For the time being", "Busy", "Absent"};
+    private String [] REPEATSPINNERLIST = {"Never", "Each day", "Every sunday", "Every workday", "Day 31 of every month", "Ever last sunday", "Every 31st of december"};
 
     private int startingValue;
     private Button moreDetailsButton;
@@ -142,15 +146,40 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
 
 
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, DURATIONSPINNERLIST);
+        ArrayAdapter<String> adapterDuration = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, DURATIONSPINNERLIST);
         // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapterDuration.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
-        durationSpinner.setAdapter(adapter);
-
-        startingValue = adapter.getPosition("1 Hour");
-
+        durationSpinner.setAdapter(adapterDuration);
+        startingValue = adapterDuration.getPosition("1 Hour");
         durationSpinner.setSelection(startingValue);
+
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<String> adapterReminder = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, REMINDERSPINNERLIST);
+        // Specify the layout to use when the list of choices appears
+        adapterReminder.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        reminderSpinner.setAdapter(adapterReminder);
+        startingValue = adapterReminder.getPosition("15 Minutes");
+        reminderSpinner.setSelection(startingValue);
+
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<String> adapterDisplayAs = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, DISPLAYASSPINNERLIST);
+        // Specify the layout to use when the list of choices appears
+        adapterDisplayAs.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        displayAsSpinner.setAdapter(adapterDisplayAs);
+        startingValue = adapterDisplayAs.getPosition("Busy");
+        displayAsSpinner.setSelection(startingValue);
+
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<String> adapterRepeat = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, REPEATSPINNERLIST);
+        // Specify the layout to use when the list of choices appears
+        adapterDisplayAs.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        repeatSpinner.setAdapter(adapterRepeat);
+        startingValue = adapterRepeat.getPosition("Never");
+        repeatSpinner.setSelection(startingValue);
 
         // ZET CLICK EVENT OP DE DATE INPUT
         dateEvent.setOnClickListener(new View.OnClickListener() {
