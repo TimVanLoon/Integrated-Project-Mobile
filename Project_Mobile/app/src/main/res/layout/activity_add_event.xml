@@ -152,12 +152,131 @@
             android:textColor="@color/blue_selected"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/edit_text_style"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
+            app:itemTextColor="@color/black"
+            app:itemIconTint="@color/black"/>
+
+        <Button
+            android:id="@+id/moreDetailsButton"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/moreDetailsButton"
+            android:textColor="@color/black"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
+            android:layout_marginBottom="20dp"
+            android:background="@color/colorGrey"
+            android:textSize="7pt">
+        </Button>
+
+        <TextView
+            android:id="@+id/reminderTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/reminderTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
+        </TextView>
+
+        <Spinner
+            android:id="@+id/reminderSpinner"
+            android:layout_width="fill_parent"
+            android:layout_height="37dp"
+            android:textSize="12dp"
+            android:textColor="@color/blue_selected"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:layout_marginBottom="20dp"
             android:background="@drawable/edit_text_style"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="72dp"
             app:itemTextColor="@color/black"
             app:itemIconTint="@color/black"/>
+
+        <TextView
+            android:id="@+id/displayAsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/displayAsTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
+        </TextView>
+
+        <Spinner
+            android:id="@+id/displayAsSpinner"
+            android:layout_width="fill_parent"
+            android:layout_height="37dp"
+            android:textSize="12dp"
+            android:textColor="@color/blue_selected"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/edit_text_style"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
+            app:itemTextColor="@color/black"
+            app:itemIconTint="@color/black"/>
+
+        <TextView
+            android:id="@+id/repeatTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/repeatTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
+        </TextView>
+
+        <Spinner
+            android:id="@+id/repeatSpinner"
+            android:layout_width="fill_parent"
+            android:layout_height="37dp"
+            android:textSize="12dp"
+            android:textColor="@color/blue_selected"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/edit_text_style"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
+            app:itemTextColor="@color/black"
+            app:itemIconTint="@color/black"/>
+
+        <TextView
+            android:id="@+id/notesTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/notesTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
+        </TextView>
+
+        <EditText
+            android:id="@+id/personalNotes"
+            android:layout_height="200dp"
+            android:hint="@string/personalNotes"
+            android:textSize="12dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/edit_text_style"
+            android:inputType="textCapSentences|textMultiLine"
+            android:maxLength="2000"
+            android:maxLines="10"
+            android:layout_width="fill_parent">
+        </EditText>
+
 
 
     </android.support.v7.widget.LinearLayoutCompat>

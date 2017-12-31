@@ -35,6 +35,10 @@
     <string name="locationTitle">Location</string>
     <string name="startTitle">Start</string>
     <string name="durationTitle">Duration</string>
+    <string name="moreDetailsButton">More details</string>
+    <string name="reminderTitle">Reminder</string>
+    <string name="displayAsTitle">Display as</string>
+    <string name="repeatTitle">Repeat</string>
 
     <string name="yourAgendas">Your agendas</string>
     <string name="agenda">Agenda</string>

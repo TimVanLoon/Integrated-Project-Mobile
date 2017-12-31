@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -57,15 +58,23 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private String [] DURATIONSPINNERLIST = {"0 Minutes", "15 Minutes", "30 Minutes", "45 Minutes", "1 Hour", "90 Minutes", " 2 Hours", "Entire day"};
 
     private int startingValue;
+    private Button moreDetailsButton;
     private EditText dateEvent;
     private EditText timeEvent;
     private EditText eventInput;
     private EditText locationInput;
-    private EditText durationInput;
+    private EditText personalNotes;
+    private TextView reminderTitle;
+    private TextView displayAsTitle;
+    private TextView repeatTitle;
+    private TextView notesTitle;
     private String userName;
     private String userEmail;
     private String accessToken;
     private Spinner durationSpinner;
+    private Spinner reminderSpinner;
+    private Spinner displayAsSpinner;
+    private Spinner repeatSpinner;
     DatePickerDialog datePickerDialog;
     Toolbar myToolbar;
 
@@ -92,7 +101,42 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         timeEvent = (EditText) findViewById(R.id.timeEvent);
         eventInput = (EditText) findViewById(R.id.eventInput);
         locationInput = (EditText) findViewById(R.id.locationInput);
+        personalNotes = (EditText) findViewById(R.id.personalNotes);
+        reminderTitle = (TextView) findViewById(R.id.reminderTitle);
+        displayAsTitle = (TextView) findViewById(R.id.displayAsTitle);
+        repeatTitle = (TextView) findViewById(R.id.repeatTitle);
+        notesTitle = (TextView) findViewById(R.id.notesTitle);
         durationSpinner = (Spinner) findViewById(R.id.durationSpinner);
+        reminderSpinner = (Spinner) findViewById(R.id.reminderSpinner);
+        repeatSpinner = (Spinner) findViewById(R.id.repeatSpinner);
+        displayAsSpinner = (Spinner) findViewById(R.id.displayAsSpinner);
+        moreDetailsButton = (Button) findViewById(R.id.moreDetailsButton);
+
+        reminderSpinner.setVisibility(View.GONE);
+        repeatSpinner.setVisibility(View.GONE);
+        displayAsSpinner.setVisibility(View.GONE);
+        notesTitle.setVisibility(View.GONE);
+        repeatTitle.setVisibility(View.GONE);
+        displayAsTitle.setVisibility(View.GONE);
+        reminderTitle.setVisibility(View.GONE);
+        personalNotes.setVisibility(View.GONE);
+
+
+
+        moreDetailsButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                moreDetailsButton.setVisibility(View.GONE);
+                reminderSpinner.setVisibility(View.VISIBLE);
+                repeatSpinner.setVisibility(View.VISIBLE);
+                displayAsSpinner.setVisibility(View.VISIBLE);
+                notesTitle.setVisibility(View.VISIBLE);
+                repeatTitle.setVisibility(View.VISIBLE);
+                displayAsTitle.setVisibility(View.VISIBLE);
+                reminderTitle.setVisibility(View.VISIBLE);
+                personalNotes.setVisibility(View.VISIBLE);
+
+            }
+        });
 
         durationSpinner.setOnItemSelectedListener(this);
 
