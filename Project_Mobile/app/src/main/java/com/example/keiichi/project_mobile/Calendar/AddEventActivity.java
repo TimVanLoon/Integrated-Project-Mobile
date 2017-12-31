@@ -3,6 +3,7 @@ package com.example.keiichi.project_mobile.Calendar;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -10,8 +11,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -45,10 +50,13 @@ import java.util.TimerTask;
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
 
-public class AddEventActivity extends AppCompatActivity {
+public class AddEventActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/events";
 
+    private String [] DURATIONSPINNERLIST = {"0 Minutes", "15 Minutes", "30 Minutes", "45 Minutes", "1 Hour", "90 Minutes", " 2 Hours", "Entire day"};
+
+    private int startingValue;
     private EditText dateEvent;
     private EditText timeEvent;
     private EditText eventInput;
@@ -56,12 +64,11 @@ public class AddEventActivity extends AppCompatActivity {
     private EditText durationInput;
     private String userName;
     private String userEmail;
-
+    private String accessToken;
+    private Spinner durationSpinner;
     DatePickerDialog datePickerDialog;
-
     Toolbar myToolbar;
 
-    private String accessToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,8 +92,21 @@ public class AddEventActivity extends AppCompatActivity {
         timeEvent = (EditText) findViewById(R.id.timeEvent);
         eventInput = (EditText) findViewById(R.id.eventInput);
         locationInput = (EditText) findViewById(R.id.locationInput);
-        durationInput = (EditText) findViewById(R.id.durationInput);
+        durationSpinner = (Spinner) findViewById(R.id.durationSpinner);
 
+        durationSpinner.setOnItemSelectedListener(this);
+
+
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, DURATIONSPINNERLIST);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        durationSpinner.setAdapter(adapter);
+
+        startingValue = adapter.getPosition("1 Hour");
+
+        durationSpinner.setSelection(startingValue);
 
         // ZET CLICK EVENT OP DE DATE INPUT
         dateEvent.setOnClickListener(new View.OnClickListener() {
@@ -247,5 +267,26 @@ public class AddEventActivity extends AppCompatActivity {
         queue.add(objectRequest);
 
     }
+
+    public void onItemSelected(AdapterView<?> parent, View view,
+                               int pos, long id) {
+        // An item was selected. You can retrieve the selected item using
+        parent.getItemAtPosition(pos);
+
+        switch(pos){
+            case 0:
+
+                Toast.makeText(getApplicationContext(), "Hey boo!", Toast.LENGTH_SHORT).show();
+
+                break;
+
+        }
+    }
+
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Another interface callback
+    }
+
+
 
 }

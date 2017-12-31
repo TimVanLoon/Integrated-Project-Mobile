@@ -144,27 +144,20 @@
             android:textSize="7pt">
         </TextView>
 
-        <EditText
-            android:id="@+id/durationInput"
+        <Spinner
+            android:id="@+id/durationSpinner"
+            android:layout_width="fill_parent"
             android:layout_height="37dp"
-            android:hint="@string/nameInput"
-            android:inputType="textCapSentences|textPersonName"
-            android:textColor="@color/black"
             android:textSize="12dp"
+            android:textColor="@color/blue_selected"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
+            android:layout_marginBottom="20dp"
             android:background="@drawable/edit_text_style"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="72dp"
-            android:layout_marginBottom="20dp"
-            android:layout_width="fill_parent">
-        </EditText>
-
-
-
-
-
-
+            app:itemTextColor="@color/black"
+            app:itemIconTint="@color/black"/>
 
 
     </android.support.v7.widget.LinearLayoutCompat>
