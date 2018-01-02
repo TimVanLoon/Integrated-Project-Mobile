@@ -146,7 +146,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
 
 
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<String> adapterDuration = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, DURATIONSPINNERLIST);
+        ArrayAdapter<String> adapterDuration = new ArrayAdapter<String>(this, R.layout.spinner_layout, DURATIONSPINNERLIST);
         // Specify the layout to use when the list of choices appears
         adapterDuration.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
@@ -155,7 +155,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         durationSpinner.setSelection(startingValue);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<String> adapterReminder = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, REMINDERSPINNERLIST);
+        ArrayAdapter<String> adapterReminder = new ArrayAdapter<String>(this, R.layout.spinner_layout, REMINDERSPINNERLIST);
         // Specify the layout to use when the list of choices appears
         adapterReminder.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
@@ -164,7 +164,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         reminderSpinner.setSelection(startingValue);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<String> adapterDisplayAs = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, DISPLAYASSPINNERLIST);
+        ArrayAdapter<String> adapterDisplayAs = new ArrayAdapter<String>(this,R.layout.spinner_layout, DISPLAYASSPINNERLIST);
         // Specify the layout to use when the list of choices appears
         adapterDisplayAs.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
@@ -173,7 +173,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         displayAsSpinner.setSelection(startingValue);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<String> adapterRepeat = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, REPEATSPINNERLIST);
+        ArrayAdapter<String> adapterRepeat = new ArrayAdapter<String>(this, R.layout.spinner_layout, REPEATSPINNERLIST);
         // Specify the layout to use when the list of choices appears
         adapterDisplayAs.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
@@ -346,8 +346,11 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         // An item was selected. You can retrieve the selected item using
         parent.getItemAtPosition(pos);
 
+
+
         switch(pos){
             case 0:
+
 
                 Toast.makeText(getApplicationContext(), "Hey boo!", Toast.LENGTH_SHORT).show();
 
