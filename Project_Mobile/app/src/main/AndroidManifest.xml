@@ -59,6 +59,7 @@
         <activity
             android:name=".Contacts.AddContactActivity"
             android:label="Add Contact"
+            android:theme="@style/ContactsTheme"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Calendar.AddEventActivity"
