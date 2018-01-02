@@ -35,16 +35,19 @@ import com.example.keiichi.project_mobile.DAL.POJOs.Location;
 import com.example.keiichi.project_mobile.R;
 import com.google.gson.Gson;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -63,11 +66,20 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
 
     final Calendar c = Calendar.getInstance();
     private int startingValue;
-    private int currentDayOfMonth;
-    private int currentMonth;
-    private int currentYear;
+    private int dayOfMonth;
+    private int month;
+    private int year;
     private int hourOfDay;
     private int minuteOfHour;
+    private int duration;
+    private String currentDay;
+    private String userName;
+    private String userEmail;
+    private String accessToken;
+    private String finalHourOfDay;
+    private String finalMinuteOfHour;
+    private boolean isCurrentDate;
+    private boolean isCurrentTime;
     private Button moreDetailsButton;
     private EditText dateEvent;
     private EditText timeEvent;
@@ -78,12 +90,6 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private TextView displayAsTitle;
     private TextView repeatTitle;
     private TextView notesTitle;
-    private String currentDay;
-    private String userName;
-    private String userEmail;
-    private String accessToken;
-    private String finalHourOfDay;
-    private String finalMinuteOfHour;
     private Spinner durationSpinner;
     private Spinner reminderSpinner;
     private Spinner displayAsSpinner;
@@ -190,60 +196,37 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         startingValue = adapterRepeat.getPosition("Never");
         repeatSpinner.setSelection(startingValue);
 
-        currentDayOfMonth = c.get(Calendar.DAY_OF_MONTH);
+        dayOfMonth = c.get(Calendar.DAY_OF_MONTH);
 
-        switch(c.get(Calendar.DAY_OF_WEEK)){
-            case 0:
-                currentDay = "Monday";
-                break;
+        currentDay = getDayInString(c.get(Calendar.DAY_OF_WEEK_IN_MONTH));
 
-            case 1:
-                currentDay = "Tuesday";
-                break;
-
-            case 2:
-                currentDay = "Wednesday";
-                break;
-
-            case 3:
-                currentDay = "Thursday";
-                break;
-
-            case 4:
-                currentDay = "Friday";
-                break;
-
-            case 5:
-                currentDay = "Saturday";
-                break;
-
-            case 6:
-                currentDay = "Sunday";
-                break;
-
-
-
-        }
-
-        currentMonth = c.get(Calendar.MONTH) + 1;
-        currentYear = c.get(Calendar.YEAR);
+        month = c.get(Calendar.MONTH) + 1;
+        year = c.get(Calendar.YEAR);
 
         minuteOfHour = c.get(Calendar.MINUTE);
         hourOfDay = c.get(Calendar.HOUR_OF_DAY);
 
         if(hourOfDay <10) {
             finalHourOfDay = "0" + hourOfDay;
+        } else {
+            finalHourOfDay = String.valueOf(hourOfDay);
         }
-        else if(minuteOfHour<10){
+
+        if(minuteOfHour<10){
             finalMinuteOfHour = "0"+ minuteOfHour;
+        }  else {
+            finalMinuteOfHour = String.valueOf(minuteOfHour);
         }
 
         dateEvent.setFocusable(false);
         dateEvent.setClickable(true);
         timeEvent.setFocusable(false);
         timeEvent.setClickable(true);
-        dateEvent.setText(currentDay + " " + currentDayOfMonth + "-" + currentMonth + "-" + currentYear );
-        timeEvent.setText(hourOfDay + ":" + minuteOfHour);
+        dateEvent.setText(dayOfMonth + "-" + month + "-" + year);
+        timeEvent.setText(finalHourOfDay + ":" + finalMinuteOfHour);
+
+        isCurrentDate = true;
+        isCurrentTime = true;
 
         // ZET CLICK EVENT OP DE DATE INPUT
         dateEvent.setOnClickListener(new View.OnClickListener() {
@@ -259,11 +242,18 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
                         new DatePickerDialog.OnDateSetListener() {
 
                             @Override
-                            public void onDateSet(DatePicker view, int year,
-                                                  int monthOfYear, int dayOfMonth) {
-                                // set day of month , month and year value in the edit text
-                                dateEvent.setText(year + "-"
-                                        + (monthOfYear + 1) + "-" + dayOfMonth);
+                            public void onDateSet(DatePicker view, int yearPicked,
+                                                  int monthOfYearPicked, int dayOfMonthPicked) {
+
+                                isCurrentDate = false;
+
+                                setStartDate(year, monthOfYearPicked++, dayOfMonthPicked);
+
+                                dayOfMonth = dayOfMonthPicked;
+                                month = monthOfYearPicked++;
+                                year = yearPicked;
+
+                                dateEvent.setText(dayOfMonth + "-" + month + "-" + year);
 
                             }
                         }, mYear, mMonth, mDay);
@@ -283,19 +273,11 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
 
-                        /*
-                        String finalHour = "";
-                        String finalMinutes = "";
+                        isCurrentTime = false;
 
-                        if(selectedHour <10) {
-                            finalHour ="0"+ selectedHour;
-                        }
-                        else if(selectedMinute<10){
-                            finalMinutes ="0"+selectedMinute;
-                        }
+                        minuteOfHour = selectedMinute;
+                        hourOfDay = selectedHour;
 
-                        timeEvent.setText(finalHour + ":" + finalMinutes);
-                        */
                         timeEvent.setText(String.format("%02d:%02d", selectedHour, selectedMinute));
                     }
                 }, hour, minute, true);//Yes 24 hour time
@@ -344,9 +326,11 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
                         @Override
                         public void run() {
                             //this code will run after the delay time which is 2 seconds.
-                            Intent intentContacts = new Intent(AddEventActivity.this, CalendarActivity.class);
-                            intentContacts.putExtra("AccessToken", accessToken);
-                            startActivity(intentContacts);
+                            Intent intentCalendar = new Intent(AddEventActivity.this, CalendarActivity.class);
+                            intentCalendar.putExtra("AccessToken", accessToken);
+                            intentCalendar.putExtra("userName", userName);
+                            intentCalendar.putExtra("userEmail", userEmail);
+                            startActivity(intentCalendar);
                         }
                     }, DELAY_TIME);
 
@@ -372,9 +356,30 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         Event event = new Event();
         event.setSubject(eventInput.getText().toString());
         event.setLocation(new Location(locationInput.getText().toString()));
-        event.setStart(new DateTimeTimeZone(dateEvent.getText().toString()+"T"+ timeEvent.getText().toString(), "UTC"));
-        event.setEnd(new DateTimeTimeZone("2018-12-12T20:16:30.033", "UTC"));
 
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        cal.set(Calendar.MONTH, month);
+        cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        cal.set(Calendar.MINUTE, minuteOfHour);
+        cal.set(Calendar.SECOND, 0);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        String startTime = sdf.format(cal.getTime());
+
+        System.out.println("test format: " + startTime);
+
+        event.setStart(new DateTimeTimeZone(startTime, TimeZone.getDefault().getDisplayName()));
+
+        cal.add(Calendar.MINUTE, duration);
+        String endTime = sdf.format(cal.getTime());
+
+        System.out.println("test format 2: " + endTime);
+
+        event.setEnd(new DateTimeTimeZone(endTime, TimeZone.getDefault().getDisplayName()));
+
+
+        System.out.println("test object: " + new Gson().toJson(event).toString());
 
         JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_POSTADRESS, new JSONObject(new Gson().toJson(event)),
                 new Response.Listener<JSONObject>() {
@@ -410,16 +415,57 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         // An item was selected. You can retrieve the selected item using
         parent.getItemAtPosition(pos);
 
+        if(parent == durationSpinner){
+            switch(pos){
+                case 0:
 
+                    duration = 0;
 
-        switch(pos){
-            case 0:
+                    break;
 
+                case 1:
 
-                Toast.makeText(getApplicationContext(), "Hey boo!", Toast.LENGTH_SHORT).show();
+                    duration = 15;
 
-                break;
+                    break;
 
+                case 2:
+
+                    duration = 30;
+
+                    break;
+
+                case 3:
+
+                    duration = 45;
+
+                    break;
+
+                case 4:
+
+                    duration = 60;
+
+                    break;
+
+                case 5:
+
+                    duration = 90;
+
+                    break;
+
+                case 6:
+
+                    duration = 120;
+
+                    break;
+
+                case 7:
+
+                    duration = 1440 ;
+
+                    break;
+
+            }
         }
     }
 
@@ -427,6 +473,49 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         // Another interface callback
     }
 
+    private void setStartDate(int yearPicked, int monthPicked, int dayOfMonthPicked) {
+        if (isCurrentDate) {
+            //startDate = LocalDateTime.of(yearPicked, monthPicked, dayOfMonthPicked, startDate.getHour(), startDate.getMinute());
+        } else {
+            // endTime =
+        }
+
+
+    }
+
+    private String getDayInString(int day) {
+        switch (day) {
+            case 0:
+                return "Monday";
+
+            case 1:
+                return "Tuesday";
+
+
+            case 2:
+                return "Wednesday";
+
+
+            case 3:
+                return "Thursday";
+
+            case 4:
+                return "Friday";
+
+
+            case 5:
+                return "Saturday";
+
+            case 6:
+                return "Sunday";
+
+
+            default:
+                return "";
+
+
+        }
+    }
 
 
 }

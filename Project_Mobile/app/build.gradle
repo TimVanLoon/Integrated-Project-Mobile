@@ -59,4 +59,6 @@ dependencies {
     compile "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
     compile "com.microsoft.appcenter:appcenter-push:${appCenterSdkVersion}"
 
+    compile 'org.apache.commons:commons-lang3:3.6'
+
 }

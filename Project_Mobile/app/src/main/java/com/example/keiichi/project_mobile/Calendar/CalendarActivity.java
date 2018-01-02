@@ -301,4 +301,5 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
             getSupportActionBar().setTitle(calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault()));
         }
     }
+
 }
