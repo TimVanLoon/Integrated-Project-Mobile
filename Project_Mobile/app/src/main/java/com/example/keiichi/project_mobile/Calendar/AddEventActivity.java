@@ -61,7 +61,13 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private String [] DISPLAYASSPINNERLIST = {"Available", "Works somewhere else", "For the time being", "Busy", "Absent"};
     private String [] REPEATSPINNERLIST = {"Never", "Each day", "Every sunday", "Every workday", "Day 31 of every month", "Ever last sunday", "Every 31st of december"};
 
+    final Calendar c = Calendar.getInstance();
     private int startingValue;
+    private int currentDayOfMonth;
+    private int currentMonth;
+    private int currentYear;
+    private int hourOfDay;
+    private int minuteOfHour;
     private Button moreDetailsButton;
     private EditText dateEvent;
     private EditText timeEvent;
@@ -72,9 +78,12 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private TextView displayAsTitle;
     private TextView repeatTitle;
     private TextView notesTitle;
+    private String currentDay;
     private String userName;
     private String userEmail;
     private String accessToken;
+    private String finalHourOfDay;
+    private String finalMinuteOfHour;
     private Spinner durationSpinner;
     private Spinner reminderSpinner;
     private Spinner displayAsSpinner;
@@ -180,6 +189,61 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         repeatSpinner.setAdapter(adapterRepeat);
         startingValue = adapterRepeat.getPosition("Never");
         repeatSpinner.setSelection(startingValue);
+
+        currentDayOfMonth = c.get(Calendar.DAY_OF_MONTH);
+
+        switch(c.get(Calendar.DAY_OF_WEEK)){
+            case 0:
+                currentDay = "Monday";
+                break;
+
+            case 1:
+                currentDay = "Tuesday";
+                break;
+
+            case 2:
+                currentDay = "Wednesday";
+                break;
+
+            case 3:
+                currentDay = "Thursday";
+                break;
+
+            case 4:
+                currentDay = "Friday";
+                break;
+
+            case 5:
+                currentDay = "Saturday";
+                break;
+
+            case 6:
+                currentDay = "Sunday";
+                break;
+
+
+
+        }
+
+        currentMonth = c.get(Calendar.MONTH) + 1;
+        currentYear = c.get(Calendar.YEAR);
+
+        minuteOfHour = c.get(Calendar.MINUTE);
+        hourOfDay = c.get(Calendar.HOUR_OF_DAY);
+
+        if(hourOfDay <10) {
+            finalHourOfDay = "0" + hourOfDay;
+        }
+        else if(minuteOfHour<10){
+            finalMinuteOfHour = "0"+ minuteOfHour;
+        }
+
+        dateEvent.setFocusable(false);
+        dateEvent.setClickable(true);
+        timeEvent.setFocusable(false);
+        timeEvent.setClickable(true);
+        dateEvent.setText(currentDay + " " + currentDayOfMonth + "-" + currentMonth + "-" + currentYear );
+        timeEvent.setText(hourOfDay + ":" + minuteOfHour);
 
         // ZET CLICK EVENT OP DE DATE INPUT
         dateEvent.setOnClickListener(new View.OnClickListener() {
