@@ -101,7 +101,7 @@ public class EventAdapter extends BaseAdapter implements ListAdapter, Filterable
                 List<Event> filt = new ArrayList<Event>(); //filtered list
                 for (int i = 0; i < originalData.size(); i++) {
                     Event e = originalData.get(i);
-                    if (e.getBodyPreview().toLowerCase().contains(constraint)) {
+                    if (e.getSubject().toLowerCase().contains(constraint)) {
                         filt.add(e); //add only items which matches
                     }
                 }

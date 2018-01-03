@@ -67,6 +67,10 @@ public class ListEventsActivity extends AppCompatActivity {
 
         setSupportActionBar(myToolbar);
 
+        // VOEG BACK BUTTON TOE AAN ACTION BAR
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
@@ -120,6 +124,15 @@ public class ListEventsActivity extends AppCompatActivity {
 
         switch(item.getItemId()){
 
+            // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
+            case android.R.id.home:
+                Intent intentCalendar = new Intent(ListEventsActivity.this, CalendarActivity.class);
+                intentCalendar.putExtra("AccessToken", accessToken);
+                intentCalendar.putExtra("userName", userName);
+                intentCalendar.putExtra("userEmail", userEmail);
+                startActivity(intentCalendar);
+
+                return true;
 
 
             case R.id.action_add:
