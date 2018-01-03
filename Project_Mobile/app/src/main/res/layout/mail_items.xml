@@ -1,7 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootlayout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:orientation="vertical"
+    >
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <View
+        android:layout_width="900dp"
+        android:layout_height="1px"
+        android:layout_marginTop="100dp"
+        android:background="@color/darkGrey"/>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_list_row"
@@ -35,7 +50,7 @@
         <TextView
             android:id="@+id/txt_primary"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:ellipsize="end"
             android:lines="1"
             android:textColor="@color/subject"
@@ -50,6 +65,8 @@
             android:lines="1"
             android:textColor="@color/message"
             android:textSize="@dimen/msg_text_secondary" />
+
+
 
     </LinearLayout>
 
@@ -93,6 +110,7 @@
                 android:layout_centerInParent="true"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/icon_text" />
+
         </RelativeLayout>
 
     </RelativeLayout>
@@ -113,5 +131,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:tint="@color/icon_tint_normal" />
+
+
+</RelativeLayout>
 
 </RelativeLayout>
