@@ -23,6 +23,7 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class EventAdapter extends BaseAdapter implements ListAdapter, Filterable {
@@ -74,11 +75,7 @@ public class EventAdapter extends BaseAdapter implements ListAdapter, Filterable
 
         header.setText(event.getSubject());
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        String startTime = sdf.format(event.getStart().getDateTime());
-
-
-        preview.setText(startTime);
+        preview.setText(event.getStart().getDateTime());
 
 
         return rowView;
