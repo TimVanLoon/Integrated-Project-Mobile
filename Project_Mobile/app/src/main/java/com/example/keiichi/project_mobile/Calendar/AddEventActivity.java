@@ -62,7 +62,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private String [] DURATIONSPINNERLIST = {"0 Minutes", "15 Minutes", "30 Minutes", "45 Minutes", "1 Hour", "90 Minutes", " 2 Hours", "Entire day"};
     private String [] REMINDERSPINNERLIST = {"0 Minutes", "15 Minutes", "30 Minutes", "45 Minutes", "1 Hour", "90 Minutes", " 2 Hours", "3 Hours", "4 Hours", "8 Hours", "12 Hours",
                                                 "1 Day", "2 Days", "3 Days", "1 Week", "2 Weeks"};
-    private String [] DISPLAYASSPINNERLIST = {"Available", "Works somewhere else", "For the time being", "Busy", "Absent"};
+    private String [] DISPLAYASSPINNERLIST = {"Free", "Working elsewhere", "Tentative", "Busy", "Absent"};
     private String [] REPEATSPINNERLIST = {"Never", "Each day", "Every sunday", "Every workday", "Day 31 of every month", "Ever last sunday", "Every 31st of december"};
 
     final Calendar c = Calendar.getInstance();
@@ -73,12 +73,14 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private int hourOfDay;
     private int minuteOfHour;
     private int duration;
+    private int reminderMinutesBeforeStart;
     private String currentDay;
     private String userName;
     private String userEmail;
     private String accessToken;
     private String finalHourOfDay;
     private String finalMinuteOfHour;
+    private String showAs;
     private boolean isCurrentDate;
     private boolean isCurrentTime;
     private Button moreDetailsButton;
@@ -159,6 +161,9 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         });
 
         durationSpinner.setOnItemSelectedListener(this);
+        reminderSpinner.setOnItemSelectedListener(this);
+        displayAsSpinner.setOnItemSelectedListener(this);
+        repeatSpinner.setOnItemSelectedListener(this);
 
 
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -191,7 +196,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<String> adapterRepeat = new ArrayAdapter<String>(this, R.layout.spinner_layout, REPEATSPINNERLIST);
         // Specify the layout to use when the list of choices appears
-        adapterDisplayAs.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapterDisplayAs.setDropDownViewResource(android.R.layout.simple_expandable_list_item_1);
         // Apply the adapter to the spinner
         repeatSpinner.setAdapter(adapterRepeat);
         startingValue = adapterRepeat.getPosition("Never");
@@ -377,6 +382,13 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
 
         event.setBody(new ItemBody("Text", personalNotes.getText().toString()));
 
+        event.setReminderMinutesBeforeStart(reminderMinutesBeforeStart);
+        event.setReminderOn(true);
+
+        event.setShowAs(showAs);
+
+
+
         JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_POSTADRESS, new JSONObject(new Gson().toJson(event)),
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -414,53 +426,154 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         if(parent == durationSpinner){
             switch(pos){
                 case 0:
-
                     duration = 0;
-
                     break;
 
                 case 1:
-
                     duration = 15;
-
                     break;
 
                 case 2:
-
                     duration = 30;
-
                     break;
 
                 case 3:
-
                     duration = 45;
-
                     break;
 
                 case 4:
-
                     duration = 60;
-
                     break;
 
                 case 5:
-
                     duration = 90;
-
                     break;
 
                 case 6:
-
                     duration = 120;
-
                     break;
 
                 case 7:
-
                     duration = 1440 ;
-
                     break;
 
+            }
+        }
+
+        if (parent == reminderSpinner){
+            switch(pos){
+                case 0:
+                    reminderMinutesBeforeStart = 0;
+                    break;
+
+                case 1:
+                    reminderMinutesBeforeStart = 15;
+                    break;
+
+                case 2:
+                    reminderMinutesBeforeStart = 30;
+                    break;
+
+                case 3:
+                    reminderMinutesBeforeStart = 45;
+                    break;
+
+                case 4:
+                    reminderMinutesBeforeStart = 60;
+                    break;
+
+                case 5:
+                    reminderMinutesBeforeStart = 90;
+                    break;
+
+                case 6:
+                    reminderMinutesBeforeStart = 120;
+                    break;
+
+                case 7:
+                    reminderMinutesBeforeStart = 180 ;
+                    break;
+
+                case 8:
+                    reminderMinutesBeforeStart = 240 ;
+                    break;
+
+                case 9:
+                    reminderMinutesBeforeStart = 480 ;
+                    break;
+
+                case 10:
+                    reminderMinutesBeforeStart = 720 ;
+                    break;
+
+                case 11:
+                    reminderMinutesBeforeStart = 1440 ;
+                    break;
+
+                case 12:
+                    reminderMinutesBeforeStart = 2880 ;
+                    break;
+
+                case 13:
+                    reminderMinutesBeforeStart = 4320 ;
+                    break;
+
+                case 14:
+                    reminderMinutesBeforeStart = 10080 ;
+                    break;
+
+                case 15:
+                    reminderMinutesBeforeStart = 20160 ;
+                    break;
+
+            }
+        }
+
+        if(parent == displayAsSpinner){
+            switch(pos){
+                case 0:
+                    showAs = "Free";
+                    break;
+
+                case 1:
+                    showAs = "WorkingElsewhere";
+                    break;
+
+                case 2:
+                    showAs = "Tentative";
+                    break;
+
+                case 3:
+                    showAs = "Busy";
+                    break;
+
+                case 4:
+                    showAs = "Oof";
+                    break;
+            }
+        }
+
+        if(parent == repeatSpinner){
+            switch(pos){
+                case 0:
+                    showAs = "Free";
+                    break;
+
+                case 1:
+                    showAs = "WorkingElsewhere";
+                    break;
+
+                case 2:
+                    showAs = "Tentative";
+                    break;
+
+                case 3:
+                    showAs = "Busy";
+                    break;
+
+                case 4:
+                    showAs = "Oof";
+                    break;
             }
         }
     }
