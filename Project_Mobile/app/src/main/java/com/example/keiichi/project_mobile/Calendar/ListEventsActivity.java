@@ -54,7 +54,7 @@ public class ListEventsActivity extends AppCompatActivity {
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/events?$select=subject,body,bodyPreview,organizer,attendees,start,end,location";
+    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/events?$orderby=start/dateTime&$top=500&$count=true";
 
     private String accessToken;
     private String userName;
