@@ -30,11 +30,13 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +53,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.Calendar.CalendarActivity;
+import com.example.keiichi.project_mobile.Contacts.AddContactActivity;
 import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
 import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
@@ -80,6 +83,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     private DrawerLayout mDrawerLayout;
     private String test;
     private Toolbar myToolbar;
+    private SearchView searchView;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private boolean multiSelect = false;
     private boolean actionModeEnabled = false;
@@ -163,7 +167,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     private static final String TAG = MainActivity.class.getSimpleName();
     // Button callGraphButton;
     Button signOutButton;
-    Button toSendMailActivity;
 
     /* Azure AD Variables */
     private PublicClientApplication sampleApp;
@@ -178,7 +181,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         userPicture = (ImageView) findViewById(R.id.userPicture);
         recyclerView = findViewById(R.id.ListViewMails);
         signOutButton = findViewById(R.id.clearCache);
-        toSendMailActivity = findViewById(R.id.ButtonSendMail);
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(this);
 
@@ -241,12 +243,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             }
         });
 
-        toSendMailActivity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toSendMailActivity();
-            }
-        });
         signOutButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 onSignOutClicked();
@@ -395,13 +391,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         findViewById(R.id.welcome).setVisibility(View.INVISIBLE);
     }
 
-    private void toSendMailActivity() {
-        Intent intent = new Intent(this, SendMailActivity.class);
-        intent.putExtra("accestoken", accessToken);
-
-        startActivity(intent);
-    }
-
 
     private void addNotification() {
         android.support.v4.app.NotificationCompat.Builder notification =
@@ -530,6 +519,61 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             }
         }));
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.my_action_bar_items_contacts, menu);
+        MenuItem addItem = menu.findItem(R.id.action_add);
+
+
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setQueryHint("Search: Inbox...");
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                //contactAdapter.getFilter().filter(s);
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                //contactAdapter.getFilter().filter(s);
+
+                return true;
+            }
+
+        });
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+
+        switch(item.getItemId()){
+
+
+
+            case R.id.action_add:
+                Intent intentSendMail = new Intent(ListMailsActvity.this, SendMailActivity.class);
+                intentSendMail.putExtra("AccessToken", accessToken);
+                intentSendMail.putExtra("userName", userName);
+                intentSendMail.putExtra("userEmail", userEmail);
+                startActivity(intentSendMail);
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 

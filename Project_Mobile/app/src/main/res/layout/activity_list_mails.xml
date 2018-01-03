@@ -113,16 +113,7 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-
-    <Button
-        android:id="@+id/ButtonSendMail"
-        android:layout_width="71dp"
-        android:layout_height="35dp"
-        android:layout_marginBottom="24dp"
-        android:layout_marginRight="72dp"
-        android:text="Button"
-        app:layout_constraintBottom_toTopOf="@+id/swipe_refresh_layout"
-        app:layout_constraintRight_toRightOf="parent" />
+        
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"

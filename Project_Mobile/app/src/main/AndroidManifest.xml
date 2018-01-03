@@ -20,7 +20,7 @@
         </activity>
         <activity
             android:name=".Mail.ListMailsActvity"
-            android:label="Postvak IN"
+            android:label="Inbox"
             android:parentActivityName=".MainActivity" />
 
         <!-- Intent filter to capture System Browser calling back to our app after Sign In -->

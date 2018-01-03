@@ -74,7 +74,7 @@ public class ContactsActivity extends AppCompatActivity {
 
     private ListView contactsListView;
 
-    SearchView searchView;
+    private SearchView searchView;
 
     NavigationView contactNavigationView;
 
