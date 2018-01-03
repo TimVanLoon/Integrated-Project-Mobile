@@ -1,6 +1,8 @@
 package com.example.keiichi.project_mobile.Calendar;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -24,6 +26,7 @@ import com.example.keiichi.project_mobile.Contacts.ContactAdapter;
 import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.Event;
+import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
 import com.google.gson.Gson;
@@ -55,6 +58,7 @@ public class ListEventsActivity extends AppCompatActivity {
     private ListView eventsListView;
     private List<Event> events = new ArrayList<>();
     private EventAdapter eventAdapter;
+   private  BottomNavigationView mBottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +68,43 @@ public class ListEventsActivity extends AppCompatActivity {
 
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         eventsListView = (ListView) findViewById(R.id.eventsListView);
+        mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
+
+        Menu menu = mBottomNav.getMenu();
+        MenuItem menuItem = menu.getItem(1);
+        menuItem.setChecked(true);
+
+        mBottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                switch(item.getItemId()) {
+
+                    case R.id.action_calendar:
+
+                        break;
+                    case R.id.action_mail:
+                        Intent intentMail = new Intent(ListEventsActivity.this, ListMailsActvity.class);
+                        intentMail.putExtra("AccessToken", accessToken);
+                        intentMail.putExtra("userName", userName);
+                        intentMail.putExtra("userEmail", userEmail);
+
+                        startActivity(intentMail);
+                        break;
+                    case R.id.action_user:
+                        Intent intentContacts = new Intent(ListEventsActivity.this, ContactsActivity.class);
+                        intentContacts.putExtra("AccessToken", accessToken);
+                        intentContacts.putExtra("userName", userName);
+                        intentContacts.putExtra("userEmail", userEmail);
+
+                        startActivity(intentContacts);
+                        break;
+
+                }
+
+                return false;
+            }
+        });
 
         setSupportActionBar(myToolbar);
 
