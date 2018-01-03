@@ -80,8 +80,13 @@
         <activity
             android:name=".Calendar.EventDetailsActivity"
             android:label="Event Details"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/ContactsTheme"></activity>
+            android:theme="@style/ContactsTheme"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".Calendar.EditEventActivity"
+            android:label="Edit Event"
+            android:theme="@style/ContactsTheme"
+            android:windowSoftInputMode="adjustResize"></activity>
     </application>
 
 </manifest>

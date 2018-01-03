@@ -98,7 +98,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private Spinner displayAsSpinner;
     private Spinner repeatSpinner;
     DatePickerDialog datePickerDialog;
-    Toolbar myToolbar;
+    private Toolbar myToolbar;
 
 
     @Override

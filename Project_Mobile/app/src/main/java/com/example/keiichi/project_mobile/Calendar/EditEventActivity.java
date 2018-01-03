@@ -8,35 +8,34 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
-import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
-import com.example.keiichi.project_mobile.Contacts.EditContactActivity;
 import com.example.keiichi.project_mobile.R;
 
-import java.io.Serializable;
+import org.json.JSONException;
 
-public class EventDetailsActivity extends AppCompatActivity {
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class EditEventActivity extends AppCompatActivity {
 
     private Toolbar myToolbar;
-    private String accessToken;
     private String userName;
     private String userEmail;
+    private String accessToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event_details);
+        setContentView(R.layout.activity_edit_event);
 
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
 
-
         // INITIALISEER ACTION BAR
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
-        // VOEG BACK BUTTON TOE AAN ACTION BAR
+        // VOEG BACK BUTTONN TOE AAN ACTION BAR
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
@@ -45,7 +44,8 @@ public class EventDetailsActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.edit_navigation, menu);
+        inflater.inflate(R.menu.add_navigation, menu);
+
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -58,30 +58,42 @@ public class EventDetailsActivity extends AppCompatActivity {
 
             // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
             case android.R.id.home:
-                Intent intentListEvents = new Intent(EventDetailsActivity.this, ListEventsActivity.class);
-                intentListEvents.putExtra("AccessToken", accessToken);
-                intentListEvents.putExtra("userName", userName);
-                intentListEvents.putExtra("userEmail", userEmail);
-
-                startActivity(intentListEvents);
-
-                return true;
-
-            case R.id.action_delete:
-
-                // builder.show();
+                Intent intentCalendar = new Intent(EditEventActivity.this, EventDetailsActivity.class);
+                intentCalendar.putExtra("AccessToken", accessToken);
+                intentCalendar.putExtra("userName", userName);
+                intentCalendar.putExtra("userEmail", userEmail);
+                startActivity(intentCalendar);
 
                 return true;
 
-            case R.id.action_edit:
-                Intent intentEditContact = new Intent(EventDetailsActivity.this, EditEventActivity.class);
-                intentEditContact.putExtra("AccessToken", accessToken);
-                intentEditContact.putExtra("userName", userName);
-                intentEditContact.putExtra("userEmail", userEmail);
+                /*
+            // WANNEER SAVE ICON WORDT AANGEKLIKT
+            case R.id.action_save:
+                try {
+                    //saveEvent();
 
-                startActivity(intentEditContact);
+                    int DELAY_TIME=2000;
 
+                    //start your animation
+                    new Timer().schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            //this code will run after the delay time which is 2 seconds.
+                            Intent intentCalendar = new Intent(EditEventActivity.this, EventDetailsActivity.class);
+                            intentCalendar.putExtra("AccessToken", accessToken);
+                            intentCalendar.putExtra("userName", userName);
+                            intentCalendar.putExtra("userEmail", userEmail);
+                            startActivity(intentCalendar);
+                        }
+                    }, DELAY_TIME);
+
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 return true;
+                */
 
             default:
                 // If we got here, the user's action was not recognized.
