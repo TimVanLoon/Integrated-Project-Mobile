@@ -313,6 +313,23 @@ public class ListEventsActivity extends AppCompatActivity {
             showEventDetails.putExtra("AccessToken", accessToken);
             showEventDetails.putExtra("userName", userName);
             showEventDetails.putExtra("id", event.getId());
+            showEventDetails.putExtra("subject", event.getSubject());
+            showEventDetails.putExtra("reminderMinutesBeforeStart", event.getReminderMinutesBeforeStart());
+            showEventDetails.putExtra("displayAs", event.getShowAs());
+
+            if(event.getLocation() == null){
+                showEventDetails.putExtra("location", "");
+            }
+            else {
+                showEventDetails.putExtra("location", event.getLocation().getDisplayName());
+            }
+
+            if(event.getStart() == null){
+                showEventDetails.putExtra("startDate", "");
+            }
+            else {
+                showEventDetails.putExtra("startDate", event.getStart().getDateTime());
+            }
 
 
             startActivity(showEventDetails);

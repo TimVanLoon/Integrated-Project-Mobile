@@ -9,6 +9,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -32,26 +37,185 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class EventDetailsActivity extends AppCompatActivity {
+public class EventDetailsActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+
+    private String [] REMINDERSPINNERLIST = {"0 Minutes", "15 Minutes", "30 Minutes", "45 Minutes", "1 Hour", "90 Minutes", " 2 Hours", "3 Hours", "4 Hours", "8 Hours", "12 Hours",
+            "1 Day", "2 Days", "3 Days", "1 Week", "2 Weeks"};
+    private String [] DISPLAYASSPINNERLIST = {"Free", "Working elsewhere", "Tentative", "Busy", "Away"};
 
     final private String URL_POSTADRESS = "https://graph.microsoft.com/beta/me/events/";
     private Toolbar myToolbar;
     private  AlertDialog.Builder builder;
+    private TextView eventSubjectTextView;
+    private TextView locationTextView;
+    private TextView startDateTextView;
+    private Spinner reminderSpinner;
+    private Spinner displayAsSpinner;
     private String accessToken;
     private String userName;
     private String userEmail;
     private String id;
+    private String subject;
+    private String location;
+    private String startDate;
+    private String displayAs;
+    private int startingValueReminder;
+    private int startingValueDisplayAs;
+    private int reminderMinutesBeforeStart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
 
+        eventSubjectTextView = (TextView) findViewById(R.id.eventSubject);
+        locationTextView = (TextView) findViewById(R.id.eventLocation);
+        startDateTextView = (TextView) findViewById(R.id.startDate);
+        reminderSpinner = (Spinner) findViewById(R.id.reminderSpinner);
+        displayAsSpinner = (Spinner) findViewById(R.id.displayAsSpinner);
+
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
         id= getIntent().getStringExtra("id");
+        subject = getIntent().getStringExtra("subject");
+        location = getIntent().getStringExtra("location");
+        startDate = getIntent().getStringExtra("startDate");
+        displayAs = getIntent().getStringExtra("displayAs");
+        reminderMinutesBeforeStart = getIntent().getIntExtra("reminderMinutesBeforeStart", 0);
 
+        System.out.println("hey boo " + displayAs);
+
+        eventSubjectTextView.setText(subject);
+        locationTextView.setText(location);
+        startDateTextView.setText(startDate);
+
+        reminderSpinner.setOnItemSelectedListener(this);
+        displayAsSpinner.setOnItemSelectedListener(this);
+
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<String> adapterReminder = new ArrayAdapter<String>(this, R.layout.spinner_layout, REMINDERSPINNERLIST);
+        // Specify the layout to use when the list of choices appears
+        adapterReminder.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        reminderSpinner.setAdapter(adapterReminder);
+
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<String> adapterDisplayAs = new ArrayAdapter<String>(this,R.layout.spinner_layout, DISPLAYASSPINNERLIST);
+        // Specify the layout to use when the list of choices appears
+        adapterDisplayAs.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        displayAsSpinner.setAdapter(adapterDisplayAs);
+
+        switch(reminderMinutesBeforeStart){
+            case 0:
+                startingValueReminder = adapterReminder.getPosition("0 Minutes");
+                reminderSpinner.setSelection(startingValueReminder);
+                break;
+
+            case 15:
+                startingValueReminder = adapterReminder.getPosition("15 Minutes");
+                reminderSpinner.setSelection(startingValueReminder);
+                break;
+
+            case 30:
+                startingValueReminder = adapterReminder.getPosition("30 Minutes");
+                reminderSpinner.setSelection(startingValueReminder);
+                break;
+
+            case 45:
+                startingValueReminder = adapterReminder.getPosition("45 Minutes");
+                reminderSpinner.setSelection(startingValueReminder);
+                break;
+
+            case 60:
+                startingValueReminder = adapterReminder.getPosition("1 Hour");
+                reminderSpinner.setSelection(startingValueReminder);
+                break;
+
+            case 90:
+                startingValueReminder = adapterReminder.getPosition("90 Minutes");
+                reminderSpinner.setSelection(startingValueReminder);
+                break;
+
+            case 120:
+                startingValueReminder = adapterReminder.getPosition("2 Hours");
+                reminderSpinner.setSelection(startingValueReminder);
+                break;
+
+            case 180:
+                startingValueReminder = adapterReminder.getPosition("3 Hours");
+                reminderSpinner.setSelection(startingValueReminder);
+                break;
+
+            case 240:
+                startingValueReminder = adapterReminder.getPosition("4 Hours");
+                reminderSpinner.setSelection(startingValueReminder);
+                break;
+
+            case 480:
+                startingValueReminder = adapterReminder.getPosition("8 Hours");
+                reminderSpinner.setSelection(startingValueReminder);
+                break;
+
+            case 720:
+                startingValueReminder = adapterReminder.getPosition("12 Hours");
+                reminderSpinner.setSelection(startingValueReminder);
+                break;
+
+            case 1440:
+                startingValueReminder = adapterReminder.getPosition("1 Day");
+                reminderSpinner.setSelection(startingValueReminder);
+                break;
+
+            case 2880:
+                startingValueReminder = adapterReminder.getPosition("2 Days");
+                reminderSpinner.setSelection(startingValueReminder);
+                break;
+
+            case 4320:
+                startingValueReminder = adapterReminder.getPosition("3 Days");
+                reminderSpinner.setSelection(startingValueReminder);
+                break;
+
+            case 10080:
+                startingValueReminder = adapterReminder.getPosition("1 Week");
+                reminderSpinner.setSelection(startingValueReminder);
+                break;
+
+            case 20160:
+                startingValueReminder = adapterReminder.getPosition("2 Weeks");
+                reminderSpinner.setSelection(startingValueReminder);
+                break;
+        }
+
+        switch(displayAs){
+            case "free":
+                startingValueDisplayAs = adapterDisplayAs.getPosition("Free");
+                displayAsSpinner.setSelection(startingValueDisplayAs);
+                break;
+
+            case "workingElsewhere":
+                startingValueDisplayAs = adapterDisplayAs.getPosition("Working elsewhere");
+                displayAsSpinner.setSelection(startingValueDisplayAs);
+                break;
+
+            case "tentative":
+                startingValueDisplayAs = adapterDisplayAs.getPosition("Tentative");
+                displayAsSpinner.setSelection(startingValueDisplayAs);
+                break;
+
+            case "busy":
+                startingValueDisplayAs = adapterDisplayAs.getPosition("Busy");
+                displayAsSpinner.setSelection(startingValueDisplayAs);
+                break;
+
+            case "oof":
+                startingValueDisplayAs = adapterDisplayAs.getPosition("Away");
+                displayAsSpinner.setSelection(startingValueDisplayAs);
+                break;
+
+        }
 
         // INITIALISEER ACTION BAR
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -186,6 +350,16 @@ public class EventDetailsActivity extends AppCompatActivity {
         };
 
         queue.add(stringRequest);
+
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
 
     }
 }
