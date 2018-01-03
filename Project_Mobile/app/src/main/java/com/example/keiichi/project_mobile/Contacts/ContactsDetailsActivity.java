@@ -536,7 +536,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         }
     }
 
-    // PATCH REQUEST VOOR UPDATE CONTACTPERSOON
+    // PATCH REQUEST VOOR DELETEN CONTACTPERSOON
     private void deleteContact() throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
 

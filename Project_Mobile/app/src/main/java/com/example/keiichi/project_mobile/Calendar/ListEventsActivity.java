@@ -308,13 +308,14 @@ public class ListEventsActivity extends AppCompatActivity {
 
             Event event = events.get(position);
 
-            Intent showContactDetails = new Intent(ListEventsActivity.this, EventDetailsActivity.class);
-            showContactDetails.putExtra("userEmail", userEmail);
-            showContactDetails.putExtra("AccessToken", accessToken);
-            showContactDetails.putExtra("userName", userName);
+            Intent showEventDetails = new Intent(ListEventsActivity.this, EventDetailsActivity.class);
+            showEventDetails.putExtra("userEmail", userEmail);
+            showEventDetails.putExtra("AccessToken", accessToken);
+            showEventDetails.putExtra("userName", userName);
+            showEventDetails.putExtra("id", event.getId());
 
 
-            startActivity(showContactDetails);
+            startActivity(showEventDetails);
 
         } else {
             Toast.makeText(getApplicationContext(), "Empty events list!", Toast.LENGTH_SHORT).show();
