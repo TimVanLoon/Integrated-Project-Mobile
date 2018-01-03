@@ -331,6 +331,19 @@ public class ListEventsActivity extends AppCompatActivity {
                 showEventDetails.putExtra("startDate", event.getStart().getDateTime());
             }
 
+            if(event.getBody().getContent() != null){
+                showEventDetails.putExtra("notes", event.getBody().getContent());
+            }
+            else {
+                showEventDetails.putExtra("notes", "");
+            }
+
+            if(event.getBody().getContent() != null){
+                showEventDetails.putExtra("notes", event.getBody().getContent());
+            }
+            else {
+                showEventDetails.putExtra("notes", "");
+            }
 
             startActivity(showEventDetails);
 

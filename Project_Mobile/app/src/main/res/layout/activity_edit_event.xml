@@ -163,27 +163,12 @@
                 android:textColor="@color/black"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:layout_marginBottom="30dp"
+                android:layout_marginBottom="20dp"
                 android:background="@drawable/edit_text_style"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 app:itemTextColor="@color/black"
                 app:itemIconTint="@color/black"/>
-
-            <Button
-                android:id="@+id/moreDetailsButton"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/moreDetailsButton"
-                android:textColor="@color/black"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
-                android:layout_marginBottom="20dp"
-                android:background="@color/colorGrey"
-                android:textSize="7pt">
-            </Button>
 
             <TextView
                 android:id="@+id/reminderTitle"

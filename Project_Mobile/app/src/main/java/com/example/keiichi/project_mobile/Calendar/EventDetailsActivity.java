@@ -59,6 +59,7 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
     private String location;
     private String startDate;
     private String displayAs;
+    private String notes;
     private int startingValueReminder;
     private int startingValueDisplayAs;
     private int reminderMinutesBeforeStart;
@@ -82,9 +83,10 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
         location = getIntent().getStringExtra("location");
         startDate = getIntent().getStringExtra("startDate");
         displayAs = getIntent().getStringExtra("displayAs");
+        notes = getIntent().getStringExtra("notes");
         reminderMinutesBeforeStart = getIntent().getIntExtra("reminderMinutesBeforeStart", 0);
 
-        System.out.println("hey boo " + displayAs);
+        System.out.println("hey boo " + notes);
 
         eventSubjectTextView.setText(subject);
         locationTextView.setText(location);
@@ -254,6 +256,12 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
                             intentListEvents.putExtra("AccessToken", accessToken);
                             intentListEvents.putExtra("userName", userName);
                             intentListEvents.putExtra("userEmail", userEmail);
+                            intentListEvents.putExtra("subject", subject);
+                            intentListEvents.putExtra("location", location);
+                            intentListEvents.putExtra("startDate", startDate);
+                            intentListEvents.putExtra("displayAs", displayAs);
+                            intentListEvents.putExtra("notes", notes);
+                            intentListEvents.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
 
                             startActivity(intentListEvents);
 
@@ -290,6 +298,12 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
                 intentListEvents.putExtra("AccessToken", accessToken);
                 intentListEvents.putExtra("userName", userName);
                 intentListEvents.putExtra("userEmail", userEmail);
+                intentListEvents.putExtra("subject", subject);
+                intentListEvents.putExtra("location", location);
+                intentListEvents.putExtra("startDate", startDate);
+                intentListEvents.putExtra("displayAs", displayAs);
+                intentListEvents.putExtra("notes", notes);
+                intentListEvents.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
 
                 startActivity(intentListEvents);
 
@@ -306,6 +320,12 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
                 intentEditEvent.putExtra("AccessToken", accessToken);
                 intentEditEvent.putExtra("userName", userName);
                 intentEditEvent.putExtra("userEmail", userEmail);
+                intentEditEvent.putExtra("subject", subject);
+                intentEditEvent.putExtra("location", location);
+                intentEditEvent.putExtra("startDate", startDate);
+                intentEditEvent.putExtra("displayAs", displayAs);
+                intentEditEvent.putExtra("notes", notes);
+                intentEditEvent.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
 
                 startActivity(intentEditEvent);
 

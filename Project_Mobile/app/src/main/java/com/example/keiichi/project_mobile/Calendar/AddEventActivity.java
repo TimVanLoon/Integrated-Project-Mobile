@@ -332,7 +332,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
                         @Override
                         public void run() {
                             //this code will run after the delay time which is 2 seconds.
-                            Intent intentCalendar = new Intent(AddEventActivity.this, CalendarActivity.class);
+                            Intent intentCalendar = new Intent(AddEventActivity.this, ListEventsActivity.class);
                             intentCalendar.putExtra("AccessToken", accessToken);
                             intentCalendar.putExtra("userName", userName);
                             intentCalendar.putExtra("userEmail", userEmail);
