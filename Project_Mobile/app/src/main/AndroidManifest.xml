@@ -50,7 +50,7 @@
         <activity
             android:name=".Calendar.ListEventsActivity"
             android:label="My Events"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".Contacts.ContactsActivity"
             android:label="My Contacts"
@@ -65,7 +65,7 @@
             android:name=".Calendar.AddEventActivity"
             android:label="New event"
             android:theme="@style/ContactsTheme"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".Contacts.ContactsDetailsActivity"
             android:label="Contact Details"
@@ -76,8 +76,12 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".SettingsActivity"
-            android:label="Settings"
-            ></activity>
+            android:label="Settings" />
+        <activity
+            android:name=".Calendar.EventDetailsActivity"
+            android:label="Event Details"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/ContactsTheme"></activity>
     </application>
 
 </manifest>

@@ -10,8 +10,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -24,6 +29,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.Contacts.AddContactActivity;
 import com.example.keiichi.project_mobile.Contacts.ContactAdapter;
 import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
+import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
@@ -69,6 +75,20 @@ public class ListEventsActivity extends AppCompatActivity {
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         eventsListView = (ListView) findViewById(R.id.eventsListView);
         mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
+
+        eventsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+
+                // Start an alpha animation for clicked item
+                Animation animation1 = new AlphaAnimation(0.3f, 1.0f);
+                animation1.setDuration(4000);
+                view.startAnimation(animation1);
+
+                onnEventClicked(position);
+
+            }
+        });
 
         Menu menu = mBottomNav.getMenu();
         MenuItem menuItem = menu.getItem(1);
@@ -279,6 +299,25 @@ public class ListEventsActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+    }
 
+    public void onnEventClicked(int position){
+
+
+        if(events.size() != 0){
+
+            Event event = events.get(position);
+
+            Intent showContactDetails = new Intent(ListEventsActivity.this, EventDetailsActivity.class);
+            showContactDetails.putExtra("userEmail", userEmail);
+            showContactDetails.putExtra("AccessToken", accessToken);
+            showContactDetails.putExtra("userName", userName);
+
+
+            startActivity(showContactDetails);
+
+        } else {
+            Toast.makeText(getApplicationContext(), "Empty events list!", Toast.LENGTH_SHORT).show();
+        }
     }
 }
