@@ -21,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,14 +67,18 @@ public class EventAdapter extends BaseAdapter implements ListAdapter, Filterable
         LayoutInflater layoutInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = layoutInflater.inflate(R.layout.event_items, parent, false);
-        TextView header = rowView.findViewById(R.id.previewBody);
-        TextView preview = rowView.findViewById(R.id.header);
+        TextView preview = rowView.findViewById(R.id.previewBody);
+        TextView header = rowView.findViewById(R.id.header);
 
         Event event = getItem(position);
 
-        header.setText(event.getBodyPreview());
+        header.setText(event.getSubject());
 
-        preview.setText(event.getSubject());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        String startTime = sdf.format(event.getStart().getDateTime());
+
+
+        preview.setText(startTime);
 
 
         return rowView;

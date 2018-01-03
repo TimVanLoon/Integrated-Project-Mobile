@@ -31,6 +31,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.DAL.POJOs.DateTimeTimeZone;
 import com.example.keiichi.project_mobile.DAL.POJOs.Event;
+import com.example.keiichi.project_mobile.DAL.POJOs.ItemBody;
 import com.example.keiichi.project_mobile.DAL.POJOs.Location;
 import com.example.keiichi.project_mobile.R;
 import com.google.gson.Gson;
@@ -250,7 +251,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
                                 setStartDate(year, monthOfYearPicked++, dayOfMonthPicked);
 
                                 dayOfMonth = dayOfMonthPicked;
-                                month = monthOfYearPicked++;
+                                month = monthOfYearPicked;
                                 year = yearPicked;
 
                                 dateEvent.setText(dayOfMonth + "-" + month + "-" + year);
@@ -360,26 +361,21 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, year);
         cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        cal.set(Calendar.MONTH, month);
-        cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        cal.set(Calendar.MONTH, month - 1);
+        cal.set(Calendar.HOUR_OF_DAY, hourOfDay - 1);
         cal.set(Calendar.MINUTE, minuteOfHour);
         cal.set(Calendar.SECOND, 0);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         String startTime = sdf.format(cal.getTime());
-
-        System.out.println("test format: " + startTime);
 
         event.setStart(new DateTimeTimeZone(startTime, TimeZone.getDefault().getDisplayName()));
 
         cal.add(Calendar.MINUTE, duration);
         String endTime = sdf.format(cal.getTime());
 
-        System.out.println("test format 2: " + endTime);
-
         event.setEnd(new DateTimeTimeZone(endTime, TimeZone.getDefault().getDisplayName()));
 
-
-        System.out.println("test object: " + new Gson().toJson(event).toString());
+        event.setBody(new ItemBody("Text", personalNotes.getText().toString()));
 
         JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_POSTADRESS, new JSONObject(new Gson().toJson(event)),
                 new Response.Listener<JSONObject>() {
