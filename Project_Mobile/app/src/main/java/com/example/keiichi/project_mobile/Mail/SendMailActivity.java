@@ -26,6 +26,8 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.Calendar.CalendarActivity;
+import com.example.keiichi.project_mobile.Calendar.ListEventsActivity;
 import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONException;
@@ -74,6 +76,10 @@ public class SendMailActivity extends AppCompatActivity {
 
         myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
+
+        // VOEG BACK BUTTON TOE AAN ACTION BAR
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         Intent intent = getIntent();
         Acces_Token = intent.getStringExtra("accestoken");
@@ -168,7 +174,15 @@ public class SendMailActivity extends AppCompatActivity {
 
         switch(item.getItemId()){
 
+            // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
+            case android.R.id.home:
+                Intent intentListMails = new Intent(SendMailActivity.this, ListMailsActvity.class);
+                intentListMails.putExtra("AccessToken", accessToken);
+                intentListMails.putExtra("userName", userName);
+                intentListMails.putExtra("userEmail", userEmail);
+                startActivity(intentListMails);
 
+                return true;
 
             case R.id.action_send:
                 try {
