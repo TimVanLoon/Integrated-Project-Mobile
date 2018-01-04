@@ -47,7 +47,6 @@ public class SendMailActivity extends AppCompatActivity {
 
     private Toolbar myToolbar;
     private Button Sendmail;
-    private ImageButton ButtonBold;
     private TextView MailAdress;
     private TextView Subject;
     private RichEditor MailBody;
@@ -78,13 +77,7 @@ public class SendMailActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         Acces_Token = intent.getStringExtra("accestoken");
-        ButtonBold = findViewById(R.id.action_bold);
-        ButtonBold.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MailBody.setBold();
-            }
-        });
+
 
         emailAddress = intent.getStringExtra("emailAddress");
 
@@ -150,7 +143,7 @@ public class SendMailActivity extends AppCompatActivity {
                         add("subject", Subject.getText().toString()).
                         add("body", Json.createObjectBuilder().
                                 add("contentType", "Text").
-                                add("content", Html.fromHtml(MailBody.getHtml()) + "\n\n\n\n Sent from PAPA STOP!\n\n Auw dat doet pijn...")).
+                                add("content", Html.fromHtml(MailBody.getHtml()).toString())).
                         add("toRecipients", Json.createArrayBuilder().
                                 add(Json.createObjectBuilder().
                                         add("emailAddress", Json.createObjectBuilder().
