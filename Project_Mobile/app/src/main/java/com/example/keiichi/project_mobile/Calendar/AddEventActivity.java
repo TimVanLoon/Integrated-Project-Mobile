@@ -555,23 +555,23 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         if(parent == repeatSpinner){
             switch(pos){
                 case 0:
-                    showAs = "Free";
+
                     break;
 
                 case 1:
-                    showAs = "WorkingElsewhere";
+
                     break;
 
                 case 2:
-                    showAs = "Tentative";
+
                     break;
 
                 case 3:
-                    showAs = "Busy";
+
                     break;
 
                 case 4:
-                    showAs = "Oof";
+
                     break;
             }
         }

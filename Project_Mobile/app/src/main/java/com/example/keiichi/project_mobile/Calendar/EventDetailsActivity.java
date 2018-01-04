@@ -86,7 +86,7 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
         notes = getIntent().getStringExtra("notes");
         reminderMinutesBeforeStart = getIntent().getIntExtra("reminderMinutesBeforeStart", 0);
 
-        System.out.println("hey boo " + notes);
+        System.out.println("hey boo " + reminderMinutesBeforeStart);
 
         eventSubjectTextView.setText(subject);
         locationTextView.setText(location);

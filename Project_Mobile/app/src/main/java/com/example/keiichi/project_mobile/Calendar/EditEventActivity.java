@@ -80,11 +80,11 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
     private String userEmail;
     private String accessToken;
     private String id;
-    private String showAs;
     private String subject;
     private String location;
     private String startDate;
     private String displayAs;
+    private String displayAsValue;
     private String notes;
     private String finalHourOfDay;
     private String finalMinuteOfHour;
@@ -99,6 +99,7 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
     private int startingValueDuration;
     private int startingValueRepeat;
     private int reminderMinutesBeforeStart;
+    private int reminderMinutesBeforeStartValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +136,11 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         eventInput.setText(subject);
         locationInput.setText(location);
         personalNotes.setText(Html.fromHtml(notes));
+
+        durationSpinner.setOnItemSelectedListener(this);
+        reminderSpinner.setOnItemSelectedListener(this);
+        displayAsSpinner.setOnItemSelectedListener(this);
+        repeatSpinner.setOnItemSelectedListener(this);
 
         start = Calendar.getInstance();
 
@@ -557,67 +563,67 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         if (parent == reminderSpinner){
             switch(pos){
                 case 0:
-                    reminderMinutesBeforeStart = 0;
+                    reminderMinutesBeforeStartValue = 0;
                     break;
 
                 case 1:
-                    reminderMinutesBeforeStart = 15;
+                    reminderMinutesBeforeStartValue = 15;
                     break;
 
                 case 2:
-                    reminderMinutesBeforeStart = 30;
+                    reminderMinutesBeforeStartValue = 30;
                     break;
 
                 case 3:
-                    reminderMinutesBeforeStart = 45;
+                    reminderMinutesBeforeStartValue = 45;
                     break;
 
                 case 4:
-                    reminderMinutesBeforeStart = 60;
+                    reminderMinutesBeforeStartValue = 60;
                     break;
 
                 case 5:
-                    reminderMinutesBeforeStart = 90;
+                    reminderMinutesBeforeStartValue = 90;
                     break;
 
                 case 6:
-                    reminderMinutesBeforeStart = 120;
+                    reminderMinutesBeforeStartValue = 120;
                     break;
 
                 case 7:
-                    reminderMinutesBeforeStart = 180 ;
+                    reminderMinutesBeforeStartValue = 180 ;
                     break;
 
                 case 8:
-                    reminderMinutesBeforeStart = 240 ;
+                    reminderMinutesBeforeStartValue = 240 ;
                     break;
 
                 case 9:
-                    reminderMinutesBeforeStart = 480 ;
+                    reminderMinutesBeforeStartValue = 480 ;
                     break;
 
                 case 10:
-                    reminderMinutesBeforeStart = 720 ;
+                    reminderMinutesBeforeStartValue = 720 ;
                     break;
 
                 case 11:
-                    reminderMinutesBeforeStart = 1440 ;
+                    reminderMinutesBeforeStartValue = 1440 ;
                     break;
 
                 case 12:
-                    reminderMinutesBeforeStart = 2880 ;
+                    reminderMinutesBeforeStartValue = 2880 ;
                     break;
 
                 case 13:
-                    reminderMinutesBeforeStart = 4320 ;
+                    reminderMinutesBeforeStartValue = 4320 ;
                     break;
 
                 case 14:
-                    reminderMinutesBeforeStart = 10080 ;
+                    reminderMinutesBeforeStartValue = 10080 ;
                     break;
 
                 case 15:
-                    reminderMinutesBeforeStart = 20160 ;
+                    reminderMinutesBeforeStartValue = 20160 ;
                     break;
 
             }
@@ -626,23 +632,28 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         if(parent == displayAsSpinner){
             switch(pos){
                 case 0:
-                    showAs = "Free";
+                    displayAsValue = "Free";
+                    displayAs = "free";
                     break;
 
                 case 1:
-                    showAs = "WorkingElsewhere";
+                    displayAsValue = "WorkingElsewhere";
+                    displayAs = "workingElsewhere";
                     break;
 
                 case 2:
-                    showAs = "Tentative";
+                    displayAsValue = "Tentative";
+                    displayAs = "tentative";
                     break;
 
                 case 3:
-                    showAs = "Busy";
+                    displayAsValue = "Busy";
+                    displayAs = "busy";
                     break;
 
                 case 4:
-                    showAs = "Oof";
+                    displayAsValue = "Oof";
+                    displayAs = "oof";
                     break;
             }
         }
@@ -650,23 +661,19 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         if(parent == repeatSpinner){
             switch(pos){
                 case 0:
-                    showAs = "Free";
                     break;
 
                 case 1:
-                    showAs = "WorkingElsewhere";
                     break;
 
                 case 2:
-                    showAs = "Tentative";
+
                     break;
 
                 case 3:
-                    showAs = "Busy";
                     break;
 
                 case 4:
-                    showAs = "Oof";
                     break;
             }
         }
@@ -683,13 +690,16 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
 
         Event event = new Event();
         event.setSubject(eventInput.getText().toString());
+        subject = eventInput.getText().toString();
+
         event.setLocation(new Location(locationInput.getText().toString()));
+        location = locationInput.getText().toString();
 
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, year);
         cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         cal.set(Calendar.MONTH, month - 1);
-        cal.set(Calendar.HOUR_OF_DAY, hourOfDay - 1);
+        cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
         cal.set(Calendar.MINUTE, minuteOfHour);
         cal.set(Calendar.SECOND, 0);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -697,17 +707,22 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
 
         event.setStart(new DateTimeTimeZone(startTime, TimeZone.getDefault().getDisplayName()));
 
+        startDate = startTime;
+
         cal.add(Calendar.MINUTE, duration);
         String endTime = sdf.format(cal.getTime());
 
         event.setEnd(new DateTimeTimeZone(endTime, TimeZone.getDefault().getDisplayName()));
 
         event.setBody(new ItemBody("Text", personalNotes.getText().toString()));
+        notes = personalNotes.getText().toString();
 
-        event.setReminderMinutesBeforeStart(reminderMinutesBeforeStart);
+        event.setReminderMinutesBeforeStart(reminderMinutesBeforeStartValue);
         event.setReminderOn(true);
 
-        event.setShowAs(showAs);
+        reminderMinutesBeforeStart = reminderMinutesBeforeStartValue;
+
+        event.setShowAs(displayAsValue);
 
         String postAddress = URL_POSTADRESS + id;
 
