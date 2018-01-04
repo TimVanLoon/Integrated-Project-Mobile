@@ -1,5 +1,7 @@
 package com.example.keiichi.project_mobile.Calendar;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,19 +10,27 @@ import android.text.Html;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONException;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class EditEventActivity extends AppCompatActivity {
+public class EditEventActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
     final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/events/";
 
@@ -31,6 +41,8 @@ public class EditEventActivity extends AppCompatActivity {
     private String [] REPEATSPINNERLIST = {"Never", "Each day", "Every sunday", "Every workday", "Day 31 of every month", "Ever last sunday", "Every 31st of december"};
 
     private Toolbar myToolbar;
+    private Calendar start;
+    private DatePickerDialog datePickerDialog;
     private EditText dateEvent;
     private EditText timeEvent;
     private EditText eventInput;
@@ -44,15 +56,26 @@ public class EditEventActivity extends AppCompatActivity {
     private Spinner reminderSpinner;
     private Spinner displayAsSpinner;
     private Spinner repeatSpinner;
+    private boolean isCurrentDate;
+    private boolean isCurrentTime;
     private String userName;
     private String userEmail;
     private String accessToken;
     private String id;
+    private String showAs;
     private String subject;
     private String location;
     private String startDate;
     private String displayAs;
     private String notes;
+    private String finalHourOfDay;
+    private String finalMinuteOfHour;
+    private int dayOfMonth;
+    private int month;
+    private int year;
+    private int hourOfDay;
+    private int minuteOfHour;
+    private int duration;
     private int startingValueReminder;
     private int startingValueDisplayAs;
     private int startingValueDuration;
@@ -94,6 +117,47 @@ public class EditEventActivity extends AppCompatActivity {
         eventInput.setText(subject);
         locationInput.setText(location);
         personalNotes.setText(Html.fromHtml(notes));
+
+        start = Calendar.getInstance();
+
+        System.out.println("test date : " + startDate);
+
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+            Date date = sdf.parse(startDate);
+            start.setTime(date);
+
+            dayOfMonth = start.get(Calendar.DAY_OF_MONTH);
+            month = start.get(Calendar.MONTH) + 1;
+            year = start.get(Calendar.YEAR);
+
+            minuteOfHour = start.get(Calendar.MINUTE);
+            hourOfDay = start.get(Calendar.HOUR_OF_DAY);
+
+
+        } catch (java.text.ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        if(hourOfDay <10) {
+            finalHourOfDay = "0" + hourOfDay;
+        } else {
+            finalHourOfDay = String.valueOf(hourOfDay);
+        }
+
+        if(minuteOfHour<10){
+            finalMinuteOfHour = "0"+ minuteOfHour;
+        }  else {
+            finalMinuteOfHour = String.valueOf(minuteOfHour);
+        }
+
+        dateEvent.setFocusable(false);
+        dateEvent.setClickable(true);
+        timeEvent.setFocusable(false);
+        timeEvent.setClickable(true);
+        dateEvent.setText(dayOfMonth + "-" + month + "-" + year);
+        timeEvent.setText(finalHourOfDay + ":" + finalMinuteOfHour);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<String> adapterDuration = new ArrayAdapter<String>(this, R.layout.spinner_layout, DURATIONSPINNERLIST);
@@ -241,6 +305,66 @@ public class EditEventActivity extends AppCompatActivity {
 
         }
 
+        // ZET CLICK EVENT OP DE DATE INPUT
+        dateEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // calender class's instance and get current date , month and year from calender
+                final Calendar c = Calendar.getInstance();
+                int mYear = c.get(Calendar.YEAR); // current year
+                int mMonth = c.get(Calendar.MONTH); // current month
+                int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
+                // date picker dialog
+                datePickerDialog = new DatePickerDialog(EditEventActivity.this,
+                        new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int yearPicked,
+                                                  int monthOfYearPicked, int dayOfMonthPicked) {
+
+                                isCurrentDate = false;
+
+                                setStartDate(year, monthOfYearPicked++, dayOfMonthPicked);
+
+                                dayOfMonth = dayOfMonthPicked;
+                                month = monthOfYearPicked;
+                                year = yearPicked;
+
+                                dateEvent.setText(dayOfMonth + "-" + month + "-" + year);
+
+                            }
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.show();
+
+            }
+        });
+
+        timeEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar mcurrentTime = Calendar.getInstance();
+                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                int minute = mcurrentTime.get(Calendar.MINUTE);
+                TimePickerDialog mTimePicker;
+                mTimePicker = new TimePickerDialog(EditEventActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+
+                        isCurrentTime = false;
+
+                        minuteOfHour = selectedMinute;
+                        hourOfDay = selectedHour;
+
+                        timeEvent.setText(String.format("%02d:%02d", selectedHour, selectedMinute));
+                    }
+                }, hour, minute, true);//Yes 24 hour time
+                mTimePicker.setTitle("Select Time");
+                mTimePicker.show();
+
+            }
+        });
+
+
         // INITIALISEER ACTION BAR
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
@@ -317,5 +441,213 @@ public class EditEventActivity extends AppCompatActivity {
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void setStartDate(int yearPicked, int monthPicked, int dayOfMonthPicked) {
+        if (isCurrentDate) {
+            //startDate = LocalDateTime.of(yearPicked, monthPicked, dayOfMonthPicked, startDate.getHour(), startDate.getMinute());
+        } else {
+            // endTime =
+        }
+
+
+    }
+
+    private String getDayInString(int day) {
+        switch (day) {
+            case 0:
+                return "Monday";
+
+            case 1:
+                return "Tuesday";
+
+
+            case 2:
+                return "Wednesday";
+
+
+            case 3:
+                return "Thursday";
+
+            case 4:
+                return "Friday";
+
+
+            case 5:
+                return "Saturday";
+
+            case 6:
+                return "Sunday";
+
+
+            default:
+                return "";
+
+
+        }
+    }
+
+    public void onItemSelected(AdapterView<?> parent, View view,
+                               int pos, long id) {
+        // An item was selected. You can retrieve the selected item using
+        parent.getItemAtPosition(pos);
+
+        if(parent == durationSpinner){
+            switch(pos){
+                case 0:
+                    duration = 0;
+                    break;
+
+                case 1:
+                    duration = 15;
+                    break;
+
+                case 2:
+                    duration = 30;
+                    break;
+
+                case 3:
+                    duration = 45;
+                    break;
+
+                case 4:
+                    duration = 60;
+                    break;
+
+                case 5:
+                    duration = 90;
+                    break;
+
+                case 6:
+                    duration = 120;
+                    break;
+
+                case 7:
+                    duration = 1440 ;
+                    break;
+
+            }
+        }
+
+        if (parent == reminderSpinner){
+            switch(pos){
+                case 0:
+                    reminderMinutesBeforeStart = 0;
+                    break;
+
+                case 1:
+                    reminderMinutesBeforeStart = 15;
+                    break;
+
+                case 2:
+                    reminderMinutesBeforeStart = 30;
+                    break;
+
+                case 3:
+                    reminderMinutesBeforeStart = 45;
+                    break;
+
+                case 4:
+                    reminderMinutesBeforeStart = 60;
+                    break;
+
+                case 5:
+                    reminderMinutesBeforeStart = 90;
+                    break;
+
+                case 6:
+                    reminderMinutesBeforeStart = 120;
+                    break;
+
+                case 7:
+                    reminderMinutesBeforeStart = 180 ;
+                    break;
+
+                case 8:
+                    reminderMinutesBeforeStart = 240 ;
+                    break;
+
+                case 9:
+                    reminderMinutesBeforeStart = 480 ;
+                    break;
+
+                case 10:
+                    reminderMinutesBeforeStart = 720 ;
+                    break;
+
+                case 11:
+                    reminderMinutesBeforeStart = 1440 ;
+                    break;
+
+                case 12:
+                    reminderMinutesBeforeStart = 2880 ;
+                    break;
+
+                case 13:
+                    reminderMinutesBeforeStart = 4320 ;
+                    break;
+
+                case 14:
+                    reminderMinutesBeforeStart = 10080 ;
+                    break;
+
+                case 15:
+                    reminderMinutesBeforeStart = 20160 ;
+                    break;
+
+            }
+        }
+
+        if(parent == displayAsSpinner){
+            switch(pos){
+                case 0:
+                    showAs = "Free";
+                    break;
+
+                case 1:
+                    showAs = "WorkingElsewhere";
+                    break;
+
+                case 2:
+                    showAs = "Tentative";
+                    break;
+
+                case 3:
+                    showAs = "Busy";
+                    break;
+
+                case 4:
+                    showAs = "Oof";
+                    break;
+            }
+        }
+
+        if(parent == repeatSpinner){
+            switch(pos){
+                case 0:
+                    showAs = "Free";
+                    break;
+
+                case 1:
+                    showAs = "WorkingElsewhere";
+                    break;
+
+                case 2:
+                    showAs = "Tentative";
+                    break;
+
+                case 3:
+                    showAs = "Busy";
+                    break;
+
+                case 4:
+                    showAs = "Oof";
+                    break;
+            }
+        }
+    }
+
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Another interface callback
     }
 }
