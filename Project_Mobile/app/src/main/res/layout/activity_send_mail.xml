@@ -25,20 +25,19 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/textView"
-                android:layout_width="55dp"
+                android:layout_width="30dp"
                 android:layout_height="47dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="15dp"
                 android:text="To:"
-                android:textSize="30dp"
+                android:textSize="20dp"
                 android:textColor="@color/black"
-                android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/TextMailAdress"
                 app:layout_constraintHorizontal_bias="0.53"
                 app:layout_constraintStart_toStartOf="parent"
@@ -49,9 +48,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="32dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/edit_text_style_sendmail"
                 android:ems="10"
-                android:inputType="textEmailAddress"
+                android:textCursorDrawable="@null"
+                android:textColor="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -59,9 +60,14 @@
 
         </LinearLayout>
 
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="1px"
+            android:background="@color/darkGrey"/>
+
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:orientation="horizontal">
 
             <TextView
@@ -69,7 +75,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="20dp"
-                android:layout_marginLeft="36dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="15dp"
                 android:textColor="@color/black"
                 android:text="Subject:"
                 android:textSize="20dp"
@@ -82,64 +89,48 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="32dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="10dp"
                 android:ems="10"
-                android:inputType="textEmailSubject"
+                android:background="@drawable/edit_text_style_sendmail"
+                android:textCursorDrawable="@null"
+                android:textColor="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/TextMailAdress" />
 
 
         </LinearLayout>
 
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="1px"
+            android:background="@color/darkGrey"/>
+
+        <jp.wasabeef.richeditor.RichEditor
+            android:id="@+id/editor"
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.75" />
+
+        <HorizontalScrollView
+            android:id="@+id/horizontalScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="140dp"
+            android:background="@android:color/black"
+            app:layout_constraintBottom_toTopOf="@+id/editor"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
+
+        </HorizontalScrollView>
 
     </android.support.v7.widget.LinearLayoutCompat>
-
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="367dp"
-        android:layout_height="48dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <Button
-            android:id="@+id/ButtonSendMail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Send" />
-    </LinearLayout>
-
-
-    <HorizontalScrollView
-        android:id="@+id/horizontalScrollView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="140dp"
-        android:background="@android:color/black"
-        app:layout_constraintBottom_toTopOf="@+id/editor"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
-
-    </HorizontalScrollView>
-
-    <jp.wasabeef.richeditor.RichEditor
-        android:id="@+id/editor"
-        android:layout_width="match_parent"
-        android:layout_height="247dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.75" />
-
 
 </android.support.constraint.ConstraintLayout>

@@ -48,7 +48,6 @@ public class SendMailActivity extends AppCompatActivity {
     final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/sendMail";
 
     private Toolbar myToolbar;
-    private Button Sendmail;
     private TextView MailAdress;
     private TextView Subject;
     private RichEditor MailBody;
@@ -69,7 +68,6 @@ public class SendMailActivity extends AppCompatActivity {
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
 
-        Sendmail = findViewById(R.id.ButtonSendMail);
         MailAdress = findViewById(R.id.TextMailAdress);
         Subject = findViewById(R.id.TextMailSubject);
         MailBody = findViewById(R.id.editor);
@@ -92,16 +90,7 @@ public class SendMailActivity extends AppCompatActivity {
         }
 
 
-        Sendmail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    SendMail();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+
 
 
     }
