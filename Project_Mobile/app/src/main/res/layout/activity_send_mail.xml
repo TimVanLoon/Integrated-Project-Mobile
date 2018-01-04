@@ -7,6 +7,15 @@
     android:layout_height="match_parent"
     tools:context="com.example.keiichi.project_mobile.Mail.SendMailActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/action_bar"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
     <EditText
         android:id="@+id/TextMailAdress"
         android:layout_width="wrap_content"
