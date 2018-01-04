@@ -216,7 +216,7 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
                 List<Message> filt = new ArrayList<Message>(); //filtered list
                 for (int i = 0; i < originalData.size(); i++) {
                     Message m = originalData.get(i);
-                    if (m.getBody().getContent().toLowerCase().contains(constraint)) {
+                    if (m.getSender().getEmailAddress().getName().toLowerCase().contains(constraint)) {
                         filt.add(m); //add only items which matches
                     }
                 }
