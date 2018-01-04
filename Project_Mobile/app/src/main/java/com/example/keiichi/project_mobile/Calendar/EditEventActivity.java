@@ -18,15 +18,33 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.DAL.POJOs.DateTimeTimeZone;
+import com.example.keiichi.project_mobile.DAL.POJOs.Event;
+import com.example.keiichi.project_mobile.DAL.POJOs.ItemBody;
+import com.example.keiichi.project_mobile.DAL.POJOs.Location;
 import com.example.keiichi.project_mobile.R;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -407,11 +425,11 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
 
                 return true;
 
-                /*
+
             // WANNEER SAVE ICON WORDT AANGEKLIKT
             case R.id.action_save:
                 try {
-                    //saveEvent();
+                    updateEvent();
 
                     int DELAY_TIME=2000;
 
@@ -424,6 +442,13 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
                             intentCalendar.putExtra("AccessToken", accessToken);
                             intentCalendar.putExtra("userName", userName);
                             intentCalendar.putExtra("userEmail", userEmail);
+                            intentCalendar.putExtra("subject", subject);
+                            intentCalendar.putExtra("location", location);
+                            intentCalendar.putExtra("startDate", startDate);
+                            intentCalendar.putExtra("displayAs", displayAs);
+                            intentCalendar.putExtra("notes", notes);
+                            intentCalendar.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
+
                             startActivity(intentCalendar);
                         }
                     }, DELAY_TIME);
@@ -434,7 +459,7 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
                     e.printStackTrace();
                 }
                 return true;
-                */
+
 
             default:
                 // If we got here, the user's action was not recognized.
@@ -649,5 +674,70 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
 
     public void onNothingSelected(AdapterView<?> parent) {
         // Another interface callback
+    }
+
+    // PATCH REQUEST VOOR UPDATE EVENT
+    private void updateEvent() throws JSONException {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+
+        Event event = new Event();
+        event.setSubject(eventInput.getText().toString());
+        event.setLocation(new Location(locationInput.getText().toString()));
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        cal.set(Calendar.MONTH, month - 1);
+        cal.set(Calendar.HOUR_OF_DAY, hourOfDay - 1);
+        cal.set(Calendar.MINUTE, minuteOfHour);
+        cal.set(Calendar.SECOND, 0);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        String startTime = sdf.format(cal.getTime());
+
+        event.setStart(new DateTimeTimeZone(startTime, TimeZone.getDefault().getDisplayName()));
+
+        cal.add(Calendar.MINUTE, duration);
+        String endTime = sdf.format(cal.getTime());
+
+        event.setEnd(new DateTimeTimeZone(endTime, TimeZone.getDefault().getDisplayName()));
+
+        event.setBody(new ItemBody("Text", personalNotes.getText().toString()));
+
+        event.setReminderMinutesBeforeStart(reminderMinutesBeforeStart);
+        event.setReminderOn(true);
+
+        event.setShowAs(showAs);
+
+        String postAddress = URL_POSTADRESS + id;
+
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.PATCH, postAddress, new JSONObject(new Gson().toJson(event)),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Toast.makeText(getApplicationContext(), "Event updated!", Toast.LENGTH_SHORT).show();
+                        System.out.println(response.toString());
+                    }
+
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+                headers.put("Content-Type", "application/json; charset=utf-8");
+
+                return headers;
+            }
+
+        };
+
+        queue.add(objectRequest);
+
     }
 }

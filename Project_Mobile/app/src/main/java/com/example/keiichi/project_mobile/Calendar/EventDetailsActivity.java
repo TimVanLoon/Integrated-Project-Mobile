@@ -261,6 +261,7 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
                             intentListEvents.putExtra("startDate", startDate);
                             intentListEvents.putExtra("displayAs", displayAs);
                             intentListEvents.putExtra("notes", notes);
+                            intentListEvents.putExtra("id", id);
                             intentListEvents.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
 
                             startActivity(intentListEvents);
@@ -303,6 +304,7 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
                 intentListEvents.putExtra("startDate", startDate);
                 intentListEvents.putExtra("displayAs", displayAs);
                 intentListEvents.putExtra("notes", notes);
+                intentListEvents.putExtra("id", id);
                 intentListEvents.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
 
                 startActivity(intentListEvents);
@@ -325,6 +327,7 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
                 intentEditEvent.putExtra("startDate", startDate);
                 intentEditEvent.putExtra("displayAs", displayAs);
                 intentEditEvent.putExtra("notes", notes);
+                intentEditEvent.putExtra("id", id);
                 intentEditEvent.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
 
                 startActivity(intentEditEvent);
