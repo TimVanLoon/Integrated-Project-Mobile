@@ -6,6 +6,7 @@
     <string name="search">Search</string>
     <string name="add">Add</string>
     <string name="searchbar">SearchBar</string>
+    <string name="edit">Edit</string>
 
     <string name="myContacts">My contacts</string>
     <string name="contactpersons">Contacts</string>
@@ -17,7 +18,7 @@
 
     <string name="save">Save</string>
     <string name="addContactTitle">Add a contact</string>
-    <string name="nameTitle">Name*</string>
+    <string name="nameTitle">Name</string>
     <string name="nameInput">First name</string>
     <string name="lastNameInput">Last name</string>
     <string name="emailTitle">E-mail</string>
@@ -34,6 +35,10 @@
     <string name="locationTitle">Location</string>
     <string name="startTitle">Start</string>
     <string name="durationTitle">Duration</string>
+    <string name="moreDetailsButton">More details</string>
+    <string name="reminderTitle">Reminder</string>
+    <string name="displayAsTitle">Show as</string>
+    <string name="repeatTitle">Repeat</string>
 
     <string name="yourAgendas">Your agendas</string>
     <string name="agenda">Agenda</string>
@@ -46,12 +51,6 @@
     <string name="action_search">Search</string>
     <string name="action_delete">Delete</string>
 
-    <string name="jobTitle">Job Title</string>
-    <string name="department">Department</string>
-    <string name="companyName">Company Name</string>
-    <string name="officeLocation">Office Location</string>
-    <string name="manager">Manager</string>
-    <string name="assistantName">Assistant Name</string>
 
     <string name="addressTitle">Address</string>
     <string name="streetName">Street</string>
@@ -79,4 +78,37 @@
     <string name="gender">Gender</string>
 
     <string name="listEvents">listEvents</string>
+
+    <string name="firstNameTitle">First name *</string>
+    <string name="lastNameTitle">Last name *</string>
+    <string name="emailTitleInput">E-mail</string>
+    <string name="jobTitle">Job title</string>
+    <string name="department">Department</string>
+    <string name="companyName">Company Name</string>
+    <string name="officeLocation">Office Location</string>
+    <string name="manager">Manager</string>
+    <string name="assistantName">Assistant Name</string>
+    <string name="departmentTitle">Department</string>
+    <string name="companyNameTitle">Company</string>
+    <string name="officeLocationTitle">Office location</string>
+    <string name="managerTitle">Manager</string>
+    <string name="assistantTitle">Assistant</string>
+    <string name="streetNameTitle">Street</string>
+    <string name="postalCodeTitle">Postal code</string>
+    <string name="cityNameTitle">City</string>
+    <string name="stateTitle">State</string>
+    <string name="countryTitle">Country/region</string>
+
+    <string name="editContactTitle">Edit contact</string>
+
+    <string name="loadingTitle">Starting uMail...</string>
+
+    <string name="appName">uMail</string>
+
+    <string name="editEventTitle">Edit Event</string>
+
+    <string name="eventSubject">Event Subject</string>
+    <string name="eventWhen">When: </string>
+    <string name="eventWhere">Where: </string>
+
 </resources>

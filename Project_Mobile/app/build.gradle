@@ -50,9 +50,15 @@ dependencies {
     //Richtext
     compile 'jp.wasabeef:richeditor-android:1.2.2'
 
+    compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
+
+    compile 'com.github.tibolte:agendacalendarview:1.0.4'
+
     def appCenterSdkVersion = '1.1.0'
     compile "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
     compile "com.microsoft.appcenter:appcenter-crashes:${appCenterSdkVersion}"
     compile "com.microsoft.appcenter:appcenter-push:${appCenterSdkVersion}"
+
+    compile 'org.apache.commons:commons-lang3:3.6'
 
 }

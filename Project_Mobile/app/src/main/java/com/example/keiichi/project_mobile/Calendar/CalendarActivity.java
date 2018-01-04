@@ -1,9 +1,11 @@
 package com.example.keiichi.project_mobile.Calendar;
 
 import android.content.Intent;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,9 +18,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -34,6 +39,14 @@ import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
+import com.example.keiichi.project_mobile.SettingsActivity;
+import com.github.tibolte.agendacalendarview.AgendaCalendarView;
+import com.github.tibolte.agendacalendarview.CalendarManager;
+import com.github.tibolte.agendacalendarview.CalendarPickerController;
+import com.github.tibolte.agendacalendarview.models.BaseCalendarEvent;
+import com.github.tibolte.agendacalendarview.models.CalendarEvent;
+import com.github.tibolte.agendacalendarview.models.DayItem;
+import com.github.tibolte.agendacalendarview.models.WeekItem;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -44,19 +57,23 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
-public class CalendarActivity extends AppCompatActivity {
+public class CalendarActivity extends AppCompatActivity implements CalendarPickerController {
 
     CalendarView calendarView;
     TextView myDate;
     BottomNavigationView mBottomNav;
     SearchView searchView;
 
+    private static final String LOG_TAG = CalendarActivity.class.getSimpleName();
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/events?$select=subject,body,bodyPreview,organizer,attendees,start,end,location";
 
+    private AgendaCalendarView mAgendaCalendarView;
     private String accessToken;
     private String userName;
     private String userEmail;
@@ -77,12 +94,28 @@ public class CalendarActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
 
+        mAgendaCalendarView = (AgendaCalendarView) findViewById(R.id.agenda_calendar_view);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
+
+        // minimum and maximum date of our calendar
+        // 2 month behind, one year ahead, example: March 2015 <-> May 2015 <-> May 2016
+        Calendar minDate = Calendar.getInstance();
+        Calendar maxDate = Calendar.getInstance();
+
+        minDate.add(Calendar.MONTH, -2);
+        minDate.set(Calendar.DAY_OF_MONTH, 1);
+        maxDate.add(Calendar.YEAR, 1);
+
+        List<CalendarEvent> eventList = new ArrayList<>();
+        mockList(eventList);
+
+        mAgendaCalendarView.init(eventList, minDate, maxDate, Locale.getDefault(), this);
+
 
         calendarNavigationView = (NavigationView) findViewById(R.id.calendarNavigationView);
         View hView =  calendarNavigationView.getHeaderView(0);
@@ -98,8 +131,11 @@ public class CalendarActivity extends AppCompatActivity {
 
         mDrawerLayout.setDrawerListener(actionBarDrawerToggle);
 
+        actionBarDrawerToggle.syncState();
+        //mDrawerLayout.bringToFront();
+        //mDrawerLayout.requestLayout();
+
         calendarView = (CalendarView) findViewById(R.id.calendarView);
-        myDate = (TextView) findViewById(R.id.myDate);
 
         mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
 
@@ -124,6 +160,7 @@ public class CalendarActivity extends AppCompatActivity {
                         intentMail.putExtra("AccessToken", accessToken);
                         intentMail.putExtra("userName", userName);
                         intentMail.putExtra("userEmail", userEmail);
+
                         startActivity(intentMail);
                         break;
                     case R.id.action_user:
@@ -131,6 +168,7 @@ public class CalendarActivity extends AppCompatActivity {
                         intentContacts.putExtra("AccessToken", accessToken);
                         intentContacts.putExtra("userName", userName);
                         intentContacts.putExtra("userEmail", userEmail);
+
                         startActivity(intentContacts);
                         break;
 
@@ -140,13 +178,21 @@ public class CalendarActivity extends AppCompatActivity {
             }
         });
 
-        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-            @Override
-            public void onSelectedDayChange(@NonNull CalendarView calendarView, int i, int i1, int i2) {
-                String date = (i1 + 1) + "/" + i2 + "/" + i;
-                myDate.setText(date);
-            }
-        });
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.calendarNavigationView);
+        View navView =  navigationView.getHeaderView(0);
+        ImageView userPicture = (ImageView)navView.findViewById(R.id.userPicture);
+        ImageView settingsIcon = (ImageView)navView.findViewById(R.id.settingsIcon);
+
+
+        ColorGenerator generator = ColorGenerator.MATERIAL;
+
+        int color2 = generator.getColor(userName.substring(0,1));
+
+        TextDrawable drawable = TextDrawable.builder()
+                .buildRound(userName.substring(0,1), color2); // radius in px
+
+        userPicture.setImageDrawable(drawable);
     }
 
     @Override
@@ -189,17 +235,15 @@ public class CalendarActivity extends AppCompatActivity {
 
             case R.id.action_listEvents:
 
-                callGraphAPI();
 
-                /*
                 Intent intentListEvents = new Intent(CalendarActivity.this, ListEventsActivity.class);
                 intentListEvents.putExtra("AccessToken", accessToken);
                 intentListEvents.putExtra("userName", userName);
                 intentListEvents.putExtra("userEmail", userEmail);
-                intentListEvents.putExtra("EventsArray", eventsArray.toString());
+
                 startActivity(intentListEvents);
 
-*/
+
                 return true;
 
             // WANNEER + ICON WORDT AANGEKLIKT
@@ -209,6 +253,7 @@ public class CalendarActivity extends AppCompatActivity {
                 intentAddEvent.putExtra("AccessToken", accessToken);
                 intentAddEvent.putExtra("userName", userName);
                 intentAddEvent.putExtra("userEmail", userEmail);
+
                 startActivity(intentAddEvent);
 
                 return true;
@@ -220,111 +265,41 @@ public class CalendarActivity extends AppCompatActivity {
         }
     }
 
-    /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
-    private void callGraphAPI() {
-        Log.d(TAG, "Starting volley request to graph");
-        Log.d(TAG, accessToken);
 
-    /* Make sure we have a token to send to graph */
-        if (accessToken == null) {
-            return;
-        }
+    private void mockList(List<CalendarEvent> eventList) {
+        Calendar startTime1 = Calendar.getInstance();
+        Calendar endTime1 = Calendar.getInstance();
+        endTime1.add(Calendar.MONTH, 1);
+        BaseCalendarEvent event1 = new BaseCalendarEvent("Thibault travels in Iceland", "A wonderful journey!", "Iceland",
+                ContextCompat.getColor(this, R.color.orange_dark), startTime1, endTime1, true);
+        eventList.add(event1);
 
-        RequestQueue queue = Volley.newRequestQueue(this);
-        JSONObject parameters = new JSONObject();
+        Calendar startTime2 = Calendar.getInstance();
+        startTime2.add(Calendar.DAY_OF_YEAR, 1);
+        Calendar endTime2 = Calendar.getInstance();
+        endTime2.add(Calendar.DAY_OF_YEAR, 3);
+        BaseCalendarEvent event2 = new BaseCalendarEvent("Visit to Dalvík", "A beautiful small town", "Dalvík",
+                ContextCompat.getColor(this, R.color.yellow), startTime2, endTime2, true);
+        eventList.add(event2);
 
-        try {
-            parameters.put("key", "value");
-        } catch (Exception e) {
-            Log.d(TAG, "Failed to put parameters: " + e.toString());
-        }
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, MSGRAPH_URL,
-                parameters, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-            /* Successfully called graph, process data and send to UI */
-                Log.d(TAG, "Response: " + response.toString());
-
-                try {
-                    updateGraphUI(response);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, "Error: " + error.toString());
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + accessToken);
-                return headers;
-            }
-        };
-
-        Log.d(TAG, "Adding HTTP GET to Queue, Request: " + request.toString());
-
-        request.setRetryPolicy(new DefaultRetryPolicy(
-                3000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        queue.add(request);
     }
 
-    /* Sets the Graph response */
-    private void updateGraphUI(JSONObject graphResponse) throws JSONException {
 
-        /*
-        // Test de response
-        //  System.out.println(graphResponse);
-        JSONArray eventsJsonArray = null;
-        // Haal de events binnen
-        try {
-            eventsJsonArray = (JSONArray) graphResponse.get("value");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        assert eventsJsonArray != null;
+    @Override
+    public void onDaySelected(DayItem dayItem) {
 
-        eventsArray = eventsJsonArray;
+    }
 
-        */
+    @Override
+    public void onEventSelected(CalendarEvent event) {
+        Log.d(LOG_TAG, String.format("Selected event: %s", event));
+    }
 
-        // Test de response
-        System.out.println(" de response: " + graphResponse);
-        JSONArray eventsJsonArray = null;
-
-        // Haal de contacten binnen
-        try {
-            eventsJsonArray = (JSONArray) graphResponse.get("value");
-
-            JSONObject eventList = graphResponse;
-            System.out.println("branko: " + eventList);
-
-            JSONArray eventArray = eventList.getJSONArray("value");
-
-            System.out.println("keffin :" + eventArray);
-            // VUL POJO
-            Type listType = new TypeToken<List<Event>>() {
-            }.getType();
-
-            // events = new Gson().fromJson(String.valueOf(eventArray), listType);
-
-            System.out.println("robin van hoof: " + events);
-
-            Intent listEventsIntent = new Intent(CalendarActivity.this, ListEventsActivity.class);
-            //Bundle args = new Bundle();
-            // args.putSerializable("eventsArrayList", (Serializable)events);
-            // listEventsIntent.putExtra("eventList", args);
-            listEventsIntent.putExtra("EventsArray", eventsJsonArray.toString());
-
-            startActivity(listEventsIntent);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
+    @Override
+    public void onScrollToDate(Calendar calendar) {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault()));
         }
     }
+
 }

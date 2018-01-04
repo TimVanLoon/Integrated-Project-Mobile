@@ -6,16 +6,19 @@
         <item
             android:id="@+id/myContacts"
             android:title="@string/myContacts"
+            android:textColor="@color/black"
             />
 
         <item
             android:id="@+id/contacts"
             android:title="@string/contactpersons"
+            android:textColor="@color/black"
             />
 
         <item
             android:id="@+id/skypeContacts"
             android:title="@string/skypeContacts"
+            android:textColor="@color/black"
             />
 
     </group>
@@ -26,6 +29,7 @@
                 android:id="@+id/feedback"
                  android:title="@string/feedback"
                 android:icon="@drawable/ic_mail"
+                 android:textColor="@color/black"
             ></item>
         </menu>
     </item>
