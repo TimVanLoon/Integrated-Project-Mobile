@@ -56,10 +56,16 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.Calendar.CalendarActivity;
 import com.example.keiichi.project_mobile.Contacts.AddContactActivity;
+import com.example.keiichi.project_mobile.Contacts.ContactAdapter;
 import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
+import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
+import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
+import com.example.keiichi.project_mobile.DAL.POJOs.Message;
 import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
 import com.example.keiichi.project_mobile.SimpleDividerItemDecoration;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.microsoft.identity.client.AuthenticationCallback;
 import com.microsoft.identity.client.AuthenticationResult;
 import com.microsoft.identity.client.MsalClientException;
@@ -73,6 +79,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -91,6 +99,8 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     private boolean multiSelect = false;
     private boolean actionModeEnabled = false;
     private ArrayList<Integer> selectedItems = new ArrayList<>();
+    private List<Message> messages = new ArrayList<>();
+
     private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
@@ -344,7 +354,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         //beetje kloten met mails
         System.out.println(graphResponse);
         this.graphResponse = graphResponse;
-        getMails(finalMailJsonArray, graphResponse);
+        getMails(graphResponse);
 
 
     }
@@ -416,7 +426,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     public void onRefresh() {
         swipeRefreshLayout.setRefreshing(true);
         try {
-            getMails(finalMailJsonArray, graphResponse);
+            getMails(graphResponse);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -476,22 +486,30 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
     }
 
-    private void getMails(JSONArray mailJsonArray, JSONObject graphResponse) throws JSONException {
+    private void getMails(JSONObject graphResponse) throws JSONException {
+
         //haal mails binnen
 
-        mailJsonArray = (JSONArray) graphResponse.get("value");
+        JSONObject messageList = graphResponse;
 
-        assert mailJsonArray != null;
-        JSONObject object = mailJsonArray.getJSONObject(1);
-        System.out.println(object.get("from"));
+        JSONArray messagesArray = messageList.getJSONArray("value");
 
-        this.finalMailJsonArray = mailJsonArray;
+        System.out.println("test response: " + messagesArray);
+
+        // VUL POJO
+        Type listType = new TypeToken<List<Message>>() {
+        }.getType();
+
+        messages = new Gson().fromJson(String.valueOf(messagesArray), listType);
+
+        mailAdapter = new MailAdapter(this, messages);
+        recyclerView.setAdapter(mailAdapter);
+
         RecyclerView.LayoutManager manager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(manager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        mailAdapter = new MailAdapter(this, finalMailJsonArray);
-        recyclerView.setAdapter(mailAdapter);
+
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
@@ -501,13 +519,13 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
 
                 } else {
+                    Message message = messages.get(position);
+
                     Intent showMail = new Intent(ListMailsActvity.this, DisplayMailActivity.class);
-                    try {
-                        showMail.putExtra("mailObjext", finalMailJsonArray.getString(position));
-                        showMail.putExtra("accestoken", accessToken);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+
+                    showMail.putExtra("mailObjext", message.getBody().getContent());
+                    showMail.putExtra("accestoken", accessToken);
+
                     startActivity(showMail);
                 }
 
@@ -585,4 +603,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
         void onLongClick(View view, int position);
     }
+
+
 }
