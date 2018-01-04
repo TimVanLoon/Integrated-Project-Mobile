@@ -1,6 +1,8 @@
 package com.example.keiichi.project_mobile.Mail;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -8,6 +10,7 @@ import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +25,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.R;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -39,6 +43,9 @@ public class DisplayMailActivity extends AppCompatActivity {
     private JSONObject mail;
     private JSONObject body;
     private ImageButton deleteButton;
+    private TextView From, iconText;
+    private TextView To;
+    private ImageView icon_mail;
     private String ACCES_TOKEN;
 
     @Override
@@ -51,6 +58,12 @@ public class DisplayMailActivity extends AppCompatActivity {
         String JsonString = intent.getStringExtra("mailObjext");
         ACCES_TOKEN = intent.getStringExtra("accestoken");
         deleteButton = findViewById(R.id.ButtonDelete);
+        From = findViewById(R.id.from);
+        To = findViewById(R.id.to);
+        iconText = findViewById(R.id.icon_txt);
+        icon_mail = findViewById(R.id.icon_profileMail);
+
+        Subject = findViewById(R.id.Subject);
 
 
 
@@ -58,6 +71,16 @@ public class DisplayMailActivity extends AppCompatActivity {
             mail = new JSONObject(JsonString);
             body = mail.getJSONObject("body");
             mailBodyContent.setText(Html.fromHtml(body.getString("content")));
+            JSONObject sender = mail.getJSONObject("from");
+            JSONObject emailAddress = sender.getJSONObject("emailAddress");
+            iconText.setText(emailAddress.getString("name").substring(0, 1));
+            From.setText(emailAddress.getString("name"));
+            JSONArray recipient = mail.getJSONArray("toRecipients");
+            emailAddress = recipient.getJSONObject(0);
+            To.setText(emailAddress.getJSONObject("emailAddress").getString("address"));
+            Subject.setText(mail.getString("subject"));
+
+            applyProfilePicture(icon_mail,iconText);
             updateMail(mail);
 
         } catch (JSONException e) {
@@ -154,6 +177,12 @@ public class DisplayMailActivity extends AppCompatActivity {
         JsonObjectBuilder factory = Json.createObjectBuilder()
                 .add("isRead", true);
         return factory.build().toString();
+    }
+
+    void applyProfilePicture(ImageView imgProfile, TextView iconText) {
+        imgProfile.setImageResource(R.drawable.bg_circle);
+        imgProfile.setColorFilter(Color.CYAN);
+        iconText.setVisibility(View.VISIBLE);
     }
 
 }

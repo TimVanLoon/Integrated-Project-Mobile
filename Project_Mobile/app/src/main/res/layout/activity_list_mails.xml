@@ -39,21 +39,21 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
 
-    <TextView
-        android:id="@+id/welcome"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="64dp"
-        android:layout_marginTop="32dp"
-        android:text="Welcome, "
-        android:textColor="#3f3f3f"
-        android:textSize="50px"
+        <TextView
+            android:id="@+id/welcome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="52dp"
+            android:layout_marginTop="56dp"
+            android:text="Welcome, "
+            android:textColor="#3f3f3f"
+            android:textSize="50px"
 
-        android:visibility="invisible"
+            android:visibility="invisible"
 
-        app:layout_constraintEnd_toStartOf="@+id/ButtonSendMail"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toStartOf="@+id/ButtonSendMail"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"
@@ -111,15 +111,14 @@
     </android.support.v4.widget.SwipeRefreshLayout>
 
 
-    <Button
-        android:id="@+id/ButtonSendMail"
-        android:layout_width="71dp"
-        android:layout_height="35dp"
-        android:layout_marginBottom="24dp"
-        android:layout_marginRight="72dp"
-        android:text="Button"
-        app:layout_constraintBottom_toTopOf="@+id/swipe_refresh_layout"
-        app:layout_constraintRight_toRightOf="parent" />
+        <Button
+            android:id="@+id/ButtonSendMail"
+            android:layout_width="71dp"
+            android:layout_height="35dp"
+            android:layout_marginRight="44dp"
+            android:text="Button"
+            app:layout_constraintBottom_toTopOf="@+id/swipe_refresh_layout"
+            app:layout_constraintRight_toRightOf="parent" />
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"
