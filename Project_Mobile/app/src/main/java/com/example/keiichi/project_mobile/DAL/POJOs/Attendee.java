@@ -1,7 +1,9 @@
 package com.example.keiichi.project_mobile.DAL.POJOs;
 
 
-public class Attendee {
+import java.io.Serializable;
+
+public class Attendee implements Serializable {
 
     private String type;
     private ResponseStatus status;

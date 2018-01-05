@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
 
-public class Event{
+public class Event implements Serializable{
 
     private List<Event> instances;
     private Attendee[] attendees;

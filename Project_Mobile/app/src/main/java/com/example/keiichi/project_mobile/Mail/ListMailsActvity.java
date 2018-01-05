@@ -87,7 +87,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, Serializable {
 
     NavigationView mailNavigationView;
     private ImageView userPicture;
@@ -527,6 +527,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                     showMail.putExtra("accestoken", accessToken);
                     showMail.putExtra("userName", userName);
                     showMail.putExtra("userEmail", userEmail);
+                    showMail.putExtra("mailObject", message);
 
                     startActivity(showMail);
                 }
