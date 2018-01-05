@@ -1,7 +1,9 @@
 package com.example.keiichi.project_mobile.DAL.POJOs;
 
 
-public class Recipient {
+import java.io.Serializable;
+
+public class Recipient implements Serializable {
 
     private EmailAddress emailAddress;
 

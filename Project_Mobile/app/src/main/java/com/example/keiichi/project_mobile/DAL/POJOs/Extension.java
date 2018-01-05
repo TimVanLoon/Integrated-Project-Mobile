@@ -1,7 +1,9 @@
 package com.example.keiichi.project_mobile.DAL.POJOs;
 
 
-public class Extension {
+import java.io.Serializable;
+
+public class Extension implements Serializable {
 
     private String id;
 

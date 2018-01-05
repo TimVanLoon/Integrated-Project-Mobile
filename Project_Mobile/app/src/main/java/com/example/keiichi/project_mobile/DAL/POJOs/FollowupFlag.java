@@ -1,7 +1,9 @@
 package com.example.keiichi.project_mobile.DAL.POJOs;
 
 
-public class FollowupFlag {
+import java.io.Serializable;
+
+public class FollowupFlag implements Serializable {
 
     private DateTimeTimeZone completedDateTime;
     private DateTimeTimeZone dueDateTime;

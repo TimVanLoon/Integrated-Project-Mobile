@@ -1,7 +1,9 @@
 package com.example.keiichi.project_mobile.DAL.POJOs;
 
 
-public class Attachment {
+import java.io.Serializable;
+
+public class Attachment implements Serializable {
 
     private String contentType;
     private String id;

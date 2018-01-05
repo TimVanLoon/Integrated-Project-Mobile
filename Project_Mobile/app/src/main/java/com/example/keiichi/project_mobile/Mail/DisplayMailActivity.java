@@ -2,13 +2,11 @@ package com.example.keiichi.project_mobile.Mail;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.Image;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,6 +27,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,25 +41,29 @@ public class DisplayMailActivity extends AppCompatActivity {
     private ImageButton deleteButton, replyButton;
     private TextView From, iconText, To,mailBodyContent,Subject;
     private ImageView icon_mail;
-    private String ACCES_TOKEN;
+    private String ACCES_TOKEN, messageBody;
+    private com.example.keiichi.project_mobile.DAL.POJOs.Message message;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_mail);
+
+
+        Intent intent = getIntent();
+        messageBody = intent.getStringExtra("messageBody");
+        ACCES_TOKEN = intent.getStringExtra("accestoken");
+        message = (com.example.keiichi.project_mobile.DAL.POJOs.Message) intent.getSerializableExtra("mailObject");
+
+
         mailBodyContent = findViewById(R.id.mailBody);
         mailBodyContent.setMovementMethod(new ScrollingMovementMethod());
-        Intent intent = getIntent();
-        String messageBody = intent.getStringExtra("messageBody");
-        ACCES_TOKEN = intent.getStringExtra("accestoken");
         deleteButton = findViewById(R.id.ButtonDelete);
-
         From = findViewById(R.id.from);
         To = findViewById(R.id.to);
         iconText = findViewById(R.id.icon_txt);
         icon_mail = findViewById(R.id.icon_profileMail);
         replyButton = findViewById(R.id.ReplyButton);
-
         Subject = findViewById(R.id.Subject);
 
 
@@ -115,7 +118,7 @@ public class DisplayMailActivity extends AppCompatActivity {
     private void goToReplyActivity() {
         Intent showMail = new Intent(DisplayMailActivity.this, ReplyToMailActivity.class);
 
-            showMail.putExtra("mailObject", mail.toString());
+            showMail.putExtra("mailObject",  message);
             showMail.putExtra("accestoken", ACCES_TOKEN);
 
         startActivity(showMail);

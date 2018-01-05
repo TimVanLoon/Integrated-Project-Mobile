@@ -1,9 +1,10 @@
 package com.example.keiichi.project_mobile.DAL.POJOs;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class Contact{
+public class Contact implements Serializable {
 
     private Contact[] contact;
     private String assistantName;
