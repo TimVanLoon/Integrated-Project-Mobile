@@ -3,11 +3,16 @@ package com.example.keiichi.project_mobile.Mail;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +26,8 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.Calendar.CalendarActivity;
+import com.example.keiichi.project_mobile.Calendar.ListEventsActivity;
 import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONException;
@@ -40,12 +47,15 @@ import jp.wasabeef.richeditor.RichEditor;
 public class SendMailActivity extends AppCompatActivity {
     final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/sendMail";
 
-    private Button Sendmail;
+    private Toolbar myToolbar;
     private TextView MailAdress;
     private TextView Subject;
     private RichEditor MailBody;
     private String Acces_Token;
     private String emailAddress;
+    private String accessToken;
+    private String userName;
+    private String userEmail;
     private RichEditor editor;
 
 
@@ -54,12 +64,21 @@ public class SendMailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_mail);
 
+        accessToken = getIntent().getStringExtra("AccessToken");
+        userName = getIntent().getStringExtra("userName");
+        userEmail = getIntent().getStringExtra("userEmail");
 
-
-        Sendmail = findViewById(R.id.ButtonSendMail);
         MailAdress = findViewById(R.id.TextMailAdress);
         Subject = findViewById(R.id.TextMailSubject);
         MailBody = findViewById(R.id.editor);
+
+        myToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
+
+        // VOEG BACK BUTTON TOE AAN ACTION BAR
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         Intent intent = getIntent();
         Acces_Token = intent.getStringExtra("accestoken");
 
@@ -71,16 +90,7 @@ public class SendMailActivity extends AppCompatActivity {
         }
 
 
-        Sendmail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    SendMail();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+
 
 
     }
@@ -135,6 +145,56 @@ public class SendMailActivity extends AppCompatActivity {
                                                 add("address", MailAdress.getText().toString()))))
                 );
         return factory.build().toString();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.send_navigation, menu);
+        MenuItem addItem = menu.findItem(R.id.action_send);
+
+
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+
+        switch(item.getItemId()){
+
+            // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
+            case android.R.id.home:
+                Intent intentListMails = new Intent(SendMailActivity.this, ListMailsActvity.class);
+                intentListMails.putExtra("AccessToken", accessToken);
+                intentListMails.putExtra("userName", userName);
+                intentListMails.putExtra("userEmail", userEmail);
+                startActivity(intentListMails);
+
+                return true;
+
+            case R.id.action_send:
+                try {
+                    SendMail();
+
+                    Intent intentSendMail = new Intent(SendMailActivity.this, ListMailsActvity.class);
+                    intentSendMail.putExtra("AccessToken", accessToken);
+                    intentSendMail.putExtra("userName", userName);
+                    intentSendMail.putExtra("userEmail", userEmail);
+
+                    startActivity(intentSendMail);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 

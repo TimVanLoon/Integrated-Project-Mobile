@@ -14,6 +14,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 
 import android.widget.LinearLayout;
@@ -22,6 +24,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
+import com.example.keiichi.project_mobile.DAL.POJOs.Message;
 import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONArray;
@@ -36,12 +41,7 @@ import java.util.List;
 
 import helper.FlipAnimator;
 
-/**
- * Created by Keiichi on 6/12/2017.
- */
-
-public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> {
-    private JSONArray jsonArray;
+public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> implements Filterable {
 
     private Context mContext;
     private SparseBooleanArray selectedItems;
@@ -51,11 +51,21 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
 
     private static int currentSelectedIndex = -1;
 
-    MailAdapter(Context context, JSONArray jsonArray) {
-        this.jsonArray = jsonArray;
+    // Ongefilterde list
+    private List<Message> originalData = null;
+    // Gefilterde list
+    private List<Message> filteredData = null;
+
+    private MailAdapter.CustomFilter mFilter = new MailAdapter.CustomFilter();
+
+    MailAdapter(Context context,  List<Message> values) {
+
         this.mContext = context;
         this.selectedItems = new SparseBooleanArray();
         animeationItemsIndex = new SparseBooleanArray();
+
+        this.originalData = values;
+        this.filteredData = values;
     }
 
     @Override
@@ -70,40 +80,41 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
         try {
             //Mail objecten ophalen
 
-            JSONObject mailObject = jsonArray.getJSONObject(position);
-            JSONObject sender = mailObject.getJSONObject("from");
-            JSONObject emailAddress = sender.getJSONObject("emailAddress");
+            Message message = getItem(position);
+
+            String from = message.getFrom().getEmailAddress().getName();
+            String email = message.getFrom().getEmailAddress().getAddress();
+            String receivedDateTime = message.getReceivedDateTime();
+            String bodyPreview = message.getBodyPreview();
+            String subject = message.getSubject();
+            Boolean isRead = message.isRead();
 
             //Data weergeven
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             SimpleDateFormat output = new SimpleDateFormat("HH:mm");
-            Date d = sdf.parse(mailObject.getString("receivedDateTime"));
+            Date d = sdf.parse(receivedDateTime);
             holder.timestamp.setText(output.format(d));
-            holder.from.setText(emailAddress.getString("name"));
-            holder.message.setText(mailObject.getString("bodyPreview"));
-            holder.subject.setText(mailObject.getString("subject"));
-            if(!mailObject.getBoolean("isRead")){
-                holder.from.setTextColor(Color.WHITE);
-            }
+            holder.from.setText(from);
+            holder.message.setText(bodyPreview);
+            holder.subject.setText(subject);
 
-
-            //eerste letter van 'from' tonen
-            holder.iconText.setText(emailAddress.getString("name").substring(0, 1));
-            applyProfilePicture(holder);
 
             //Row state tot active zetten
             holder.itemView.setActivated(selectedItems.get(position, false));
 
-            //set onlcik events
+            ColorGenerator generator = ColorGenerator.MATERIAL;
+
+            int color2 = generator.getColor(message.getSender().getEmailAddress().getName().substring(0,1));
+
+            TextDrawable drawable1 = TextDrawable.builder()
+                    .buildRoundRect(message.getSender().getEmailAddress().getName().substring(0,1), color2, 3); // radius in px
+
+            holder.profilePicture.setImageDrawable(drawable1);
 
 
-        } catch (JSONException e) {
-            e.printStackTrace();
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
-
     }
 
 
@@ -147,14 +158,13 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
 
     @Override
     public int getItemCount() {
-        return jsonArray.length();
+        return filteredData.size();
     }
-
 
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         TextView from, subject, message, iconText, timestamp;
-        ImageView iconImp, imgProfile;
+        ImageView iconImp, imgProfile, profilePicture;
         LinearLayout messageContainer;
         RelativeLayout iconContainer, iconBack, iconFront;
 
@@ -163,20 +173,27 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
             from = view.findViewById(R.id.from);
             subject = view.findViewById(R.id.txt_primary);
             message = view.findViewById(R.id.txt_secondary);
-            iconText = view.findViewById(R.id.icon_text);
             timestamp = view.findViewById(R.id.timestamp);
             iconBack = view.findViewById(R.id.icon_back);
             iconFront = view.findViewById(R.id.icon_front);
             iconImp = view.findViewById(R.id.icon_star);
-            imgProfile = view.findViewById(R.id.icon_profile);
             messageContainer = view.findViewById(R.id.message_container);
             iconContainer = view.findViewById(R.id.icon_container);
+            profilePicture = view.findViewById(R.id.profilePicture);
+
 
         }
 
 
     }
 
+
+
+    public Message getItem(int position) {
+
+      return filteredData.get(position);
+
+    }
 
 
 
@@ -187,5 +204,52 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
     }
 
 
+    public Filter getFilter() {
+        // return mFilter;
+        if (mFilter == null)
+            mFilter = new MailAdapter.CustomFilter();
+        return mFilter;
+    }
+
+    private class CustomFilter extends Filter {
+        // called when adapter filter method is called
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            constraint = constraint.toString().toLowerCase();
+            FilterResults result = new FilterResults();
+            if (constraint != null && constraint.toString().length() > 0) {
+                List<Message> filt = new ArrayList<Message>(); //filtered list
+                for (int i = 0; i < originalData.size(); i++) {
+                    Message m = originalData.get(i);
+                    if (m.getSender().getEmailAddress().getName().toLowerCase().contains(constraint)) {
+                        filt.add(m); //add only items which matches
+                    }
+                }
+                result.count = filt.size();
+                result.values = filt;
+            } else { // return original list
+                synchronized (this) {
+                    result.values = originalData;
+                    result.count = originalData.size();
+                }
+            }
+            return result;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint,
+                                      FilterResults results) {
+            if (results != null) {
+                setList((List<Message>) results.values); // notify data set changed
+            } else {
+                setList((List<Message>) originalData);
+            }
+        }
+    }
+
+    public void setList(List<Message> data) {
+        filteredData = data; // set the adapter list to data
+        MailAdapter.this.notifyDataSetChanged(); // notify data set change
+    }
 
 }

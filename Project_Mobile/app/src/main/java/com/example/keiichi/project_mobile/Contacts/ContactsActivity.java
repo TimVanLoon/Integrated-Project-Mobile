@@ -329,8 +329,6 @@ public class ContactsActivity extends AppCompatActivity {
 
             System.out.println("test response: " + contactArray);
 
-            JSONArray sortedContactArray = new JSONArray();
-
 
             // VUL POJO
             Type listType = new TypeToken<List<Contact>>() {
@@ -359,7 +357,7 @@ public class ContactsActivity extends AppCompatActivity {
 
     }
 
-    public void onContactClicked(int position){
+    private void onContactClicked(int position){
 
 
         if(contacts.size() != 0){

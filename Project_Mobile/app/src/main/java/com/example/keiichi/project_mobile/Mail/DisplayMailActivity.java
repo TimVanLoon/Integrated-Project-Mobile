@@ -51,9 +51,10 @@ public class DisplayMailActivity extends AppCompatActivity {
         mailBodyContent = findViewById(R.id.mailBody);
         mailBodyContent.setMovementMethod(new ScrollingMovementMethod());
         Intent intent = getIntent();
-        String JsonString = intent.getStringExtra("mailObjext");
+        String messageBody = intent.getStringExtra("messageBody");
         ACCES_TOKEN = intent.getStringExtra("accestoken");
         deleteButton = findViewById(R.id.ButtonDelete);
+
         From = findViewById(R.id.from);
         To = findViewById(R.id.to);
         iconText = findViewById(R.id.icon_txt);
@@ -65,7 +66,7 @@ public class DisplayMailActivity extends AppCompatActivity {
 
 
         try {
-            mail = new JSONObject(JsonString);
+            mail = new JSONObject(messageBody);
             body = mail.getJSONObject("body");
             mailBodyContent.setText(Html.fromHtml(body.getString("content")));
             JSONObject sender = mail.getJSONObject("from");
@@ -83,6 +84,10 @@ public class DisplayMailActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        mailBodyContent.setText(Html.fromHtml(messageBody));
+
+
 
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override

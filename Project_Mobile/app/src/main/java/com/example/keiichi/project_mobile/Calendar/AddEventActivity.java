@@ -252,8 +252,6 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
 
                                 isCurrentDate = false;
 
-                                setStartDate(year, monthOfYearPicked++, dayOfMonthPicked);
-
                                 dayOfMonth = dayOfMonthPicked;
                                 month = monthOfYearPicked;
                                 year = yearPicked;
@@ -581,15 +579,6 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         // Another interface callback
     }
 
-    private void setStartDate(int yearPicked, int monthPicked, int dayOfMonthPicked) {
-        if (isCurrentDate) {
-            //startDate = LocalDateTime.of(yearPicked, monthPicked, dayOfMonthPicked, startDate.getHour(), startDate.getMinute());
-        } else {
-            // endTime =
-        }
-
-
-    }
 
     private String getDayInString(int day) {
         switch (day) {
