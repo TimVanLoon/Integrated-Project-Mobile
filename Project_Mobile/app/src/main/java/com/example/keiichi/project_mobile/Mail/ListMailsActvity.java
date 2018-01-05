@@ -525,6 +525,8 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
                     showMail.putExtra("mailObjext", message.getBody().getContent());
                     showMail.putExtra("accestoken", accessToken);
+                    showMail.putExtra("userName", userName);
+                    showMail.putExtra("userEmail", userEmail);
 
                     startActivity(showMail);
                 }
