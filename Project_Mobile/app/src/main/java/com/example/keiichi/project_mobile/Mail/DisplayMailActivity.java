@@ -38,13 +38,9 @@ import javax.json.JsonObjectBuilder;
 public class DisplayMailActivity extends AppCompatActivity {
 
     final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
-    private TextView mailBodyContent;
-    private TextView Subject;
-    private JSONObject mail;
-    private JSONObject body;
-    private ImageButton deleteButton;
-    private TextView From, iconText;
-    private TextView To;
+    private JSONObject mail, body;
+    private ImageButton deleteButton, replyButton;
+    private TextView From, iconText, To,mailBodyContent,Subject;
     private ImageView icon_mail;
     private String ACCES_TOKEN;
 
@@ -62,6 +58,7 @@ public class DisplayMailActivity extends AppCompatActivity {
         To = findViewById(R.id.to);
         iconText = findViewById(R.id.icon_txt);
         icon_mail = findViewById(R.id.icon_profileMail);
+        replyButton = findViewById(R.id.ReplyButton);
 
         Subject = findViewById(R.id.Subject);
 
@@ -99,7 +96,26 @@ public class DisplayMailActivity extends AppCompatActivity {
             }
         });
 
+        replyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToReplyActivity();
+            }
+        });
+
+
+
     }
+
+    private void goToReplyActivity() {
+        Intent showMail = new Intent(DisplayMailActivity.this, ReplyToMailActivity.class);
+
+            showMail.putExtra("mailObject", mail.toString());
+            showMail.putExtra("accestoken", ACCES_TOKEN);
+
+        startActivity(showMail);
+    }
+
 
     private void deleteMail(JSONObject mail) throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);

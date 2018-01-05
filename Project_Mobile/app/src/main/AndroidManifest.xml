@@ -86,7 +86,8 @@
             android:name=".Calendar.EditEventActivity"
             android:label="Edit Event"
             android:theme="@style/ContactsTheme"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".Mail.ReplyToMailActivity"></activity>
     </application>
 
 </manifest>
