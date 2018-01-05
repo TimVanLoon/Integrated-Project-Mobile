@@ -55,37 +55,13 @@ public class DisplayMailActivity extends AppCompatActivity {
         mailBodyContent = findViewById(R.id.mailBody);
         mailBodyContent.setMovementMethod(new ScrollingMovementMethod());
         Intent intent = getIntent();
-        String JsonString = intent.getStringExtra("mailObjext");
+        String messageBody = intent.getStringExtra("messageBody");
         ACCES_TOKEN = intent.getStringExtra("accestoken");
         deleteButton = findViewById(R.id.ButtonDelete);
-        From = findViewById(R.id.from);
-        To = findViewById(R.id.to);
-        iconText = findViewById(R.id.icon_txt);
-        icon_mail = findViewById(R.id.icon_profileMail);
-
-        Subject = findViewById(R.id.Subject);
 
 
+        mailBodyContent.setText(Html.fromHtml(messageBody));
 
-        try {
-            mail = new JSONObject(JsonString);
-            body = mail.getJSONObject("body");
-            mailBodyContent.setText(Html.fromHtml(body.getString("content")));
-            JSONObject sender = mail.getJSONObject("from");
-            JSONObject emailAddress = sender.getJSONObject("emailAddress");
-            iconText.setText(emailAddress.getString("name").substring(0, 1));
-            From.setText(emailAddress.getString("name"));
-            JSONArray recipient = mail.getJSONArray("toRecipients");
-            emailAddress = recipient.getJSONObject(0);
-            To.setText(emailAddress.getJSONObject("emailAddress").getString("address"));
-            Subject.setText(mail.getString("subject"));
-
-            applyProfilePicture(icon_mail,iconText);
-            updateMail(mail);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
