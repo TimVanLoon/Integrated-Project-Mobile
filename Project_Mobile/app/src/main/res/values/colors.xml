@@ -8,7 +8,7 @@
     <color name="colorGrey">#c3c3c3 </color>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#000</color>
     <color name="contact_name">#333333</color>
     <color name="contact_number">#8c8c8c</color>
     <color name="from">#000000</color>
@@ -20,4 +20,11 @@
     <color name="row_activated">#e0e0e0</color>
     <color name="bg_action_mode">#757575</color>
     <color name="bg_circle_default">#666666</color>
+    <color name="background_contact_details_header">#353535</color>
+    <color name="action_bar">#086D9C</color>
+    <color name="loadingScreenBg">#086D9C</color>
+    <color name="emptyField">#F4E7D7</color>
+    <color name="orange_dark">#E64A19</color>
+    <color name="blue_dark">#00537F</color>
+    <color name="yellow">#F5A623</color>
 </resources>

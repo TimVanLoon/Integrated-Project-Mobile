@@ -3,6 +3,7 @@ package com.example.keiichi.project_mobile.Contacts;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,9 @@ import android.widget.TextView;
 import android.widget.Filter;
 import android.widget.Filterable;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
+import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONArray;
@@ -24,22 +28,25 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterable{
+public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterable {
 
+    private TextDrawable drawable;
+    private ImageView profilePicture;
     private final Context context;
     //private final JSONArray values;
 
-    // Ongefilterde JSONArray
-    private JSONArray originalData = null;
-    // Gefilterde JSONArray
-    private JSONArray filteredData = null;
+    // Ongefilterde list
+    private List<Contact> originalData = null;
+    // Gefilterde list
+    private List<Contact> filteredData = null;
 
-    private ItemFilter mFilter = new ItemFilter();
+    private CustomFilter mFilter = new CustomFilter();
 
-
-    public ContactAdapter(Context context, JSONArray values) {
+    public ContactAdapter(Context context, List<Contact> values) {
         this.context = context;
+
         this.originalData = values;
         this.filteredData = values;
     }
@@ -47,18 +54,17 @@ public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterab
 
     @Override
     public int getCount() {
-        return filteredData.length();
+        return filteredData.size();
     }
 
     @Override
-    public JSONObject getItem(int i) {
-        return filteredData.optJSONObject(i);
+    public Contact getItem(int i) {
+        return filteredData.get(i);
     }
 
     @Override
     public long getItemId(int i) {
-        JSONObject jsonObject = getItem(i);
-        return jsonObject.optLong("id");
+        return i;
     }
 
     @NonNull
@@ -69,67 +75,71 @@ public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterab
         View rowView = layoutInflater.inflate(R.layout.contact_items, parent, false);
         TextView name = rowView.findViewById(R.id.contactName);
 
-        JSONObject json_data = getItem(position);
+        profilePicture = (ImageView)rowView.findViewById(R.id.profilePicture);
 
-        try {
-            name.setText(json_data.getString("givenName"));
+        Contact contact = getItem(position);
 
+        name.setText(contact.getDisplayName());
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        ColorGenerator generator = ColorGenerator.MATERIAL;
 
+        int color2 = generator.getColor(contact.getDisplayName().substring(0,1));
+
+        TextDrawable drawable1 = TextDrawable.builder()
+                .buildRoundRect(contact.getDisplayName().substring(0,1), color2, 3); // radius in px
+
+        profilePicture.setImageDrawable(drawable1);
 
         return rowView;
 
     }
 
-    @Override
     public Filter getFilter() {
+        // return mFilter;
+        if (mFilter == null)
+            mFilter = new CustomFilter();
         return mFilter;
     }
 
-    private class ItemFilter extends Filter {
+    private class CustomFilter extends Filter {
+        // called when adapter filter method is called
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
-
-            String filterString = constraint.toString().toLowerCase();
-
-            FilterResults results = new FilterResults();
-
-            final JSONArray list = originalData;
-
-            int count = list.length();
-            final ArrayList<String> nlist = new ArrayList<String>(count);
-
-            String filterableString ;
-
-            for (int i = 0; i < count; i++) {
-                try {
-                    filterableString = list.getJSONObject(i).toString();
-
-                    if (filterableString.toLowerCase().contains(filterString)) {
-                        nlist.add(filterableString);
+            constraint = constraint.toString().toLowerCase();
+            FilterResults result = new FilterResults();
+            if (constraint != null && constraint.toString().length() > 0) {
+                List<Contact> filt = new ArrayList<Contact>(); //filtered list
+                for (int i = 0; i < originalData.size(); i++) {
+                    Contact c = originalData.get(i);
+                    if (c.getDisplayName().toLowerCase().contains(constraint)) {
+                        filt.add(c); //add only items which matches
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                }
+                result.count = filt.size();
+                result.values = filt;
+            } else { // return original list
+                synchronized (this) {
+                    result.values = originalData;
+                    result.count = originalData.size();
                 }
             }
-
-            results.values = nlist;
-            results.count = nlist.size();
-
-            return results;
+            return result;
         }
 
-        @SuppressWarnings("unchecked")
         @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-
-            filteredData =  (JSONArray) results.values;
-            notifyDataSetChanged();
+        protected void publishResults(CharSequence constraint,
+                                      FilterResults results) {
+            if (results != null) {
+                setList((List<Contact>) results.values); // notify data set changed
+            } else {
+                setList((List<Contact>) originalData);
+            }
         }
+    }
 
+    public void setList(List<Contact> data) {
+        filteredData = data; // set the adapter list to data
+        ContactAdapter.this.notifyDataSetChanged(); // notify data set change
     }
 
 
