@@ -281,10 +281,13 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
             Calendar endTime1 = Calendar.getInstance();
             endTime1.setTime(output.parse(event.getEnd().getDateTime()));
 
-            System.out.println("data: " + startTime1.toString() + " " +endTime1.toString());
+            ColorGenerator generator = ColorGenerator.MATERIAL;
+
+            // generate random color
+            int color1 = generator.getRandomColor();
 
             BaseCalendarEvent event1 = new BaseCalendarEvent(event.getSubject(), event.getBodyPreview(), event.getLocation().getDisplayName(),
-                    ContextCompat.getColor(this, R.color.orange_dark), startTime1, endTime1, true);
+                    color1, startTime1, endTime1, true);
             eventList.add(event1);
         }
 
