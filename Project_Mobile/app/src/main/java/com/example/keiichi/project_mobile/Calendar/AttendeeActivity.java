@@ -14,6 +14,7 @@ import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -28,6 +29,7 @@ import com.example.keiichi.project_mobile.Contacts.ContactAdapter;
 import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
 import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
+import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
 import com.google.gson.Gson;
@@ -75,11 +77,11 @@ public class AttendeeActivity extends AppCompatActivity {
 
                 // Start an alpha animation for clicked item
                 Animation animation1 = new AlphaAnimation(0.3f, 1.0f);
-                animation1.setDuration(4000);
+                animation1.setDuration(300);
                 view.startAnimation(animation1);
 
 
-                //onContactClicked(position);
+                onContactClicked(position);
 
             }
         });
@@ -246,6 +248,37 @@ public class AttendeeActivity extends AppCompatActivity {
         contactAdapter = new ContactAdapter(this, contacts );
         contactsListView.setAdapter(contactAdapter);
 
+    }
+
+    private void onContactClicked(int position){
+
+
+        if(contacts.size() != 0){
+
+            Contact contact = contacts.get(position);
+
+            List<EmailAddress> email = contact.getEmailAddresses();
+
+            if(email.isEmpty()){
+                Toast.makeText(getApplicationContext(), "No email found for this contact!", Toast.LENGTH_SHORT).show();
+            } else{
+
+                Intent showContactDetails = new Intent(AttendeeActivity.this, AddEventActivity.class);
+
+                showContactDetails.putExtra("userEmail", userEmail);
+                showContactDetails.putExtra("AccessToken", accessToken);
+                showContactDetails.putExtra("userName", userName);
+                //showContactDetails.putExtra("email", email);
+                showContactDetails.putExtra("fromAttendeesActivity", "yes");
+
+
+                startActivity(showContactDetails);
+            }
+
+
+        } else {
+            Toast.makeText(getApplicationContext(), "Empty contact list!", Toast.LENGTH_SHORT).show();
+        }
     }
 
 

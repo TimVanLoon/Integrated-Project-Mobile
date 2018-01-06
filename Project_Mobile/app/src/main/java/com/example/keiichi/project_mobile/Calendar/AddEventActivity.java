@@ -82,6 +82,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private String finalHourOfDay;
     private String finalMinuteOfHour;
     private String showAs;
+    private String fromAttendeesActivity;
     private boolean isCurrentDate;
     private boolean isCurrentTime;
     private Button moreDetailsButton;
@@ -94,6 +95,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private TextView displayAsTitle;
     private TextView repeatTitle;
     private TextView notesTitle;
+    private TextView attendeesTitle;
     private Spinner durationSpinner;
     private Spinner reminderSpinner;
     private Spinner displayAsSpinner;
@@ -111,6 +113,8 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
+        fromAttendeesActivity = getIntent().getStringExtra("fromAttendeesActivity");
+
 
         // INITIALISEER ACTION BAR
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -129,6 +133,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         reminderTitle = (TextView) findViewById(R.id.reminderTitle);
         displayAsTitle = (TextView) findViewById(R.id.displayAsTitle);
         repeatTitle = (TextView) findViewById(R.id.repeatTitle);
+        attendeesTitle = (TextView) findViewById(R.id.attendeesTitle);
         notesTitle = (TextView) findViewById(R.id.notesTitle);
         durationSpinner = (Spinner) findViewById(R.id.durationSpinner);
         reminderSpinner = (Spinner) findViewById(R.id.reminderSpinner);
@@ -137,6 +142,8 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         moreDetailsButton = (Button) findViewById(R.id.moreDetailsButton);
         plusAttendeeIcon = (ImageView) findViewById(R.id.plusAttendeeIcon);
 
+        attendeesTitle.setVisibility(View.GONE);
+        plusAttendeeIcon.setVisibility(View.GONE);
         reminderSpinner.setVisibility(View.GONE);
         repeatSpinner.setVisibility(View.GONE);
         displayAsSpinner.setVisibility(View.GONE);
@@ -158,17 +165,16 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
             }
         });
 
+        if(fromAttendeesActivity != null ){
+
+            makeExtraVisible();
+
+        }
+
         moreDetailsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                moreDetailsButton.setVisibility(View.GONE);
-                reminderSpinner.setVisibility(View.VISIBLE);
-                repeatSpinner.setVisibility(View.VISIBLE);
-                displayAsSpinner.setVisibility(View.VISIBLE);
-                notesTitle.setVisibility(View.VISIBLE);
-                repeatTitle.setVisibility(View.VISIBLE);
-                displayAsTitle.setVisibility(View.VISIBLE);
-                reminderTitle.setVisibility(View.VISIBLE);
-                personalNotes.setVisibility(View.VISIBLE);
+
+                makeExtraVisible();
 
             }
         });
@@ -625,6 +631,21 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
 
 
         }
+    }
+
+    private void makeExtraVisible(){
+
+        moreDetailsButton.setVisibility(View.GONE);
+        reminderSpinner.setVisibility(View.VISIBLE);
+        repeatSpinner.setVisibility(View.VISIBLE);
+        displayAsSpinner.setVisibility(View.VISIBLE);
+        notesTitle.setVisibility(View.VISIBLE);
+        repeatTitle.setVisibility(View.VISIBLE);
+        displayAsTitle.setVisibility(View.VISIBLE);
+        reminderTitle.setVisibility(View.VISIBLE);
+        personalNotes.setVisibility(View.VISIBLE);
+        attendeesTitle.setVisibility(View.VISIBLE);
+        plusAttendeeIcon.setVisibility(View.VISIBLE);
     }
 
 

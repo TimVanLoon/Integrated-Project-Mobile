@@ -10,7 +10,7 @@ import java.util.List;
 public class Event implements Serializable{
 
     private List<Event> instances;
-    private Attendee[] attendees;
+    private List<Attendee> attendees;
     private ItemBody body;
     private String bodyPreview;
     private List<String> categories;
@@ -271,11 +271,11 @@ public class Event implements Serializable{
         this.webLink = webLink;
     }
 
-    public Attendee[] getAttendees() {
+    public List<Attendee> getAttendees() {
         return attendees;
     }
 
-    public void setAttendees(Attendee[] attendees) {
+    public void setAttendees(List<Attendee> attendees) {
         this.attendees = attendees;
     }
 
