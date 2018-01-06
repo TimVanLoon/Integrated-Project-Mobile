@@ -43,17 +43,19 @@
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-        
+
 
 
 
         <ListView
             android:id="@+id/contactsListView"
             android:layout_width="456dp"
-            android:layout_height="501dp"
+            android:layout_height="match_parent"
             android:divider="@drawable/list_divider"
             android:dividerHeight="4dip"
+            android:layout_marginTop="55dp"
             app:layout_constraintBottom_toTopOf="@+id/navigation"
+            android:layout_marginBottom="1dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"

@@ -197,7 +197,7 @@
         </TextView>
 
         <ImageView
-            android:id="@+id/profilePicture"
+            android:id="@+id/plusAttendeeIcon"
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_marginLeft="15dp"

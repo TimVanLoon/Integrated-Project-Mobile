@@ -92,7 +92,11 @@
             android:theme="@style/ContactsTheme"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".Mail.ReplyToMailActivity" />
-        <activity android:name=".Calendar.AttendeeActivity"></activity>
+        <activity
+            android:name=".Calendar.AttendeeActivity"
+            android:label="Contacts"
+            android:theme="@style/ContactsTheme"
+            android:windowSoftInputMode="adjustResize"></activity>
     </application>
 
 </manifest>

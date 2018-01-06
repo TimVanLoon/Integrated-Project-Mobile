@@ -67,7 +67,7 @@ public class ContactsActivity extends AppCompatActivity {
 
     BottomNavigationView mBottomNav;
 
-    Toolbar myToolbar;
+    private Toolbar myToolbar;
 
     private TextDrawable drawable;
     private ImageView profilePicture;
@@ -78,9 +78,9 @@ public class ContactsActivity extends AppCompatActivity {
 
     private SearchView searchView;
 
-    NavigationView contactNavigationView;
+    private NavigationView contactNavigationView;
 
-    ContactAdapter contactAdapter;
+    private ContactAdapter contactAdapter;
 
     private List<Contact> contacts = new ArrayList<>();
     private List<Contact> countactsFiltered;

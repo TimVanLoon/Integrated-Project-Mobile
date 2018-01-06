@@ -16,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -97,6 +98,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private Spinner reminderSpinner;
     private Spinner displayAsSpinner;
     private Spinner repeatSpinner;
+    private ImageView plusAttendeeIcon;
     private DatePickerDialog datePickerDialog;
     private Toolbar myToolbar;
 
@@ -133,6 +135,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         repeatSpinner = (Spinner) findViewById(R.id.repeatSpinner);
         displayAsSpinner = (Spinner) findViewById(R.id.displayAsSpinner);
         moreDetailsButton = (Button) findViewById(R.id.moreDetailsButton);
+        plusAttendeeIcon = (ImageView) findViewById(R.id.plusAttendeeIcon);
 
         reminderSpinner.setVisibility(View.GONE);
         repeatSpinner.setVisibility(View.GONE);
@@ -143,7 +146,17 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         reminderTitle.setVisibility(View.GONE);
         personalNotes.setVisibility(View.GONE);
 
+        plusAttendeeIcon.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
 
+                Intent intentAttendees = new Intent(AddEventActivity.this, AttendeeActivity.class);
+                intentAttendees.putExtra("AccessToken", accessToken);
+                intentAttendees.putExtra("userName", userName);
+                intentAttendees.putExtra("userEmail", userEmail);
+
+                startActivity(intentAttendees);
+            }
+        });
 
         moreDetailsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
