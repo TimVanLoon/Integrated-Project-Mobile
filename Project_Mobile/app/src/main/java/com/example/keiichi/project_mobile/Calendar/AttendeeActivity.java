@@ -111,14 +111,14 @@ public class AttendeeActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                //contactAdapter.getFilter().filter(s);
+                contactAdapter.getFilter().filter(s);
 
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-                //contactAdapter.getFilter().filter(s);
+                contactAdapter.getFilter().filter(s);
 
                 return true;
             }
