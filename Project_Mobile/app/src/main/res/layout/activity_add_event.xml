@@ -187,6 +187,24 @@
         </Button>
 
         <TextView
+            android:id="@+id/attendeesTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/attendeesTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
+        </TextView>
+
+        <ImageView
+            android:id="@+id/profilePicture"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginBottom="20dp"
+            android:src="@drawable/ic_add_black"/>
+
+        <TextView
             android:id="@+id/reminderTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -195,6 +213,12 @@
             android:layout_marginLeft="15dp"
             android:textSize="7pt">
         </TextView>
+
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:divider="@drawable/list_divider"
+            android:dividerHeight="4dip" />
 
         <Spinner
             android:id="@+id/reminderSpinner"
