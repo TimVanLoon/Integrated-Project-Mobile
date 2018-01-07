@@ -51,6 +51,7 @@ public class AttendeeActivity extends AppCompatActivity {
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts?$orderBy=displayName&$top=500&$count=true";
 
     private List<Contact> contacts = new ArrayList<>();
+    private List<EmailAddress> emailList = new ArrayList<>();
     private ContactAdapter contactAdapter;
     private Toolbar myToolbar;
     private ListView contactsListView;
@@ -58,6 +59,7 @@ public class AttendeeActivity extends AppCompatActivity {
     private String accessToken;
     private String userName;
     private String userEmail;
+    private String firstTime;
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -89,6 +91,13 @@ public class AttendeeActivity extends AppCompatActivity {
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
+        firstTime = getIntent().getStringExtra("firstTime");
+
+        if(firstTime != null){
+            emailList = (List<EmailAddress>)getIntent().getSerializableExtra("emailList");
+        }
+
+
 
         // VOEG BACK BUTTON TOE AAN ACTION BAR
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -268,8 +277,16 @@ public class AttendeeActivity extends AppCompatActivity {
                 showContactDetails.putExtra("userEmail", userEmail);
                 showContactDetails.putExtra("AccessToken", accessToken);
                 showContactDetails.putExtra("userName", userName);
-                //showContactDetails.putExtra("email", email);
                 showContactDetails.putExtra("fromAttendeesActivity", "yes");
+
+                if(contact.getEmailAddresses() != null){
+
+                    EmailAddress emailContact = contact.getEmailAddresses().get(0);
+
+                    emailList.add(emailContact);
+
+                    showContactDetails.putExtra("emailList",(Serializable) emailList);
+                }
 
 
                 startActivity(showContactDetails);

@@ -34,6 +34,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.Contacts.ContactAdapter;
 import com.example.keiichi.project_mobile.DAL.POJOs.Attendee;
 import com.example.keiichi.project_mobile.DAL.POJOs.DateTimeTimeZone;
+import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.DAL.POJOs.ItemBody;
 import com.example.keiichi.project_mobile.DAL.POJOs.Location;
@@ -44,6 +45,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -73,6 +75,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
 
     private final Calendar c = Calendar.getInstance();
     private List<Attendee> attendees;
+    private List<EmailAddress> emailList = new ArrayList<>();
     private int startingValue;
     private int dayOfMonth;
     private int month;
@@ -89,6 +92,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private String finalMinuteOfHour;
     private String showAs;
     private String fromAttendeesActivity;
+    private String firstTime;
     private boolean isCurrentDate;
     private boolean isCurrentTime;
     private Button moreDetailsButton;
@@ -121,6 +125,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
+        emailList = (List<EmailAddress>)getIntent().getSerializableExtra("emailList");
         fromAttendeesActivity = getIntent().getStringExtra("fromAttendeesActivity");
 
 
@@ -169,6 +174,8 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
                 intentAttendees.putExtra("AccessToken", accessToken);
                 intentAttendees.putExtra("userName", userName);
                 intentAttendees.putExtra("userEmail", userEmail);
+                intentAttendees.putExtra("emailList",(Serializable) emailList);
+                intentAttendees.putExtra("firstTime", firstTime);
 
                 startActivity(intentAttendees);
             }
@@ -180,8 +187,27 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
 
             attendees = new ArrayList<>();
 
-            attendeeAdapter = new AttendeeAdapter(this, attendees);
-            attendeeList.setAdapter(attendeeAdapter);
+            if(!emailList.isEmpty()){
+
+                for (EmailAddress email : emailList) {
+
+                    firstTime = "no";
+
+                    String contactEmail = email.getAddress();
+                    String contactName = email.getName();
+                    String type = "optional";
+
+                    Attendee attendee = new Attendee(type, email);
+
+                    attendees.add(attendee);
+                }
+
+                attendeeAdapter = new AttendeeAdapter(this, attendees);
+                attendeeList.setAdapter(attendeeAdapter);
+
+            }
+
+
 
         }
 
@@ -346,6 +372,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
                 intentCalendar.putExtra("AccessToken", accessToken);
                 intentCalendar.putExtra("userName", userName);
                 intentCalendar.putExtra("userEmail", userEmail);
+
                 startActivity(intentCalendar);
 
                 return true;
@@ -366,6 +393,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
                             intentCalendar.putExtra("AccessToken", accessToken);
                             intentCalendar.putExtra("userName", userName);
                             intentCalendar.putExtra("userEmail", userEmail);
+
                             startActivity(intentCalendar);
                         }
                     }, DELAY_TIME);
@@ -411,6 +439,8 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         event.setEnd(new DateTimeTimeZone(endTime, TimeZone.getDefault().getDisplayName()));
 
         event.setBody(new ItemBody("Text", personalNotes.getText().toString()));
+
+        event.setAttendees(attendees);
 
         event.setReminderMinutesBeforeStart(reminderMinutesBeforeStart);
         event.setReminderOn(true);
