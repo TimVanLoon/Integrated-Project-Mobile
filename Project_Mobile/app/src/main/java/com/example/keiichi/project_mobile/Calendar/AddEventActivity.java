@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -30,6 +31,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.Contacts.ContactAdapter;
+import com.example.keiichi.project_mobile.DAL.POJOs.Attendee;
 import com.example.keiichi.project_mobile.DAL.POJOs.DateTimeTimeZone;
 import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.DAL.POJOs.ItemBody;
@@ -45,9 +48,11 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.Timer;
@@ -66,7 +71,8 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private String [] DISPLAYASSPINNERLIST = {"Free", "Working elsewhere", "Tentative", "Busy", "Away"};
     private String [] REPEATSPINNERLIST = {"Never", "Each day", "Every sunday", "Every workday", "Day 31 of every month", "Ever last sunday", "Every 31st of december"};
 
-    final Calendar c = Calendar.getInstance();
+    private final Calendar c = Calendar.getInstance();
+    private List<Attendee> attendees;
     private int startingValue;
     private int dayOfMonth;
     private int month;
@@ -101,8 +107,10 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private Spinner displayAsSpinner;
     private Spinner repeatSpinner;
     private ImageView plusAttendeeIcon;
+    private ListView attendeeList;
     private DatePickerDialog datePickerDialog;
     private Toolbar myToolbar;
+    private AttendeeAdapter attendeeAdapter;
 
 
     @Override
@@ -141,6 +149,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         displayAsSpinner = (Spinner) findViewById(R.id.displayAsSpinner);
         moreDetailsButton = (Button) findViewById(R.id.moreDetailsButton);
         plusAttendeeIcon = (ImageView) findViewById(R.id.plusAttendeeIcon);
+        attendeeList = (ListView) findViewById(R.id.attendeeList);
 
         attendeesTitle.setVisibility(View.GONE);
         plusAttendeeIcon.setVisibility(View.GONE);
@@ -168,6 +177,11 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         if(fromAttendeesActivity != null ){
 
             makeExtraVisible();
+
+            attendees = new ArrayList<>();
+
+            attendeeAdapter = new AttendeeAdapter(this, attendees);
+            attendeeList.setAdapter(attendeeAdapter);
 
         }
 
