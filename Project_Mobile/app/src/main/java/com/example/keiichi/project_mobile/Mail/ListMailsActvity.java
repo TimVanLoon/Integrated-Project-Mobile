@@ -101,6 +101,8 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     private ArrayList<Integer> selectedItems = new ArrayList<>();
     private List<Message> messages = new ArrayList<>();
 
+    private Button attachmentButton;
+
     private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
@@ -542,6 +544,8 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
             }
         }));
+
+
 
     }
 

@@ -1,5 +1,7 @@
 package com.example.keiichi.project_mobile.DAL.POJOs;
 
+import android.graphics.drawable.Drawable;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -44,7 +46,7 @@ public class Contact implements Serializable {
     private String yomiCompanyName;
     private String yomiGivenName;
     private String yomiSurname;
-    private ProfilePhoto profilePhoto;
+    private byte[] profilePhoto;
 
     public PhysicalAddress getHomeAddress() {
         return homeAddress;
@@ -68,14 +70,6 @@ public class Contact implements Serializable {
 
     public void setMobilePhone(String mobilePhone) {
         this.mobilePhone = mobilePhone;
-    }
-
-    public ProfilePhoto getProfilePhoto() {
-        return profilePhoto;
-    }
-
-    public void setProfilePhoto(ProfilePhoto profilePhoto) {
-        this.profilePhoto = profilePhoto;
     }
 
     public Contact[] getContacts() {
@@ -366,8 +360,7 @@ public class Contact implements Serializable {
         this.emailAddresses = emailAddresses;
     }
 
-    public void getImage()
-    {
-
+    public void setProfilePhoto(byte[] profilePhoto) {
+        this.profilePhoto = profilePhoto;
     }
 }

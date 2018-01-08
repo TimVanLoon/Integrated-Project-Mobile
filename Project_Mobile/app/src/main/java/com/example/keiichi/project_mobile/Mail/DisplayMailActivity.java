@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,16 +29,27 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
 import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
 import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
+
+import com.example.keiichi.project_mobile.DAL.POJOs.Attachment;
+import com.example.keiichi.project_mobile.DAL.POJOs.Message;
 import com.example.keiichi.project_mobile.R;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
 import java.io.Serializable;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -54,12 +66,21 @@ public class DisplayMailActivity extends AppCompatActivity {
     private ImageView icon_mail;
     private Toolbar myToolbar;
     private String ACCES_TOKEN, messageBody;
+
+    private Message messageObject;
+
     private String accessToken;
     private String userName;
     private String userEmail;
+
     private String mailId;
-    private com.example.keiichi.project_mobile.DAL.POJOs.Message message;
     private  AlertDialog.Builder builder;
+
+
+    private com.example.keiichi.project_mobile.DAL.POJOs.Message message;
+    private Button attachmentButton;
+    private ArrayList<Attachment> attachments = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +116,11 @@ public class DisplayMailActivity extends AppCompatActivity {
         replyButton = findViewById(R.id.ReplyButton);
         forwardButton = findViewById(R.id.forwardButton);
         Subject = findViewById(R.id.Subject);
+        attachmentButton = findViewById(R.id.attachmentButton);
+
+
+        messageObject = (Message) intent.getSerializableExtra("mailObject");
+
 
         builder = new AlertDialog.Builder(DisplayMailActivity.this);
         builder.setCancelable(true);
@@ -155,8 +181,12 @@ public class DisplayMailActivity extends AppCompatActivity {
             To.setText(emailAddress.getJSONObject("emailAddress").getString("address"));
             Subject.setText(mail.getString("subject"));
 
+            if (!messageObject.isRead()){
+                updateMail(messageObject);
+
+            }
+
             applyProfilePicture(icon_mail,iconText);
-            updateMail(mail);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -190,8 +220,59 @@ public class DisplayMailActivity extends AppCompatActivity {
             }
         });
 
+        attachmentButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    getAttachments();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
 
+    }
+
+    private void getAttachments() throws JSONException {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET, URL_DELETE + messageObject.getId() + "/attachments", null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        System.out.println(response.toString());
+                        Type listType = new TypeToken<List<Attachment>>() {
+                        }.getType();
+                        try {
+                            attachments = new Gson().fromJson(String.valueOf(response.getJSONArray("value")),listType);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        System.out.println(attachments.get(1).getId());
+                    }
+
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + ACCES_TOKEN);
+
+
+                return headers;
+            }
+
+        };
+
+        queue.add(objectRequest);
     }
 
     private void toForwardMail() {
@@ -224,7 +305,9 @@ public class DisplayMailActivity extends AppCompatActivity {
 
         String postAddress = URL_DELETE + mailId;
 
+
         StringRequest stringRequest = new StringRequest(Request.Method.DELETE, postAddress,
+
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -253,7 +336,7 @@ public class DisplayMailActivity extends AppCompatActivity {
 
     }
 
-    private void updateMail(JSONObject mail) throws JSONException {
+    private void updateMail(Message mail) throws JSONException {
 
         RequestQueue queue = Volley.newRequestQueue(this);
 
@@ -263,7 +346,7 @@ public class DisplayMailActivity extends AppCompatActivity {
 
         System.out.println(mail.toString());
 
-        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.PATCH, URL_DELETE + mail.getString("id"), body,
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.PATCH, URL_DELETE + mail.getId(), body,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

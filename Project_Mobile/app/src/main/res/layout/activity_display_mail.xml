@@ -140,4 +140,12 @@
             app:srcCompat="@android:drawable/sym_action_email" />
     </LinearLayout>
 
+    <Button
+        android:id="@+id/attachmentButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="attachm"
+        tools:layout_editor_absoluteX="295dp"
+        tools:layout_editor_absoluteY="141dp" />
+
 </android.support.constraint.ConstraintLayout>
