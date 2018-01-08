@@ -100,6 +100,7 @@ public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterab
 
         profilePicture.setImageDrawable(drawable1);
 
+        /*
         RequestQueue queue = Volley.newRequestQueue(context);
         String url = "https://graph.microsoft.com/v1.0/users/" + contact.getEmailAddresses().get(0).getAddress() + "/photo/$value";
         System.out.println("hit");
@@ -132,8 +133,11 @@ public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterab
 
         queue.add(request);
 
-        return rowView;
 
+
+        */
+
+        return rowView;
     }
 
     public Filter getFilter() {

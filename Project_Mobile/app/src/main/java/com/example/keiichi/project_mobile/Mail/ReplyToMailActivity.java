@@ -37,8 +37,12 @@ import jp.wasabeef.richeditor.RichEditor;
 public class ReplyToMailActivity extends AppCompatActivity {
     final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/messages/" ;
 
-
-    private String ACCES_TOKEN,ID;
+    private String accessToken;
+    private String userName;
+    private String userEmail;
+    private String mailId;
+    private String mailSubject;
+    private String mailAddress;
     private Message message;
     EditText TextMailAdress,TextMailSubject;
     Button ReplyButton;
@@ -52,17 +56,19 @@ public class ReplyToMailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reply_to_mail);
 
-        Intent intent = getIntent();
-        message = (Message) intent.getSerializableExtra("mailObject");
-        ACCES_TOKEN = intent.getStringExtra("accestoken");
-        ID = message.getId();
+        accessToken = getIntent().getStringExtra("AccessToken");
+        userName = getIntent().getStringExtra("userName");
+        userEmail = getIntent().getStringExtra("userEmail");
+        mailId = getIntent().getStringExtra("mailId");
+        mailSubject = getIntent().getStringExtra("mailSubject");
+        mailAddress = getIntent().getStringExtra("mailAddress");
 
         ReplyButton = findViewById(R.id.ReplyButton);
         Editor = findViewById(R.id.editor);
         TextMailAdress = findViewById(R.id.TextMailAdress);
         TextMailSubject = findViewById(R.id.TextMailSubject);
-        TextMailAdress.setText(message.getFrom().getEmailAddress().getAddress());
-        TextMailSubject.setText("RE: " + message.getSubject());
+        TextMailAdress.setText(mailAddress);
+        TextMailSubject.setText("RE: " + mailSubject);
 
         ReplyButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,7 +92,7 @@ public class ReplyToMailActivity extends AppCompatActivity {
 
         System.out.println(jsonObject.toString());
 
-        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_POSTADRESS+ message.getId() + "/reply", jsonObject,
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_POSTADRESS+ mailId + "/reply", jsonObject,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -104,7 +110,7 @@ public class ReplyToMailActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + ACCES_TOKEN);
+                headers.put("Authorization", "Bearer " + accessToken);
 
                 return headers;
             }

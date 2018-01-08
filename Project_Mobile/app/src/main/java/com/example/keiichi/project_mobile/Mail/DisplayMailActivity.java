@@ -61,7 +61,6 @@ public class DisplayMailActivity extends AppCompatActivity {
 
     final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
     private JSONObject mail, body;
-    private ImageButton deleteButton, replyButton, forwardButton;
     private TextView From, iconText, To,mailBodyContent,Subject;
     private ImageView icon_mail;
     private Toolbar myToolbar;
@@ -72,7 +71,8 @@ public class DisplayMailActivity extends AppCompatActivity {
     private String accessToken;
     private String userName;
     private String userEmail;
-
+    private String mailSubject;
+    private String mailAddress;
     private String mailId;
     private  AlertDialog.Builder builder;
 
@@ -98,6 +98,8 @@ public class DisplayMailActivity extends AppCompatActivity {
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
         mailId = getIntent().getStringExtra("mailId");
+        mailSubject = getIntent().getStringExtra("mailSubject");
+        mailAddress = getIntent().getStringExtra("mailAddress");
 
         Intent intent = getIntent();
         String mB = intent.getStringExtra("messageBody");
@@ -108,13 +110,10 @@ public class DisplayMailActivity extends AppCompatActivity {
 
         mailBodyContent = findViewById(R.id.mailBody);
         mailBodyContent.setMovementMethod(new ScrollingMovementMethod());
-        deleteButton = findViewById(R.id.ButtonDelete);
         From = findViewById(R.id.from);
         To = findViewById(R.id.to);
         iconText = findViewById(R.id.icon_txt);
         icon_mail = findViewById(R.id.icon_profileMail);
-        replyButton = findViewById(R.id.ReplyButton);
-        forwardButton = findViewById(R.id.forwardButton);
         Subject = findViewById(R.id.Subject);
         attachmentButton = findViewById(R.id.attachmentButton);
 
@@ -193,32 +192,7 @@ public class DisplayMailActivity extends AppCompatActivity {
         }
 
         mailBodyContent.setText(Html.fromHtml(messageBody));
-
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    deleteMail();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        });
-
-        replyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToReplyActivity();
-            }
-        });
-
-        forwardButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toForwardMail();
-            }
-        });
+        
 
         attachmentButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -278,12 +252,10 @@ public class DisplayMailActivity extends AppCompatActivity {
     private void toForwardMail() {
         Intent showMail = new Intent(DisplayMailActivity.this, ForwardMailActivity.class);
 
-        showMail.putExtra("mailObject",  message);
-        showMail.putExtra("accestoken", ACCES_TOKEN);
-
         showMail.putExtra("AccessToken", accessToken);
         showMail.putExtra("userName", userName);
         showMail.putExtra("userEmail", userEmail);
+        showMail.putExtra("mailId", mailId);
 
         startActivity(showMail);
 
@@ -292,8 +264,12 @@ public class DisplayMailActivity extends AppCompatActivity {
     private void goToReplyActivity() {
         Intent showMail = new Intent(DisplayMailActivity.this, ReplyToMailActivity.class);
 
-            showMail.putExtra("mailObject",  message);
-            showMail.putExtra("accestoken", ACCES_TOKEN);
+            showMail.putExtra("AccessToken", accessToken);
+            showMail.putExtra("userName", userName);
+            showMail.putExtra("userEmail", userEmail);
+            showMail.putExtra("mailId", mailId);
+            showMail.putExtra("mailSubject", mailSubject);
+            showMail.putExtra("mailAddress", mailAddress);
 
         startActivity(showMail);
     }

@@ -35,7 +35,10 @@ public class ForwardMailActivity extends AppCompatActivity {
 
     final private String URL_FORWARD = "https://graph.microsoft.com/v1.0/me/messages/";
 
-    private String ACCES_TOKEN,ID;
+    private String accessToken;
+    private String userName;
+    private String userEmail;
+    private String mailId;
     private Message message;
     EditText TextMailAdress,TextMailSubject;
     Button ForwardButton;
@@ -46,10 +49,10 @@ public class ForwardMailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forward_mail);
 
-        Intent intent = getIntent();
-        message = (Message) intent.getSerializableExtra("mailObject");
-        ACCES_TOKEN = intent.getStringExtra("accestoken");
-        ID = message.getId();
+        accessToken = getIntent().getStringExtra("AccessToken");
+        userName = getIntent().getStringExtra("userName");
+        userEmail = getIntent().getStringExtra("userEmail");
+        mailId = getIntent().getStringExtra("mailId");
 
         TextMailAdress = findViewById(R.id.TextMailAdress);
         TextMailSubject = findViewById(R.id.TextMailSubject);
@@ -75,7 +78,7 @@ public class ForwardMailActivity extends AppCompatActivity {
 
         System.out.println(jsonObject.toString());
 
-        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_FORWARD + message.getId() + "/forward", jsonObject,
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_FORWARD + mailId + "/forward", jsonObject,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -93,7 +96,7 @@ public class ForwardMailActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + ACCES_TOKEN);
+                headers.put("Authorization", "Bearer " + accessToken);
 
                 return headers;
             }

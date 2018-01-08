@@ -115,7 +115,16 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
 
             RequestQueue queue = Volley.newRequestQueue(mContext);
 
+            ColorGenerator generator = ColorGenerator.MATERIAL;
 
+            int color2 = generator.getColor(message.getSender().getEmailAddress().getName().substring(0,1));
+
+            TextDrawable drawable1 = TextDrawable.builder()
+                    .buildRoundRect(message.getSender().getEmailAddress().getName().substring(0,1), color2, 3); // radius in px
+
+            holder.profilePicture.setImageDrawable(drawable1);
+
+/*
 
             String url = "http://i.imgur.com/7spzG.png";
             System.out.println("hit");
@@ -130,18 +139,13 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
                     new Response.ErrorListener() {
                         public void onErrorResponse(VolleyError error) {
                             System.out.println("hit2");
-                            ColorGenerator generator = ColorGenerator.MATERIAL;
 
-                            int color2 = generator.getColor(message.getSender().getEmailAddress().getName().substring(0,1));
-
-                            TextDrawable drawable1 = TextDrawable.builder()
-                                    .buildRoundRect(message.getSender().getEmailAddress().getName().substring(0,1), color2, 3); // radius in px
-
-                            holder.profilePicture.setImageDrawable(drawable1);
                         }
                     });
 
             queue.add(request);
+
+            */
 
             if (!isRead){
                 holder.subject.setTextColor(Color.CYAN);
@@ -151,6 +155,8 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
+
     }
 
 
