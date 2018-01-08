@@ -47,7 +47,6 @@ public class ForwardMailActivity extends AppCompatActivity {
     private String mailAddress;
     private Toolbar myToolbar;
     EditText TextMailAdress,TextMailSubject;
-    Button ForwardButton;
     RichEditor Editor;
 
     @Override
@@ -64,7 +63,6 @@ public class ForwardMailActivity extends AppCompatActivity {
 
         TextMailAdress = findViewById(R.id.TextMailAdress);
         TextMailSubject = findViewById(R.id.TextMailSubject);
-        ForwardButton = findViewById(R.id.ForwardButton);
         Editor = findViewById(R.id.editor);
 
         myToolbar = findViewById(R.id.toolbar);
@@ -74,16 +72,6 @@ public class ForwardMailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        ForwardButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    forwardMail();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
     }
 
     private void forwardMail() throws JSONException {
@@ -158,6 +146,15 @@ public class ForwardMailActivity extends AppCompatActivity {
                 intentListMails.putExtra("mailAddress", mailAddress);
 
                 startActivity(intentListMails);
+
+                return true;
+
+            case R.id.action_send:
+                try {
+                    forwardMail();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
                 return true;
 

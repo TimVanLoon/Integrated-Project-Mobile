@@ -48,9 +48,8 @@ public class ReplyToMailActivity extends AppCompatActivity {
     private String mailSubject;
     private String mailAddress;
     private Toolbar myToolbar;
-    EditText TextMailAdress,TextMailSubject;
-    Button ReplyButton;
-    RichEditor Editor;
+    private EditText TextMailAdress,TextMailSubject;
+    private RichEditor Editor;
 
 
 
@@ -66,8 +65,7 @@ public class ReplyToMailActivity extends AppCompatActivity {
         mailId = getIntent().getStringExtra("mailId");
         mailSubject = getIntent().getStringExtra("mailSubject");
         mailAddress = getIntent().getStringExtra("mailAddress");
-
-        ReplyButton = findViewById(R.id.ReplyButton);
+        
         Editor = findViewById(R.id.editor);
         TextMailAdress = findViewById(R.id.TextMailAdress);
         TextMailSubject = findViewById(R.id.TextMailSubject);
@@ -81,17 +79,6 @@ public class ReplyToMailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        ReplyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    ReplyToMail();
-                    finish();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            };
-        });
 
 
     }
@@ -165,6 +152,16 @@ public class ReplyToMailActivity extends AppCompatActivity {
                 intentListMails.putExtra("mailAddress", mailAddress);
 
                 startActivity(intentListMails);
+
+                return true;
+
+            case R.id.action_send:
+                try {
+                    ReplyToMail();
+                    finish();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
                 return true;
 
