@@ -7,6 +7,15 @@
     android:background="@color/darkGrey"
     tools:context="com.example.keiichi.project_mobile.Mail.DisplayMailActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/action_bar"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
     <TextView
         android:id="@+id/mailBody"
         android:layout_width="match_parent"
