@@ -42,7 +42,13 @@
         <activity
             android:name=".Mail.DisplayMailActivity"
 
+
             android:windowSoftInputMode="adjustPan" />
+
+            android:launchMode="singleInstance"
+            android:theme="@style/ContactsTheme"
+            android:windowSoftInputMode="adjustPan"/>
+
         <activity
             android:name=".Mail.SendMailActivity"
             android:label="Compose"

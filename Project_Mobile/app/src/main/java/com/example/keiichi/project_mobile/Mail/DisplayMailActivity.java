@@ -4,8 +4,12 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.method.ScrollingMovementMethod;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -48,8 +52,15 @@ public class DisplayMailActivity extends AppCompatActivity {
     private ImageButton deleteButton, replyButton, forwardButton;
     private TextView From, iconText, To,mailBodyContent,Subject;
     private ImageView icon_mail;
+    private Toolbar myToolbar;
     private String ACCES_TOKEN, messageBody;
+
     private Message messageObject;
+
+    private String accessToken;
+    private String userName;
+    private String userEmail;
+
     private com.example.keiichi.project_mobile.DAL.POJOs.Message message;
     private Button attachmentButton;
     private ArrayList<Attachment> attachments = new ArrayList<>();
@@ -59,6 +70,16 @@ public class DisplayMailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_mail);
 
+        myToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
+
+        // VOEG BACK BUTTON TOE AAN ACTION BAR
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        accessToken = getIntent().getStringExtra("AccessToken");
+        userName = getIntent().getStringExtra("userName");
+        userEmail = getIntent().getStringExtra("userEmail");
 
         Intent intent = getIntent();
         String mB = intent.getStringExtra("messageBody");
@@ -294,6 +315,46 @@ public class DisplayMailActivity extends AppCompatActivity {
         imgProfile.setImageResource(R.drawable.bg_circle);
         imgProfile.setColorFilter(Color.CYAN);
         iconText.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.display_navigation, menu);
+        MenuItem addItem = menu.findItem(R.id.action_send);
+
+
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+
+        switch(item.getItemId()){
+
+            // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
+            case android.R.id.home:
+                Intent intentListMails = new Intent(DisplayMailActivity.this, ListMailsActvity.class);
+                intentListMails.putExtra("AccessToken", accessToken);
+                intentListMails.putExtra("userName", userName);
+                intentListMails.putExtra("userEmail", userEmail);
+
+                startActivity(intentListMails);
+
+                return true;
+
+            case R.id.action_reply:
+
+                goToReplyActivity();
+
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 }

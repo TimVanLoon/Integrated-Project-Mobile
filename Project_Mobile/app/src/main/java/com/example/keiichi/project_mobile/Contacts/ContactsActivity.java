@@ -140,7 +140,9 @@ public class ContactsActivity extends AppCompatActivity {
         userEmail = getIntent().getStringExtra("userEmail");
         id = getIntent().getStringExtra("id");
 
+
         //getProfilePhotos();
+
 
         mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
 
@@ -199,6 +201,9 @@ public class ContactsActivity extends AppCompatActivity {
                 .buildRound(userName.substring(0, 1), color2); // radius in px
 
         userPicture.setImageDrawable(drawable);
+
+
+
 
     }
 
@@ -365,8 +370,6 @@ public class ContactsActivity extends AppCompatActivity {
 
 
 
-
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -374,6 +377,8 @@ public class ContactsActivity extends AppCompatActivity {
 
         contactAdapter = new ContactAdapter(this, contacts );
         contactsListView.setAdapter(contactAdapter);
+
+        getContactPhotos();
 
     }
 
@@ -511,64 +516,6 @@ public class ContactsActivity extends AppCompatActivity {
         }
     }
 
-    public void getProfilePhotos(Contact contact){
-        Log.d(TAG, "Starting volley request to graph");
-        System.out.println("auw papa");
-        Log.d(TAG, accessToken);
-
-    /* Make sure we have a token to send to graph */
-        if (accessToken == null) {
-            return;
-        }
-
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-        JSONObject parameters = new JSONObject();
-
-        try {
-            parameters.put("key", "value");
-        } catch (Exception e) {
-            Log.d(TAG, "Failed to put parameters: " + e.toString());
-        }
-
-
-        String PHOTO_URL = "/users/" + userEmail + "/contacts/" + contact.getId() + "/photo/$value";
-
-
-        StringRequest request = new StringRequest(Request.Method.GET, PHOTO_URL,
-                new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-            /* Successfully called graph, process data and send to UI */
-                System.out.println("Response fotos: " + response);
-
-                System.out.println("papa aaauwwwwwwwwwww: " +response.getClass().getName());
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, "Error: " + error.toString());
-                System.out.println("papa stop");
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + accessToken);
-                return headers;
-            }
-        };
-
-        Log.d(TAG, "Adding HTTP GET to Queue, Request: " + request.toString());
-
-        request.setRetryPolicy(new DefaultRetryPolicy(
-                3000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        queue.add(request);
-        }
 
 
     public void setFilter(List<Contact> contactFilterted) {
@@ -578,7 +525,7 @@ public class ContactsActivity extends AppCompatActivity {
     }
 
     public void getContactPhotos(){
-        Log.d(TAG, "Starting volley request to graph");
+        Log.d(TAG, "Starting volley request for pic");
         System.out.println("auw papa");
         Log.d(TAG, accessToken);
 
@@ -589,54 +536,57 @@ public class ContactsActivity extends AppCompatActivity {
 
         for (Contact contact : contacts) {
 
-            String contactId = contact.getId();
+            if(!contact.getEmailAddresses().isEmpty()){
 
-            RequestQueue queue = Volley.newRequestQueue(this);
-            JSONObject parameters = new JSONObject();
+                String contactEmail = contact.getEmailAddresses().get(0).getAddress();
 
-            try {
-                parameters.put("key", "value");
-            } catch (Exception e) {
-                Log.d(TAG, "Failed to put parameters: " + e.toString());
+                System.out.println("email test: " + contactEmail) ;
+
+                RequestQueue queue = Volley.newRequestQueue(this);
+                JSONObject parameters = new JSONObject();
+
+                try {
+                    parameters.put("key", "value");
+                } catch (Exception e) {
+                    Log.d(TAG, "Failed to put parameters: " + e.toString());
+                }
+
+
+                String PHOTO_URL = "https://graph.microsoft.com/v1.0/users/"+ contactEmail + "/photo/$value";
+
+
+                StringRequest request = new StringRequest(Request.Method.GET, PHOTO_URL,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                System.out.println("CONTACTTTTT: " + response);
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d(TAG, "Error: " + error.toString());
+                        System.out.println("papa stop");
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> headers = new HashMap<>();
+                        headers.put("Authorization", "Bearer " + accessToken);
+                        return headers;
+                    }
+                };
+
+                Log.d(TAG, "Adding HTTP GET to Queue, Request: " + request.toString());
+
+                request.setRetryPolicy(new DefaultRetryPolicy(
+                        3000,
+                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+                queue.add(request);
             }
 
 
-            String PHOTO_URL = "";
-
-
-            StringRequest request = new StringRequest(Request.Method.GET, PHOTO_URL,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-            /* Successfully called graph, process data and send to UI */
-                            System.out.println("Response fotos: " + response);
-
-                            System.out.println("papa aaauwwwwwwwwwww: " +response.getClass().getName());
-
-                        }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.d(TAG, "Error: " + error.toString());
-                    System.out.println("papa stop");
-                }
-            }) {
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<>();
-                    headers.put("Authorization", "Bearer " + accessToken);
-                    return headers;
-                }
-            };
-
-            Log.d(TAG, "Adding HTTP GET to Queue, Request: " + request.toString());
-
-            request.setRetryPolicy(new DefaultRetryPolicy(
-                    3000,
-                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-            queue.add(request);
         }
 
     }
