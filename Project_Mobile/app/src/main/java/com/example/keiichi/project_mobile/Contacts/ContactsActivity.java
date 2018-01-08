@@ -139,8 +139,7 @@ public class ContactsActivity extends AppCompatActivity {
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
         id = getIntent().getStringExtra("id");
-
-     
+        
 
         mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
 
@@ -363,7 +362,7 @@ public class ContactsActivity extends AppCompatActivity {
             contactsListView.setAdapter(contactAdapter);
 
 
-
+            getContactPhotos();
 
 
 
@@ -511,64 +510,6 @@ public class ContactsActivity extends AppCompatActivity {
         }
     }
 
-    public void getProfilePhotos(Contact contact){
-        Log.d(TAG, "Starting volley request to graph");
-        System.out.println("auw papa");
-        Log.d(TAG, accessToken);
-
-    /* Make sure we have a token to send to graph */
-        if (accessToken == null) {
-            return;
-        }
-
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-        JSONObject parameters = new JSONObject();
-
-        try {
-            parameters.put("key", "value");
-        } catch (Exception e) {
-            Log.d(TAG, "Failed to put parameters: " + e.toString());
-        }
-
-
-        String PHOTO_URL = "/users/" + userEmail + "/contacts/" + contact.getId() + "/photo/$value";
-
-
-        StringRequest request = new StringRequest(Request.Method.GET, PHOTO_URL,
-                new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-            /* Successfully called graph, process data and send to UI */
-                System.out.println("Response fotos: " + response);
-
-                System.out.println("papa aaauwwwwwwwwwww: " +response.getClass().getName());
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, "Error: " + error.toString());
-                System.out.println("papa stop");
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + accessToken);
-                return headers;
-            }
-        };
-
-        Log.d(TAG, "Adding HTTP GET to Queue, Request: " + request.toString());
-
-        request.setRetryPolicy(new DefaultRetryPolicy(
-                3000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        queue.add(request);
-        }
 
 
     public void setFilter(List<Contact> contactFilterted) {
@@ -601,18 +542,14 @@ public class ContactsActivity extends AppCompatActivity {
             }
 
 
-            String PHOTO_URL = "";
+            String PHOTO_URL = "https://graph.microsoft.com/beta/me/contacts/" + contactId + "/photo/$value";
 
 
             StringRequest request = new StringRequest(Request.Method.GET, PHOTO_URL,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-            /* Successfully called graph, process data and send to UI */
-                            System.out.println("Response fotos: " + response);
-
-                            System.out.println("papa aaauwwwwwwwwwww: " +response.getClass().getName());
-
+                            System.out.println("CONTACTTTTT: " + response);
                         }
                     }, new Response.ErrorListener() {
                 @Override
