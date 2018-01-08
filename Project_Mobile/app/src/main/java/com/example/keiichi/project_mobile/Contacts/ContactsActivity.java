@@ -519,7 +519,7 @@ public class ContactsActivity extends AppCompatActivity {
     }
 
     public void getContactPhotos(){
-        Log.d(TAG, "Starting volley request to graph");
+        Log.d(TAG, "Starting volley request for pic");
         System.out.println("auw papa");
         Log.d(TAG, accessToken);
 
