@@ -1,9 +1,10 @@
 package com.example.keiichi.project_mobile.DAL.POJOs;
 
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class DateTimeTimeZone {
+public class DateTimeTimeZone implements Serializable {
 
     private String dateTime;
     private String timeZone;

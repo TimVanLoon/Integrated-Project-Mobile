@@ -24,6 +24,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.example.keiichi.project_mobile.DAL.POJOs.Message;
 import com.example.keiichi.project_mobile.R;
 
@@ -97,14 +99,17 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
             holder.subject.setText(subject);
 
 
-            //eerste letter van 'from' tonen
-            holder.iconText.setText(email.substring(0, 1));
-            applyProfilePicture(holder);
-
             //Row state tot active zetten
             holder.itemView.setActivated(selectedItems.get(position, false));
 
-            //set onlcik events
+            ColorGenerator generator = ColorGenerator.MATERIAL;
+
+            int color2 = generator.getColor(message.getSender().getEmailAddress().getName().substring(0,1));
+
+            TextDrawable drawable1 = TextDrawable.builder()
+                    .buildRoundRect(message.getSender().getEmailAddress().getName().substring(0,1), color2, 3); // radius in px
+
+            holder.profilePicture.setImageDrawable(drawable1);
 
 
         } catch (ParseException e) {
@@ -159,7 +164,7 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         TextView from, subject, message, iconText, timestamp;
-        ImageView iconImp, imgProfile;
+        ImageView iconImp, imgProfile, profilePicture;
         LinearLayout messageContainer;
         RelativeLayout iconContainer, iconBack, iconFront;
 
@@ -168,14 +173,14 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
             from = view.findViewById(R.id.from);
             subject = view.findViewById(R.id.txt_primary);
             message = view.findViewById(R.id.txt_secondary);
-            iconText = view.findViewById(R.id.icon_text);
             timestamp = view.findViewById(R.id.timestamp);
             iconBack = view.findViewById(R.id.icon_back);
             iconFront = view.findViewById(R.id.icon_front);
             iconImp = view.findViewById(R.id.icon_star);
-            imgProfile = view.findViewById(R.id.icon_profile);
             messageContainer = view.findViewById(R.id.message_container);
             iconContainer = view.findViewById(R.id.icon_container);
+            profilePicture = view.findViewById(R.id.profilePicture);
+
 
         }
 

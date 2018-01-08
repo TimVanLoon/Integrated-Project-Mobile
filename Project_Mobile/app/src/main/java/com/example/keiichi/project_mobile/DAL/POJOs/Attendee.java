@@ -1,15 +1,16 @@
 package com.example.keiichi.project_mobile.DAL.POJOs;
 
 
-public class Attendee {
+import java.io.Serializable;
+
+public class Attendee implements Serializable {
 
     private String type;
     private ResponseStatus status;
     private EmailAddress emailAddress;
 
-    public Attendee(ResponseStatus status, String type, EmailAddress emailAddress) {
+    public Attendee(String type, EmailAddress emailAddress) {
 
-        this.status = status;
         this.type = type;
         this.emailAddress = emailAddress;
     }

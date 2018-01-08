@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -47,6 +48,7 @@ import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.microsoft.appcenter.ingestion.models.Model;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -65,7 +67,7 @@ public class ContactsActivity extends AppCompatActivity {
 
     BottomNavigationView mBottomNav;
 
-    Toolbar myToolbar;
+    private Toolbar myToolbar;
 
     private TextDrawable drawable;
     private ImageView profilePicture;
@@ -76,11 +78,12 @@ public class ContactsActivity extends AppCompatActivity {
 
     private SearchView searchView;
 
-    NavigationView contactNavigationView;
+    private NavigationView contactNavigationView;
 
-    ContactAdapter contactAdapter;
+    private ContactAdapter contactAdapter;
 
     private List<Contact> contacts = new ArrayList<>();
+    private List<Contact> countactsFiltered;
 
     private List<EmailAddress> emailList;
     private String accessToken;
@@ -125,6 +128,7 @@ public class ContactsActivity extends AppCompatActivity {
                 animation1.setDuration(4000);
                 view.startAnimation(animation1);
 
+
                 onContactClicked(position);
 
             }
@@ -141,9 +145,9 @@ public class ContactsActivity extends AppCompatActivity {
         mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
 
         contactNavigationView = (NavigationView) findViewById(R.id.contactNavigationView);
-        View hView =  contactNavigationView.getHeaderView(0);
-        TextView nav_userName = (TextView)hView.findViewById(R.id.userName);
-        TextView nav_userEmail = (TextView)hView.findViewById(R.id.userEmail);
+        View hView = contactNavigationView.getHeaderView(0);
+        TextView nav_userName = (TextView) hView.findViewById(R.id.userName);
+        TextView nav_userEmail = (TextView) hView.findViewById(R.id.userEmail);
         nav_userName.setText(userName);
         nav_userEmail.setText(userEmail);
 
@@ -157,7 +161,7 @@ public class ContactsActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-                switch(item.getItemId()) {
+                switch (item.getItemId()) {
 
                     case R.id.action_calendar:
                         Intent intentCalendar = new Intent(ContactsActivity.this, CalendarActivity.class);
@@ -184,32 +188,31 @@ public class ContactsActivity extends AppCompatActivity {
         });
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.contactNavigationView);
-        View navView =  navigationView.getHeaderView(0);
-        ImageView userPicture = (ImageView)navView.findViewById(R.id.userPicture);
+        View navView = navigationView.getHeaderView(0);
+        ImageView userPicture = (ImageView) navView.findViewById(R.id.userPicture);
 
         ColorGenerator generator = ColorGenerator.MATERIAL;
 
-        int color2 = generator.getColor(userName.substring(0,1));
+        int color2 = generator.getColor(userName.substring(0, 1));
 
         TextDrawable drawable = TextDrawable.builder()
-                .buildRound(userName.substring(0,1), color2); // radius in px
+                .buildRound(userName.substring(0, 1), color2); // radius in px
 
         userPicture.setImageDrawable(drawable);
 
     }
 
     @Override
-    protected void onPostCreate(Bundle savedInstanceState){
+    protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         actionBarDrawerToggle.syncState();
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.my_action_bar_items_contacts, menu);
         MenuItem addItem = menu.findItem(R.id.action_add);
-
 
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
@@ -233,6 +236,23 @@ public class ContactsActivity extends AppCompatActivity {
             }
 
         });
+
+        MenuItemCompat.setOnActionExpandListener(searchItem,
+                new MenuItemCompat.OnActionExpandListener() {
+                    @Override
+                    public boolean onMenuItemActionCollapse(MenuItem item) {
+// Do something when collapsed
+                        setFilter(contacts);
+                        return true; // Return true to collapse action view
+                    }
+
+                    @Override
+                    public boolean onMenuItemActionExpand(MenuItem item) {
+// Do something when expanded
+                        return true; // Return true to expand action view
+                    }
+                });
+
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -361,6 +381,7 @@ public class ContactsActivity extends AppCompatActivity {
 
 
         if(contacts.size() != 0){
+
             Contact contact = contacts.get(position);
 
             Intent showContactDetails = new Intent(ContactsActivity.this, ContactsDetailsActivity.class);
@@ -551,7 +572,11 @@ public class ContactsActivity extends AppCompatActivity {
         }
 
 
-
+    public void setFilter(List<Contact> contactFilterted) {
+        countactsFiltered = new ArrayList<>();
+        countactsFiltered.addAll(contactFilterted);
+        contactAdapter.notifyDataSetChanged();
+    }
 
 
 }

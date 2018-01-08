@@ -56,8 +56,11 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -71,7 +74,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
     SearchView searchView;
 
     private static final String LOG_TAG = CalendarActivity.class.getSimpleName();
-    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/events?$select=subject,body,bodyPreview,organizer,attendees,start,end,location";
+    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/events?$orderby=start/dateTime&$top=500&$count=true";
 
     private AgendaCalendarView mAgendaCalendarView;
     private String accessToken;
@@ -79,6 +82,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
     private String userEmail;
     private JSONArray eventsArray;
     private List<Event> events = new ArrayList<>();
+    List<CalendarEvent> eventList = new ArrayList<>();
     EventAdapter eventAdapter;
 
     /* UI & Debugging Variables */
@@ -88,6 +92,12 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
     ActionBarDrawerToggle actionBarDrawerToggle;
 
     NavigationView calendarNavigationView;
+
+
+    // minimum and maximum date of our calendar
+    // 2 month behind, one year ahead, example: March 2015 <-> May 2015 <-> May 2016
+    Calendar minDate = Calendar.getInstance();
+    Calendar maxDate = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,19 +112,11 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
 
-        // minimum and maximum date of our calendar
-        // 2 month behind, one year ahead, example: March 2015 <-> May 2015 <-> May 2016
-        Calendar minDate = Calendar.getInstance();
-        Calendar maxDate = Calendar.getInstance();
-
         minDate.add(Calendar.MONTH, -2);
         minDate.set(Calendar.DAY_OF_MONTH, 1);
         maxDate.add(Calendar.YEAR, 1);
 
-        List<CalendarEvent> eventList = new ArrayList<>();
-        mockList(eventList);
-
-        mAgendaCalendarView.init(eventList, minDate, maxDate, Locale.getDefault(), this);
+        callGraphAPI();
 
 
         calendarNavigationView = (NavigationView) findViewById(R.id.calendarNavigationView);
@@ -193,6 +195,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
                 .buildRound(userName.substring(0,1), color2); // radius in px
 
         userPicture.setImageDrawable(drawable);
+
     }
 
     @Override
@@ -266,21 +269,30 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
     }
 
 
-    private void mockList(List<CalendarEvent> eventList) {
-        Calendar startTime1 = Calendar.getInstance();
-        Calendar endTime1 = Calendar.getInstance();
-        endTime1.add(Calendar.MONTH, 1);
-        BaseCalendarEvent event1 = new BaseCalendarEvent("Thibault travels in Iceland", "A wonderful journey!", "Iceland",
-                ContextCompat.getColor(this, R.color.orange_dark), startTime1, endTime1, true);
-        eventList.add(event1);
+    private void mockList(List<CalendarEvent> eventList) throws ParseException {
 
-        Calendar startTime2 = Calendar.getInstance();
-        startTime2.add(Calendar.DAY_OF_YEAR, 1);
-        Calendar endTime2 = Calendar.getInstance();
-        endTime2.add(Calendar.DAY_OF_YEAR, 3);
-        BaseCalendarEvent event2 = new BaseCalendarEvent("Visit to Dalvík", "A beautiful small town", "Dalvík",
-                ContextCompat.getColor(this, R.color.yellow), startTime2, endTime2, true);
-        eventList.add(event2);
+        for (Event event : events) {
+            System.out.println("test events : " + event.getSubject());
+
+            Calendar startTime1 = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd");
+            startTime1.setTime(output.parse(event.getStart().getDateTime()));
+            Calendar endTime1 = Calendar.getInstance();
+            endTime1.setTime(output.parse(event.getEnd().getDateTime()));
+
+            ColorGenerator generator = ColorGenerator.MATERIAL;
+
+            // generate random color
+            int color1 = generator.getRandomColor();
+
+            BaseCalendarEvent event1 = new BaseCalendarEvent(event.getSubject(), event.getBodyPreview(), event.getLocation().getDisplayName(),
+                    color1, startTime1, endTime1, true);
+            eventList.add(event1);
+        }
+
+        mAgendaCalendarView.init(eventList, minDate, maxDate, Locale.getDefault(), this);
+
 
     }
 
@@ -300,6 +312,91 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault()));
         }
+    }
+
+
+    /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
+    private void callGraphAPI() {
+        Log.d(TAG, "Starting volley request to graph");
+        Log.d(TAG, accessToken);
+
+    /* Make sure we have a token to send to graph */
+        if (accessToken == null) {
+            return;
+        }
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        JSONObject parameters = new JSONObject();
+
+        try {
+            parameters.put("key", "value");
+        } catch (Exception e) {
+            Log.d(TAG, "Failed to put parameters: " + e.toString());
+        }
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, MSGRAPH_URL,
+                parameters, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+            /* Successfully called graph, process data and send to UI */
+                Log.d(TAG, "Response: " + response.toString());
+
+                try {
+                    updateGraphUI(response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d(TAG, "Error: " + error.toString());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+                return headers;
+            }
+        };
+
+        Log.d(TAG, "Adding HTTP GET to Queue, Request: " + request.toString());
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                3000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(request);
+    }
+
+    /* Sets the Graph response */
+    private void updateGraphUI(JSONObject graphResponse) throws JSONException {
+
+        // Test de response
+        JSONArray eventsJsonArray = null;
+
+        // Haal de events binnen
+        try {
+
+            JSONObject eventsList = graphResponse;
+
+            JSONArray eventArray = eventsList.getJSONArray("value");
+
+
+            // VUL POJO
+            Type listType = new TypeToken<List<Event>>() {
+            }.getType();
+
+            events = new Gson().fromJson(String.valueOf(eventArray), listType);
+
+            mockList(eventList);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

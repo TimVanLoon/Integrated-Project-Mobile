@@ -1,7 +1,9 @@
 package com.example.keiichi.project_mobile.DAL.POJOs;
 
 
-public class Message {
+import java.io.Serializable;
+
+public class Message implements Serializable {
 
     private Recipient[] bccRecipients;
     private ItemBody body;

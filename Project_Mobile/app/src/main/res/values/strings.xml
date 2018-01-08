@@ -39,6 +39,7 @@
     <string name="reminderTitle">Reminder</string>
     <string name="displayAsTitle">Show as</string>
     <string name="repeatTitle">Repeat</string>
+    <string name="attendeesTitle">Attendees</string>
 
     <string name="yourAgendas">Your agendas</string>
     <string name="agenda">Agenda</string>

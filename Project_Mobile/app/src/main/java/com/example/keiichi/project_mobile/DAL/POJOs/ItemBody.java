@@ -1,7 +1,9 @@
 package com.example.keiichi.project_mobile.DAL.POJOs;
 
 
-public class ItemBody {
+import java.io.Serializable;
+
+public class ItemBody implements Serializable {
 
     private String contentType;
     private String content;

@@ -16,6 +16,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -29,7 +31,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.Contacts.ContactAdapter;
+import com.example.keiichi.project_mobile.DAL.POJOs.Attendee;
 import com.example.keiichi.project_mobile.DAL.POJOs.DateTimeTimeZone;
+import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.DAL.POJOs.ItemBody;
 import com.example.keiichi.project_mobile.DAL.POJOs.Location;
@@ -40,13 +45,16 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.Timer;
@@ -65,7 +73,9 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private String [] DISPLAYASSPINNERLIST = {"Free", "Working elsewhere", "Tentative", "Busy", "Away"};
     private String [] REPEATSPINNERLIST = {"Never", "Each day", "Every sunday", "Every workday", "Day 31 of every month", "Ever last sunday", "Every 31st of december"};
 
-    final Calendar c = Calendar.getInstance();
+    private final Calendar c = Calendar.getInstance();
+    private List<Attendee> attendees;
+    private List<EmailAddress> emailList = new ArrayList<>();
     private int startingValue;
     private int dayOfMonth;
     private int month;
@@ -81,6 +91,8 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private String finalHourOfDay;
     private String finalMinuteOfHour;
     private String showAs;
+    private String fromAttendeesActivity;
+    private String firstTime;
     private boolean isCurrentDate;
     private boolean isCurrentTime;
     private Button moreDetailsButton;
@@ -93,12 +105,16 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private TextView displayAsTitle;
     private TextView repeatTitle;
     private TextView notesTitle;
+    private TextView attendeesTitle;
     private Spinner durationSpinner;
     private Spinner reminderSpinner;
     private Spinner displayAsSpinner;
     private Spinner repeatSpinner;
+    private ImageView plusAttendeeIcon;
+    private ListView attendeeList;
     private DatePickerDialog datePickerDialog;
     private Toolbar myToolbar;
+    private AttendeeAdapter attendeeAdapter;
 
 
     @Override
@@ -109,6 +125,9 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
+        emailList = (List<EmailAddress>)getIntent().getSerializableExtra("emailList");
+        fromAttendeesActivity = getIntent().getStringExtra("fromAttendeesActivity");
+
 
         // INITIALISEER ACTION BAR
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -127,13 +146,18 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         reminderTitle = (TextView) findViewById(R.id.reminderTitle);
         displayAsTitle = (TextView) findViewById(R.id.displayAsTitle);
         repeatTitle = (TextView) findViewById(R.id.repeatTitle);
+        attendeesTitle = (TextView) findViewById(R.id.attendeesTitle);
         notesTitle = (TextView) findViewById(R.id.notesTitle);
         durationSpinner = (Spinner) findViewById(R.id.durationSpinner);
         reminderSpinner = (Spinner) findViewById(R.id.reminderSpinner);
         repeatSpinner = (Spinner) findViewById(R.id.repeatSpinner);
         displayAsSpinner = (Spinner) findViewById(R.id.displayAsSpinner);
         moreDetailsButton = (Button) findViewById(R.id.moreDetailsButton);
+        plusAttendeeIcon = (ImageView) findViewById(R.id.plusAttendeeIcon);
+        attendeeList = (ListView) findViewById(R.id.attendeeList);
 
+        attendeesTitle.setVisibility(View.GONE);
+        plusAttendeeIcon.setVisibility(View.GONE);
         reminderSpinner.setVisibility(View.GONE);
         repeatSpinner.setVisibility(View.GONE);
         displayAsSpinner.setVisibility(View.GONE);
@@ -143,19 +167,54 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         reminderTitle.setVisibility(View.GONE);
         personalNotes.setVisibility(View.GONE);
 
+        plusAttendeeIcon.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
 
+                Intent intentAttendees = new Intent(AddEventActivity.this, AttendeeActivity.class);
+                intentAttendees.putExtra("AccessToken", accessToken);
+                intentAttendees.putExtra("userName", userName);
+                intentAttendees.putExtra("userEmail", userEmail);
+                intentAttendees.putExtra("emailList",(Serializable) emailList);
+                intentAttendees.putExtra("firstTime", firstTime);
+
+                startActivity(intentAttendees);
+            }
+        });
+
+        if(fromAttendeesActivity != null ){
+
+            makeExtraVisible();
+
+            attendees = new ArrayList<>();
+
+            if(!emailList.isEmpty()){
+
+                for (EmailAddress email : emailList) {
+
+                    firstTime = "no";
+
+                    String contactEmail = email.getAddress();
+                    String contactName = email.getName();
+                    String type = "optional";
+
+                    Attendee attendee = new Attendee(type, email);
+
+                    attendees.add(attendee);
+                }
+
+                attendeeAdapter = new AttendeeAdapter(this, attendees);
+                attendeeList.setAdapter(attendeeAdapter);
+
+            }
+
+
+
+        }
 
         moreDetailsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                moreDetailsButton.setVisibility(View.GONE);
-                reminderSpinner.setVisibility(View.VISIBLE);
-                repeatSpinner.setVisibility(View.VISIBLE);
-                displayAsSpinner.setVisibility(View.VISIBLE);
-                notesTitle.setVisibility(View.VISIBLE);
-                repeatTitle.setVisibility(View.VISIBLE);
-                displayAsTitle.setVisibility(View.VISIBLE);
-                reminderTitle.setVisibility(View.VISIBLE);
-                personalNotes.setVisibility(View.VISIBLE);
+
+                makeExtraVisible();
 
             }
         });
@@ -313,6 +372,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
                 intentCalendar.putExtra("AccessToken", accessToken);
                 intentCalendar.putExtra("userName", userName);
                 intentCalendar.putExtra("userEmail", userEmail);
+
                 startActivity(intentCalendar);
 
                 return true;
@@ -333,6 +393,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
                             intentCalendar.putExtra("AccessToken", accessToken);
                             intentCalendar.putExtra("userName", userName);
                             intentCalendar.putExtra("userEmail", userEmail);
+
                             startActivity(intentCalendar);
                         }
                     }, DELAY_TIME);
@@ -378,6 +439,8 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         event.setEnd(new DateTimeTimeZone(endTime, TimeZone.getDefault().getDisplayName()));
 
         event.setBody(new ItemBody("Text", personalNotes.getText().toString()));
+
+        event.setAttendees(attendees);
 
         event.setReminderMinutesBeforeStart(reminderMinutesBeforeStart);
         event.setReminderOn(true);
@@ -612,6 +675,21 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
 
 
         }
+    }
+
+    private void makeExtraVisible(){
+
+        moreDetailsButton.setVisibility(View.GONE);
+        reminderSpinner.setVisibility(View.VISIBLE);
+        repeatSpinner.setVisibility(View.VISIBLE);
+        displayAsSpinner.setVisibility(View.VISIBLE);
+        notesTitle.setVisibility(View.VISIBLE);
+        repeatTitle.setVisibility(View.VISIBLE);
+        displayAsTitle.setVisibility(View.VISIBLE);
+        reminderTitle.setVisibility(View.VISIBLE);
+        personalNotes.setVisibility(View.VISIBLE);
+        attendeesTitle.setVisibility(View.VISIBLE);
+        plusAttendeeIcon.setVisibility(View.VISIBLE);
     }
 
 

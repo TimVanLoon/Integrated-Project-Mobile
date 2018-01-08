@@ -1,7 +1,9 @@
 package com.example.keiichi.project_mobile.DAL.POJOs;
 
 
-public class SingleValueLegacyExtendedProperty {
+import java.io.Serializable;
+
+public class SingleValueLegacyExtendedProperty implements Serializable {
 
     private String id;
     private String value;

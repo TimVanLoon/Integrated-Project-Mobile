@@ -21,7 +21,8 @@
         <activity
             android:name=".Mail.ListMailsActvity"
             android:label="Inbox"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="adjustPan" />
 
         <!-- Intent filter to capture System Browser calling back to our app after Sign In -->
         <activity android:name="com.microsoft.identity.client.BrowserTabActivity">
@@ -48,7 +49,8 @@
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".Calendar.CalendarActivity"
-            android:label="My Calendar" />
+            android:label="My Calendar"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".Calendar.ListEventsActivity"
             android:label="My Events"
@@ -87,6 +89,12 @@
         <activity
             android:name=".Calendar.EditEventActivity"
             android:label="Edit Event"
+            android:theme="@style/ContactsTheme"
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".Mail.ReplyToMailActivity" />
+        <activity
+            android:name=".Calendar.AttendeeActivity"
+            android:label="Contacts"
             android:theme="@style/ContactsTheme"
             android:windowSoftInputMode="adjustResize"></activity>
     </application>
