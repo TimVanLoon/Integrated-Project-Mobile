@@ -139,7 +139,7 @@ public class ContactsActivity extends AppCompatActivity {
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
         id = getIntent().getStringExtra("id");
-        
+
 
         mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
 
@@ -530,7 +530,7 @@ public class ContactsActivity extends AppCompatActivity {
 
         for (Contact contact : contacts) {
 
-            String contactId = contact.getId();
+            String contactEmail = contact.getEmailAddresses().get(0).getAddress();
 
             RequestQueue queue = Volley.newRequestQueue(this);
             JSONObject parameters = new JSONObject();
@@ -542,7 +542,7 @@ public class ContactsActivity extends AppCompatActivity {
             }
 
 
-            String PHOTO_URL = "https://graph.microsoft.com/beta/me/contacts/" + contactId + "/photo/$value";
+            String PHOTO_URL = "https://graph.microsoft.com/v1.0/users/"+ contactEmail + "/photo/$value";
 
 
             StringRequest request = new StringRequest(Request.Method.GET, PHOTO_URL,
