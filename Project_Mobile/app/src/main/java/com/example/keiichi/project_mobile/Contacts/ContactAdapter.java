@@ -19,6 +19,12 @@ import android.widget.Filterable;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
+import com.android.volley.AuthFailureError;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.R;
 
@@ -29,6 +35,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterable {
 
@@ -36,6 +43,7 @@ public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterab
     private ImageView profilePicture;
     private final Context context;
     //private final JSONArray values;
+    private Contact contact;
 
     // Ongefilterde list
     private List<Contact> originalData = null;
@@ -43,12 +51,14 @@ public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterab
     private List<Contact> filteredData = null;
 
     private CustomFilter mFilter = new CustomFilter();
+    private String accessToken;
 
-    public ContactAdapter(Context context, List<Contact> values) {
+    public ContactAdapter(Context context, List<Contact> values, String accessToken) {
         this.context = context;
 
         this.originalData = values;
         this.filteredData = values;
+        this.accessToken = accessToken;
     }
 
 
@@ -77,7 +87,7 @@ public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterab
 
         profilePicture = (ImageView)rowView.findViewById(R.id.profilePicture);
 
-        Contact contact = getItem(position);
+        contact = getItem(position);
 
         name.setText(contact.getDisplayName());
 
@@ -89,6 +99,38 @@ public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterab
                 .buildRoundRect(contact.getDisplayName().substring(0,1), color2, 3); // radius in px
 
         profilePicture.setImageDrawable(drawable1);
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+        String url = "https://graph.microsoft.com/v1.0/users/" + contact.getEmailAddresses().get(0).getAddress() + "/photo/$value";
+        System.out.println("hit");
+        ImageRequest request = new ImageRequest(url,
+                new Response.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(Bitmap bitmap) {
+                        System.out.println("hit1");
+                        profilePicture.setImageBitmap(bitmap);
+                    }
+                }, 0, 0, null,
+                new Response.ErrorListener() {
+                    public void onErrorResponse(VolleyError error) {
+                        System.out.println("hit2");
+                        ColorGenerator generator = ColorGenerator.MATERIAL;
+                        int color2 = generator.getColor(contact.getDisplayName().substring(0, 1));
+                        TextDrawable drawable = TextDrawable.builder()
+                                .buildRound(contact.getDisplayName().substring(0, 1), color2); // radius in px
+                        profilePicture.setImageDrawable(drawable);
+                    }
+                }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+                System.out.println(accessToken);
+                return headers;
+            }
+        };
+
+        queue.add(request);
 
         return rowView;
 

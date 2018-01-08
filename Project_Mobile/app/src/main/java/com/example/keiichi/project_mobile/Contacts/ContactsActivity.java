@@ -2,8 +2,11 @@ package com.example.keiichi.project_mobile.Contacts;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
@@ -36,6 +39,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -54,8 +58,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -90,6 +97,9 @@ public class ContactsActivity extends AppCompatActivity {
     private String userName;
     private String userEmail;
     private String id;
+
+    private Contact testContact;
+    private ImageView mImageView;
 
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts?$orderBy=displayName&$top=500&$count=true";
     final static String MSGRAPH_URL_FOTO = "https://graph.microsoft.com/beta/me/contacts/";
@@ -188,17 +198,32 @@ public class ContactsActivity extends AppCompatActivity {
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.contactNavigationView);
         View navView = navigationView.getHeaderView(0);
-        ImageView userPicture = (ImageView) navView.findViewById(R.id.userPicture);
+        mImageView = (ImageView) navView.findViewById(R.id.userPicture);
 
-        ColorGenerator generator = ColorGenerator.MATERIAL;
+        RequestQueue queue = Volley.newRequestQueue(this);
 
-        int color2 = generator.getColor(userName.substring(0, 1));
+        String url = "http://i.imgur.com/7spzG.png";
+        System.out.println("hit");
+        ImageRequest request = new ImageRequest(url,
+                new Response.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(Bitmap bitmap) {
+                        System.out.println("hit1");
+                        mImageView.setImageBitmap(bitmap);
+                    }
+                }, 0, 0, null,
+                new Response.ErrorListener() {
+                    public void onErrorResponse(VolleyError error) {
+                        System.out.println("hit2");
+                        ColorGenerator generator = ColorGenerator.MATERIAL;
+                        int color2 = generator.getColor(userName.substring(0, 1));
+                        TextDrawable drawable = TextDrawable.builder()
+                                .buildRound(userName.substring(0, 1), color2); // radius in px
+                        mImageView.setImageDrawable(drawable);
+                    }
+                });
 
-        TextDrawable drawable = TextDrawable.builder()
-                .buildRound(userName.substring(0, 1), color2); // radius in px
-
-        userPicture.setImageDrawable(drawable);
-
+        queue.add(request);
     }
 
     @Override
@@ -257,10 +282,9 @@ public class ContactsActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
+    public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch(item.getItemId()){
-
+        switch (item.getItemId()) {
 
 
             case R.id.action_add:
@@ -356,13 +380,9 @@ public class ContactsActivity extends AppCompatActivity {
             contacts = new Gson().fromJson(String.valueOf(contactArray), listType);
 
 
-
-
-            contactAdapter = new ContactAdapter(this, contacts);
+            contactAdapter = new ContactAdapter(this, contacts, accessToken);
             contactsListView.setAdapter(contactAdapter);
 
-
-            getContactPhotos();
 
 
 
@@ -371,15 +391,15 @@ public class ContactsActivity extends AppCompatActivity {
         }
         assert contactsJsonArray != null;
 
-        contactAdapter = new ContactAdapter(this, contacts );
+        contactAdapter = new ContactAdapter(this, contacts, accessToken);
         contactsListView.setAdapter(contactAdapter);
 
     }
 
-    private void onContactClicked(int position){
+    private void onContactClicked(int position) {
 
 
-        if(contacts.size() != 0){
+        if (contacts.size() != 0) {
 
             Contact contact = contacts.get(position);
 
@@ -388,114 +408,110 @@ public class ContactsActivity extends AppCompatActivity {
             showContactDetails.putExtra("displayName", contact.getDisplayName());
             showContactDetails.putExtra("id", contact.getId());
 
-            if(contact.getMobilePhone() == null){
+            if (contact.getMobilePhone() == null) {
                 showContactDetails.putExtra("userPhone", "");
-            }
-            else {
+            } else {
                 showContactDetails.putExtra("userPhone", contact.getMobilePhone());
             }
 
-            if(contact.getEmailAddresses() != null){
-                showContactDetails.putExtra("emailList",(Serializable) contact.getEmailAddresses());
+            if (contact.getEmailAddresses() != null) {
+                showContactDetails.putExtra("emailList", (Serializable) contact.getEmailAddresses());
             }
 
-            if(contact.getPersonalNotes() != null){
+            if (contact.getPersonalNotes() != null) {
                 showContactDetails.putExtra("notes", contact.getPersonalNotes());
-            }
-            else {
+            } else {
                 showContactDetails.putExtra("notes", "");
             }
 
-            if(contact.getSpouseName() != null){
+            if (contact.getSpouseName() != null) {
                 showContactDetails.putExtra("spouse", contact.getSpouseName());
-            }
-            else {
+            } else {
                 showContactDetails.putExtra("spouse", "");
             }
 
-            if(contact.getNickName() != null){
+            if (contact.getNickName() != null) {
                 showContactDetails.putExtra("nickname", contact.getNickName());
-            }
-            else {
+            } else {
                 showContactDetails.putExtra("nickname", "");
             }
 
-            if(contact.getJobTitle() != null){
+            if (contact.getJobTitle() != null) {
                 showContactDetails.putExtra("job", contact.getJobTitle());
             } else {
                 showContactDetails.putExtra("job", "");
             }
 
-            if(contact.getDepartment() != null){
+            if (contact.getDepartment() != null) {
                 showContactDetails.putExtra("department", contact.getDepartment());
             } else {
                 showContactDetails.putExtra("department", "");
             }
 
-            if(contact.getCompanyName() != null){
+            if (contact.getCompanyName() != null) {
                 showContactDetails.putExtra("company", contact.getCompanyName());
             } else {
                 showContactDetails.putExtra("company", "");
             }
 
-            if(contact.getOfficeLocation() != null) {
+            if (contact.getOfficeLocation() != null) {
                 showContactDetails.putExtra("office", contact.getOfficeLocation());
             } else {
                 showContactDetails.putExtra("office", "");
             }
 
-            if(contact.getManager() != null){
+            if (contact.getManager() != null) {
                 showContactDetails.putExtra("manager", contact.getManager());
             } else {
                 showContactDetails.putExtra("manager", "");
             }
 
-            if(contact.getAssistantName() != null){
+            if (contact.getAssistantName() != null) {
                 showContactDetails.putExtra("assistant", contact.getAssistantName());
             } else {
                 showContactDetails.putExtra("assistant", "");
             }
 
-            if(contact.getHomeAddress() != null){
-                showContactDetails.putExtra("street",contact.getHomeAddress().getStreet());
-                showContactDetails.putExtra("postalcode",contact.getHomeAddress().getPostalCode());
-                showContactDetails.putExtra("city",contact.getHomeAddress().getCity());
-                showContactDetails.putExtra("state",contact.getHomeAddress().getState());
-                showContactDetails.putExtra("country",contact.getHomeAddress().getCountryOrRegion());
+            if (contact.getHomeAddress() != null) {
+                showContactDetails.putExtra("street", contact.getHomeAddress().getStreet());
+                showContactDetails.putExtra("postalcode", contact.getHomeAddress().getPostalCode());
+                showContactDetails.putExtra("city", contact.getHomeAddress().getCity());
+                showContactDetails.putExtra("state", contact.getHomeAddress().getState());
+                showContactDetails.putExtra("country", contact.getHomeAddress().getCountryOrRegion());
             } else {
                 showContactDetails.putExtra("street", "");
-                showContactDetails.putExtra("postalcode","");
-                showContactDetails.putExtra("city","");
+                showContactDetails.putExtra("postalcode", "");
+                showContactDetails.putExtra("city", "");
                 showContactDetails.putExtra("state", "");
                 showContactDetails.putExtra("country", "");
             }
 
-            if(contact.getHomeAddress().getStreet() == null){
+            if (contact.getHomeAddress().getStreet() == null) {
                 showContactDetails.putExtra("street", "");
             }
 
-            if(contact.getHomeAddress().getPostalCode() == null){
+            if (contact.getHomeAddress().getPostalCode() == null) {
                 showContactDetails.putExtra("postalcode", "");
             }
 
-            if(contact.getHomeAddress().getCity() == null){
+            if (contact.getHomeAddress().getCity() == null) {
                 showContactDetails.putExtra("city", "");
             }
 
-            if(contact.getHomeAddress().getState() == null){
+            if (contact.getHomeAddress().getState() == null) {
                 showContactDetails.putExtra("state", "");
             }
 
-            if(contact.getHomeAddress().getCountryOrRegion() == null){
+            if (contact.getHomeAddress().getCountryOrRegion() == null) {
                 showContactDetails.putExtra("country", "");
             }
 
-            if(contact.getGivenName() != null){
-                showContactDetails.putExtra("firstname",contact.getGivenName());
+            if (contact.getGivenName() != null) {
+                showContactDetails.putExtra("firstname", contact.getGivenName());
             }
 
-            if(contact.getSurname() != null){
-                showContactDetails.putExtra("lastname",contact.getSurname());
+            if (contact.getSurname() != null) {
+                showContactDetails.putExtra("lastname", contact.getSurname());
             }
 
             showContactDetails.putExtra("userEmail", userEmail);
@@ -511,72 +527,12 @@ public class ContactsActivity extends AppCompatActivity {
     }
 
 
-
     public void setFilter(List<Contact> contactFilterted) {
         countactsFiltered = new ArrayList<>();
         countactsFiltered.addAll(contactFilterted);
         contactAdapter.notifyDataSetChanged();
     }
 
-    public void getContactPhotos(){
-        Log.d(TAG, "Starting volley request for pic");
-        System.out.println("auw papa");
-        Log.d(TAG, accessToken);
-
-    /* Make sure we have a token to send to graph */
-        if (accessToken == null) {
-            return;
-        }
-
-        for (Contact contact : contacts) {
-
-            String contactEmail = contact.getEmailAddresses().get(0).getAddress();
-
-            RequestQueue queue = Volley.newRequestQueue(this);
-            JSONObject parameters = new JSONObject();
-
-            try {
-                parameters.put("key", "value");
-            } catch (Exception e) {
-                Log.d(TAG, "Failed to put parameters: " + e.toString());
-            }
-
-
-            String PHOTO_URL = "https://graph.microsoft.com/v1.0/users/"+ contactEmail + "/photo/$value";
-
-
-            StringRequest request = new StringRequest(Request.Method.GET, PHOTO_URL,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            System.out.println("CONTACTTTTT: " + response);
-                        }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.d(TAG, "Error: " + error.toString());
-                    System.out.println("papa stop");
-                }
-            }) {
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<>();
-                    headers.put("Authorization", "Bearer " + accessToken);
-                    return headers;
-                }
-            };
-
-            Log.d(TAG, "Adding HTTP GET to Queue, Request: " + request.toString());
-
-            request.setRetryPolicy(new DefaultRetryPolicy(
-                    3000,
-                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-            queue.add(request);
-        }
-
-    }
 
 
 }
