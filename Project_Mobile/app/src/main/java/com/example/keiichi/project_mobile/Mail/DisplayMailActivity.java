@@ -55,13 +55,13 @@ public class DisplayMailActivity extends AppCompatActivity {
         mailBodyContent = findViewById(R.id.mailBody);
         mailBodyContent.setMovementMethod(new ScrollingMovementMethod());
         Intent intent = getIntent();
-        String messageBody = intent.getStringExtra("messageBody");
+        String mB = intent.getStringExtra("messageBody");
+        String messageBody = mB.substring(mB.indexOf('\n')+1);
         ACCES_TOKEN = intent.getStringExtra("accestoken");
         deleteButton = findViewById(R.id.ButtonDelete);
 
 
         mailBodyContent.setText(Html.fromHtml(messageBody));
-
 
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,6 +76,8 @@ public class DisplayMailActivity extends AppCompatActivity {
         });
 
     }
+
+
 
     private void deleteMail(JSONObject mail) throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
