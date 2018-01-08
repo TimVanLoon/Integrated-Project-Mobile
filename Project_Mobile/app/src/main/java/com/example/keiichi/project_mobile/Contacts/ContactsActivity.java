@@ -140,7 +140,7 @@ public class ContactsActivity extends AppCompatActivity {
         userEmail = getIntent().getStringExtra("userEmail");
         id = getIntent().getStringExtra("id");
 
-        getProfilePhotos();
+        //getProfilePhotos();
 
         mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
 
