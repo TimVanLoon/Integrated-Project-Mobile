@@ -96,7 +96,8 @@
             android:name=".Calendar.AttendeeActivity"
             android:label="Contacts"
             android:theme="@style/ContactsTheme"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".Mail.ForwardMailActivity"></activity>
     </application>
 
 </manifest>

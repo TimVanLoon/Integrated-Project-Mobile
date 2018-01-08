@@ -27,7 +27,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,7 +37,7 @@ public class DisplayMailActivity extends AppCompatActivity {
 
     final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
     private JSONObject mail, body;
-    private ImageButton deleteButton, replyButton;
+    private ImageButton deleteButton, replyButton, forwardButton;
     private TextView From, iconText, To,mailBodyContent,Subject;
     private ImageView icon_mail;
     private String ACCES_TOKEN, messageBody;
@@ -64,6 +63,7 @@ public class DisplayMailActivity extends AppCompatActivity {
         iconText = findViewById(R.id.icon_txt);
         icon_mail = findViewById(R.id.icon_profileMail);
         replyButton = findViewById(R.id.ReplyButton);
+        forwardButton = findViewById(R.id.forwardButton);
         Subject = findViewById(R.id.Subject);
 
 
@@ -111,7 +111,24 @@ public class DisplayMailActivity extends AppCompatActivity {
             }
         });
 
+        forwardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toForwardMail();
+            }
+        });
 
+
+
+    }
+
+    private void toForwardMail() {
+        Intent showMail = new Intent(DisplayMailActivity.this, ForwardMailActivity.class);
+
+        showMail.putExtra("mailObject",  message);
+        showMail.putExtra("accestoken", ACCES_TOKEN);
+
+        startActivity(showMail);
 
     }
 
