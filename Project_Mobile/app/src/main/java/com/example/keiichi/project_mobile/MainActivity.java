@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             "https://graph.microsoft.com/Contacts.ReadWrite",
             "https://graph.microsoft.com/Calendars.ReadWrite",
             "https://graph.microsoft.com/User.ReadBasic.All"
-    };
+         };
 
     /* Azure AD Variables */
     private PublicClientApplication sampleApp;

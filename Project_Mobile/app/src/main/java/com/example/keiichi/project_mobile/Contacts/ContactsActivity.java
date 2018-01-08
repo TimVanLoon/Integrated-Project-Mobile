@@ -151,6 +151,9 @@ public class ContactsActivity extends AppCompatActivity {
         id = getIntent().getStringExtra("id");
 
 
+        //getProfilePhotos();
+
+
         mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
 
         contactNavigationView = (NavigationView) findViewById(R.id.contactNavigationView);
@@ -224,6 +227,7 @@ public class ContactsActivity extends AppCompatActivity {
                 });
 
         queue.add(request);
+
     }
 
     @Override
@@ -393,7 +397,7 @@ public class ContactsActivity extends AppCompatActivity {
 
         contactAdapter = new ContactAdapter(this, contacts, accessToken);
         contactsListView.setAdapter(contactAdapter);
-
+        
     }
 
     private void onContactClicked(int position) {
@@ -532,7 +536,5 @@ public class ContactsActivity extends AppCompatActivity {
         countactsFiltered.addAll(contactFilterted);
         contactAdapter.notifyDataSetChanged();
     }
-
-
 
 }
