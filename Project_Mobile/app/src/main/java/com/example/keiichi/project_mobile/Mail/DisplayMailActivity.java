@@ -192,7 +192,7 @@ public class DisplayMailActivity extends AppCompatActivity {
         }
 
         mailBodyContent.setText(Html.fromHtml(messageBody));
-        
+
 
         attachmentButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -256,6 +256,8 @@ public class DisplayMailActivity extends AppCompatActivity {
         showMail.putExtra("userName", userName);
         showMail.putExtra("userEmail", userEmail);
         showMail.putExtra("mailId", mailId);
+        showMail.putExtra("mailSubject", mailSubject);
+        showMail.putExtra("mailAddress", mailAddress);
 
         startActivity(showMail);
 

@@ -4,7 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,7 +47,7 @@ public class ReplyToMailActivity extends AppCompatActivity {
     private String mailId;
     private String mailSubject;
     private String mailAddress;
-    private Message message;
+    private Toolbar myToolbar;
     EditText TextMailAdress,TextMailSubject;
     Button ReplyButton;
     RichEditor Editor;
@@ -69,6 +73,13 @@ public class ReplyToMailActivity extends AppCompatActivity {
         TextMailSubject = findViewById(R.id.TextMailSubject);
         TextMailAdress.setText(mailAddress);
         TextMailSubject.setText("RE: " + mailSubject);
+
+        myToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
+
+        // VOEG BACK BUTTON TOE AAN ACTION BAR
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         ReplyButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,5 +136,44 @@ public class ReplyToMailActivity extends AppCompatActivity {
         JsonObjectBuilder factory = Json.createObjectBuilder()
                 .add("comment", Html.fromHtml(Editor.getHtml()).toString());
         return factory.build().toString();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.send_navigation, menu);
+        MenuItem addItem = menu.findItem(R.id.action_send);
+
+
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+
+        switch(item.getItemId()){
+
+            // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
+            case android.R.id.home:
+                Intent intentListMails = new Intent(ReplyToMailActivity.this, DisplayMailActivity.class);
+                intentListMails.putExtra("AccessToken", accessToken);
+                intentListMails.putExtra("userName", userName);
+                intentListMails.putExtra("userEmail", userEmail);
+                intentListMails.putExtra("mailId", mailId);
+                intentListMails.putExtra("mailSubject", mailSubject);
+                intentListMails.putExtra("mailAddress", mailAddress);
+
+                startActivity(intentListMails);
+
+                return true;
+
+
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

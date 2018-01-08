@@ -3,7 +3,11 @@ package com.example.keiichi.project_mobile.Mail;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,7 +43,9 @@ public class ForwardMailActivity extends AppCompatActivity {
     private String userName;
     private String userEmail;
     private String mailId;
-    private Message message;
+    private String mailSubject;
+    private String mailAddress;
+    private Toolbar myToolbar;
     EditText TextMailAdress,TextMailSubject;
     Button ForwardButton;
     RichEditor Editor;
@@ -53,11 +59,20 @@ public class ForwardMailActivity extends AppCompatActivity {
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
         mailId = getIntent().getStringExtra("mailId");
+        mailSubject = getIntent().getStringExtra("mailSubject");
+        mailAddress = getIntent().getStringExtra("mailAddress");
 
         TextMailAdress = findViewById(R.id.TextMailAdress);
         TextMailSubject = findViewById(R.id.TextMailSubject);
         ForwardButton = findViewById(R.id.ForwardButton);
         Editor = findViewById(R.id.editor);
+
+        myToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
+
+        // VOEG BACK BUTTON TOE AAN ACTION BAR
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         ForwardButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,5 +129,44 @@ public class ForwardMailActivity extends AppCompatActivity {
                         add("emailAddress", Json.createObjectBuilder().
                                 add("address", TextMailAdress.getText().toString()))));
         return factory.build().toString();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.send_navigation, menu);
+        MenuItem addItem = menu.findItem(R.id.action_send);
+
+
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+
+        switch(item.getItemId()){
+
+            // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
+            case android.R.id.home:
+                Intent intentListMails = new Intent(ForwardMailActivity.this, DisplayMailActivity.class);
+                intentListMails.putExtra("AccessToken", accessToken);
+                intentListMails.putExtra("userName", userName);
+                intentListMails.putExtra("userEmail", userEmail);
+                intentListMails.putExtra("mailId", mailId);
+                intentListMails.putExtra("mailSubject", mailSubject);
+                intentListMails.putExtra("mailAddress", mailAddress);
+
+                startActivity(intentListMails);
+
+                return true;
+
+
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
