@@ -7,6 +7,12 @@
         app:showAsAction="always"
         />
 
+    <item android:id="@+id/action_forward"
+        android:title="@string/edit"
+        android:icon="@drawable/ic_forward"
+        app:showAsAction="always"
+        />
+
     <item android:id="@+id/action_reply"
         android:title="@string/edit"
         android:icon="@drawable/ic_reply"

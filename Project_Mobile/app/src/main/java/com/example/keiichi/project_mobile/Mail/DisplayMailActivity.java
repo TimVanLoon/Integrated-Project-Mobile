@@ -1,8 +1,10 @@
 package com.example.keiichi.project_mobile.Mail;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -16,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amulyakhare.textdrawable.TextDrawable;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -25,14 +28,19 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
+import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
 import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
@@ -49,7 +57,9 @@ public class DisplayMailActivity extends AppCompatActivity {
     private String accessToken;
     private String userName;
     private String userEmail;
+    private String mailId;
     private com.example.keiichi.project_mobile.DAL.POJOs.Message message;
+    private  AlertDialog.Builder builder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +76,7 @@ public class DisplayMailActivity extends AppCompatActivity {
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
+        mailId = getIntent().getStringExtra("mailId");
 
         Intent intent = getIntent();
         String mB = intent.getStringExtra("messageBody");
@@ -84,6 +95,50 @@ public class DisplayMailActivity extends AppCompatActivity {
         replyButton = findViewById(R.id.ReplyButton);
         forwardButton = findViewById(R.id.forwardButton);
         Subject = findViewById(R.id.Subject);
+
+        builder = new AlertDialog.Builder(DisplayMailActivity.this);
+        builder.setCancelable(true);
+        builder.setTitle("Delete Mail");
+        builder.setMessage("Are you sure you want to delete this mail?");
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                try {
+                    deleteMail();
+
+                    int DELAY_TIME=2000;
+
+                    new Timer().schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            //this code will run after the delay time which is 2 seconds.
+                            Intent intentListMail = new Intent(DisplayMailActivity.this, ListMailsActvity.class);
+
+                            intentListMail.putExtra("AccessToken", accessToken);
+                            intentListMail.putExtra("userName", userName);
+                            intentListMail.putExtra("userEmail", userEmail);
+
+                            startActivity(intentListMail);
+
+
+                        }
+                    }, DELAY_TIME);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
 
 
 
@@ -113,7 +168,7 @@ public class DisplayMailActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 try {
-                    deleteMail(mail);
+                    deleteMail();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -145,6 +200,10 @@ public class DisplayMailActivity extends AppCompatActivity {
         showMail.putExtra("mailObject",  message);
         showMail.putExtra("accestoken", ACCES_TOKEN);
 
+        showMail.putExtra("AccessToken", accessToken);
+        showMail.putExtra("userName", userName);
+        showMail.putExtra("userEmail", userEmail);
+
         startActivity(showMail);
 
     }
@@ -159,18 +218,18 @@ public class DisplayMailActivity extends AppCompatActivity {
     }
 
 
-    private void deleteMail(JSONObject mail) throws JSONException {
+    // PATCH REQUEST VOOR DELETEN CONTACTPERSOON
+    private void deleteMail() throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
 
+        String postAddress = URL_DELETE + mailId;
 
-        StringRequest objectRequest = new StringRequest(Request.Method.DELETE, URL_DELETE + mail.getString("id") ,
+        StringRequest stringRequest = new StringRequest(Request.Method.DELETE, postAddress,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         Toast.makeText(getApplicationContext(), "Mail deleted!", Toast.LENGTH_SHORT).show();
-                        System.out.println(response);
                     }
-
 
                 }, new Response.ErrorListener() {
             @Override
@@ -182,14 +241,15 @@ public class DisplayMailActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + ACCES_TOKEN);
+                headers.put("Authorization", "Bearer " + accessToken);
+                headers.put("Content-Type", "application/json; charset=utf-8");
 
                 return headers;
             }
 
         };
 
-        queue.add(objectRequest);
+        queue.add(stringRequest);
 
     }
 
@@ -273,6 +333,18 @@ public class DisplayMailActivity extends AppCompatActivity {
             case R.id.action_reply:
 
                 goToReplyActivity();
+
+                return true;
+
+            case R.id.action_delete:
+
+                builder.show();
+
+                return true;
+
+            case R.id.action_forward:
+
+                toForwardMail();
 
                 return true;
 
