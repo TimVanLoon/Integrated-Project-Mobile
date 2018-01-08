@@ -366,4 +366,8 @@ public class Contact implements Serializable {
         this.emailAddresses = emailAddresses;
     }
 
+    public void getImage()
+    {
+
+    }
 }

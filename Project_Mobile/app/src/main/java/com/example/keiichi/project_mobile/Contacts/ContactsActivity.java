@@ -511,7 +511,7 @@ public class ContactsActivity extends AppCompatActivity {
         }
     }
 
-    public void getProfilePhotos(){
+    public void getProfilePhotos(Contact contact){
         Log.d(TAG, "Starting volley request to graph");
         System.out.println("auw papa");
         Log.d(TAG, accessToken);
@@ -531,9 +531,8 @@ public class ContactsActivity extends AppCompatActivity {
             Log.d(TAG, "Failed to put parameters: " + e.toString());
         }
 
-        String contactId = id;
 
-        String PHOTO_URL = "https://graph.microsoft.com/beta/me/photo/$value";
+        String PHOTO_URL = "/users/" + userEmail + "/contacts/" + contact.getId() + "/photo/$value";
 
 
         StringRequest request = new StringRequest(Request.Method.GET, PHOTO_URL,
