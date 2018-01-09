@@ -128,6 +128,7 @@
             <EditText
                 android:id="@+id/timeEvent"
                 android:layout_height="37dp"
+                android:layout_width="105dp"
                 android:hint="@string/nameInput"
                 android:inputType="textCapSentences|textPersonName"
                 android:textColor="@color/black"
@@ -138,8 +139,7 @@
                 android:background="@drawable/edit_text_style"
                 android:layout_marginLeft="0dp"
                 android:layout_marginRight="15dp"
-                android:layout_marginBottom="20dp"
-                android:layout_width="100dp">
+                android:layout_marginBottom="20dp">
             </EditText>
 
         </LinearLayout>

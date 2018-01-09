@@ -255,9 +255,9 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         displayAsSpinner.setSelection(startingValue);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<String> adapterRepeat = new ArrayAdapter<String>(this, R.layout.spinner_layout, REPEATSPINNERLIST);
+        ArrayAdapter<String> adapterRepeat = new ArrayAdapter<String>(this,R.layout.spinner_layout, REPEATSPINNERLIST);
         // Specify the layout to use when the list of choices appears
-        adapterDisplayAs.setDropDownViewResource(android.R.layout.simple_expandable_list_item_1);
+        adapterRepeat.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         repeatSpinner.setAdapter(adapterRepeat);
         startingValue = adapterRepeat.getPosition("Never");
