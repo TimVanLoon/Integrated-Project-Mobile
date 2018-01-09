@@ -112,4 +112,6 @@
     <string name="eventWhen">When: </string>
     <string name="eventWhere">Where: </string>
 
+    <string name="toTextView">To:</string>
+
 </resources>

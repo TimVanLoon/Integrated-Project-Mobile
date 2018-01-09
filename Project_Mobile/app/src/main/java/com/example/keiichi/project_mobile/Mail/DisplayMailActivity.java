@@ -63,10 +63,12 @@ public class DisplayMailActivity extends AppCompatActivity {
 
     final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
     private JSONObject mail, body;
-    private TextView From, iconText, To,mailBodyContent,Subject;
+    private TextView From;
     private TextView mailSubjectTextView;
     private TextView senderTimeTextView;
     private TextView senderNameTextView;
+    private TextView receiverNameTextView;
+    private TextView receiverMailTextView;
     private ImageView icon_mail;
     private ImageView profilePicture;
     private Toolbar myToolbar;
@@ -80,11 +82,12 @@ public class DisplayMailActivity extends AppCompatActivity {
     private String mailId;
     private String senderName;
     private String timeSent;
+    private String receiverName;
+    private String receiverMail;
     private  AlertDialog.Builder builder;
 
 
     private com.example.keiichi.project_mobile.DAL.POJOs.Message message;
-    private Button attachmentButton;
     private ArrayList<Attachment> attachments = new ArrayList<>();
 
 
@@ -108,6 +111,8 @@ public class DisplayMailActivity extends AppCompatActivity {
         mailAddress = getIntent().getStringExtra("mailAddress");
         senderName = getIntent().getStringExtra("senderName");
         timeSent = getIntent().getStringExtra("timeSent");
+        receiverName = getIntent().getStringExtra("receiverName");
+        receiverMail = getIntent().getStringExtra("receiverMail");
 
         Intent intent = getIntent();
         String mB = intent.getStringExtra("messageBody");
@@ -115,19 +120,13 @@ public class DisplayMailActivity extends AppCompatActivity {
         ACCES_TOKEN = intent.getStringExtra("accestoken");
         message = (com.example.keiichi.project_mobile.DAL.POJOs.Message) intent.getSerializableExtra("mailObject");
 
-
-        mailBodyContent = findViewById(R.id.mailBody);
-        mailBodyContent.setMovementMethod(new ScrollingMovementMethod());
         From = findViewById(R.id.from);
-        To = findViewById(R.id.to);
-        iconText = findViewById(R.id.icon_txt);
-        icon_mail = findViewById(R.id.icon_profileMail);
-        Subject = findViewById(R.id.Subject);
-        attachmentButton = findViewById(R.id.attachmentButton);
         mailSubjectTextView = findViewById(R.id.mailSubjectTextView);
         senderNameTextView = findViewById(R.id.senderNameTextView);
         senderTimeTextView = findViewById(R.id.senderTimeTextView);
         profilePicture = findViewById(R.id.profilePicture);
+        receiverNameTextView = findViewById(R.id.receiverNameTextView);
+        receiverMailTextView = findViewById(R.id.receiverMailTextView);
 
         ColorGenerator generator = ColorGenerator.MATERIAL;
 
@@ -191,40 +190,23 @@ public class DisplayMailActivity extends AppCompatActivity {
         try {
             mail = new JSONObject(messageBody);
             body = mail.getJSONObject("body");
-            mailBodyContent.setText(Html.fromHtml(body.getString("content")));
             JSONObject sender = mail.getJSONObject("from");
             JSONObject emailAddress = sender.getJSONObject("emailAddress");
-            iconText.setText(emailAddress.getString("name").substring(0, 1));
             From.setText(emailAddress.getString("name"));
             JSONArray recipient = mail.getJSONArray("toRecipients");
             emailAddress = recipient.getJSONObject(0);
-            To.setText(emailAddress.getJSONObject("emailAddress").getString("address"));
-            Subject.setText(mail.getString("subject"));
 
             if (!messageObject.isRead()){
                 updateMail(messageObject);
 
             }
 
-            applyProfilePicture(icon_mail,iconText);
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        mailBodyContent.setText(Html.fromHtml(messageBody));
 
-
-        attachmentButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    getAttachments();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
 
 
         displayMailData();
@@ -443,6 +425,8 @@ public class DisplayMailActivity extends AppCompatActivity {
         mailSubjectTextView.setText(mailSubject);
         senderNameTextView.setText(senderName);
         senderTimeTextView.setText(timeSent);
+        receiverNameTextView.setText(receiverName);
+        receiverMailTextView.setText(receiverMail);
 
     }
 
