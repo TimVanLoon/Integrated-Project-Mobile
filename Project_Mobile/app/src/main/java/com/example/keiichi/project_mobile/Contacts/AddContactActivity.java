@@ -214,7 +214,7 @@ public class AddContactActivity extends AppCompatActivity {
             emailInput.setError("Invalid Email Address");
         }
         else {
-            EmailAddress contactEmail = new EmailAddress(emailInput.getText().toString());
+            EmailAddress contactEmail = new EmailAddress(emailInput.getText().toString(), displayName);
             List<EmailAddress> listEmails = new ArrayList<>();
             listEmails.add(contactEmail);
             contact.setEmailAddresses(listEmails);

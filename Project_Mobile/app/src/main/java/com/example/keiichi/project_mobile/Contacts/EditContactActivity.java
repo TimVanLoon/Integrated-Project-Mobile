@@ -321,7 +321,7 @@ public class EditContactActivity extends AppCompatActivity {
         contact.setDisplayName(displayname);
 
         if(!emailInput.getText().toString().isEmpty()){
-            EmailAddress contactEmail = new EmailAddress(emailInput.getText().toString());
+            EmailAddress contactEmail = new EmailAddress(emailInput.getText().toString(), displayname);
             List<EmailAddress> listEmails = new ArrayList<>();
             listEmails.add(contactEmail);
             contact.setEmailAddresses(listEmails);
