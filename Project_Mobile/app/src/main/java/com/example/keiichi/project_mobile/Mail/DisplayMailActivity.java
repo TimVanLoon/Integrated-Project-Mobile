@@ -69,10 +69,11 @@ public class DisplayMailActivity extends AppCompatActivity {
     private TextView senderNameTextView;
     private TextView receiverNameTextView;
     private TextView receiverMailTextView;
-    private ImageView icon_mail;
+    private TextView mailBodyTextView;
     private ImageView profilePicture;
     private Toolbar myToolbar;
-    private String ACCES_TOKEN, messageBody;
+    private String ACCES_TOKEN;
+    private String messageBody;
     private Message messageObject;
     private String accessToken;
     private String userName;
@@ -113,10 +114,9 @@ public class DisplayMailActivity extends AppCompatActivity {
         timeSent = getIntent().getStringExtra("timeSent");
         receiverName = getIntent().getStringExtra("receiverName");
         receiverMail = getIntent().getStringExtra("receiverMail");
+        messageBody = getIntent().getStringExtra("messageBody");
 
         Intent intent = getIntent();
-        String mB = intent.getStringExtra("messageBody");
-        String messageBody = mB.substring(mB.indexOf('\n')+1);
         ACCES_TOKEN = intent.getStringExtra("accestoken");
         message = (com.example.keiichi.project_mobile.DAL.POJOs.Message) intent.getSerializableExtra("mailObject");
 
@@ -127,6 +127,7 @@ public class DisplayMailActivity extends AppCompatActivity {
         profilePicture = findViewById(R.id.profilePicture);
         receiverNameTextView = findViewById(R.id.receiverNameTextView);
         receiverMailTextView = findViewById(R.id.receiverMailTextView);
+        mailBodyTextView = findViewById(R.id.mailBodyTextView);
 
         ColorGenerator generator = ColorGenerator.MATERIAL;
 
@@ -427,6 +428,8 @@ public class DisplayMailActivity extends AppCompatActivity {
         senderTimeTextView.setText(timeSent);
         receiverNameTextView.setText(receiverName);
         receiverMailTextView.setText(receiverMail);
+        mailBodyTextView.setMovementMethod(new ScrollingMovementMethod());
+        mailBodyTextView.setText(Html.fromHtml(messageBody));
 
     }
 

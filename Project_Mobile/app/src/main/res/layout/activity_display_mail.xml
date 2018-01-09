@@ -30,7 +30,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="95dp"
+        android:layout_height="80dp"
         android:orientation="vertical"
         android:background="@color/lightGrey"
         android:layout_alignParentTop="true">
@@ -73,7 +73,7 @@
                 android:layout_marginTop="11dp"
                 android:paddingLeft="7dp"
                 android:text="Sender Name"
-                android:textColor="@color/black"
+                android:textColor="@color/blue_selected"
                 android:textSize="7pt" />
 
             <TextView
@@ -152,13 +152,36 @@
                             android:textColor="@color/black"
                             android:textSize="7pt" />
 
+
+
                     </LinearLayout>
 
 
                 </LinearLayout>
 
-            </LinearLayout>
+                <View
+                    android:layout_width="900dp"
+                    android:layout_height="1px"
+                    android:background="@color/darkGrey"/>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/mailBodyTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="15dp"
+                        android:layout_marginBottom="15dp"
+                        android:text="TextView"
+                       />
+
+                </LinearLayout>
+
+            </LinearLayout>
 
 
         </ScrollView>
