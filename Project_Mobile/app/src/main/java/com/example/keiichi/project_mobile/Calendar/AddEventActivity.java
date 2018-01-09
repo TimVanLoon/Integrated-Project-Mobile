@@ -39,6 +39,7 @@ import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.DAL.POJOs.ItemBody;
 import com.example.keiichi.project_mobile.DAL.POJOs.Location;
 import com.example.keiichi.project_mobile.R;
+import com.example.keiichi.project_mobile.Utility;
 import com.google.gson.Gson;
 
 import org.apache.commons.lang3.time.DateUtils;
@@ -204,6 +205,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
 
                 attendeeAdapter = new AttendeeAdapter(this, attendees);
                 attendeeList.setAdapter(attendeeAdapter);
+                Utility.setListViewHeightBasedOnChildren(attendeeList);
 
             }
 

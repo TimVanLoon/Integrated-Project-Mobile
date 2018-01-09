@@ -207,7 +207,7 @@
         <ListView
             android:id="@+id/attendeeList"
             android:layout_width="match_parent"
-            android:layout_height="120dp"
+            android:layout_height="0dp"
             android:layout_marginBottom="20dp"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"/>
