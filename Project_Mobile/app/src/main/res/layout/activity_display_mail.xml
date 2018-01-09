@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/darkGrey"
     tools:context="com.example.keiichi.project_mobile.Mail.DisplayMailActivity">
 
     <android.support.v7.widget.Toolbar
@@ -15,6 +14,91 @@
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="95dp"
+        android:orientation="vertical"
+        android:background="@color/lightGrey"
+        android:layout_alignParentTop="true">
+
+        <TextView
+            android:id="@+id/mailSubjectTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/toolbar"
+            android:layout_marginTop="18dp"
+            android:paddingLeft="17dp"
+            android:text="Subject"
+            android:textColor="@color/black"
+            android:textSize="7pt" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true">
+
+        <ImageView
+            android:id="@+id/profilePicture"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="12.5dp"
+            android:layout_marginLeft="12.5dp"/>
+
+        <LinearLayout
+            android:layout_width="243dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/senderNameTextView"
+                android:layout_width="180dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="11dp"
+                android:paddingLeft="7dp"
+                android:text="Sender Name"
+                android:textColor="@color/black"
+                android:textSize="7pt" />
+
+            <TextView
+                android:id="@+id/senderTimeTextView"
+                android:layout_width="180dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="10dp"
+                android:paddingLeft="7dp"
+                android:text="Time sent"
+                android:textColor="@color/black"
+                android:textSize="7pt" />
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/replyIcon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/ic_reply_black"/>
+
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/mailBody"
@@ -29,6 +113,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.731" />
+
 
     <LinearLayout
         android:layout_width="383dp"
@@ -113,5 +198,7 @@
         android:text="attachm"
         tools:layout_editor_absoluteX="295dp"
         tools:layout_editor_absoluteY="141dp" />
+
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

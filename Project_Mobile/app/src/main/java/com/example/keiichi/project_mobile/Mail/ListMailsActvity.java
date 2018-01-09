@@ -532,6 +532,8 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                     showMail.putExtra("mailId", message.getId());
                     showMail.putExtra("mailSubject", message.getSubject());
                     showMail.putExtra("mailAddress", message.getFrom().getEmailAddress().getAddress());
+                    showMail.putExtra("senderName", message.getFrom().getEmailAddress().getName());
+                    showMail.putExtra("timeSent", message.getReceivedDateTime());
 
                     startActivity(showMail);
                 }

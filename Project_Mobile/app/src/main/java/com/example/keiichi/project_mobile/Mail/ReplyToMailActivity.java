@@ -65,7 +65,7 @@ public class ReplyToMailActivity extends AppCompatActivity {
         mailId = getIntent().getStringExtra("mailId");
         mailSubject = getIntent().getStringExtra("mailSubject");
         mailAddress = getIntent().getStringExtra("mailAddress");
-        
+
         Editor = findViewById(R.id.editor);
         TextMailAdress = findViewById(R.id.TextMailAdress);
         TextMailSubject = findViewById(R.id.TextMailSubject);

@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -42,6 +43,7 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 
 import java.io.Serializable;
@@ -62,18 +64,22 @@ public class DisplayMailActivity extends AppCompatActivity {
     final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
     private JSONObject mail, body;
     private TextView From, iconText, To,mailBodyContent,Subject;
+    private TextView mailSubjectTextView;
+    private TextView senderTimeTextView;
+    private TextView senderNameTextView;
     private ImageView icon_mail;
+    private ImageView profilePicture;
     private Toolbar myToolbar;
     private String ACCES_TOKEN, messageBody;
-
     private Message messageObject;
-
     private String accessToken;
     private String userName;
     private String userEmail;
     private String mailSubject;
     private String mailAddress;
     private String mailId;
+    private String senderName;
+    private String timeSent;
     private  AlertDialog.Builder builder;
 
 
@@ -100,6 +106,8 @@ public class DisplayMailActivity extends AppCompatActivity {
         mailId = getIntent().getStringExtra("mailId");
         mailSubject = getIntent().getStringExtra("mailSubject");
         mailAddress = getIntent().getStringExtra("mailAddress");
+        senderName = getIntent().getStringExtra("senderName");
+        timeSent = getIntent().getStringExtra("timeSent");
 
         Intent intent = getIntent();
         String mB = intent.getStringExtra("messageBody");
@@ -116,6 +124,19 @@ public class DisplayMailActivity extends AppCompatActivity {
         icon_mail = findViewById(R.id.icon_profileMail);
         Subject = findViewById(R.id.Subject);
         attachmentButton = findViewById(R.id.attachmentButton);
+        mailSubjectTextView = findViewById(R.id.mailSubjectTextView);
+        senderNameTextView = findViewById(R.id.senderNameTextView);
+        senderTimeTextView = findViewById(R.id.senderTimeTextView);
+        profilePicture = findViewById(R.id.profilePicture);
+
+        ColorGenerator generator = ColorGenerator.MATERIAL;
+
+        int color2 = generator.getColor(senderName.substring(0,1));
+
+        TextDrawable drawable1 = TextDrawable.builder()
+                .buildRoundRect(senderName.substring(0,1), color2, 3); // radius in px
+
+        profilePicture.setImageDrawable(drawable1);
 
 
         messageObject = (Message) intent.getSerializableExtra("mailObject");
@@ -206,6 +227,7 @@ public class DisplayMailActivity extends AppCompatActivity {
         });
 
 
+        displayMailData();
     }
 
     private void getAttachments() throws JSONException {
@@ -414,6 +436,14 @@ public class DisplayMailActivity extends AppCompatActivity {
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void displayMailData(){
+
+        mailSubjectTextView.setText(mailSubject);
+        senderNameTextView.setText(senderName);
+        senderTimeTextView.setText(timeSent);
+
     }
 
 }
