@@ -13,8 +13,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -28,11 +30,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.DAL.POJOs.Attendee;
 import com.example.keiichi.project_mobile.DAL.POJOs.DateTimeTimeZone;
 import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.DAL.POJOs.ItemBody;
 import com.example.keiichi.project_mobile.DAL.POJOs.Location;
 import com.example.keiichi.project_mobile.R;
+import com.example.keiichi.project_mobile.Utility;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -42,6 +46,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -58,6 +63,7 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
     private String [] DISPLAYASSPINNERLIST = {"Free", "Working elsewhere", "Tentative", "Busy", "Away"};
     private String [] REPEATSPINNERLIST = {"Never", "Each day", "Every sunday", "Every workday", "Day 31 of every month", "Ever last sunday", "Every 31st of december"};
 
+    private List<Attendee> attendees;
     private Toolbar myToolbar;
     private Calendar start;
     private DatePickerDialog datePickerDialog;
@@ -74,8 +80,14 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
     private Spinner reminderSpinner;
     private Spinner displayAsSpinner;
     private Spinner repeatSpinner;
+    private CheckBox privateCheckbox;
+    private CheckBox responseCheckbox;
+    private ListView attendeeList;
+    private AttendeeAdapter attendeeAdapter;
     private boolean isCurrentDate;
     private boolean isCurrentTime;
+    private boolean isPrivate;
+    private boolean responseRequested;
     private String userName;
     private String userEmail;
     private String accessToken;
@@ -88,6 +100,8 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
     private String notes;
     private String finalHourOfDay;
     private String finalMinuteOfHour;
+    private String sensitivity;
+    private String fromEventDetails;
     private int dayOfMonth;
     private int month;
     private int year;
@@ -115,7 +129,11 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         startDate = getIntent().getStringExtra("startDate");
         displayAs = getIntent().getStringExtra("displayAs");
         notes = getIntent().getStringExtra("notes");
+        sensitivity = getIntent().getStringExtra("sensitivity");
+        fromEventDetails = getIntent().getStringExtra("fromEventDetails");
+        responseRequested = getIntent().getBooleanExtra("responseRequested", false);
         reminderMinutesBeforeStart = getIntent().getIntExtra("reminderMinutesBeforeStart", 0);
+        attendees = (List<Attendee>)getIntent().getSerializableExtra("attendeesList");
 
         // INITIALISEER DE INPUT FIELDS
         dateEvent = (EditText) findViewById(R.id.dateEvent);
@@ -127,10 +145,13 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         displayAsTitle = (TextView) findViewById(R.id.displayAsTitle);
         repeatTitle = (TextView) findViewById(R.id.repeatTitle);
         notesTitle = (TextView) findViewById(R.id.notesTitle);
+        attendeeList = (ListView) findViewById(R.id.attendeeList);
         durationSpinner = (Spinner) findViewById(R.id.durationSpinner);
         reminderSpinner = (Spinner) findViewById(R.id.reminderSpinner);
         repeatSpinner = (Spinner) findViewById(R.id.repeatSpinner);
         displayAsSpinner = (Spinner) findViewById(R.id.displayAsSpinner);
+        privateCheckbox = (CheckBox) findViewById(R.id.privateCheckbox);
+        responseCheckbox = (CheckBox) findViewById(R.id.responseCheckbox);
 
         // VUL INPUTS MET DATA VAN CONTACT
         eventInput.setText(subject);
@@ -144,7 +165,45 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
 
         start = Calendar.getInstance();
 
-        System.out.println("test date : " + startDate);
+        if(fromEventDetails != null){
+
+            if(!attendees.isEmpty()){
+
+                attendeeAdapter = new AttendeeAdapter(this, attendees);
+                attendeeList.setAdapter(attendeeAdapter);
+                Utility.setListViewHeightBasedOnChildren(attendeeList);
+
+            }
+
+        }
+
+        switch(sensitivity){
+            case "normal":
+                privateCheckbox.setChecked(false);
+                break;
+
+            case "personal":
+                privateCheckbox.setChecked(false);
+                break;
+
+            case "private":
+                privateCheckbox.setChecked(true);
+                break;
+
+            case "confidential":
+                privateCheckbox.setChecked(false);
+                break;
+        }
+
+        if(responseRequested){
+
+            responseCheckbox.setChecked(true);
+
+        } else {
+
+            responseCheckbox.setChecked(false);
+
+        }
 
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
@@ -211,9 +270,9 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         //displayAsSpinner.setSelection(startingValue);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<String> adapterRepeat = new ArrayAdapter<String>(this, R.layout.spinner_layout, REPEATSPINNERLIST);
+        ArrayAdapter<String> adapterRepeat = new ArrayAdapter<String>(this,R.layout.spinner_layout, REPEATSPINNERLIST);
         // Specify the layout to use when the list of choices appears
-        adapterDisplayAs.setDropDownViewResource(android.R.layout.simple_expandable_list_item_1);
+        adapterRepeat.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         repeatSpinner.setAdapter(adapterRepeat);
         //startingValue = adapterRepeat.getPosition("Never");
@@ -754,5 +813,39 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
 
         queue.add(objectRequest);
 
+    }
+
+    public void onCheckboxClicked(View view) {
+        // Is the view now checked?
+        boolean checked = ((CheckBox) view).isChecked();
+
+        // Check which checkbox was clicked
+        switch(view.getId()) {
+            case R.id.privateCheckbox:
+                if (checked){
+
+                    isPrivate = true;
+
+                }
+
+                else{
+                    isPrivate = false;
+                }
+                break;
+
+            case R.id.responseCheckbox:
+                if (checked){
+
+                    responseRequested = true;
+
+                }
+
+                else{
+                    responseRequested = false;
+                }
+                break;
+
+
+        }
     }
 }

@@ -65,6 +65,7 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
     private CheckBox privateCheckbox;
     private ListView attendeeList;
     private AttendeeAdapter attendeeAdapter;
+    private boolean responseRequested;
     private String accessToken;
     private String userName;
     private String userEmail;
@@ -104,6 +105,7 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
         displayAs = getIntent().getStringExtra("displayAs");
         notes = getIntent().getStringExtra("notes");
         sensitivity = getIntent().getStringExtra("sensitivity");
+        responseRequested = getIntent().getBooleanExtra("responseRequested", false);
         reminderMinutesBeforeStart = getIntent().getIntExtra("reminderMinutesBeforeStart", 0);
         attendees = (List<Attendee>)getIntent().getSerializableExtra("attendeesList");
 
@@ -135,6 +137,7 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
                 privateCheckbox.setChecked(false);
                 break;
         }
+
 
         if(!attendees.isEmpty()){
 
@@ -385,6 +388,10 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
                 intentEditEvent.putExtra("notes", notes);
                 intentEditEvent.putExtra("id", id);
                 intentEditEvent.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
+                intentEditEvent.putExtra("sensitivity", sensitivity);
+                intentEditEvent.putExtra("attendeesList", (Serializable)attendees);
+                intentEditEvent.putExtra("fromEventDetails", "yes");
+                intentEditEvent.putExtra("responseRequested", responseRequested);
 
                 startActivity(intentEditEvent);
 

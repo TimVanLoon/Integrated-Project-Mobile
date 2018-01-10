@@ -358,6 +358,8 @@ public class ListEventsActivity extends AppCompatActivity {
 
             showEventDetails.putExtra("sensitivity", event.getSensitivity());
 
+            showEventDetails.putExtra("responseRequested", event.isResponseRequested());
+
             if (event.getAttendees() != null) {
                 showEventDetails.putExtra("attendeesList", (Serializable) event.getAttendees());
             }
