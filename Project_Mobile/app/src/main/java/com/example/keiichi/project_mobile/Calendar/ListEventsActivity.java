@@ -6,6 +6,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -85,7 +86,7 @@ public class ListEventsActivity extends AppCompatActivity {
                 animation1.setDuration(4000);
                 view.startAnimation(animation1);
 
-                onnEventClicked(position);
+                onEventClicked(position);
 
             }
         });
@@ -301,7 +302,7 @@ public class ListEventsActivity extends AppCompatActivity {
 
     }
 
-    public void onnEventClicked(int position){
+    public void onEventClicked(int position){
 
 
         if(events.size() != 0){
@@ -338,12 +339,23 @@ public class ListEventsActivity extends AppCompatActivity {
                 showEventDetails.putExtra("notes", "");
             }
 
-            if(event.getBody().getContent() != null){
-                showEventDetails.putExtra("notes", event.getBody().getContent());
+            String eventBody = event.getBody().getContent();
+
+            int substring1 = eventBody.indexOf("<!--");
+            int substring2 = eventBody.lastIndexOf("-->") + 2;
+
+            String filterable = eventBody.substring(substring1, substring2);
+            String eventBodyFiltered = eventBody.replace(filterable, "");
+
+            System.out.println("test filter: " + Html.fromHtml(eventBodyFiltered));
+
+            if(eventBody != null){
+                showEventDetails.putExtra("notes", eventBodyFiltered);
             }
             else {
                 showEventDetails.putExtra("notes", "");
             }
+
 
             startActivity(showEventDetails);
 

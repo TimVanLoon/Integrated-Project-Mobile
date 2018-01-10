@@ -6,6 +6,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -30,6 +31,7 @@ import com.example.keiichi.project_mobile.Contacts.EditContactActivity;
 import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONException;
+import org.w3c.dom.Text;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -49,6 +51,8 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
     private TextView eventSubjectTextView;
     private TextView locationTextView;
     private TextView startDateTextView;
+    private TextView notesTextView;
+    private TextView notesTextViewTitle;
     private Spinner reminderSpinner;
     private Spinner displayAsSpinner;
     private String accessToken;
@@ -72,6 +76,8 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
         eventSubjectTextView = (TextView) findViewById(R.id.eventSubject);
         locationTextView = (TextView) findViewById(R.id.eventLocation);
         startDateTextView = (TextView) findViewById(R.id.startDate);
+        notesTextView = (TextView) findViewById(R.id.notesTextView);
+        notesTextViewTitle = (TextView) findViewById(R.id.notesTextViewTitle);
         reminderSpinner = (Spinner) findViewById(R.id.reminderSpinner);
         displayAsSpinner = (Spinner) findViewById(R.id.displayAsSpinner);
 
@@ -86,7 +92,16 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
         notes = getIntent().getStringExtra("notes");
         reminderMinutesBeforeStart = getIntent().getIntExtra("reminderMinutesBeforeStart", 0);
 
-        System.out.println("hey boo " + reminderMinutesBeforeStart);
+        if(!notes.equals("0")){
+
+            notesTextView.setText(Html.fromHtml(notes));
+
+        } else {
+
+            notesTextView.setVisibility(View.GONE);
+            notesTextViewTitle.setVisibility(View.GONE);
+
+        }
 
         eventSubjectTextView.setText(subject);
         locationTextView.setText(location);

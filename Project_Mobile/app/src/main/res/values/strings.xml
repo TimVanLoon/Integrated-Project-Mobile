@@ -117,4 +117,6 @@
     <string name="markAsPrivateTextView">Mark as private</string>
     <string name="responseTextView">Request responses</string>
 
+    <string name="notesTextView">Notes</string>
+
 </resources>
