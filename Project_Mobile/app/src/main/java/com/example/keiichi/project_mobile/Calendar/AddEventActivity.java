@@ -99,6 +99,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private boolean isCurrentDate;
     private boolean isCurrentTime;
     private boolean isPrivate;
+    private boolean responseRequested;
     private Button moreDetailsButton;
     private EditText dateEvent;
     private EditText timeEvent;
@@ -454,7 +455,17 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
 
         event.setShowAs(showAs);
 
-        event.setSensitivity("private");
+        if(isPrivate){
+
+            event.setSensitivity("private");
+
+        } else {
+
+            event.setSensitivity("normal");
+
+        }
+
+        event.setResponseRequested(responseRequested);
 
         JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_POSTADRESS, new JSONObject(new Gson().toJson(event)),
                 new Response.Listener<JSONObject>() {
@@ -715,6 +726,18 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
 
             else{
                     isPrivate = false;
+                }
+                break;
+
+            case R.id.responseCheckbox:
+                if (checked){
+
+                    responseRequested = true;
+
+                }
+
+                else{
+                    responseRequested = false;
                 }
                 break;
 
