@@ -83,7 +83,7 @@ public class ListEventsActivity extends AppCompatActivity {
 
                 // Start an alpha animation for clicked item
                 Animation animation1 = new AlphaAnimation(0.3f, 1.0f);
-                animation1.setDuration(4000);
+                animation1.setDuration(1000);
                 view.startAnimation(animation1);
 
                 onEventClicked(position);
