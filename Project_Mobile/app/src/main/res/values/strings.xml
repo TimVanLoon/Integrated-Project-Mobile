@@ -114,4 +114,6 @@
 
     <string name="toTextView">To:</string>
 
+    <string name="markAsPrivateTextView">Mark as private</string>
+
 </resources>

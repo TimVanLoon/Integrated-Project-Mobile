@@ -14,9 +14,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -96,6 +98,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private String firstTime;
     private boolean isCurrentDate;
     private boolean isCurrentTime;
+    private boolean isPrivate;
     private Button moreDetailsButton;
     private EditText dateEvent;
     private EditText timeEvent;
@@ -115,6 +118,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private ListView attendeeList;
     private DatePickerDialog datePickerDialog;
     private Toolbar myToolbar;
+    private LinearLayout privateLayout;
     private AttendeeAdapter attendeeAdapter;
 
 
@@ -156,6 +160,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         moreDetailsButton = (Button) findViewById(R.id.moreDetailsButton);
         plusAttendeeIcon = (ImageView) findViewById(R.id.plusAttendeeIcon);
         attendeeList = (ListView) findViewById(R.id.attendeeList);
+        privateLayout = (LinearLayout) findViewById(R.id.privateLayout);
 
         attendeesTitle.setVisibility(View.GONE);
         plusAttendeeIcon.setVisibility(View.GONE);
@@ -449,7 +454,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
 
         event.setShowAs(showAs);
 
-
+        event.setSensitivity("private");
 
         JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_POSTADRESS, new JSONObject(new Gson().toJson(event)),
                 new Response.Listener<JSONObject>() {
@@ -695,4 +700,25 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     }
 
 
+    public void onCheckboxClicked(View view) {
+        // Is the view now checked?
+        boolean checked = ((CheckBox) view).isChecked();
+
+        // Check which checkbox was clicked
+        switch(view.getId()) {
+            case R.id.privateCheckbox:
+                if (checked){
+
+                    isPrivate = true;
+
+                }
+
+            else{
+                    isPrivate = false;
+                }
+                break;
+
+
+        }
+    }
 }
