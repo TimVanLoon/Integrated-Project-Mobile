@@ -356,6 +356,11 @@ public class ListEventsActivity extends AppCompatActivity {
                 showEventDetails.putExtra("notes", "");
             }
 
+            showEventDetails.putExtra("sensitivity", event.getSensitivity());
+
+            if (event.getAttendees() != null) {
+                showEventDetails.putExtra("attendeesList", (Serializable) event.getAttendees());
+            }
 
             startActivity(showEventDetails);
 

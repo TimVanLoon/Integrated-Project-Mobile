@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,13 +30,17 @@ import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
 import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
 import com.example.keiichi.project_mobile.Contacts.EditContactActivity;
+import com.example.keiichi.project_mobile.DAL.POJOs.Attendee;
+import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.R;
+import com.example.keiichi.project_mobile.Utility;
 
 import org.json.JSONException;
 import org.w3c.dom.Text;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -46,6 +52,7 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
     private String [] DISPLAYASSPINNERLIST = {"Free", "Working elsewhere", "Tentative", "Busy", "Away"};
 
     final private String URL_POSTADRESS = "https://graph.microsoft.com/beta/me/events/";
+    private List<Attendee> attendees;
     private Toolbar myToolbar;
     private  AlertDialog.Builder builder;
     private TextView eventSubjectTextView;
@@ -55,6 +62,9 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
     private TextView notesTextViewTitle;
     private Spinner reminderSpinner;
     private Spinner displayAsSpinner;
+    private CheckBox privateCheckbox;
+    private ListView attendeeList;
+    private AttendeeAdapter attendeeAdapter;
     private String accessToken;
     private String userName;
     private String userEmail;
@@ -64,6 +74,7 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
     private String startDate;
     private String displayAs;
     private String notes;
+    private String sensitivity;
     private int startingValueReminder;
     private int startingValueDisplayAs;
     private int reminderMinutesBeforeStart;
@@ -80,6 +91,8 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
         notesTextViewTitle = (TextView) findViewById(R.id.notesTextViewTitle);
         reminderSpinner = (Spinner) findViewById(R.id.reminderSpinner);
         displayAsSpinner = (Spinner) findViewById(R.id.displayAsSpinner);
+        privateCheckbox = (CheckBox) findViewById(R.id.privateCheckbox);
+        attendeeList = (ListView) findViewById(R.id.attendeeList);
 
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
@@ -90,7 +103,9 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
         startDate = getIntent().getStringExtra("startDate");
         displayAs = getIntent().getStringExtra("displayAs");
         notes = getIntent().getStringExtra("notes");
+        sensitivity = getIntent().getStringExtra("sensitivity");
         reminderMinutesBeforeStart = getIntent().getIntExtra("reminderMinutesBeforeStart", 0);
+        attendees = (List<Attendee>)getIntent().getSerializableExtra("attendeesList");
 
         if(!notes.equals("0")){
 
@@ -100,6 +115,32 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
 
             notesTextView.setVisibility(View.GONE);
             notesTextViewTitle.setVisibility(View.GONE);
+
+        }
+
+        switch(sensitivity){
+            case "normal":
+                privateCheckbox.setChecked(false);
+                break;
+
+            case "personal":
+                privateCheckbox.setChecked(false);
+                break;
+
+            case "private":
+                privateCheckbox.setChecked(true);
+                break;
+
+            case "confidential":
+                privateCheckbox.setChecked(false);
+                break;
+        }
+
+        if(!attendees.isEmpty()){
+
+            attendeeAdapter = new AttendeeAdapter(this, attendees);
+            attendeeList.setAdapter(attendeeAdapter);
+            Utility.setListViewHeightBasedOnChildren(attendeeList);
 
         }
 
