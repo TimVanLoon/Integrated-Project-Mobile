@@ -120,6 +120,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private DatePickerDialog datePickerDialog;
     private Toolbar myToolbar;
     private LinearLayout privateLayout;
+    private LinearLayout requestReponseLayout;
     private AttendeeAdapter attendeeAdapter;
 
 
@@ -162,6 +163,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         plusAttendeeIcon = (ImageView) findViewById(R.id.plusAttendeeIcon);
         attendeeList = (ListView) findViewById(R.id.attendeeList);
         privateLayout = (LinearLayout) findViewById(R.id.privateLayout);
+        requestReponseLayout = (LinearLayout) findViewById(R.id.requestReponseLayout);
 
         attendeesTitle.setVisibility(View.GONE);
         plusAttendeeIcon.setVisibility(View.GONE);
@@ -173,6 +175,8 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         displayAsTitle.setVisibility(View.GONE);
         reminderTitle.setVisibility(View.GONE);
         personalNotes.setVisibility(View.GONE);
+        privateLayout.setVisibility(View.GONE);
+        requestReponseLayout.setVisibility(View.GONE);
 
         plusAttendeeIcon.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -708,6 +712,8 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         personalNotes.setVisibility(View.VISIBLE);
         attendeesTitle.setVisibility(View.VISIBLE);
         plusAttendeeIcon.setVisibility(View.VISIBLE);
+        privateLayout.setVisibility(View.VISIBLE);
+        requestReponseLayout.setVisibility(View.VISIBLE);
     }
 
 
