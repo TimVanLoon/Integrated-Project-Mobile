@@ -96,6 +96,8 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private String showAs;
     private String fromAttendeesActivity;
     private String firstTime;
+    private String finalMonth;
+    private String finalDayOfMonth;
     private boolean isCurrentDate;
     private boolean isCurrentTime;
     private boolean isPrivate;
@@ -279,6 +281,18 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         month = c.get(Calendar.MONTH) + 1;
         year = c.get(Calendar.YEAR);
 
+        if(month <10) {
+            finalMonth = "0" + month;
+        } else {
+            finalMonth = String.valueOf(month);
+        }
+
+        if(dayOfMonth <10) {
+            finalDayOfMonth = "0" + dayOfMonth;
+        } else {
+            finalDayOfMonth = String.valueOf(dayOfMonth);
+        }
+
         minuteOfHour = c.get(Calendar.MINUTE);
         hourOfDay = c.get(Calendar.HOUR_OF_DAY);
 
@@ -298,7 +312,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         dateEvent.setClickable(true);
         timeEvent.setFocusable(false);
         timeEvent.setClickable(true);
-        dateEvent.setText(dayOfMonth + "-" + month + "-" + year);
+        dateEvent.setText(finalDayOfMonth + "-" + finalMonth + "-" + year);
         timeEvent.setText(finalHourOfDay + ":" + finalMinuteOfHour);
 
         isCurrentDate = true;
@@ -324,10 +338,23 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
                                 isCurrentDate = false;
 
                                 dayOfMonth = dayOfMonthPicked;
-                                month = monthOfYearPicked;
+                                month = monthOfYearPicked + 1;
                                 year = yearPicked;
 
-                                dateEvent.setText(dayOfMonth + "-" + month + "-" + year);
+                                if(month <10) {
+                                    finalMonth = "0" + month;
+                                } else {
+                                    finalMonth = String.valueOf(month);
+                                }
+
+                                if(dayOfMonth <10) {
+                                    finalDayOfMonth = "0" + dayOfMonth;
+                                } else {
+                                    finalDayOfMonth = String.valueOf(dayOfMonth);
+                                }
+
+
+                                dateEvent.setText(finalDayOfMonth + "-" + finalMonth + "-" + year);
 
                             }
                         }, mYear, mMonth, mDay);
