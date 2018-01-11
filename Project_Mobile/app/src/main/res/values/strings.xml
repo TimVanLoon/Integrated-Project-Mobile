@@ -118,5 +118,9 @@
     <string name="responseTextView">Request responses</string>
 
     <string name="notesTextView">Notes</string>
+    <string name="title_activity_test">test</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
 </resources>

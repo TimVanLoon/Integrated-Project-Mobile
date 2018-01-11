@@ -73,35 +73,25 @@ import java.util.Map;
 
 public class ContactsActivity extends AppCompatActivity {
 
-    BottomNavigationView mBottomNav;
-
+    private BottomNavigationView mBottomNav;
     private Toolbar myToolbar;
-
     private TextDrawable drawable;
     private ImageView profilePicture;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
-
     private ListView contactsListView;
-
     private SearchView searchView;
-
     private NavigationView contactNavigationView;
-
     private ContactAdapter contactAdapter;
-
     private List<Contact> contacts = new ArrayList<>();
     private List<Contact> countactsFiltered;
-
     private List<EmailAddress> emailList;
     private String accessToken;
     private String userName;
     private String userEmail;
     private String id;
-
     private Contact testContact;
     private ImageView mImageView;
-
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts?$orderBy=displayName&$top=500&$count=true";
     final static String MSGRAPH_URL_FOTO = "https://graph.microsoft.com/beta/me/contacts/";
     final static String MSGRAPH_URL_FOTO2 = "/photo/$value";
@@ -125,10 +115,9 @@ public class ContactsActivity extends AppCompatActivity {
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, myToolbar, R.string.drawer_open,
                 R.string.drawer_close);
 
+        mDrawerLayout.addDrawerListener(actionBarDrawerToggle);
 
-
-        mDrawerLayout.setDrawerListener(actionBarDrawerToggle);
-
+        actionBarDrawerToggle.syncState();
 
         contactsListView = (ListView) findViewById(R.id.contactsListView);
 
@@ -166,6 +155,7 @@ public class ContactsActivity extends AppCompatActivity {
         nav_userName.setText(userName);
         nav_userEmail.setText(userEmail);
 
+
         Menu menu = mBottomNav.getMenu();
         MenuItem menuItem = menu.getItem(2);
         menuItem.setChecked(true);
@@ -202,8 +192,7 @@ public class ContactsActivity extends AppCompatActivity {
             }
         });
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.contactNavigationView);
-        View navView = navigationView.getHeaderView(0);
+        View navView = contactNavigationView.getHeaderView(0);
         mImageView = (ImageView) navView.findViewById(R.id.userPicture);
 
         RequestQueue queue = Volley.newRequestQueue(this);
