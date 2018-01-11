@@ -1,5 +1,6 @@
 package com.example.keiichi.project_mobile.Mail;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -9,14 +10,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.method.ScrollingMovementMethod;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +37,8 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import android.webkit.WebSettings.ZoomDensity;
 
 import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
 import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
@@ -410,11 +418,22 @@ public class DisplayMailActivity extends AppCompatActivity {
         receiverNameTextView.setText(receiverName);
         receiverMailTextView.setText(receiverMail);
 
-        
+        System.out.println("Content type: " + contentType);
+
+        mailBodyWebView.setPadding(0,0,0,0);
+
+        mailBodyWebView.setInitialScale(1);
+
+        //setupWebView();
+
         if(contentType.equals("html")){
 
-            mailBodyWebView.loadDataWithBaseURL("", messageBody, "text/html", "utf-8","");
+            mailBodyWebView.getSettings().setJavaScriptEnabled(true);
             mailBodyWebView.getSettings().setLoadWithOverviewMode(true);
+            mailBodyWebView.getSettings().setUseWideViewPort(true);
+            mailBodyWebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+            mailBodyWebView.setScrollbarFadingEnabled(false);
+            mailBodyWebView.loadDataWithBaseURL("", messageBody, "text/html", "utf-8","");
 
         } else{
 
@@ -427,6 +446,36 @@ public class DisplayMailActivity extends AppCompatActivity {
         //mailBodyWebView.loadDataWithBaseURL("", messageBody, "text/html", "utf-8","");
         //mailBodyWebView.getSettings().setLoadWithOverviewMode(true);
 
+    }
+
+    private int getScale(){
+        Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        int width = display.getWidth();
+        Double val = new Double(width)/new Double(360);
+        val = val * 100d;
+        return val.intValue();
+    }
+
+    private void setupWebView() {
+        mailBodyWebView.getSettings().setJavaScriptEnabled(true);
+        mailBodyWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                mailBodyWebView.loadUrl("javascript:MyApp.resize(document.body.getBoundingClientRect().height)");
+                super.onPageFinished(view, url);
+            }
+        });
+        mailBodyWebView.addJavascriptInterface(this, "MyApp");
+    }
+
+    @JavascriptInterface
+    public void resize(final float height) {
+        DisplayMailActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mailBodyWebView.setLayoutParams(new LinearLayout.LayoutParams(getResources().getDisplayMetrics().widthPixels, (int) (height * getResources().getDisplayMetrics().density)));
+            }
+        });
     }
 
 }
