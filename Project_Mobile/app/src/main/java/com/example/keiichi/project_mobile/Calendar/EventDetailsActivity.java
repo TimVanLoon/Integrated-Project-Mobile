@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
@@ -58,12 +59,12 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
     private TextView eventSubjectTextView;
     private TextView locationTextView;
     private TextView startDateTextView;
-    private TextView notesTextView;
     private TextView notesTextViewTitle;
     private Spinner reminderSpinner;
     private Spinner displayAsSpinner;
     private CheckBox privateCheckbox;
     private ListView attendeeList;
+    private WebView notesWebView;
     private AttendeeAdapter attendeeAdapter;
     private boolean responseRequested;
     private String accessToken;
@@ -76,6 +77,7 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
     private String displayAs;
     private String notes;
     private String sensitivity;
+    private String contentType;
     private int startingValueReminder;
     private int startingValueDisplayAs;
     private int reminderMinutesBeforeStart;
@@ -88,12 +90,12 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
         eventSubjectTextView = (TextView) findViewById(R.id.eventSubject);
         locationTextView = (TextView) findViewById(R.id.eventLocation);
         startDateTextView = (TextView) findViewById(R.id.startDate);
-        notesTextView = (TextView) findViewById(R.id.notesTextView);
         notesTextViewTitle = (TextView) findViewById(R.id.notesTextViewTitle);
         reminderSpinner = (Spinner) findViewById(R.id.reminderSpinner);
         displayAsSpinner = (Spinner) findViewById(R.id.displayAsSpinner);
         privateCheckbox = (CheckBox) findViewById(R.id.privateCheckbox);
         attendeeList = (ListView) findViewById(R.id.attendeeList);
+        notesWebView = (WebView) findViewById(R.id.notesWebView);
 
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
@@ -103,6 +105,7 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
         location = getIntent().getStringExtra("location");
         startDate = getIntent().getStringExtra("startDate");
         displayAs = getIntent().getStringExtra("displayAs");
+        contentType = getIntent().getStringExtra("contentType");
         notes = getIntent().getStringExtra("notes");
         sensitivity = getIntent().getStringExtra("sensitivity");
         responseRequested = getIntent().getBooleanExtra("responseRequested", false);
@@ -111,11 +114,30 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
 
         if(!notes.equals("0")){
 
-            notesTextView.setText(Html.fromHtml(notes));
+            notesWebView.setPadding(0,0,0,0);
+
+            notesWebView.setInitialScale(1);
+
+            //setupWebView();
+
+            if(contentType.equals("html")){
+
+                notesWebView.getSettings().setJavaScriptEnabled(true);
+                notesWebView.getSettings().setLoadWithOverviewMode(true);
+                notesWebView.getSettings().setUseWideViewPort(true);
+                notesWebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+                notesWebView.setScrollbarFadingEnabled(false);
+                notesWebView.loadDataWithBaseURL("", notes, "text/html", "utf-8","");
+
+            } else{
+
+                notesWebView.loadDataWithBaseURL("", notes, "text", "utf-8","");
+
+            }
 
         } else {
 
-            notesTextView.setVisibility(View.GONE);
+            notesWebView.setVisibility(View.GONE);
             notesTextViewTitle.setVisibility(View.GONE);
 
         }

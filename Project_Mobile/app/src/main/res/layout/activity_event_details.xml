@@ -225,8 +225,8 @@
             android:textStyle="bold"
             android:textColor="@color/black" />
 
-        <TextView
-            android:id="@+id/notesTextView"
+        <WebView
+            android:id="@+id/notesWebView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="notes"

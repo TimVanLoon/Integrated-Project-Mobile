@@ -339,6 +339,12 @@ public class ListEventsActivity extends AppCompatActivity {
                 showEventDetails.putExtra("notes", "");
             }
 
+            if(event.getBody().getContentType() != null){
+
+                showEventDetails.putExtra("contentType", event.getBody().getContentType());
+
+            }
+
             String eventBody = event.getBody().getContent();
 
             int substring1 = eventBody.indexOf("<!--");
