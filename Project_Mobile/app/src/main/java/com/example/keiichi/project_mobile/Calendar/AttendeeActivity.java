@@ -72,6 +72,8 @@ public class AttendeeActivity extends AppCompatActivity {
     private String notes;
     private String sensitivity;
     private String startDate;
+    private String id;
+    private String contentType;
     private int eventDayOfMonth;
     private int eventMonth;
     private int eventYear;
@@ -138,6 +140,8 @@ public class AttendeeActivity extends AppCompatActivity {
         responseRequested = getIntent().getBooleanExtra("responseRequested", false);
         startDate = getIntent().getStringExtra("startDate");
         isPrivate = getIntent().getBooleanExtra("isPrivate", false);
+        id = getIntent().getStringExtra("id");
+        contentType = getIntent().getStringExtra("contentType");
 
         if(firstTime != null){
             emailList = (List<EmailAddress>)getIntent().getSerializableExtra("emailList");
@@ -216,6 +220,8 @@ public class AttendeeActivity extends AppCompatActivity {
                     intentEditEvent.putExtra("responseRequested", responseRequested);
                     intentEditEvent.putExtra("sensitivity", sensitivity);
                     intentEditEvent.putExtra("startDate", startDate);
+                    intentEditEvent.putExtra("id", id);
+                    intentEditEvent.putExtra("contentType", contentType);
 
                     startActivity(intentEditEvent);
 
@@ -240,6 +246,8 @@ public class AttendeeActivity extends AppCompatActivity {
                     intentAddEvent.putExtra("eventRequestResponses", eventRequestResponses);
                     intentAddEvent.putExtra("eventReminderMinutesBeforeStart", eventReminderMinutesBeforeStart);
                     intentAddEvent.putExtra("emailList",(Serializable) emailList);
+                    intentAddEvent.putExtra("id", id);
+                    intentAddEvent.putExtra("contentType", contentType);
 
                     startActivity(intentAddEvent);
 
@@ -390,6 +398,8 @@ public class AttendeeActivity extends AppCompatActivity {
                     intentEditEvent.putExtra("responseRequested", responseRequested);
                     intentEditEvent.putExtra("sensitivity", sensitivity);
                     intentEditEvent.putExtra("startDate", startDate);
+                    intentEditEvent.putExtra("id", id);
+                    intentEditEvent.putExtra("contentType", contentType);
 
                     if(contact.getEmailAddresses() != null){
 
@@ -424,6 +434,8 @@ public class AttendeeActivity extends AppCompatActivity {
                     intentAddEvent.putExtra("eventIsPrivate", eventIsPrivate);
                     intentAddEvent.putExtra("eventRequestResponses", eventRequestResponses);
                     intentAddEvent.putExtra("eventReminderMinutesBeforeStart", eventReminderMinutesBeforeStart);
+                    intentAddEvent.putExtra("id", id);
+                    intentAddEvent.putExtra("contentType", contentType);
 
                     if(contact.getEmailAddresses() != null){
 

@@ -401,6 +401,7 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
                 intentListEvents.putExtra("notes", notes);
                 intentListEvents.putExtra("id", id);
                 intentListEvents.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
+                intentListEvents.putExtra("contentType", contentType);
 
                 startActivity(intentListEvents);
 
@@ -429,6 +430,7 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
                 intentEditEvent.putExtra("fromEventDetails", "yes");
                 intentEditEvent.putExtra("responseRequested", responseRequested);
                 intentEditEvent.putExtra("fromEventDetails", "yes");
+                intentEditEvent.putExtra("contentType", contentType);
 
                 startActivity(intentEditEvent);
 
