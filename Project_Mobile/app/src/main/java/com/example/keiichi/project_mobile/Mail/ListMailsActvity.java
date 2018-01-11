@@ -585,6 +585,95 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
     }
 
+    /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
+    private void updateMailIsRead(Message message, String id) {
+        Log.d(TAG, "Starting volley request to graph");
+        Log.d(TAG, accessToken);
+
+    /* Make sure we have a token to send to graph */
+        if (accessToken == null) {
+            return;
+        }
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        JSONObject parameters = new JSONObject();
+
+        try {
+            parameters.put("key", "value");
+        } catch (Exception e) {
+            Log.d(TAG, "Failed to put parameters: " + e.toString());
+        }
+
+        String patchUrl = URL_MAIL + id;
+
+        JsonObjectRequest objectRequest = null;
+        try {
+            objectRequest = new JsonObjectRequest(Request.Method.PATCH, patchUrl, new JSONObject(new Gson().toJson(message)),
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Toast.makeText(getApplicationContext(), "Mail updated!", Toast.LENGTH_SHORT).show();
+                            System.out.println(response.toString());
+                        }
+
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyLog.e("Error: ", error.getMessage());
+                    error.printStackTrace();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("Authorization", "Bearer " + accessToken);
+                    headers.put("Content-Type", "application/json; charset=utf-8");
+
+                    return headers;
+                }
+
+            };
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        queue.add(objectRequest);
+    }
+
+    /* Sets the Graph response */
+    private void updateIsRead(JSONObject graphResponse) throws JSONException {
+
+        // Haal de mailfolders binnen
+        try {
+            JSONObject list = graphResponse;
+
+            JSONArray mails = list.getJSONArray("value");
+
+            // VUL POJO
+            Type listType = new TypeToken<List<Message>>() {
+            }.getType();
+
+            messages = new Gson().fromJson(String.valueOf(mails), listType);
+
+            if(!messages.isEmpty()) {
+
+                for (Message message : messages) {
+                    // RANDOM COLOR OF ICON
+                }
+
+                mailAdapter = new MailAdapter(this, messages);
+                recyclerView.setAdapter(mailAdapter);
+
+                mailAdapter.notifyDataSetChanged();
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
     private void getMails(JSONObject graphResponse) throws JSONException {
 
         //haal mails binnen
@@ -614,11 +703,21 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             public void onClick(View view, int position) {
                 if (actionModeEnabled) {
                     selectedItem(position);
+
                     Toast.makeText(getApplicationContext(), String.valueOf(position), Toast.LENGTH_SHORT).show();
 
 
                 } else {
                     Message message = messages.get(position);
+
+                    if (!message.isRead()){
+
+                        String id = message.getId();
+                        message.setRead(true);
+
+                        updateMailIsRead(message, id);
+
+                    }
 
                     Intent showMail = new Intent(ListMailsActvity.this, DisplayMailActivity.class);
 

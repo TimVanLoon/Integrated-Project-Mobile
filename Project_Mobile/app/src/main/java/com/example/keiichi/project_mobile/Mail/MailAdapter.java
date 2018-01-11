@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -147,8 +148,20 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
 
             */
 
-            if (!isRead){
-                holder.subject.setTextColor(Color.CYAN);
+            if (message.isRead()) {
+
+                holder.from.setTypeface(null, Typeface.NORMAL);
+                holder.subject.setTypeface(null, Typeface.NORMAL);
+                holder.from.setTextColor(ContextCompat.getColor(mContext, R.color.subject));
+                holder.subject.setTextColor(ContextCompat.getColor(mContext, R.color.message));
+
+            } else {
+
+                holder.from.setTypeface(null, Typeface.BOLD);
+                holder.subject.setTypeface(null, Typeface.BOLD);
+                holder.from.setTextColor(ContextCompat.getColor(mContext, R.color.from));
+                holder.subject.setTextColor(ContextCompat.getColor(mContext, R.color.subject));
+                
             }
 
 
