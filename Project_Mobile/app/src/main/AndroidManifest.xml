@@ -21,6 +21,7 @@
         <activity
             android:name=".Mail.ListMailsActvity"
             android:label="Inbox"
+            android:theme="@style/ContactsTheme"
             android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="adjustPan" />
 

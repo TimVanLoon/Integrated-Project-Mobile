@@ -74,6 +74,8 @@ import com.microsoft.identity.client.MsalServiceException;
 import com.microsoft.identity.client.MsalUiRequiredException;
 import com.microsoft.identity.client.PublicClientApplication;
 import com.microsoft.identity.client.User;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -96,6 +98,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     private Toolbar myToolbar;
     private SearchView searchView;
     private ActionBarDrawerToggle actionBarDrawerToggle;
+    private Drawer drawer;
     private boolean multiSelect = false;
     private boolean actionModeEnabled = false;
     private ArrayList<Integer> selectedItems = new ArrayList<>();
@@ -206,23 +209,23 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
-        mDrawerLayout = findViewById(R.id.drawer_layout);
+        //mDrawerLayout = findViewById(R.id.drawer_layout);
 
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, myToolbar, R.string.drawer_open,
-                R.string.drawer_close);
+        //actionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, myToolbar, R.string.drawer_open,
+        //        R.string.drawer_close);
 
-        mDrawerLayout.setDrawerListener(actionBarDrawerToggle);
+        //mDrawerLayout.setDrawerListener(actionBarDrawerToggle);
 
-        addNotification();
+        //addNotification();
 
         mBottomNav = findViewById(R.id.navigation);
 
-        mailNavigationView = findViewById(R.id.mailNavigationView);
-        View hView = mailNavigationView.getHeaderView(0);
-        TextView nav_userName = hView.findViewById(R.id.userName);
-        TextView nav_userEmail = hView.findViewById(R.id.userEmail);
-        nav_userName.setText(userName);
-        nav_userEmail.setText(userEmail);
+        ///mailNavigationView = findViewById(R.id.mailNavigationView);
+        //View hView = mailNavigationView.getHeaderView(0);
+        //TextView nav_userName = hView.findViewById(R.id.userName);
+        //TextView nav_userEmail = hView.findViewById(R.id.userEmail);
+        //nav_userName.setText(userName);
+        //nav_userEmail.setText(userEmail);
 
         Menu menu = mBottomNav.getMenu();
         MenuItem menuItem = menu.getItem(0);
@@ -267,6 +270,9 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
         callGraphAPI();
 
+        buildDrawer();
+
+        /*
         NavigationView navigationView = (NavigationView) findViewById(R.id.mailNavigationView);
         View navView =  navigationView.getHeaderView(0);
         ImageView userPicture = (ImageView)navView.findViewById(R.id.userPicture);
@@ -279,6 +285,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                 .buildRound(userName.substring(0,1), color2); // radius in px
 
         userPicture.setImageDrawable(drawable);
+        */
 
     }
 
@@ -286,7 +293,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        actionBarDrawerToggle.syncState();
+        //actionBarDrawerToggle.syncState();
     }
 
 
@@ -619,5 +626,15 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         void onLongClick(View view, int position);
     }
 
+    public void buildDrawer(){
+
+        drawer = new DrawerBuilder()
+                .withActivity(this)
+                .withToolbar(myToolbar)
+                .withTranslucentStatusBar(false)
+                .build();
+
+
+    }
 
 }
