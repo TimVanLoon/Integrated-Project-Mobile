@@ -4,7 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,12 +41,15 @@ import jp.wasabeef.richeditor.RichEditor;
 public class ReplyToMailActivity extends AppCompatActivity {
     final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/messages/" ;
 
-
-    private String ACCES_TOKEN,ID;
-    private Message message;
-    EditText TextMailAdress,TextMailSubject;
-    Button ReplyButton;
-    RichEditor Editor;
+    private String accessToken;
+    private String userName;
+    private String userEmail;
+    private String mailId;
+    private String mailSubject;
+    private String mailAddress;
+    private Toolbar myToolbar;
+    private EditText TextMailAdress,TextMailSubject;
+    private RichEditor Editor;
 
 
 
@@ -52,29 +59,26 @@ public class ReplyToMailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reply_to_mail);
 
-        Intent intent = getIntent();
-        message = (Message) intent.getSerializableExtra("mailObject");
-        ACCES_TOKEN = intent.getStringExtra("accestoken");
-        ID = message.getId();
+        accessToken = getIntent().getStringExtra("AccessToken");
+        userName = getIntent().getStringExtra("userName");
+        userEmail = getIntent().getStringExtra("userEmail");
+        mailId = getIntent().getStringExtra("mailId");
+        mailSubject = getIntent().getStringExtra("mailSubject");
+        mailAddress = getIntent().getStringExtra("mailAddress");
 
-        ReplyButton = findViewById(R.id.ReplyButton);
         Editor = findViewById(R.id.editor);
         TextMailAdress = findViewById(R.id.TextMailAdress);
         TextMailSubject = findViewById(R.id.TextMailSubject);
-        TextMailAdress.setText(message.getFrom().getEmailAddress().getAddress());
-        TextMailSubject.setText("RE: " + message.getSubject());
+        TextMailAdress.setText(mailAddress);
+        TextMailSubject.setText("RE: " + mailSubject);
 
-        ReplyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    ReplyToMail();
-                    finish();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            };
-        });
+        myToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
+
+        // VOEG BACK BUTTON TOE AAN ACTION BAR
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
 
 
     }
@@ -86,7 +90,7 @@ public class ReplyToMailActivity extends AppCompatActivity {
 
         System.out.println(jsonObject.toString());
 
-        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_POSTADRESS+ message.getId() + "/reply", jsonObject,
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_POSTADRESS+ mailId + "/reply", jsonObject,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -104,7 +108,7 @@ public class ReplyToMailActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + ACCES_TOKEN);
+                headers.put("Authorization", "Bearer " + accessToken);
 
                 return headers;
             }
@@ -119,5 +123,54 @@ public class ReplyToMailActivity extends AppCompatActivity {
         JsonObjectBuilder factory = Json.createObjectBuilder()
                 .add("comment", Html.fromHtml(Editor.getHtml()).toString());
         return factory.build().toString();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.send_navigation, menu);
+        MenuItem addItem = menu.findItem(R.id.action_send);
+
+
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+
+        switch(item.getItemId()){
+
+            // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
+            case android.R.id.home:
+                Intent intentListMails = new Intent(ReplyToMailActivity.this, DisplayMailActivity.class);
+                intentListMails.putExtra("AccessToken", accessToken);
+                intentListMails.putExtra("userName", userName);
+                intentListMails.putExtra("userEmail", userEmail);
+                intentListMails.putExtra("mailId", mailId);
+                intentListMails.putExtra("mailSubject", mailSubject);
+                intentListMails.putExtra("mailAddress", mailAddress);
+
+                startActivity(intentListMails);
+
+                return true;
+
+            case R.id.action_send:
+                try {
+                    ReplyToMail();
+                    finish();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                return true;
+
+
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

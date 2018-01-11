@@ -112,4 +112,11 @@
     <string name="eventWhen">When: </string>
     <string name="eventWhere">Where: </string>
 
+    <string name="toTextView">To:</string>
+
+    <string name="markAsPrivateTextView">Mark as private</string>
+    <string name="responseTextView">Request responses</string>
+
+    <string name="notesTextView">Notes</string>
+
 </resources>

@@ -56,7 +56,7 @@ public class AttendeeAdapter extends BaseAdapter implements ListAdapter {
 
         TextView attendeeEmail = rowView.findViewById(R.id.attendee);
 
-        attendeeEmail.setText(attendee.getEmailAddress().getAddress());
+        attendeeEmail.setText(attendee.getEmailAddress().getName());
 
         return rowView;
     }

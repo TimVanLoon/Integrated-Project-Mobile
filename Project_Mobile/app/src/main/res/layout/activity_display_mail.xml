@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/darkGrey"
     tools:context="com.example.keiichi.project_mobile.Mail.DisplayMailActivity">
 
     <android.support.v7.widget.Toolbar
@@ -16,136 +15,177 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-    <TextView
-        android:id="@+id/mailBody"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="519dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="148dp"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.731" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
 
     <LinearLayout
-        android:layout_width="383dp"
-        android:layout_height="141dp"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:orientation="vertical"
+        android:background="@color/lightGrey"
+        android:layout_alignParentTop="true">
+
+        <TextView
+            android:id="@+id/mailSubjectTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/toolbar"
+            android:layout_marginTop="18dp"
+            android:paddingLeft="17dp"
+            android:text="Subject"
+            android:textColor="@color/black"
+            android:textSize="7pt" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
         android:orientation="horizontal"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_alignParentTop="true">
 
-        <RelativeLayout
-            android:id="@+id/icon_front"
-            android:layout_width="68dp"
-            android:layout_height="64dp">
-
-            <ImageView
-                android:id="@+id/icon_profileMail"
-                android:layout_width="@dimen/icon_width_height"
-                android:layout_height="@dimen/icon_width_height"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true" />
-
-            <TextView
-                android:id="@+id/icon_txt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/icon_profileMail"
-                android:layout_centerHorizontal="true"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/icon_text" />
-        </RelativeLayout>
+        <ImageView
+            android:id="@+id/profilePicture"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="12.5dp"
+            android:layout_marginLeft="12.5dp"/>
 
         <LinearLayout
-            android:id="@+id/message_container"
-            android:layout_width="294dp"
-            android:layout_height="117dp"
-            android:layout_marginTop="8dp"
-            android:clickable="true"
-            android:orientation="vertical"
-            android:paddingLeft="72dp"
-            android:paddingRight="@dimen/padding_list_row"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_width="243dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/from"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:lines="1"
-                android:textAlignment="viewStart"
-                android:textColor="@color/from"
-                android:textSize="@dimen/msg_text_primary"
-                android:textStyle="bold" />
+                android:id="@+id/senderNameTextView"
+                android:layout_width="180dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="11dp"
+                android:paddingLeft="7dp"
+                android:text="Sender Name"
+                android:textColor="@color/blue_selected"
+                android:textSize="7pt" />
 
             <TextView
-                android:id="@+id/to"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:lines="1"
-                android:textAlignment="viewStart"
-                android:textColor="@color/subject"
-                android:textSize="@dimen/msg_text_secondary"
-                android:textStyle="bold" />
+                android:id="@+id/senderTimeTextView"
+                android:layout_width="180dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="10dp"
+                android:paddingLeft="7dp"
+                android:text="Time sent"
+                android:textColor="@color/black"
+                android:textSize="7pt" />
 
-            <TextView
-                android:id="@+id/Subject"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="TextView" />
 
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/replyIcon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/ic_reply_black"/>
+
+
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="353dp"
-        android:layout_height="39dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="8dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
 
-        <ImageButton
-            android:id="@+id/ButtonDelete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:srcCompat="@android:drawable/ic_menu_delete" />
+        <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
 
-        <ImageButton
-            android:id="@+id/forwardButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:srcCompat="@android:drawable/ic_menu_set_as" />
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        <ImageButton
-            android:id="@+id/ReplyButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            app:srcCompat="@android:drawable/sym_action_email" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/toTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"
+                        android:layout_marginLeft="62.5dp"
+                        android:layout_marginTop="11dp"
+                        android:paddingLeft="7dp"
+                        android:text="@string/toTextView"
+                        android:textColor="@color/black"
+                        android:textSize="7pt" />
+
+                    <LinearLayout
+                        android:layout_width="250dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/receiverNameTextView"
+                            android:layout_width="240dp"
+                            android:layout_height="20dp"
+                            android:layout_marginTop="11dp"
+                            android:layout_marginLeft="12dp"
+                            android:paddingLeft="7dp"
+                            android:text="Receiver Name"
+                            android:textColor="@color/black"
+                            android:textSize="7pt" />
+
+                        <TextView
+                            android:id="@+id/receiverMailTextView"
+                            android:layout_width="240dp"
+                            android:layout_height="20dp"
+                            android:layout_marginLeft="13dp"
+                            android:paddingLeft="7dp"
+                            android:text="Receiver Mail"
+                            android:textColor="@color/black"
+                            android:textSize="7pt" />
+
+
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="900dp"
+                    android:layout_height="1px"
+                    android:background="@color/darkGrey"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/mailBodyTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="15dp"
+                        android:layout_marginBottom="15dp"
+                        android:text="TextView"
+                       />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+        </ScrollView>
+
     </LinearLayout>
-
-    <Button
-        android:id="@+id/attachmentButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="attachm"
-        tools:layout_editor_absoluteX="295dp"
-        tools:layout_editor_absoluteY="141dp" />
 
 </android.support.constraint.ConstraintLayout>

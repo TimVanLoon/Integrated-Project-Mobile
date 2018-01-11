@@ -8,8 +8,9 @@ public class EmailAddress implements Serializable {
     private String name;
     private String address;
 
-    public EmailAddress(String address) {
+    public EmailAddress(String address, String name) {
         this.address = address;
+        this.name = name;
     }
 
     public String getName() {

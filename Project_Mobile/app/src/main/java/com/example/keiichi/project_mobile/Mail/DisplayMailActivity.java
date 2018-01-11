@@ -1,8 +1,10 @@
 package com.example.keiichi.project_mobile.Mail;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -17,6 +19,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -26,6 +30,10 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
+import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
+
 import com.example.keiichi.project_mobile.DAL.POJOs.Attachment;
 import com.example.keiichi.project_mobile.DAL.POJOs.Message;
 import com.example.keiichi.project_mobile.R;
@@ -35,12 +43,18 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
+
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
@@ -49,21 +63,34 @@ public class DisplayMailActivity extends AppCompatActivity {
 
     final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
     private JSONObject mail, body;
-    private ImageButton deleteButton, replyButton, forwardButton;
-    private TextView From, iconText, To,mailBodyContent,Subject;
-    private ImageView icon_mail;
+    private TextView From;
+    private TextView mailSubjectTextView;
+    private TextView senderTimeTextView;
+    private TextView senderNameTextView;
+    private TextView receiverNameTextView;
+    private TextView receiverMailTextView;
+    private TextView mailBodyTextView;
+    private ImageView profilePicture;
     private Toolbar myToolbar;
-    private String ACCES_TOKEN, messageBody;
-
+    private String ACCES_TOKEN;
+    private String messageBody;
     private Message messageObject;
-
     private String accessToken;
     private String userName;
     private String userEmail;
+    private String mailSubject;
+    private String mailAddress;
+    private String mailId;
+    private String senderName;
+    private String timeSent;
+    private String receiverName;
+    private String receiverMail;
+    private  AlertDialog.Builder builder;
+
 
     private com.example.keiichi.project_mobile.DAL.POJOs.Message message;
-    private Button attachmentButton;
     private ArrayList<Attachment> attachments = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,96 +107,110 @@ public class DisplayMailActivity extends AppCompatActivity {
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
+        mailId = getIntent().getStringExtra("mailId");
+        mailSubject = getIntent().getStringExtra("mailSubject");
+        mailAddress = getIntent().getStringExtra("mailAddress");
+        senderName = getIntent().getStringExtra("senderName");
+        timeSent = getIntent().getStringExtra("timeSent");
+        receiverName = getIntent().getStringExtra("receiverName");
+        receiverMail = getIntent().getStringExtra("receiverMail");
+        messageBody = getIntent().getStringExtra("messageBody");
 
         Intent intent = getIntent();
-        String mB = intent.getStringExtra("messageBody");
-        String messageBody = mB.substring(mB.indexOf('\n')+1);
         ACCES_TOKEN = intent.getStringExtra("accestoken");
         message = (com.example.keiichi.project_mobile.DAL.POJOs.Message) intent.getSerializableExtra("mailObject");
 
-
-        mailBodyContent = findViewById(R.id.mailBody);
-        mailBodyContent.setMovementMethod(new ScrollingMovementMethod());
-        deleteButton = findViewById(R.id.ButtonDelete);
         From = findViewById(R.id.from);
-        To = findViewById(R.id.to);
-        iconText = findViewById(R.id.icon_txt);
-        icon_mail = findViewById(R.id.icon_profileMail);
-        replyButton = findViewById(R.id.ReplyButton);
-        forwardButton = findViewById(R.id.forwardButton);
-        Subject = findViewById(R.id.Subject);
-        attachmentButton = findViewById(R.id.attachmentButton);
+        mailSubjectTextView = findViewById(R.id.mailSubjectTextView);
+        senderNameTextView = findViewById(R.id.senderNameTextView);
+        senderTimeTextView = findViewById(R.id.senderTimeTextView);
+        profilePicture = findViewById(R.id.profilePicture);
+        receiverNameTextView = findViewById(R.id.receiverNameTextView);
+        receiverMailTextView = findViewById(R.id.receiverMailTextView);
+        mailBodyTextView = findViewById(R.id.mailBodyTextView);
+
+        ColorGenerator generator = ColorGenerator.MATERIAL;
+
+        int color2 = generator.getColor(senderName.substring(0,1));
+
+        TextDrawable drawable1 = TextDrawable.builder()
+                .buildRoundRect(senderName.substring(0,1), color2, 3); // radius in px
+
+        profilePicture.setImageDrawable(drawable1);
 
 
         messageObject = (Message) intent.getSerializableExtra("mailObject");
 
+
+        builder = new AlertDialog.Builder(DisplayMailActivity.this);
+        builder.setCancelable(true);
+        builder.setTitle("Delete Mail");
+        builder.setMessage("Are you sure you want to delete this mail?");
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                try {
+                    deleteMail();
+
+                    int DELAY_TIME=2000;
+
+                    new Timer().schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            //this code will run after the delay time which is 2 seconds.
+                            Intent intentListMail = new Intent(DisplayMailActivity.this, ListMailsActvity.class);
+
+                            intentListMail.putExtra("AccessToken", accessToken);
+                            intentListMail.putExtra("userName", userName);
+                            intentListMail.putExtra("userEmail", userEmail);
+
+                            startActivity(intentListMail);
+
+
+                        }
+                    }, DELAY_TIME);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
 
 
 
         try {
             mail = new JSONObject(messageBody);
             body = mail.getJSONObject("body");
-            mailBodyContent.setText(Html.fromHtml(body.getString("content")));
             JSONObject sender = mail.getJSONObject("from");
             JSONObject emailAddress = sender.getJSONObject("emailAddress");
-            iconText.setText(emailAddress.getString("name").substring(0, 1));
             From.setText(emailAddress.getString("name"));
             JSONArray recipient = mail.getJSONArray("toRecipients");
             emailAddress = recipient.getJSONObject(0);
-            To.setText(emailAddress.getJSONObject("emailAddress").getString("address"));
-            Subject.setText(mail.getString("subject"));
 
             if (!messageObject.isRead()){
                 updateMail(messageObject);
 
             }
 
-            applyProfilePicture(icon_mail,iconText);
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        mailBodyContent.setText(Html.fromHtml(messageBody));
-
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    deleteMail(mail);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        });
-
-        replyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToReplyActivity();
-            }
-        });
-
-        forwardButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toForwardMail();
-            }
-        });
-
-        attachmentButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    getAttachments();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
 
 
+
+        displayMailData();
     }
 
     private void getAttachments() throws JSONException {
@@ -216,8 +257,12 @@ public class DisplayMailActivity extends AppCompatActivity {
     private void toForwardMail() {
         Intent showMail = new Intent(DisplayMailActivity.this, ForwardMailActivity.class);
 
-        showMail.putExtra("mailObject",  message);
-        showMail.putExtra("accestoken", ACCES_TOKEN);
+        showMail.putExtra("AccessToken", accessToken);
+        showMail.putExtra("userName", userName);
+        showMail.putExtra("userEmail", userEmail);
+        showMail.putExtra("mailId", mailId);
+        showMail.putExtra("mailSubject", mailSubject);
+        showMail.putExtra("mailAddress", mailAddress);
 
         startActivity(showMail);
 
@@ -226,25 +271,31 @@ public class DisplayMailActivity extends AppCompatActivity {
     private void goToReplyActivity() {
         Intent showMail = new Intent(DisplayMailActivity.this, ReplyToMailActivity.class);
 
-            showMail.putExtra("mailObject",  message);
-            showMail.putExtra("accestoken", ACCES_TOKEN);
+            showMail.putExtra("AccessToken", accessToken);
+            showMail.putExtra("userName", userName);
+            showMail.putExtra("userEmail", userEmail);
+            showMail.putExtra("mailId", mailId);
+            showMail.putExtra("mailSubject", mailSubject);
+            showMail.putExtra("mailAddress", mailAddress);
 
         startActivity(showMail);
     }
 
 
-    private void deleteMail(JSONObject mail) throws JSONException {
+    // PATCH REQUEST VOOR DELETEN CONTACTPERSOON
+    private void deleteMail() throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
 
+        String postAddress = URL_DELETE + mailId;
 
-        StringRequest objectRequest = new StringRequest(Request.Method.DELETE, URL_DELETE + messageObject.getId() ,
+
+        StringRequest stringRequest = new StringRequest(Request.Method.DELETE, postAddress,
+
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         Toast.makeText(getApplicationContext(), "Mail deleted!", Toast.LENGTH_SHORT).show();
-                        System.out.println(response);
                     }
-
 
                 }, new Response.ErrorListener() {
             @Override
@@ -256,14 +307,15 @@ public class DisplayMailActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + ACCES_TOKEN);
+                headers.put("Authorization", "Bearer " + accessToken);
+                headers.put("Content-Type", "application/json; charset=utf-8");
 
                 return headers;
             }
 
         };
 
-        queue.add(objectRequest);
+        queue.add(stringRequest);
 
     }
 
@@ -350,11 +402,35 @@ public class DisplayMailActivity extends AppCompatActivity {
 
                 return true;
 
+            case R.id.action_delete:
+
+                builder.show();
+
+                return true;
+
+            case R.id.action_forward:
+
+                toForwardMail();
+
+                return true;
+
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void displayMailData(){
+
+        mailSubjectTextView.setText(mailSubject);
+        senderNameTextView.setText(senderName);
+        senderTimeTextView.setText(timeSent);
+        receiverNameTextView.setText(receiverName);
+        receiverMailTextView.setText(receiverMail);
+        mailBodyTextView.setMovementMethod(new ScrollingMovementMethod());
+        mailBodyTextView.setText(Html.fromHtml(messageBody));
+
     }
 
 }

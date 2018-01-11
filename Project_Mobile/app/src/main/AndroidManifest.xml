@@ -41,11 +41,7 @@
         </activity>
         <activity
             android:name=".Mail.DisplayMailActivity"
-
-
-            android:windowSoftInputMode="adjustPan" />
-
-            android:launchMode="singleInstance"
+            android:label=""
             android:theme="@style/ContactsTheme"
             android:windowSoftInputMode="adjustPan"/>
 
@@ -97,13 +93,22 @@
             android:label="Edit Event"
             android:theme="@style/ContactsTheme"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".Mail.ReplyToMailActivity" />
+        <activity
+            android:name=".Mail.ReplyToMailActivity"
+            android:label="Compose"
+            android:theme="@style/ContactsTheme"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".Calendar.AttendeeActivity"
             android:label="Contacts"
             android:theme="@style/ContactsTheme"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".Mail.ForwardMailActivity"></activity>
+        <activity
+            android:name=".Mail.ForwardMailActivity"
+            android:label="Compose"
+            android:theme="@style/ContactsTheme"
+            android:windowSoftInputMode="adjustResize">
+        </activity>
     </application>
 
 </manifest>
