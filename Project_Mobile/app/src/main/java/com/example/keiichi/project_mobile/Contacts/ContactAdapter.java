@@ -69,7 +69,7 @@ public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterab
 
     @Override
     public Contact getItem(int i) {
-        return filteredData.get(i);
+        return originalData.get(i);
     }
 
     @Override

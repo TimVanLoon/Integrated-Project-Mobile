@@ -39,6 +39,10 @@ dependencies {
     // RecyclerView
     implementation 'com.android.support:recyclerview-v7:26.1.0'
 
+    implementation("com.mikepenz:materialdrawer:6.0.2@aar") {
+        transitive = true
+    }
+
     // Include the sdk as a dependency
     compile('com.microsoft.graph:msgraph-sdk-android:1.2.+')
     compile 'com.microsoft.graph:msa-auth-for-android-adapter:0.9.+'

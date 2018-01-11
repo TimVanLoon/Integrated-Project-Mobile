@@ -53,6 +53,7 @@ import com.example.keiichi.project_mobile.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.microsoft.appcenter.ingestion.models.Model;
+import com.mikepenz.materialdrawer.DrawerBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -79,7 +80,7 @@ public class ContactsActivity extends AppCompatActivity {
     private TextDrawable drawable;
     private ImageView profilePicture;
     private DrawerLayout mDrawerLayout;
-    ActionBarDrawerToggle actionBarDrawerToggle;
+    private ActionBarDrawerToggle actionBarDrawerToggle;
 
     private ListView contactsListView;
 
@@ -123,6 +124,8 @@ public class ContactsActivity extends AppCompatActivity {
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, myToolbar, R.string.drawer_open,
                 R.string.drawer_close);
+
+
 
         mDrawerLayout.setDrawerListener(actionBarDrawerToggle);
 
@@ -205,6 +208,7 @@ public class ContactsActivity extends AppCompatActivity {
 
         RequestQueue queue = Volley.newRequestQueue(this);
 
+        /*
         String url = "http://i.imgur.com/7spzG.png";
         System.out.println("hit");
         ImageRequest request = new ImageRequest(url,
@@ -227,6 +231,18 @@ public class ContactsActivity extends AppCompatActivity {
                 });
 
         queue.add(request);
+
+        */
+
+        ColorGenerator generator = ColorGenerator.MATERIAL;
+
+        int color2 = generator.getColor(userName.substring(0,1));
+
+        TextDrawable drawable = TextDrawable.builder()
+                .buildRound(userName.substring(0,1), color2); // radius in px
+
+        mImageView.setImageDrawable(drawable);
+
 
     }
 

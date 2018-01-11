@@ -52,7 +52,7 @@ public class EventAdapter extends BaseAdapter implements ListAdapter, Filterable
 
     @Override
     public Event getItem(int i) {
-        return filteredData.get(i);
+        return originalData.get(i);
     }
 
 
