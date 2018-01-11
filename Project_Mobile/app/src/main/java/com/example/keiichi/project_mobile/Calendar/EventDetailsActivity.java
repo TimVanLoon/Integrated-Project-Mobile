@@ -392,6 +392,7 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
                 intentEditEvent.putExtra("attendeesList", (Serializable)attendees);
                 intentEditEvent.putExtra("fromEventDetails", "yes");
                 intentEditEvent.putExtra("responseRequested", responseRequested);
+                intentEditEvent.putExtra("fromEventDetails", "yes");
 
                 startActivity(intentEditEvent);
 
