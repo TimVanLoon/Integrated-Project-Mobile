@@ -60,6 +60,7 @@ import com.example.keiichi.project_mobile.Contacts.ContactAdapter;
 import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
 import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
+import com.example.keiichi.project_mobile.DAL.POJOs.MailFolder;
 import com.example.keiichi.project_mobile.DAL.POJOs.Message;
 import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
@@ -74,8 +75,15 @@ import com.microsoft.identity.client.MsalServiceException;
 import com.microsoft.identity.client.MsalUiRequiredException;
 import com.microsoft.identity.client.PublicClientApplication;
 import com.microsoft.identity.client.User;
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.holder.BadgeStyle;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -88,10 +96,19 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, Serializable {
 
-    NavigationView mailNavigationView;
+    final private String URL_MAIL = "https://graph.microsoft.com/v1.0/me/messages/";
+    final private String PHOTO_REQUEST = "https://graph.microsoft.com/v1.0/me/photo/$value";
+    final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
+    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/mailFolders('Inbox')/messages?$top=25";
+    final static String CHANNEL_ID = "my_channel_01";
+    final static String URL_MAILFOLDERS = "https://graph.microsoft.com/v1.0/me/mailFolders";
+
+    private NavigationView mailNavigationView;
     private ImageView userPicture;
     private DrawerLayout mDrawerLayout;
     private String test;
@@ -103,6 +120,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     private boolean actionModeEnabled = false;
     private ArrayList<Integer> selectedItems = new ArrayList<>();
     private List<Message> messages = new ArrayList<>();
+    private List<MailFolder> mailFolders;
 
     private Button attachmentButton;
 
@@ -159,15 +177,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             "https://graph.microsoft.com/Calendars.ReadWrite"};
 
     //final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me";
-
-    final private String URL_MAIL = "https://graph.microsoft.com/v1.0/me/messages/";
-
-    final private String PHOTO_REQUEST = "https://graph.microsoft.com/v1.0/me/photo/$value";
-
-    final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
-
-    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/mailFolders('Inbox')/messages?$top=25";
-    final static String CHANNEL_ID = "my_channel_01";
 
     private JSONObject graphResponse;
     private RecyclerView recyclerView;
@@ -267,10 +276,9 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             }
         });
 
-
         callGraphAPI();
 
-        buildDrawer();
+        getMailFolders();
 
         /*
         NavigationView navigationView = (NavigationView) findViewById(R.id.mailNavigationView);
@@ -436,6 +444,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         swipeRefreshLayout.setRefreshing(true);
         try {
             getMails(graphResponse);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -492,6 +501,87 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
             queue.add(objectRequest);
         }
+
+    }
+
+    /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
+    private void getMailFolders() {
+        Log.d(TAG, "Starting volley request to graph");
+        Log.d(TAG, accessToken);
+
+    /* Make sure we have a token to send to graph */
+        if (accessToken == null) {
+            return;
+        }
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        JSONObject parameters = new JSONObject();
+
+        try {
+            parameters.put("key", "value");
+        } catch (Exception e) {
+            Log.d(TAG, "Failed to put parameters: " + e.toString());
+        }
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, URL_MAILFOLDERS,
+                parameters, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+            /* Successfully called graph, process data and send to UI */
+                Log.d(TAG, "Response: " + response.toString());
+
+                try {
+                    updateFolders(response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d(TAG, "Error: " + error.toString());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+                return headers;
+            }
+        };
+
+        Log.d(TAG, "Adding HTTP GET to Queue, Request: " + request.toString());
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                3000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(request);
+    }
+
+    /* Sets the Graph response */
+    private void updateFolders(JSONObject graphResponse) throws JSONException {
+
+        // Test de response
+        JSONArray contactsJsonArray = null;
+
+        // Haal de mailfolders binnen
+        try {
+            JSONObject folderList = graphResponse;
+
+            JSONArray folders = folderList.getJSONArray("value");
+
+            // VUL POJO
+            Type listType = new TypeToken<List<MailFolder>>() {
+            }.getType();
+
+            mailFolders = new Gson().fromJson(String.valueOf(folders), listType);
+
+            buildDrawer(userName, userEmail, myToolbar, mailFolders);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
 
     }
 
@@ -597,6 +687,8 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         return super.onCreateOptionsMenu(menu);
     }
 
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
 
@@ -626,12 +718,50 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         void onLongClick(View view, int position);
     }
 
-    public void buildDrawer(){
+    public void buildDrawer(String name, String email, Toolbar toolbar, List<MailFolder> folders){
+
+        ArrayList<IDrawerItem> drawerItems = new ArrayList<>();
+
+        for(MailFolder folder : folders) {
+            PrimaryDrawerItem item = new PrimaryDrawerItem();
+            if(folder.getUnreadItemCount() == 0){
+                item.withName(folder.getDisplayName())
+                        .withIcon(R.drawable.ic_mail);
+            } else {
+                item.withName(folder.getDisplayName())
+                        .withIcon(R.drawable.ic_mail);
+            }
+            item.withTag(folder);
+            drawerItems.add(item);
+        }
+
+        ColorGenerator generator = ColorGenerator.MATERIAL;
+
+        int color2 = generator.getColor(userName.substring(0,1));
+
+        TextDrawable drawable = TextDrawable.builder()
+                .buildRound(userName.substring(0,1), color2); // radius in px
+
+        AccountHeader headerResult = new AccountHeaderBuilder()
+                .withActivity(this)
+                .withHeaderBackground(R.color.colorPrimary)
+                .addProfiles(
+                        new ProfileDrawerItem().withName(name).withEmail(email).withIcon(drawable)
+                )
+                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
+                    @Override
+                    public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
+                        return false;
+                    }
+                })
+                .build();
 
         drawer = new DrawerBuilder()
                 .withActivity(this)
-                .withToolbar(myToolbar)
+                .withToolbar(toolbar)
                 .withTranslucentStatusBar(false)
+                .withAccountHeader(headerResult)
+                .withDrawerItems(drawerItems)
                 .build();
 
 
