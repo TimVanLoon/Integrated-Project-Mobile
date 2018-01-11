@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -69,7 +70,7 @@ public class DisplayMailActivity extends AppCompatActivity {
     private TextView senderNameTextView;
     private TextView receiverNameTextView;
     private TextView receiverMailTextView;
-    private TextView mailBodyTextView;
+    private WebView mailBodyWebView;
     private ImageView profilePicture;
     private Toolbar myToolbar;
     private String ACCES_TOKEN;
@@ -85,6 +86,7 @@ public class DisplayMailActivity extends AppCompatActivity {
     private String timeSent;
     private String receiverName;
     private String receiverMail;
+    private String contentType;
     private  AlertDialog.Builder builder;
 
 
@@ -115,6 +117,7 @@ public class DisplayMailActivity extends AppCompatActivity {
         receiverName = getIntent().getStringExtra("receiverName");
         receiverMail = getIntent().getStringExtra("receiverMail");
         messageBody = getIntent().getStringExtra("messageBody");
+        contentType = getIntent().getStringExtra("contentType");
 
         Intent intent = getIntent();
         ACCES_TOKEN = intent.getStringExtra("accestoken");
@@ -127,7 +130,7 @@ public class DisplayMailActivity extends AppCompatActivity {
         profilePicture = findViewById(R.id.profilePicture);
         receiverNameTextView = findViewById(R.id.receiverNameTextView);
         receiverMailTextView = findViewById(R.id.receiverMailTextView);
-        mailBodyTextView = findViewById(R.id.mailBodyTextView);
+        mailBodyWebView = findViewById(R.id.mailBodyWebView);
 
         ColorGenerator generator = ColorGenerator.MATERIAL;
 
@@ -185,28 +188,6 @@ public class DisplayMailActivity extends AppCompatActivity {
 
             }
         });
-
-
-
-        try {
-            mail = new JSONObject(messageBody);
-            body = mail.getJSONObject("body");
-            JSONObject sender = mail.getJSONObject("from");
-            JSONObject emailAddress = sender.getJSONObject("emailAddress");
-            From.setText(emailAddress.getString("name"));
-            JSONArray recipient = mail.getJSONArray("toRecipients");
-            emailAddress = recipient.getJSONObject(0);
-
-            if (!messageObject.isRead()){
-                updateMail(messageObject);
-
-            }
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
 
 
 
@@ -428,8 +409,23 @@ public class DisplayMailActivity extends AppCompatActivity {
         senderTimeTextView.setText(timeSent);
         receiverNameTextView.setText(receiverName);
         receiverMailTextView.setText(receiverMail);
-        mailBodyTextView.setMovementMethod(new ScrollingMovementMethod());
-        mailBodyTextView.setText(Html.fromHtml(messageBody));
+
+        
+        if(contentType.equals("html")){
+
+            mailBodyWebView.loadDataWithBaseURL("", messageBody, "text/html", "utf-8","");
+            mailBodyWebView.getSettings().setLoadWithOverviewMode(true);
+
+        } else{
+
+            mailBodyWebView.loadDataWithBaseURL("", messageBody, "text", "utf-8","");
+
+        }
+
+
+
+        //mailBodyWebView.loadDataWithBaseURL("", messageBody, "text/html", "utf-8","");
+        //mailBodyWebView.getSettings().setLoadWithOverviewMode(true);
 
     }
 
