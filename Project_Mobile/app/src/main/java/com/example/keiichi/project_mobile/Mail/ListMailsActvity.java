@@ -102,6 +102,7 @@ import java.util.TimerTask;
 public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, Serializable {
 
     final private String URL_MAIL = "https://graph.microsoft.com/v1.0/me/messages/";
+    final private String URL_MAIL_UPDATE = "https://graph.microsoft.com/beta/me/messages/";
     final private String PHOTO_REQUEST = "https://graph.microsoft.com/v1.0/me/photo/$value";
     final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/mailFolders('Inbox')/messages?$top=25";
@@ -604,7 +605,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             Log.d(TAG, "Failed to put parameters: " + e.toString());
         }
 
-        String patchUrl = URL_MAIL + id;
+        String patchUrl = URL_MAIL_UPDATE + id;
 
         JsonObjectRequest objectRequest = null;
         try {
@@ -710,16 +711,21 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                 } else {
                     Message message = messages.get(position);
 
+
+                    Intent showMail = new Intent(ListMailsActvity.this, DisplayMailActivity.class);
+
                     if (!message.isRead()){
+
+                        System.out.println("KEVIN BECKWEE");
 
                         String id = message.getId();
                         message.setRead(true);
 
-                        updateMailIsRead(message, id);
+                        showMail.putExtra("isRead", "yes");
+
+                        //updateMailIsRead(message, id);
 
                     }
-
-                    Intent showMail = new Intent(ListMailsActvity.this, DisplayMailActivity.class);
 
                     showMail.putExtra("messageBody", message.getBody().getContent());
                     showMail.putExtra("AccessToken", accessToken);
@@ -733,7 +739,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                     showMail.putExtra("receiverName", message.getToRecipients().get(0).getEmailAddress().getName());
                     showMail.putExtra("receiverMail", message.getToRecipients().get(0).getEmailAddress().getAddress());
                     showMail.putExtra("contentType", message.getBody().getContentType());
-
+                    showMail.putExtra("messageObject", message);
 
                     startActivity(showMail);
                 }

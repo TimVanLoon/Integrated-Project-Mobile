@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -45,6 +46,7 @@ import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
 
 import com.example.keiichi.project_mobile.DAL.POJOs.Attachment;
 import com.example.keiichi.project_mobile.DAL.POJOs.Message;
+import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -70,7 +72,9 @@ import javax.json.JsonObjectBuilder;
 
 public class DisplayMailActivity extends AppCompatActivity {
 
+    final private String URL_MAIL_UPDATE = "https://graph.microsoft.com/v1.0/me/messages/";
     final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
+    private static final String TAG = MainActivity.class.getSimpleName();
     private JSONObject mail, body;
     private TextView From;
     private TextView mailSubjectTextView;
@@ -95,8 +99,8 @@ public class DisplayMailActivity extends AppCompatActivity {
     private String receiverName;
     private String receiverMail;
     private String contentType;
-    private  AlertDialog.Builder builder;
-
+    private String isRead;
+    private AlertDialog.Builder builder;
 
     private com.example.keiichi.project_mobile.DAL.POJOs.Message message;
     private ArrayList<Attachment> attachments = new ArrayList<>();
@@ -126,6 +130,8 @@ public class DisplayMailActivity extends AppCompatActivity {
         receiverMail = getIntent().getStringExtra("receiverMail");
         messageBody = getIntent().getStringExtra("messageBody");
         contentType = getIntent().getStringExtra("contentType");
+        isRead = getIntent().getStringExtra("isRead");
+
 
         Intent intent = getIntent();
         ACCES_TOKEN = intent.getStringExtra("accestoken");
@@ -150,7 +156,19 @@ public class DisplayMailActivity extends AppCompatActivity {
         profilePicture.setImageDrawable(drawable1);
 
 
-        messageObject = (Message) intent.getSerializableExtra("mailObject");
+        messageObject = (Message) intent.getSerializableExtra("messageObject");
+
+        if(isRead != null){
+
+            messageObject.setRead(true);
+
+            try {
+                updateMailIsRead(messageObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
 
 
         builder = new AlertDialog.Builder(DisplayMailActivity.this);
@@ -410,6 +428,49 @@ public class DisplayMailActivity extends AppCompatActivity {
         }
     }
 
+    /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
+    private void updateMailIsRead(Message message) throws JSONException{
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        message.setRead(true);
+
+        Message newMessage = message;
+
+        String messageId = newMessage.getId();
+
+        String patchUrl = URL_MAIL_UPDATE + messageId;
+
+        System.out.println("test message xd: " + new Gson().toJson(newMessage));
+
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.PATCH, patchUrl ,new JSONObject(new Gson().toJson(newMessage)),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Toast.makeText(getApplicationContext(), "Mail updated!", Toast.LENGTH_SHORT).show();
+                        System.out.println(response.toString());
+                    }
+
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+                headers.put("Content-Type", "application/json; charset=utf-8");
+
+                return headers;
+            }
+
+        };
+
+        queue.add(objectRequest);
+    }
+
     public void displayMailData(){
 
         mailSubjectTextView.setText(mailSubject);
@@ -479,6 +540,7 @@ public class DisplayMailActivity extends AppCompatActivity {
             }
         });
     }
+
 
 }
 

@@ -161,7 +161,7 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
                 holder.subject.setTypeface(null, Typeface.BOLD);
                 holder.from.setTextColor(ContextCompat.getColor(mContext, R.color.from));
                 holder.subject.setTextColor(ContextCompat.getColor(mContext, R.color.subject));
-                
+
             }
 
 
