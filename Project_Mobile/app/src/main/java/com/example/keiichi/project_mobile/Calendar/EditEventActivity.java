@@ -152,7 +152,7 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         responseRequested = getIntent().getBooleanExtra("responseRequested", false);
         reminderMinutesBeforeStart = getIntent().getIntExtra("reminderMinutesBeforeStart", 0);
         attendees = (List<Attendee>)getIntent().getSerializableExtra("attendeesList");
-        fromEventDetails = getIntent().getStringExtra("fromEventDetails");
+        fromAttendeesActivity = getIntent().getStringExtra("fromAttendeesActivity");
 
         // INITIALISEER DE INPUT FIELDS
         dateEvent = (EditText) findViewById(R.id.dateEvent);
@@ -182,24 +182,46 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
                 intentAttendees.putExtra("userEmail", userEmail);
                 intentAttendees.putExtra("emailList",(Serializable) emailList);
                 intentAttendees.putExtra("firstTime", firstTime);
-                intentAttendees.putExtra("eventSubject", eventInput.getText().toString());
-                intentAttendees.putExtra("eventLocation", locationInput.getText().toString());
+                intentAttendees.putExtra("subject", eventInput.getText().toString());
+                intentAttendees.putExtra("location", locationInput.getText().toString());
                 intentAttendees.putExtra("eventDayOfMonth", dayOfMonth);
                 intentAttendees.putExtra("eventMonth", month);
                 intentAttendees.putExtra("eventYear", year);
                 intentAttendees.putExtra("eventHour", hourOfDay);
                 intentAttendees.putExtra("eventMinute", minuteOfHour);
                 intentAttendees.putExtra("eventDuration", duration);
-                intentAttendees.putExtra("eventReminderMinutesBeforeStart", reminderMinutesBeforeStart);
-                intentAttendees.putExtra("eventShowAs", displayAs);
-                intentAttendees.putExtra("eventNotes", personalNotes.getText().toString());
+                intentAttendees.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
+                intentAttendees.putExtra("displayAs", displayAs);
+                intentAttendees.putExtra("notes", personalNotes.getText().toString());
                 intentAttendees.putExtra("eventIsPrivate", isPrivate);
-                intentAttendees.putExtra("eventRequestResponses", responseRequested);
+                intentAttendees.putExtra("responseRequested", responseRequested);
                 intentAttendees.putExtra("fromEdit", "yes");
+                intentAttendees.putExtra("sensitivity", sensitivity);
+                intentAttendees.putExtra("startDate", startDate);
 
                 startActivity(intentAttendees);
             }
         });
+
+        if(fromEventDetails != null){
+
+            if(!attendees.isEmpty()){
+
+                for(Attendee attendee : attendees){
+
+                    firstTime = "no";
+
+                    emailList.add(attendee.getEmailAddress());
+
+                }
+
+                attendeeAdapter = new AttendeeAdapter(this, attendees);
+                attendeeList.setAdapter(attendeeAdapter);
+                Utility.setListViewHeightBasedOnChildren(attendeeList);
+
+            }
+
+        }
 
         // VUL INPUTS MET DATA VAN CONTACT
         eventInput.setText(subject);
@@ -213,17 +235,6 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
 
         start = Calendar.getInstance();
 
-        if(fromEventDetails != null){
-
-            if(!attendees.isEmpty()){
-
-                attendeeAdapter = new AttendeeAdapter(this, attendees);
-                attendeeList.setAdapter(attendeeAdapter);
-                Utility.setListViewHeightBasedOnChildren(attendeeList);
-
-            }
-
-        }
 
         switch(sensitivity){
             case "normal":
@@ -271,6 +282,18 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
             e.printStackTrace();
         }
 
+        if(month <10) {
+            finalMonth = "0" + month;
+        } else {
+            finalMonth = String.valueOf(month);
+        }
+
+        if(dayOfMonth <10) {
+            finalDayOfMonth = "0" + dayOfMonth;
+        } else {
+            finalDayOfMonth = String.valueOf(dayOfMonth);
+        }
+
         if(hourOfDay <10) {
             finalHourOfDay = "0" + hourOfDay;
         } else {
@@ -287,7 +310,7 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         dateEvent.setClickable(true);
         timeEvent.setFocusable(false);
         timeEvent.setClickable(true);
-        dateEvent.setText(dayOfMonth + "-" + month + "-" + year);
+        dateEvent.setText(finalDayOfMonth + "-" + finalMonth + "-" + year);
         timeEvent.setText(finalHourOfDay + ":" + finalMinuteOfHour);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -458,10 +481,22 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
                                 setStartDate(year, monthOfYearPicked++, dayOfMonthPicked);
 
                                 dayOfMonth = dayOfMonthPicked;
-                                month = monthOfYearPicked;
+                                month = monthOfYearPicked + 1;
                                 year = yearPicked;
 
-                                dateEvent.setText(dayOfMonth + "-" + month + "-" + year);
+                                if(month <10) {
+                                    finalMonth = "0" + month;
+                                } else {
+                                    finalMonth = String.valueOf(month);
+                                }
+
+                                if(dayOfMonth <10) {
+                                    finalDayOfMonth = "0" + dayOfMonth;
+                                } else {
+                                    finalDayOfMonth = String.valueOf(dayOfMonth);
+                                }
+
+                                dateEvent.setText(finalDayOfMonth + "-" + finalMonth + "-" + year);
 
                             }
                         }, mYear, mMonth, mDay);
@@ -507,7 +542,55 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
 
         if(fromAttendeesActivity != null ){
 
+            emailList = (List<EmailAddress>)getIntent().getSerializableExtra("emailList");
+            duration = getIntent().getIntExtra("eventDuration", 0);
+
+            switch(duration){
+                case 0:
+                    startingValue = adapterDuration.getPosition("0 Minutes");
+                    durationSpinner.setSelection(startingValue);
+                    break;
+
+                case 15:
+                    startingValue = adapterDuration.getPosition("15 Minutes");
+                    durationSpinner.setSelection(startingValue);
+                    break;
+
+                case 30:
+                    startingValue = adapterDuration.getPosition("30 Minutes");
+                    durationSpinner.setSelection(startingValue);
+                    break;
+
+                case 45:
+                    startingValue = adapterDuration.getPosition("45 Minutes");
+                    durationSpinner.setSelection(startingValue);
+                    break;
+
+                case 60:
+                    startingValue = adapterDuration.getPosition("1 Hour");
+                    durationSpinner.setSelection(startingValue);
+                    break;
+
+                case 90:
+                    startingValue = adapterDuration.getPosition("90 Minutes");
+                    durationSpinner.setSelection(startingValue);
+                    break;
+
+                case 120:
+                    startingValue = adapterDuration.getPosition("2 Hours");
+                    durationSpinner.setSelection(startingValue);
+                    break;
+
+                case 1440:
+                    startingValue = adapterDuration.getPosition("Entire day");
+                    durationSpinner.setSelection(startingValue);
+                    break;
+
+            }
+
             refillFromAttendeeActivity();
+
+            attendees = new ArrayList<>();
 
             if(!emailList.isEmpty()){
 
@@ -846,7 +929,7 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         cal.set(Calendar.YEAR, year);
         cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         cal.set(Calendar.MONTH, month - 1);
-        cal.set(Calendar.HOUR_OF_DAY, hourOfDay - 1);
+        cal.set(Calendar.HOUR_OF_DAY, hourOfDay );
         cal.set(Calendar.MINUTE, minuteOfHour);
         cal.set(Calendar.SECOND, 0);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -929,11 +1012,15 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
                 if (checked){
 
                     isPrivate = true;
+                    sensitivity = "private";
 
                 }
 
                 else{
+
                     isPrivate = false;
+                    sensitivity = "normal";
+
                 }
                 break;
 
@@ -955,23 +1042,11 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
 
     public void refillFromAttendeeActivity(){
 
-        eventSubject = getIntent().getStringExtra("eventSubject");
-        eventLocation = getIntent().getStringExtra("eventLocation");
         dayOfMonth = getIntent().getIntExtra("eventDayOfMonth", 0);
         month = getIntent().getIntExtra("eventMonth", 0);
         year = getIntent().getIntExtra("eventYear", 0);
         hourOfDay = getIntent().getIntExtra("eventHour", 0);
         minuteOfHour = getIntent().getIntExtra("eventMinute", 0);
-        duration = getIntent().getIntExtra("eventDuration", 0);
-        displayAs = getIntent().getStringExtra("eventShowAs");
-        eventNotes = getIntent().getStringExtra("eventNotes");
-        isPrivate = getIntent().getBooleanExtra("eventIsPrivate", false);
-        responseRequested = getIntent().getBooleanExtra("eventRequestResponses", false);
-        reminderMinutesBeforeStart = getIntent().getIntExtra("eventReminderMinutesBeforeStart", 0);
-
-        eventInput.setText(eventSubject);
-        locationInput.setText(eventLocation);
-        personalNotes.setText(eventNotes);
 
         if(month <10) {
             finalMonth = "0" + month;
@@ -999,181 +1074,6 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
 
         dateEvent.setText(finalDayOfMonth + "-" + finalMonth + "-" + year);
         timeEvent.setText(finalHourOfDay + ":" + finalMinuteOfHour);
-
-
-        if(isPrivate){
-
-            privateCheckbox.setChecked(true);
-
-        } else {
-
-            privateCheckbox.setChecked(false);
-
-        }
-
-        if(responseRequested){
-
-            responseCheckbox.setChecked(true);
-
-        } else {
-
-            responseCheckbox.setChecked(false);
-
-        }
-
-        switch(displayAs){
-            case "Free":
-                startingValue = adapterDisplayAs.getPosition("Free");
-                displayAsSpinner.setSelection(startingValue);
-                break;
-
-            case "WorkingElsewhere":
-                startingValue = adapterDisplayAs.getPosition("Working elsewhere");
-                displayAsSpinner.setSelection(startingValue);
-                break;
-
-            case "Tentative":
-                startingValue = adapterDisplayAs.getPosition("Tentative");
-                displayAsSpinner.setSelection(startingValue);
-                break;
-
-            case "Busy":
-                startingValue = adapterDisplayAs.getPosition("Busy");
-                displayAsSpinner.setSelection(startingValue);
-                break;
-
-            case "Oof":
-                startingValue = adapterDisplayAs.getPosition("Away");
-                displayAsSpinner.setSelection(startingValue);
-                break;
-
-        }
-
-        switch(duration){
-            case 0:
-                startingValue = adapterDuration.getPosition("0 Minutes");
-                durationSpinner.setSelection(startingValue);
-                break;
-
-            case 15:
-                startingValue = adapterDuration.getPosition("15 Minutes");
-                durationSpinner.setSelection(startingValue);
-                break;
-
-            case 30:
-                startingValue = adapterDuration.getPosition("30 Minutes");
-                durationSpinner.setSelection(startingValue);
-                break;
-
-            case 45:
-                startingValue = adapterDuration.getPosition("45 Minutes");
-                durationSpinner.setSelection(startingValue);
-                break;
-
-            case 60:
-                startingValue = adapterDuration.getPosition("1 Hour");
-                durationSpinner.setSelection(startingValue);
-                break;
-
-            case 90:
-                startingValue = adapterDuration.getPosition("90 Minutes");
-                durationSpinner.setSelection(startingValue);
-                break;
-
-            case 120:
-                startingValue = adapterDuration.getPosition("2 Hours");
-                durationSpinner.setSelection(startingValue);
-                break;
-
-            case 1440:
-                startingValue = adapterDuration.getPosition("Entire day");
-                durationSpinner.setSelection(startingValue);
-                break;
-
-        }
-
-
-        switch(reminderMinutesBeforeStart){
-            case 0:
-                startingValue = adapterReminder.getPosition("0 Minutes");
-                reminderSpinner.setSelection(startingValue);
-                break;
-
-            case 15:
-                startingValue = adapterReminder.getPosition("15 Minutes");
-                reminderSpinner.setSelection(startingValue);
-                break;
-
-            case 30:
-                startingValue = adapterReminder.getPosition("30 Minutes");
-                reminderSpinner.setSelection(startingValue);
-                break;
-
-            case 45:
-                startingValue = adapterReminder.getPosition("45 Minutes");
-                reminderSpinner.setSelection(startingValue);
-                break;
-
-            case 60:
-                startingValue = adapterReminder.getPosition("1 Hour");
-                reminderSpinner.setSelection(startingValue);
-                break;
-
-            case 90:
-                startingValue = adapterReminder.getPosition("90 Minutes");
-                reminderSpinner.setSelection(startingValue);
-                break;
-
-            case 120:
-                startingValue = adapterReminder.getPosition("2 Hours");
-                reminderSpinner.setSelection(startingValue);
-                break;
-
-            case 180:
-                startingValue = adapterReminder.getPosition("3 Hours");
-                reminderSpinner.setSelection(startingValue);
-                break;
-
-            case 240:
-                startingValue = adapterReminder.getPosition("4 Hours");
-                reminderSpinner.setSelection(startingValue);
-                break;
-
-            case 480:
-                startingValue = adapterReminder.getPosition("8 Hours");
-                reminderSpinner.setSelection(startingValue);
-                break;
-
-            case 720:
-                startingValue = adapterReminder.getPosition("12 Hours");
-                reminderSpinner.setSelection(startingValue);
-                break;
-
-            case 1440:
-                startingValue = adapterReminder.getPosition("1 Day");
-                reminderSpinner.setSelection(startingValue);
-                break;
-
-            case 2880:
-                startingValue = adapterReminder.getPosition("2 Days");
-                reminderSpinner.setSelection(startingValue);
-                break;
-
-            case 4320:
-                startingValue = adapterReminder.getPosition("3 Days");
-                reminderSpinner.setSelection(startingValue);
-                break;
-
-            case 10080:
-                startingValue = adapterReminder.getPosition("1 Week");
-                reminderSpinner.setSelection(startingValue);
-                break;
-
-            case 20160:
-                startingValue = adapterReminder.getPosition("2 Weeks");
-                reminderSpinner.setSelection(startingValue);
-                break;
-        }
 
     }
 }
