@@ -63,6 +63,23 @@ public class ForwardMailActivity extends AppCompatActivity {
 
         TextMailAdress = findViewById(R.id.TextMailAdress);
         TextMailSubject = findViewById(R.id.TextMailSubject);
+
+        TextMailSubject.setText("forward: " + mailSubject);
+        /*ForwardButton = findViewById(R.id.ForwardButton);
+        Editor = findViewById(R.id.editor);
+
+        ForwardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    forwardMail();
+                    finish();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });*/
+
         Editor = findViewById(R.id.editor);
 
         myToolbar = findViewById(R.id.toolbar);
@@ -71,6 +88,7 @@ public class ForwardMailActivity extends AppCompatActivity {
         // VOEG BACK BUTTON TOE AAN ACTION BAR
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
 
     }
 
