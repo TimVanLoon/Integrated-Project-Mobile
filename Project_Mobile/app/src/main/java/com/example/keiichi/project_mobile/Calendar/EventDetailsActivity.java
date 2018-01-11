@@ -40,6 +40,9 @@ import org.json.JSONException;
 import org.w3c.dom.Text;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -171,7 +174,18 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
 
         eventSubjectTextView.setText(subject);
         locationTextView.setText(location);
-        startDateTextView.setText(startDate);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        SimpleDateFormat output = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        Date d = null;
+        try {
+            d = sdf.parse(startDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        startDateTextView.setText(output.format(d));
+
+        //startDateTextView.setText(startDate);
 
         reminderSpinner.setOnItemSelectedListener(this);
         displayAsSpinner.setOnItemSelectedListener(this);
