@@ -53,6 +53,7 @@ public class ForwardMailActivity extends AppCompatActivity {
 
         TextMailAdress = findViewById(R.id.TextMailAdress);
         TextMailSubject = findViewById(R.id.TextMailSubject);
+        TextMailSubject.setText("forward: " + message.getSubject());
         ForwardButton = findViewById(R.id.ForwardButton);
         Editor = findViewById(R.id.editor);
 
@@ -61,6 +62,7 @@ public class ForwardMailActivity extends AppCompatActivity {
             public void onClick(View view) {
                 try {
                     forwardMail();
+                    finish();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
