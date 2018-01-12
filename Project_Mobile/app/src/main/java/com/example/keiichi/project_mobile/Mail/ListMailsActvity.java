@@ -122,6 +122,9 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     private ArrayList<Integer> selectedItems = new ArrayList<>();
     private List<Message> messages = new ArrayList<>();
     private List<MailFolder> mailFolders;
+    private ArrayList<String> mailFolderNames = new ArrayList<>();
+    private ArrayList<IDrawerItem> drawerItems = new ArrayList<>();
+
 
     private Button attachmentButton;
 
@@ -846,47 +849,57 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             switch(folderName) {
 
                 case "archive":
-                    item.withName("Archive");
+                    mailFolderNames.add("Archive");
+
                     break;
 
                 case "boxer":
-                    item.withName("Boxer");
+                    mailFolderNames.add("Boxer");
+
                     break;
 
                 case "concepten":
-                    item.withName("Drafts");
+                    mailFolderNames.add("Drafts");
+
                     break;
 
                 case "conversation history":
-                    item.withName("Conversation History");
+                    mailFolderNames.add("Conversation History");
+
                     break;
 
                 case "onbelangrijke e-mail":
-                    item.withName("Unimportant E-Mail");
+                    mailFolderNames.add("Unimportant E-Mail");
+
                     break;
 
                 case "ongewenste e-mail":
-                    item.withName("Junk E-Mail");
+                    mailFolderNames.add("Junk E-Mail");
+
                     break;
 
                 case "postvak in":
-                    item.withName("Inbox").withIcon(R.drawable.ic_mail);
+                    mailFolderNames.add("Inbox");
+
                     break;
 
                 case "postvak uit":
-                    item.withName("Outbox");
+                    mailFolderNames.add("Outbox");
+
                     break;
 
                 case "verwijderde items":
-                    item.withName("Deleted Items");
+                    mailFolderNames.add("Deleted Items");
+
                     break;
 
                 case "verzonden items":
-                    item.withName("Sent Items");
+                    mailFolderNames.add("Sent Items");
+
                     break;
 
                 default:
-                    item.withName(folder.getDisplayName());
+                    mailFolderNames.add(folder.getDisplayName());
                     break;
             }
 
@@ -901,6 +914,11 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             */
             item.withTag(folder);
             drawerItems.add(item);
+        }
+
+        for (String mailFolderName : mailFolderNames){
+
+
         }
 
         ColorGenerator generator = ColorGenerator.MATERIAL;
