@@ -35,9 +35,12 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
+
 public class EditContactActivity extends AppCompatActivity {
 
-    final private String URL_POSTADRESS = "https://graph.microsoft.com/beta/me/contacts/";
+    final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/contacts/";
     private Toolbar myToolbar;
     private String userName;
     private String userEmail;
@@ -390,11 +393,15 @@ public class EditContactActivity extends AppCompatActivity {
             notes = personalNotesInput.getText().toString();
         }
 
-        System.out.println("wanna cuddle?" +contact);
+        System.out.println("wanna cuddle?" + contact);
 
         String postAddress = URL_POSTADRESS + id;
 
-        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.PATCH, postAddress,new JSONObject(new Gson().toJson(contact)),
+        System.out.println("test contact: " + new Gson().toJson(contact));
+
+        //final JSONObject jsonObject = new JSONObject(buildJsonEditContact());
+
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.PATCH, postAddress, new JSONObject(new Gson().toJson(contact)),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -422,6 +429,14 @@ public class EditContactActivity extends AppCompatActivity {
 
         queue.add(objectRequest);
 
+    }
+
+    private String buildJsonEditContact() {
+        JsonObjectBuilder factory = Json.createObjectBuilder()
+
+                .add("isRead", true);
+
+        return factory.build().toString();
     }
 
     private boolean isValidMobile(String phone) {
