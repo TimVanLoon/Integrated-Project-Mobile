@@ -45,7 +45,9 @@ import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
 import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
 
 import com.example.keiichi.project_mobile.DAL.POJOs.Attachment;
+import com.example.keiichi.project_mobile.DAL.POJOs.ItemBody;
 import com.example.keiichi.project_mobile.DAL.POJOs.Message;
+import com.example.keiichi.project_mobile.DAL.POJOs.Recipient;
 import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
 import com.google.gson.Gson;
@@ -295,7 +297,6 @@ public class DisplayMailActivity extends AppCompatActivity {
 
         String postAddress = URL_DELETE + mailId;
 
-
         StringRequest stringRequest = new StringRequest(Request.Method.DELETE, postAddress,
 
                 new Response.Listener<String>() {
@@ -432,17 +433,15 @@ public class DisplayMailActivity extends AppCompatActivity {
     private void updateMailIsRead(Message message) throws JSONException{
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        message.setRead(true);
+        Message newMessage = new Message();
 
-        Message newMessage = message;
+        newMessage.setRead(true);
 
-        String messageId = newMessage.getId();
+        final JSONObject jsonObject = new JSONObject(buildJsonIsRead());
 
-        String patchUrl = URL_MAIL_UPDATE + messageId;
+        String patchUrl = URL_MAIL_UPDATE + message.getId();
 
-        System.out.println("test message xd: " + new Gson().toJson(newMessage));
-
-        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.PATCH, patchUrl ,new JSONObject(new Gson().toJson(newMessage)),
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.PATCH, patchUrl , jsonObject,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -469,6 +468,14 @@ public class DisplayMailActivity extends AppCompatActivity {
         };
 
         queue.add(objectRequest);
+    }
+
+    private String buildJsonIsRead() {
+        JsonObjectBuilder factory = Json.createObjectBuilder()
+
+                        .add("isRead", true);
+
+        return factory.build().toString();
     }
 
     public void displayMailData(){

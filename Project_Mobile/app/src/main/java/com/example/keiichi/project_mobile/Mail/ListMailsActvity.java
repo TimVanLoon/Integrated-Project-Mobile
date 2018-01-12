@@ -744,7 +744,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                     if(!message.getToRecipients().isEmpty()){
                         showMail.putExtra("receiverMail", message.getToRecipients().get(0).getEmailAddress().getAddress());
                     }
-                    
+
                     showMail.putExtra("contentType", message.getBody().getContentType());
                     showMail.putExtra("messageObject", message);
 
