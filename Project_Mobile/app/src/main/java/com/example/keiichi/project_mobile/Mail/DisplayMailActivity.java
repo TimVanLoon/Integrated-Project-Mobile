@@ -1,14 +1,25 @@
 package com.example.keiichi.project_mobile.Mail;
 
+import android.Manifest;
+import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StrictMode;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -46,6 +57,10 @@ import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -63,6 +78,7 @@ public class DisplayMailActivity extends AppCompatActivity {
 
     final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
     private JSONObject mail, body;
+    private ImageButton AttachementButton;
     private TextView From;
     private TextView mailSubjectTextView;
     private TextView senderTimeTextView;
@@ -86,6 +102,10 @@ public class DisplayMailActivity extends AppCompatActivity {
     private String receiverName;
     private String receiverMail;
     private  AlertDialog.Builder builder;
+    private FileOutputStream outputStream;
+    private File filePath = new File(Environment.DIRECTORY_DOWNLOADS);
+    StrictMode.VmPolicy.Builder fileBuilder = new StrictMode.VmPolicy.Builder();
+
 
 
     private com.example.keiichi.project_mobile.DAL.POJOs.Message message;
@@ -115,6 +135,8 @@ public class DisplayMailActivity extends AppCompatActivity {
         receiverName = getIntent().getStringExtra("receiverName");
         receiverMail = getIntent().getStringExtra("receiverMail");
         messageBody = getIntent().getStringExtra("messageBody");
+        messageObject = (Message) getIntent().getSerializableExtra("mail");
+
 
         Intent intent = getIntent();
         ACCES_TOKEN = intent.getStringExtra("accestoken");
@@ -128,6 +150,18 @@ public class DisplayMailActivity extends AppCompatActivity {
         receiverNameTextView = findViewById(R.id.receiverNameTextView);
         receiverMailTextView = findViewById(R.id.receiverMailTextView);
         mailBodyTextView = findViewById(R.id.mailBodyTextView);
+        AttachementButton = findViewById(R.id.AttachementButton);
+
+        AttachementButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    getAttachments();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         ColorGenerator generator = ColorGenerator.MATERIAL;
 
@@ -138,8 +172,6 @@ public class DisplayMailActivity extends AppCompatActivity {
 
         profilePicture.setImageDrawable(drawable1);
 
-
-        messageObject = (Message) intent.getSerializableExtra("mailObject");
 
 
         builder = new AlertDialog.Builder(DisplayMailActivity.this);
@@ -230,7 +262,25 @@ public class DisplayMailActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
 
-                        System.out.println(attachments.get(1).getId());
+                        //System.out.println(attachments.get(0).getContentBytes());
+
+                        if (Build.VERSION.SDK_INT < 23) {
+                            downloadAttachment(attachments.get(0));
+                            //openAttachment(attachments.get(0).getName(), attachments.get(0).getContentType());
+                        } else {
+                            if (checkAndRequestPermissions()) {
+                                for (Attachment attachment: attachments) {
+                                    downloadAttachment(attachment);
+                                }
+                                //downloadAttachment(attachments.get(0));
+                                //openAttachment(attachments.get(0).getName(), attachments.get(0).getContentType());
+                            }
+                        }
+
+
+
+
+
                     }
 
                 }, new Response.ErrorListener() {
@@ -243,7 +293,7 @@ public class DisplayMailActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + ACCES_TOKEN);
+                headers.put("Authorization", "Bearer " + accessToken);
 
 
                 return headers;
@@ -329,7 +379,7 @@ public class DisplayMailActivity extends AppCompatActivity {
 
         System.out.println(mail.toString());
 
-        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.PATCH, URL_DELETE + mail.getId(), body,
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.PATCH, URL_DELETE + mailId, body,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -432,6 +482,89 @@ public class DisplayMailActivity extends AppCompatActivity {
         mailBodyTextView.setText(Html.fromHtml(messageBody));
 
     }
+
+
+    private boolean checkAndRequestPermissions() {
+        int storageWritePermission = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+
+        int storageReadPermission = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        if (storageReadPermission != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+        if (storageWritePermission != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this,
+                    listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), 2);
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 2:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    downloadAttachment(attachments.get(0));
+                    //openAttachment(attachments.get(0).getName(), attachments.get(0).getContentType());
+                } else {
+                    Toast.makeText(DisplayMailActivity.this, "attachement error", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
+
+    private void downloadAttachment(Attachment attachment) {
+
+            String base64 = attachment.getContentBytes();
+            try {
+                if (base64 != null) {
+                    byte[] data = Base64.decode(base64, Base64.DEFAULT);
+                    File filePath = new File(Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_DOWNLOADS), attachment.getName());
+                    System.out.println(filePath.toString());
+                    FileOutputStream os = new FileOutputStream(filePath, true);
+                    os.write(data);
+                    os.close();
+                    Uri path = Uri.fromFile(filePath);
+
+                    Toast.makeText(DisplayMailActivity.this,"saved!", Toast.LENGTH_SHORT).show();
+                }
+            } catch (IOException e) {
+                Toast.makeText(DisplayMailActivity.this, "save fail", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+
+    }
+
+    private void openAttachment(String filename, String contentType){
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator +
+                filename);
+
+        fileBuilder.detectFileUriExposure();
+        Uri path = Uri.fromFile(file);
+        Intent pdfOpenintent = new Intent(Intent.ACTION_VIEW);
+        pdfOpenintent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        pdfOpenintent.setDataAndType(path, contentType);
+        pdfOpenintent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        try {
+            this.startActivity(pdfOpenintent);
+        } catch (ActivityNotFoundException e) {
+
+        }
+    }
+
+
+
+
 
 }
 

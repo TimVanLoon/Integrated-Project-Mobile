@@ -1,15 +1,19 @@
 package com.example.keiichi.project_mobile.Mail;
 
 import android.app.Activity;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.RingtoneManager;
+import android.os.Build;
 import android.os.Bundle;
 
 
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -407,12 +411,17 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void addNotification() {
         android.support.v4.app.NotificationCompat.Builder notification =
                 new NotificationCompat.Builder(this)
                         .setContentTitle("Hey boo")
                         .setContentText("Wanna cuddle?")
+                        .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400})
+                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+
                         .setSmallIcon(R.drawable.bootje);
+
 
 
         Intent notificationIntent = new Intent(this, MainActivity.class);
@@ -444,7 +453,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                 recyclerView.getChildAt(item).setBackgroundColor(Color.TRANSPARENT);
             } else {
                 selectedItems.add(item);
-                recyclerView.getChildAt(item).setBackgroundColor(Color.WHITE);
+                recyclerView.getChildAt(item).setBackgroundColor(Color.LTGRAY);
             }
         }
     }
@@ -536,6 +545,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                     showMail.putExtra("timeSent", message.getReceivedDateTime());
                     showMail.putExtra("receiverName", message.getToRecipients().get(0).getEmailAddress().getName());
                     showMail.putExtra("receiverMail", message.getToRecipients().get(0).getEmailAddress().getAddress());
+                    showMail.putExtra("mail",message);
 
                     startActivity(showMail);
                 }
