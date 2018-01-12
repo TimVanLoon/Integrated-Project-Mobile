@@ -840,13 +840,65 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
         for(MailFolder folder : folders) {
             PrimaryDrawerItem item = new PrimaryDrawerItem();
-            if(folder.getUnreadItemCount() == 0){
+
+            String folderName = folder.getDisplayName().toLowerCase();
+
+            switch(folderName) {
+
+                case "archive":
+                    item.withName("Archive");
+                    break;
+
+                case "boxer":
+                    item.withName("Boxer");
+                    break;
+
+                case "concepten":
+                    item.withName("Drafts");
+                    break;
+
+                case "conversation history":
+                    item.withName("Conversation History");
+                    break;
+
+                case "onbelangrijke e-mail":
+                    item.withName("Unimportant E-Mail");
+                    break;
+
+                case "ongewenste e-mail":
+                    item.withName("Junk E-Mail");
+                    break;
+
+                case "postvak in":
+                    item.withName("Inbox").withIcon(R.drawable.ic_mail);
+                    break;
+
+                case "postvak uit":
+                    item.withName("Outbox");
+                    break;
+
+                case "verwijderde items":
+                    item.withName("Deleted Items");
+                    break;
+
+                case "verzonden items":
+                    item.withName("Sent Items");
+                    break;
+
+                default:
+                    item.withName(folder.getDisplayName());
+                    break;
+            }
+
+            /*
+            if(folder.getUnreadItemCoungetDisplayNamet() == 0){
                 item.withName(folder.getDisplayName())
                         .withIcon(R.drawable.ic_mail);
             } else {
                 item.withName(folder.getDisplayName())
                         .withIcon(R.drawable.ic_mail);
             }
+            */
             item.withTag(folder);
             drawerItems.add(item);
         }
@@ -860,7 +912,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
         AccountHeader headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
-                .withHeaderBackground(R.color.colorPrimary)
+                .withHeaderBackground(R.color.action_bar)
                 .addProfiles(
                         new ProfileDrawerItem().withName(name).withEmail(email).withIcon(drawable)
                 )
