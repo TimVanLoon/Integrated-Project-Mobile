@@ -410,7 +410,7 @@ public class ContactsActivity extends AppCompatActivity {
 
         if (contacts.size() != 0) {
 
-            Contact contact = contacts.get(position);
+            Contact contact = contactAdapter.getItemAtPosition(position);
 
             Intent showContactDetails = new Intent(ContactsActivity.this, ContactsDetailsActivity.class);
             showContactDetails.putExtra("givenName", contact.getGivenName());

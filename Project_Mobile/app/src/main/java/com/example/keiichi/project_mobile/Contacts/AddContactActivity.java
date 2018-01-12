@@ -39,7 +39,7 @@ import java.util.regex.Pattern;
 public class AddContactActivity extends AppCompatActivity {
 
     final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/contacts";
-    Toolbar myToolbar;
+    private Toolbar myToolbar;
     private EditText firstNameInput;
     private EditText lastNameInput;
     private EditText emailInput;
@@ -60,6 +60,8 @@ public class AddContactActivity extends AppCompatActivity {
     private EditText spouseName;
     private String userName;
     private String userEmail;
+    private String attendeeName;
+    private String attendeeMail;
     private String accessToken;
     private boolean isValidEmail;
 

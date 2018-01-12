@@ -28,6 +28,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.Calendar.AddEventActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.PhysicalAddress;
@@ -194,9 +195,29 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                     Intent sendMail = new Intent(ContactsDetailsActivity.this, SendMailActivity.class);
                     sendMail.putExtra("AccessToken", accessToken);
                     sendMail.putExtra("userName", userName);
-                    sendMail.putExtra("userEmail", userEmail);
+                    sendMail.putExtra("userEmail", emailList.get(0).getAddress());
+                    sendMail.putExtra("userMailName", emailList.get(0).getName());
                     sendMail.putExtra("emailAddress", emailAddress);
+
                     startActivity(sendMail);
+
+                }
+            });
+
+            calendarButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+
+                    Intent addEventActivity = new Intent(ContactsDetailsActivity.this, AddEventActivity.class);
+                    addEventActivity.putExtra("AccessToken", accessToken);
+                    addEventActivity.putExtra("userName", userName);
+                    addEventActivity.putExtra("userEmail", userEmail);
+                    addEventActivity.putExtra("emailAddress", emailAddress);
+                    addEventActivity.putExtra("attendeeMail", emailList.get(0).getAddress());
+                    addEventActivity.putExtra("attendeeName", emailList.get(0).getName());
+                    addEventActivity.putExtra("fromContactDetailsActivity", "yes");
+
+                    startActivity(addEventActivity);
+
                 }
             });
         }
@@ -205,8 +226,16 @@ public class ContactsDetailsActivity extends AppCompatActivity {
             email.setTextColor(Color.parseColor("#F4E7D7"));
 
             mailButton.setColorFilter(Color.GRAY);
+            calendarButton.setColorFilter(Color.GRAY);
 
             mailButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+
+                    Toast.makeText(getApplicationContext(), "No E-mail Address found!", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            calendarButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
 
                     Toast.makeText(getApplicationContext(), "No E-mail Address found!", Toast.LENGTH_SHORT).show();
@@ -253,17 +282,6 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                 }
             });
         }
-
-
-
-
-        calendarButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-                Toast.makeText(getApplicationContext(), "Plan!", Toast.LENGTH_SHORT).show();
-            }
-        });
-
 
         TextView headerDisplayName = (TextView) findViewById(R.id.displayName);
         headerDisplayName.setText(displayName);

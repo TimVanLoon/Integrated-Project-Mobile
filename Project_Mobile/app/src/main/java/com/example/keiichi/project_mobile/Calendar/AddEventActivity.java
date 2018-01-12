@@ -101,6 +101,11 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private String eventSubject;
     private String eventLocation;
     private String eventNotes;
+    private String userMailName;
+    private String fromContactDetailsActivity;
+    private String emailAddress;
+    private String attendeeMail;
+    private String attendeeName;
     private boolean isCurrentDate;
     private boolean isCurrentTime;
     private boolean isPrivate;
@@ -144,7 +149,9 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         userEmail = getIntent().getStringExtra("userEmail");
         emailList = (List<EmailAddress>)getIntent().getSerializableExtra("emailList");
         fromAttendeesActivity = getIntent().getStringExtra("fromAttendeesActivity");
-
+        fromContactDetailsActivity = getIntent().getStringExtra("fromContactDetailsActivity");
+        attendeeName = getIntent().getStringExtra("attendeeName");
+        attendeeMail = getIntent().getStringExtra("attendeeMail");
 
         // INITIALISEER ACTION BAR
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -231,7 +238,6 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         displayAsSpinner.setOnItemSelectedListener(this);
         repeatSpinner.setOnItemSelectedListener(this);
 
-
         // Create an ArrayAdapter using the string array and a default spinner layout
         adapterDuration = new ArrayAdapter<String>(this, R.layout.spinner_layout, DURATIONSPINNERLIST);
         // Specify the layout to use when the list of choices appears
@@ -310,6 +316,31 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
 
         isCurrentDate = true;
         isCurrentTime = true;
+
+        if(fromContactDetailsActivity != null){
+
+            makeExtraVisible();
+
+            firstTime = "no";
+
+            attendees = new ArrayList<>();
+            emailList = new ArrayList<>();
+
+            EmailAddress email = new EmailAddress(attendeeMail, attendeeName);
+
+            emailList.add(email);
+
+            String type = "optional";
+
+            Attendee attendee = new Attendee(type, email);
+
+            attendees.add(attendee);
+
+            attendeeAdapter = new AttendeeAdapter(this, attendees);
+            attendeeList.setAdapter(attendeeAdapter);
+            Utility.setListViewHeightBasedOnChildren(attendeeList);
+
+        }
 
         if(fromAttendeesActivity != null ){
 
