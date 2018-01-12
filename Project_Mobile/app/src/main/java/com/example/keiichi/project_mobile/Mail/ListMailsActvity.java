@@ -126,10 +126,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     private ArrayList<Integer> selectedItems = new ArrayList<>();
     private List<Message> messages = new ArrayList<>();
     private List<MailFolder> mailFolders;
-    private ArrayList<String> mailFolderNames = new ArrayList<>();
-    private ArrayList<IDrawerItem> drawerItems = new ArrayList<>();
-
-
+    private List<String> mailFolderNames;
     private Button attachmentButton;
 
     private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
@@ -860,78 +857,59 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
             String folderName = folder.getDisplayName().toLowerCase();
 
+            System.out.println("naam: " + folderName);
+
             switch(folderName) {
 
                 case "archive":
-                    mailFolderNames.add("Archive");
+                    item.withName("Archive");
 
                     break;
 
                 case "boxer":
-                    mailFolderNames.add("Boxer");
-
+                    item.withName("Boxer");
                     break;
 
                 case "concepten":
-                    mailFolderNames.add("Drafts");
-
+                    item.withName("Drafts");
                     break;
 
                 case "conversation history":
-                    mailFolderNames.add("Conversation History");
-
+                    item.withName("Conversation History");
                     break;
 
                 case "onbelangrijke e-mail":
-                    mailFolderNames.add("Unimportant E-Mail");
-
+                    item.withName("Unimportant E-Mail");
                     break;
 
                 case "ongewenste e-mail":
-                    mailFolderNames.add("Junk E-Mail");
-
+                    item.withName("Junk E-Mail");
                     break;
 
                 case "postvak in":
-                    mailFolderNames.add("Inbox");
-
+                    item.withName("Inbox");
                     break;
 
                 case "postvak uit":
-                    mailFolderNames.add("Outbox");
-
+                    item.withName("Outbox");
                     break;
 
                 case "verwijderde items":
-                    mailFolderNames.add("Deleted Items");
-
+                    item.withName("Deleted Items");
                     break;
 
                 case "verzonden items":
-                    mailFolderNames.add("Sent Items");
-
+                    item.withName("Sent Items");
                     break;
 
                 default:
-                    mailFolderNames.add(folder.getDisplayName());
+                    item.withName(folder.getDisplayName());
                     break;
             }
 
-            /*
-            if(folder.getUnreadItemCoungetDisplayNamet() == 0){
-                item.withName(folder.getDisplayName())
-                        .withIcon(R.drawable.ic_mail);
-            } else {
-                item.withName(folder.getDisplayName())
-                        .withIcon(R.drawable.ic_mail);
-            }
-            */
             item.withTag(folder);
+            item.withBadge(String.valueOf(folder.getUnreadItemCount())).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.action_bar));
             drawerItems.add(item);
-        }
-
-        for (String mailFolderName : mailFolderNames){
-
 
         }
 
@@ -945,6 +923,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         AccountHeader headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.color.action_bar)
+                .withSelectionListEnabledForSingleProfile(false)
                 .addProfiles(
                         new ProfileDrawerItem().withName(name).withEmail(email).withIcon(drawable)
                 )
