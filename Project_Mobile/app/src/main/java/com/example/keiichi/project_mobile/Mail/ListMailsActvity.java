@@ -16,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -781,11 +782,20 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         }
     }
 
-
     public interface ClickListener {
         void onClick(View view, int position);
 
         void onLongClick(View view, int position);
+    }
+
+    private void setActionBarMail(String title, Toolbar toolbar) {
+
+        toolbar.setTitle(title);
+        toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+        toolbar.setSubtitleTextColor(ContextCompat.getColor(this, R.color.white));
+        // THIS LINE REMOVES ANNOYING LEFT MARGIN
+        toolbar.setTitleMarginStart(30);
+
     }
 
     public void buildDrawer(String name, String email, Toolbar toolbar, List<MailFolder> folders){
@@ -891,6 +901,10 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                             String folderId = folder.getId();
 
                             getMailsFromFolder(folderId);
+
+                            String folderName = ((PrimaryDrawerItem) drawerItem).getName().getText().toString();
+
+                            setActionBarMail(folderName ,myToolbar);
 
                         }
                         return false;
