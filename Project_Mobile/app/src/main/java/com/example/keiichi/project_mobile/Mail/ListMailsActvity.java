@@ -230,7 +230,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
         //mDrawerLayout.setDrawerListener(actionBarDrawerToggle);
 
-        //addNotification();
+        addNotification();
 
         mBottomNav = findViewById(R.id.navigation);
 
@@ -431,7 +431,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
+
     private void addNotification() {
         android.support.v4.app.NotificationCompat.Builder notification =
                 new NotificationCompat.Builder(this)
@@ -439,7 +439,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                         .setContentText("Wanna cuddle?")
                         .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400})
                         .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-
                         .setSmallIcon(R.drawable.bootje);
 
 

@@ -3,7 +3,6 @@ package com.example.keiichi.project_mobile.Mail;
 
 import android.Manifest;
 import android.content.ActivityNotFoundException;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,14 +18,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.text.method.ScrollingMovementMethod;
-
 import android.util.Base64;
-
-import android.util.Log;
 import android.view.Display;
-
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -35,8 +28,6 @@ import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -53,35 +44,21 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-
-import android.webkit.WebSettings.ZoomDensity;
-
-import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
-import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
-
 import com.example.keiichi.project_mobile.DAL.POJOs.Attachment;
-import com.example.keiichi.project_mobile.DAL.POJOs.ItemBody;
 import com.example.keiichi.project_mobile.DAL.POJOs.Message;
-import com.example.keiichi.project_mobile.DAL.POJOs.Recipient;
 import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
-
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,9 +73,8 @@ public class DisplayMailActivity extends AppCompatActivity {
     final private String URL_MAIL_UPDATE = "https://graph.microsoft.com/v1.0/me/messages/";
     final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
     private static final String TAG = MainActivity.class.getSimpleName();
-    private JSONObject mail, body;
-    private ImageButton AttachementButton;
-    private TextView From;
+
+
     private TextView mailSubjectTextView;
     private TextView senderTimeTextView;
     private TextView senderNameTextView;
@@ -132,7 +108,6 @@ public class DisplayMailActivity extends AppCompatActivity {
 
 
 
-    private com.example.keiichi.project_mobile.DAL.POJOs.Message message;
     private ArrayList<Attachment> attachments = new ArrayList<>();
 
 
@@ -168,9 +143,7 @@ public class DisplayMailActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         ACCES_TOKEN = intent.getStringExtra("accestoken");
-        message = (com.example.keiichi.project_mobile.DAL.POJOs.Message) intent.getSerializableExtra("mailObject");
 
-        From = findViewById(R.id.from);
         mailSubjectTextView = findViewById(R.id.mailSubjectTextView);
         senderNameTextView = findViewById(R.id.senderNameTextView);
         senderTimeTextView = findViewById(R.id.senderTimeTextView);
@@ -178,18 +151,6 @@ public class DisplayMailActivity extends AppCompatActivity {
         receiverNameTextView = findViewById(R.id.receiverNameTextView);
         receiverMailTextView = findViewById(R.id.receiverMailTextView);
 
-        AttachementButton = findViewById(R.id.AttachementButton);
-
-        AttachementButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    getAttachments();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
 
         mailBodyWebView = findViewById(R.id.mailBodyWebView);
 
@@ -458,13 +419,12 @@ public class DisplayMailActivity extends AppCompatActivity {
 
             // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
             case android.R.id.home:
-                Intent intentListMails = new Intent(DisplayMailActivity.this, ListMailsActvity.class);
-                intentListMails.putExtra("AccessToken", accessToken);
-                intentListMails.putExtra("userName", userName);
-                intentListMails.putExtra("userEmail", userEmail);
 
-                startActivity(intentListMails);
+                finish();
+                return true;
 
+            case R.id.action_replyAll:
+                goToReplyAllActivity();
                 return true;
 
             case R.id.action_reply:
@@ -485,11 +445,29 @@ public class DisplayMailActivity extends AppCompatActivity {
 
                 return true;
 
+            case R.id.action_downloadAttachments:
+
+                try {
+                    getAttachments();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                return true;
+
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void goToReplyAllActivity() {
+        Intent replyAllIntent = new Intent(DisplayMailActivity.this,ReplyAllActivity.class);
+        replyAllIntent.putExtra("mail",messageObject );
+        replyAllIntent.putExtra("accestoken",accessToken);
+
+        startActivity(replyAllIntent);
     }
 
     /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */

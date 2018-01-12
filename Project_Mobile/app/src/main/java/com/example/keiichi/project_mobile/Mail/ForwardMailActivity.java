@@ -155,7 +155,7 @@ public class ForwardMailActivity extends AppCompatActivity {
 
             // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
             case android.R.id.home:
-                Intent intentListMails = new Intent(ForwardMailActivity.this, DisplayMailActivity.class);
+                /*Intent intentListMails = new Intent(ForwardMailActivity.this, DisplayMailActivity.class);
                 intentListMails.putExtra("AccessToken", accessToken);
                 intentListMails.putExtra("userName", userName);
                 intentListMails.putExtra("userEmail", userEmail);
@@ -163,7 +163,9 @@ public class ForwardMailActivity extends AppCompatActivity {
                 intentListMails.putExtra("mailSubject", mailSubject);
                 intentListMails.putExtra("mailAddress", mailAddress);
 
-                startActivity(intentListMails);
+                startActivity(intentListMails);*/
+
+                finish();
 
                 return true;
 

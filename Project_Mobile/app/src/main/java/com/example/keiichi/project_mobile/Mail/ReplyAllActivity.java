@@ -5,104 +5,78 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.SearchView;
-import android.widget.TextView;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.keiichi.project_mobile.Calendar.CalendarActivity;
-import com.example.keiichi.project_mobile.Calendar.ListEventsActivity;
+import com.example.keiichi.project_mobile.DAL.POJOs.Message;
 import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.json.Json;
-import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import jp.wasabeef.richeditor.RichEditor;
 
-public class SendMailActivity extends AppCompatActivity {
-    final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/sendMail";
+public class ReplyAllActivity extends AppCompatActivity {
+    private String accestoken;
+    private Message message;
 
-    private Toolbar myToolbar;
-    private TextView MailAdress;
-    private TextView Subject;
-    private RichEditor MailBody;
-    private String Acces_Token;
-    private String emailAddress;
-    private String accessToken;
-    private String userName;
-    private String userEmail;
 
+    private RichEditor Editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_send_mail);
+        setContentView(R.layout.activity_reply_all);
 
-        accessToken = getIntent().getStringExtra("AccessToken");
-        userName = getIntent().getStringExtra("userName");
-        userEmail = getIntent().getStringExtra("userEmail");
+        Intent intent = getIntent();
 
-        MailAdress = findViewById(R.id.TextMailAdress);
-        Subject = findViewById(R.id.TextMailSubject);
-        MailBody = findViewById(R.id.editor);
+        accestoken = intent.getStringExtra("accestoken");
+        message = (Message) intent.getSerializableExtra("mail");
 
-        myToolbar = findViewById(R.id.toolbar);
+
+        Editor = findViewById(R.id.editor);
+        EditText textMailAdress = findViewById(R.id.TextMailAdress);
+        EditText textMailSubject = findViewById(R.id.TextMailSubject);
+
+        textMailAdress.setText(message.getFrom().getEmailAddress().getAddress());
+        textMailSubject.setText("RE: " + message.getSubject());
+
+        Toolbar myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
         // VOEG BACK BUTTON TOE AAN ACTION BAR
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        Intent intent = getIntent();
-        Acces_Token = intent.getStringExtra("accestoken");
-
-
-        emailAddress = intent.getStringExtra("emailAddress");
-
-        if (emailAddress != null){
-            MailAdress.setText(emailAddress);
-        }
-
-
-
-
-
     }
 
-    private void SendMail() throws JSONException {
-        System.out.println(MailBody.getHtml());
+    private void ReplyToMail() throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
 
         final JSONObject jsonObject = new JSONObject(buildJsonMail());
 
         System.out.println(jsonObject.toString());
 
-        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_POSTADRESS, jsonObject,
+        String replyUrl = "https://graph.microsoft.com/v1.0/users/me/messages/";
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, replyUrl + message.getId() + "/replyAll", jsonObject,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -120,7 +94,7 @@ public class SendMailActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + Acces_Token);
+                headers.put("Authorization", "Bearer " + accestoken);
 
                 return headers;
             }
@@ -133,16 +107,7 @@ public class SendMailActivity extends AppCompatActivity {
 
     private String buildJsonMail() {
         JsonObjectBuilder factory = Json.createObjectBuilder()
-                .add("message", Json.createObjectBuilder().
-                        add("subject", Subject.getText().toString()).
-                        add("body", Json.createObjectBuilder().
-                                add("contentType", "Text").
-                                add("content", Html.fromHtml(MailBody.getHtml()).toString())).
-                        add("toRecipients", Json.createArrayBuilder().
-                                add(Json.createObjectBuilder().
-                                        add("emailAddress", Json.createObjectBuilder().
-                                                add("address", MailAdress.getText().toString()))))
-                );
+                .add("comment", Html.fromHtml(Editor.getHtml()).toString());
         return factory.build().toString();
     }
 
@@ -164,26 +129,22 @@ public class SendMailActivity extends AppCompatActivity {
 
             // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
             case android.R.id.home:
-                /*Intent intentListMails = new Intent(SendMailActivity.this, ListMailsActvity.class);
-                intentListMails.putExtra("AccessToken", accessToken);
-                intentListMails.putExtra("userName", userName);
-                intentListMails.putExtra("userEmail", userEmail);
-                startActivity(intentListMails);*/
+
                 finish();
 
                 return true;
 
             case R.id.action_send:
                 try {
-                    SendMail();
+                    ReplyToMail();
                     finish();
-
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
                 return true;
+
+
 
             default:
                 // If we got here, the user's action was not recognized.
@@ -191,6 +152,4 @@ public class SendMailActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
-
 }

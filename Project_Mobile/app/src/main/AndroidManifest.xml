@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.keiichi.project_mobile">
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
@@ -23,8 +24,8 @@
         <activity
             android:name=".Mail.ListMailsActvity"
             android:label="Inbox"
-            android:theme="@style/ContactsTheme"
             android:parentActivityName=".MainActivity"
+            android:theme="@style/ContactsTheme"
             android:windowSoftInputMode="adjustPan" />
 
         <!-- Intent filter to capture System Browser calling back to our app after Sign In -->
@@ -45,6 +46,7 @@
         <activity
             android:name=".Mail.DisplayMailActivity"
             android:label=""
+            android:launchMode="singleInstance"
             android:theme="@style/ContactsTheme"
             android:windowSoftInputMode="adjustPan" />
         <activity
@@ -110,7 +112,8 @@
             android:name=".Mail.ForwardMailActivity"
             android:label="Compose"
             android:theme="@style/ContactsTheme"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".Mail.ReplyAllActivity"></activity>
     </application>
 
 </manifest>

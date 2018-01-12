@@ -143,15 +143,8 @@ public class ReplyToMailActivity extends AppCompatActivity {
 
             // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
             case android.R.id.home:
-                Intent intentListMails = new Intent(ReplyToMailActivity.this, DisplayMailActivity.class);
-                intentListMails.putExtra("AccessToken", accessToken);
-                intentListMails.putExtra("userName", userName);
-                intentListMails.putExtra("userEmail", userEmail);
-                intentListMails.putExtra("mailId", mailId);
-                intentListMails.putExtra("mailSubject", mailSubject);
-                intentListMails.putExtra("mailAddress", mailAddress);
 
-                startActivity(intentListMails);
+                finish();
 
                 return true;
 
