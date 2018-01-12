@@ -97,6 +97,13 @@
             android:layout_marginLeft="15dp"
             android:src="@drawable/ic_reply_black"/>
 
+        <ImageButton
+            android:id="@+id/AttachementButton"
+            android:layout_width="33dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@android:drawable/btn_star" />
+
 
     </LinearLayout>
 
