@@ -115,7 +115,7 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
         reminderMinutesBeforeStart = getIntent().getIntExtra("reminderMinutesBeforeStart", 0);
         attendees = (List<Attendee>)getIntent().getSerializableExtra("attendeesList");
 
-        if(!notes.equals("0")){
+        if(notes != null){
 
             notesWebView.setPadding(0,0,0,0);
 

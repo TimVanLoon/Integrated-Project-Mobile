@@ -213,7 +213,7 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
     public int getItemCount() {
 
         return filteredData.size();
-        
+
     }
 
 

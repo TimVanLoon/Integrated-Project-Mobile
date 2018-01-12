@@ -347,16 +347,8 @@ public class ListEventsActivity extends AppCompatActivity {
 
             String eventBody = event.getBody().getContent();
 
-            int substring1 = eventBody.indexOf("<!--");
-            int substring2 = eventBody.lastIndexOf("-->") + 2;
-
-            String filterable = eventBody.substring(substring1, substring2);
-            String eventBodyFiltered = eventBody.replace(filterable, "");
-
-            System.out.println("test filter: " + Html.fromHtml(eventBodyFiltered));
-
             if(eventBody != null){
-                showEventDetails.putExtra("notes", eventBodyFiltered);
+                showEventDetails.putExtra("notes", eventBody);
             }
             else {
                 showEventDetails.putExtra("notes", "");
