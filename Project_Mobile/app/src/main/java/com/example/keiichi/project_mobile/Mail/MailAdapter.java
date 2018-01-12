@@ -34,6 +34,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.DAL.POJOs.Message;
 import com.example.keiichi.project_mobile.MainActivity;
@@ -245,15 +246,9 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
 
     }
 
-
-
-    public Message getItem(int position) {
-
-      return filteredData.get(position);
-
+    public Message getItem(int i) {
+        return filteredData.get(i);
     }
-
-
 
     public interface ClickListener {
         void onClick(View view, int position);

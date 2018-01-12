@@ -296,6 +296,11 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         userPicture.setImageDrawable(drawable);
         */
 
+        mailFolders = new ArrayList<>();
+        mailFolders.add(new MailFolder("1", "Not found", 0, 0));
+
+        buildDrawer(userName, userEmail, myToolbar, mailFolders);
+
     }
 
 
