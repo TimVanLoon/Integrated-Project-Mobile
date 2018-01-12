@@ -1,6 +1,7 @@
 package com.example.keiichi.project_mobile.Calendar;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -36,6 +37,7 @@ import com.example.keiichi.project_mobile.Contacts.ContactAdapter;
 import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.Event;
+import com.example.keiichi.project_mobile.DAL.POJOs.MailFolder;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
@@ -49,6 +51,15 @@ import com.github.tibolte.agendacalendarview.models.DayItem;
 import com.github.tibolte.agendacalendarview.models.WeekItem;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.holder.BadgeStyle;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -77,6 +88,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/events?$orderby=start/dateTime&$top=500&$count=true";
 
     private AgendaCalendarView mAgendaCalendarView;
+    private Drawer drawer;
     private String accessToken;
     private String userName;
     private String userEmail;
@@ -87,12 +99,6 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
-
-    DrawerLayout mDrawerLayout;
-    ActionBarDrawerToggle actionBarDrawerToggle;
-
-    NavigationView calendarNavigationView;
-
 
     // minimum and maximum date of our calendar
     // 2 month behind, one year ahead, example: March 2015 <-> May 2015 <-> May 2016
@@ -117,25 +123,6 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
         maxDate.add(Calendar.YEAR, 1);
 
         callGraphAPI();
-
-
-        calendarNavigationView = (NavigationView) findViewById(R.id.calendarNavigationView);
-        View hView =  calendarNavigationView.getHeaderView(0);
-        TextView nav_userName = (TextView)hView.findViewById(R.id.userName);
-        TextView nav_userEmail = (TextView)hView.findViewById(R.id.userEmail);
-        nav_userName.setText(userName);
-        nav_userEmail.setText(userEmail);
-
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, myToolbar, R.string.drawer_open,
-                R.string.drawer_close);
-
-        mDrawerLayout.setDrawerListener(actionBarDrawerToggle);
-
-        actionBarDrawerToggle.syncState();
-        //mDrawerLayout.bringToFront();
-        //mDrawerLayout.requestLayout();
 
         calendarView = (CalendarView) findViewById(R.id.calendarView);
 
@@ -180,28 +167,16 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
             }
         });
 
+        List<MailFolder> mailFolders = new ArrayList<>();
+        mailFolders.add(new MailFolder("1", "Not found", 0, 0));
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.calendarNavigationView);
-        View navView =  navigationView.getHeaderView(0);
-        ImageView userPicture = (ImageView)navView.findViewById(R.id.userPicture);
-        ImageView settingsIcon = (ImageView)navView.findViewById(R.id.settingsIcon);
-
-
-        ColorGenerator generator = ColorGenerator.MATERIAL;
-
-        int color2 = generator.getColor(userName.substring(0,1));
-
-        TextDrawable drawable = TextDrawable.builder()
-                .buildRound(userName.substring(0,1), color2); // radius in px
-
-        userPicture.setImageDrawable(drawable);
+        buildDrawer(userName, userEmail, myToolbar, mailFolders);
 
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState){
         super.onPostCreate(savedInstanceState);
-        actionBarDrawerToggle.syncState();
     }
 
     // VOEG ICONS TOE AAN DE ACTION BAR
@@ -396,6 +371,69 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
+    }
+
+    public void buildDrawer(String name, String email, Toolbar toolbar, List<MailFolder> folders){
+
+        ArrayList<IDrawerItem> drawerItems = new ArrayList<>();
+
+        for(MailFolder folder : folders) {
+            PrimaryDrawerItem item = new PrimaryDrawerItem();
+
+            String folderName = folder.getDisplayName().toLowerCase();
+
+            switch(folderName) {
+
+            }
+
+            item.withTag(folder);
+            item.withBadge(String.valueOf(folder.getUnreadItemCount())).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.action_bar));
+            drawerItems.add(item);
+
+        }
+
+        ColorGenerator generator = ColorGenerator.MATERIAL;
+
+        int color2 = generator.getColor(userName.substring(0,1));
+
+        TextDrawable drawable = TextDrawable.builder()
+                .buildRound(userName.substring(0,1), color2); // radius in px
+
+        AccountHeader headerResult = new AccountHeaderBuilder()
+                .withActivity(this)
+                .withHeaderBackground(R.color.colorWhite)
+                .withSelectionListEnabledForSingleProfile(false)
+                .withTextColor(Color.BLACK)
+                .addProfiles(
+                        new ProfileDrawerItem().withName(name).withEmail(email).withIcon(drawable)
+                )
+                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
+                    @Override
+                    public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
+                        return false;
+                    }
+                })
+                .build();
+
+        drawer = new DrawerBuilder()
+                .withActivity(this)
+                .withToolbar(toolbar)
+                .withTranslucentStatusBar(false)
+                .withAccountHeader(headerResult)
+                .withDrawerItems(drawerItems)
+                .withSelectedItemByPosition(7)
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        if (drawerItem instanceof PrimaryDrawerItem){
+
+
+                        }
+                        return false;
+                    }
+                })
+                .build();
 
     }
 

@@ -46,6 +46,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.Calendar.CalendarActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
+import com.example.keiichi.project_mobile.DAL.POJOs.MailFolder;
 import com.example.keiichi.project_mobile.DAL.POJOs.PhysicalAddress;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 import com.example.keiichi.project_mobile.MainActivity;
@@ -53,7 +54,15 @@ import com.example.keiichi.project_mobile.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.microsoft.appcenter.ingestion.models.Model;
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.holder.BadgeStyle;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -77,11 +86,8 @@ public class ContactsActivity extends AppCompatActivity {
     private Toolbar myToolbar;
     private TextDrawable drawable;
     private ImageView profilePicture;
-    private DrawerLayout mDrawerLayout;
-    private ActionBarDrawerToggle actionBarDrawerToggle;
     private ListView contactsListView;
     private SearchView searchView;
-    private NavigationView contactNavigationView;
     private ContactAdapter contactAdapter;
     private List<Contact> contacts = new ArrayList<>();
     private List<Contact> countactsFiltered;
@@ -92,6 +98,7 @@ public class ContactsActivity extends AppCompatActivity {
     private String id;
     private Contact testContact;
     private ImageView mImageView;
+    private Drawer drawer;
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts?$orderBy=displayName&$top=500&$count=true";
     final static String MSGRAPH_URL_FOTO = "https://graph.microsoft.com/beta/me/contacts/";
     final static String MSGRAPH_URL_FOTO2 = "/photo/$value";
@@ -109,15 +116,6 @@ public class ContactsActivity extends AppCompatActivity {
         profilePicture = (ImageView) findViewById(R.id.profilePicture);
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
-
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, myToolbar, R.string.drawer_open,
-                R.string.drawer_close);
-
-        mDrawerLayout.addDrawerListener(actionBarDrawerToggle);
-
-        actionBarDrawerToggle.syncState();
 
         contactsListView = (ListView) findViewById(R.id.contactsListView);
 
@@ -147,14 +145,6 @@ public class ContactsActivity extends AppCompatActivity {
 
 
         mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
-
-        contactNavigationView = (NavigationView) findViewById(R.id.contactNavigationView);
-        View hView = contactNavigationView.getHeaderView(0);
-        TextView nav_userName = (TextView) hView.findViewById(R.id.userName);
-        TextView nav_userEmail = (TextView) hView.findViewById(R.id.userEmail);
-        nav_userName.setText(userName);
-        nav_userEmail.setText(userEmail);
-
 
         Menu menu = mBottomNav.getMenu();
         MenuItem menuItem = menu.getItem(2);
@@ -192,10 +182,7 @@ public class ContactsActivity extends AppCompatActivity {
             }
         });
 
-        View navView = contactNavigationView.getHeaderView(0);
-        mImageView = (ImageView) navView.findViewById(R.id.userPicture);
-
-        RequestQueue queue = Volley.newRequestQueue(this);
+        //RequestQueue queue = Volley.newRequestQueue(this);
 
         /*
         String url = "http://i.imgur.com/7spzG.png";
@@ -223,22 +210,17 @@ public class ContactsActivity extends AppCompatActivity {
 
         */
 
-        ColorGenerator generator = ColorGenerator.MATERIAL;
+        List<MailFolder> mailFolders = new ArrayList<>();
+        mailFolders.add(new MailFolder("1", "Not found", 0, 0));
 
-        int color2 = generator.getColor(userName.substring(0,1));
-
-        TextDrawable drawable = TextDrawable.builder()
-                .buildRound(userName.substring(0,1), color2); // radius in px
-
-        mImageView.setImageDrawable(drawable);
-
+        buildDrawer(userName, userEmail, myToolbar, mailFolders);
 
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        actionBarDrawerToggle.syncState();
+
     }
 
     @Override
@@ -535,11 +517,73 @@ public class ContactsActivity extends AppCompatActivity {
         }
     }
 
-
     public void setFilter(List<Contact> contactFilterted) {
         countactsFiltered = new ArrayList<>();
         countactsFiltered.addAll(contactFilterted);
         contactAdapter.notifyDataSetChanged();
+    }
+
+    public void buildDrawer(String name, String email, Toolbar toolbar, List<MailFolder> folders){
+
+        ArrayList<IDrawerItem> drawerItems = new ArrayList<>();
+
+        for(MailFolder folder : folders) {
+            PrimaryDrawerItem item = new PrimaryDrawerItem();
+
+            String folderName = folder.getDisplayName().toLowerCase();
+
+            switch(folderName) {
+
+            }
+
+            item.withTag(folder);
+            item.withBadge(String.valueOf(folder.getUnreadItemCount())).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.action_bar));
+            drawerItems.add(item);
+
+        }
+
+        ColorGenerator generator = ColorGenerator.MATERIAL;
+
+        int color2 = generator.getColor(userName.substring(0,1));
+
+        TextDrawable drawable = TextDrawable.builder()
+                .buildRound(userName.substring(0,1), color2); // radius in px
+
+        AccountHeader headerResult = new AccountHeaderBuilder()
+                .withActivity(this)
+                .withHeaderBackground(R.color.colorWhite)
+                .withSelectionListEnabledForSingleProfile(false)
+                .withTextColor(Color.BLACK)
+                .addProfiles(
+                        new ProfileDrawerItem().withName(name).withEmail(email).withIcon(drawable)
+                )
+                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
+                    @Override
+                    public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
+                        return false;
+                    }
+                })
+                .build();
+
+        drawer = new DrawerBuilder()
+                .withActivity(this)
+                .withToolbar(toolbar)
+                .withTranslucentStatusBar(false)
+                .withAccountHeader(headerResult)
+                .withDrawerItems(drawerItems)
+                .withSelectedItemByPosition(7)
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        if (drawerItem instanceof PrimaryDrawerItem){
+
+
+                        }
+                        return false;
+                    }
+                })
+                .build();
+
     }
 
 }

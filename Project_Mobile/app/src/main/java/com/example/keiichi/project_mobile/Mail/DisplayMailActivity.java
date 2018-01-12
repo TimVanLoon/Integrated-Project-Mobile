@@ -508,7 +508,6 @@ public class DisplayMailActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Toast.makeText(getApplicationContext(), "Mail updated!", Toast.LENGTH_SHORT).show();
                         System.out.println(response.toString());
                     }
 

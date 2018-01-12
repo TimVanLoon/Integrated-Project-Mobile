@@ -117,7 +117,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
     private NavigationView mailNavigationView;
     private ImageView userPicture;
-    private DrawerLayout mDrawerLayout;
     private String test;
     private Toolbar myToolbar;
     private SearchView searchView;
@@ -878,8 +877,9 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
         AccountHeader headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
-                .withHeaderBackground(R.color.action_bar)
+                .withHeaderBackground(R.color.colorWhite)
                 .withSelectionListEnabledForSingleProfile(false)
+                .withTextColor(Color.BLACK)
                 .addProfiles(
                         new ProfileDrawerItem().withName(name).withEmail(email).withIcon(drawable)
                 )
