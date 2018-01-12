@@ -482,7 +482,7 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
 
                                 isCurrentDate = false;
 
-                                setStartDate(year, monthOfYearPicked++, dayOfMonthPicked);
+                                setStartDate(year, monthOfYearPicked, dayOfMonthPicked);
 
                                 dayOfMonth = dayOfMonthPicked;
                                 month = monthOfYearPicked + 1;
