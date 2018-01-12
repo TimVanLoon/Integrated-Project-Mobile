@@ -79,10 +79,10 @@ import java.util.Map;
 
 public class CalendarActivity extends AppCompatActivity implements CalendarPickerController {
 
-    CalendarView calendarView;
-    TextView myDate;
-    BottomNavigationView mBottomNav;
-    SearchView searchView;
+    private CalendarView calendarView;
+    private TextView myDate;
+    private BottomNavigationView mBottomNav;
+    private SearchView searchView;
 
     private static final String LOG_TAG = CalendarActivity.class.getSimpleName();
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/events?$orderby=start/dateTime&$top=500&$count=true";
@@ -94,8 +94,8 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
     private String userEmail;
     private JSONArray eventsArray;
     private List<Event> events = new ArrayList<>();
-    List<CalendarEvent> eventList = new ArrayList<>();
-    EventAdapter eventAdapter;
+    private List<CalendarEvent> eventList = new ArrayList<>();
+    private EventAdapter eventAdapter;
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();

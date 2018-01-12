@@ -211,7 +211,9 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
 
     @Override
     public int getItemCount() {
-        return originalData.size();
+
+        return filteredData.size();
+        
     }
 
 
