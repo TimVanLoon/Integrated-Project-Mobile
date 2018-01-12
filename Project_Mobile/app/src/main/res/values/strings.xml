@@ -100,6 +100,8 @@
     <string name="stateTitle">State</string>
     <string name="countryTitle">Country/region</string>
 
+    <string name="inbox">Inbox</string>
+
     <string name="editContactTitle">Edit contact</string>
 
     <string name="loadingTitle">Starting uMail...</string>

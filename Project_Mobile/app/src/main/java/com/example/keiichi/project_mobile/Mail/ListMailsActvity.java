@@ -112,6 +112,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/mailFolders('Inbox')/messages?$top=25";
     final static String CHANNEL_ID = "my_channel_01";
     final static String URL_MAILFOLDERS = "https://graph.microsoft.com/v1.0/me/mailFolders";
+    final static String URL_MAILFOLDER = "https://graph.microsoft.com/v1.0/me/mailFolders/";
 
     private NavigationView mailNavigationView;
     private ImageView userPicture;
@@ -128,6 +129,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     private List<MailFolder> mailFolders;
     private List<String> mailFolderNames;
     private Button attachmentButton;
+    private String folderData;
 
     private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
         @Override
@@ -219,27 +221,14 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
+        folderData = getIntent().getStringExtra("folderInfo");
 
         myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
-        //mDrawerLayout = findViewById(R.id.drawer_layout);
-
-        //actionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, myToolbar, R.string.drawer_open,
-        //        R.string.drawer_close);
-
-        //mDrawerLayout.setDrawerListener(actionBarDrawerToggle);
-
         //addNotification();
 
         mBottomNav = findViewById(R.id.navigation);
-
-        ///mailNavigationView = findViewById(R.id.mailNavigationView);
-        //View hView = mailNavigationView.getHeaderView(0);
-        //TextView nav_userName = hView.findViewById(R.id.userName);
-        //TextView nav_userEmail = hView.findViewById(R.id.userEmail);
-        //nav_userName.setText(userName);
-        //nav_userEmail.setText(userEmail);
 
         Menu menu = mBottomNav.getMenu();
         MenuItem menuItem = menu.getItem(0);
@@ -284,21 +273,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         callGraphAPI();
 
         getMailFolders();
-
-        /*
-        NavigationView navigationView = (NavigationView) findViewById(R.id.mailNavigationView);
-        View navView =  navigationView.getHeaderView(0);
-        ImageView userPicture = (ImageView)navView.findViewById(R.id.userPicture);
-
-        ColorGenerator generator = ColorGenerator.MATERIAL;
-
-        int color2 = generator.getColor(userName.substring(0,1));
-
-        TextDrawable drawable = TextDrawable.builder()
-                .buildRound(userName.substring(0,1), color2); // radius in px
-
-        userPicture.setImageDrawable(drawable);
-        */
 
         mailFolders = new ArrayList<>();
         mailFolders.add(new MailFolder("1", "Not found", 0, 0));
@@ -654,40 +628,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         queue.add(objectRequest);
     }
 
-    /* Sets the Graph response */
-    private void updateIsRead(JSONObject graphResponse) throws JSONException {
-
-        // Haal de mailfolders binnen
-        try {
-            JSONObject list = graphResponse;
-
-            JSONArray mails = list.getJSONArray("value");
-
-            // VUL POJO
-            Type listType = new TypeToken<List<Message>>() {
-            }.getType();
-
-            messages = new Gson().fromJson(String.valueOf(mails), listType);
-
-            if(!messages.isEmpty()) {
-
-                for (Message message : messages) {
-                    // RANDOM COLOR OF ICON
-                }
-
-                mailAdapter = new MailAdapter(this, messages);
-                recyclerView.setAdapter(mailAdapter);
-
-                mailAdapter.notifyDataSetChanged();
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-    }
-
     private void getMails(JSONObject graphResponse) throws JSONException {
 
         //haal mails binnen
@@ -941,8 +881,113 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                 .withTranslucentStatusBar(false)
                 .withAccountHeader(headerResult)
                 .withDrawerItems(drawerItems)
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        if (drawerItem instanceof PrimaryDrawerItem){
+
+                            MailFolder folder = (MailFolder) drawerItem.getTag();
+
+                            String folderId = folder.getId();
+
+                            getMailsFromFolder(folderId);
+
+                        }
+                        return false;
+                    }
+                })
                 .build();
 
+        drawer.setSelection(0, false);
+
+    }
+
+    public void getMailsFromFolder(String id){
+
+        Log.d(TAG, "Starting volley request to graph");
+        Log.d(TAG, accessToken);
+
+    /* Make sure we have a token to send to graph */
+        if (accessToken == null) {
+            return;
+        }
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        JSONObject parameters = new JSONObject();
+
+        try {
+            parameters.put("key", "value");
+        } catch (Exception e) {
+            Log.d(TAG, "Failed to put parameters: " + e.toString());
+        }
+
+        String getUrl = URL_MAILFOLDER + id + "/messages";
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, getUrl,
+                parameters, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+            /* Successfully called graph, process data and send to UI */
+                Log.d(TAG, "Response: " + response.toString());
+
+                try {
+                    updateWithMailFolder(response);
+
+                    System.out.println("hey bootjes! " + response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d(TAG, "Error: " + error.toString());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+                return headers;
+            }
+        };
+
+        Log.d(TAG, "Adding HTTP GET to Queue, Request: " + request.toString());
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                3000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(request);
+
+    }
+
+    private void updateWithMailFolder(JSONObject graphResponse) throws JSONException {
+
+        try {
+            //haal mails binnen
+
+            JSONObject messageList = graphResponse;
+
+            JSONArray messagesArray = messageList.getJSONArray("value");
+
+            System.out.println("test response: " + messagesArray);
+
+            // VUL POJO
+            Type listType = new TypeToken<List<Message>>() {
+            }.getType();
+
+            messages = new Gson().fromJson(String.valueOf(messagesArray), listType);
+
+            mailAdapter = new MailAdapter(this, messages);
+            recyclerView.setAdapter(mailAdapter);
+
+            mailAdapter.notifyDataSetChanged();
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
     }
 
