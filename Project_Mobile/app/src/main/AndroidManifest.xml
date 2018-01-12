@@ -79,6 +79,7 @@
         <activity
             android:name=".Contacts.EditContactActivity"
             android:label="Edit Contact"
+            android:theme="@style/ContactsTheme"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".SettingsActivity"

@@ -303,7 +303,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
     }
 
-
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
