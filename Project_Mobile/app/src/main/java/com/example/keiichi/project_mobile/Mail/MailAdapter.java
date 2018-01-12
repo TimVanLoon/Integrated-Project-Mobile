@@ -34,6 +34,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.DAL.POJOs.Message;
 import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.MySingleton;
@@ -307,6 +308,12 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
     public void setList(List<Message> data) {
         filteredData = data; // set the adapter list to data
         MailAdapter.this.notifyDataSetChanged(); // notify data set change
+    }
+
+    public Message getItemAtPosition(int position){
+
+        return filteredData.get(position);
+
     }
 
 }

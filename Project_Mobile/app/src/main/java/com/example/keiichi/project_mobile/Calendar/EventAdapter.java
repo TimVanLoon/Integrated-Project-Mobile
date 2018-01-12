@@ -142,4 +142,10 @@ public class EventAdapter extends BaseAdapter implements ListAdapter, Filterable
         filteredData = data; // set the adapter list to data
         EventAdapter.this.notifyDataSetChanged(); // notify data set change
     }
+
+    public Event getItemAtPosition(int position){
+
+        return filteredData.get(position);
+
+    }
 }

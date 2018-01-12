@@ -709,7 +709,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
 
                 } else {
-                    Message message = messages.get(position);
+                    Message message = mailAdapter.getItemAtPosition(position);
 
 
                     Intent showMail = new Intent(ListMailsActvity.this, DisplayMailActivity.class);
