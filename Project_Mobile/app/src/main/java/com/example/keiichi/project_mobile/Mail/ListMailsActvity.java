@@ -131,6 +131,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     private List<String> mailFolderNames;
     private Button attachmentButton;
     private String folderData;
+    private String currentMailFolderId;
 
     private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
         @Override
@@ -432,13 +433,21 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     public void onRefresh() {
         swipeRefreshLayout.setRefreshing(true);
         try {
-            getMails(graphResponse);
+
+            if(currentMailFolderId == null){
+
+                getMails(graphResponse);
+
+            } else{
+
+                getMailsFromFolder(currentMailFolderId);
+
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
         swipeRefreshLayout.setRefreshing(false);
-
 
     }
 
@@ -717,11 +726,8 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                 view.startActionMode(actionModeCallback);
                 selectedItem(position);
 
-
             }
         }));
-
-
 
     }
 
@@ -788,7 +794,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         void onLongClick(View view, int position);
     }
 
-    private void setActionBarMail(String title, Toolbar toolbar) {
+    private void setActionBarTitle(String title, Toolbar toolbar) {
 
         toolbar.setTitle(title);
         toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
@@ -891,6 +897,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                 .withTranslucentStatusBar(false)
                 .withAccountHeader(headerResult)
                 .withDrawerItems(drawerItems)
+                .withSelectedItemByPosition(7)
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
@@ -898,21 +905,19 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
                             MailFolder folder = (MailFolder) drawerItem.getTag();
 
-                            String folderId = folder.getId();
+                            currentMailFolderId = folder.getId();
 
-                            getMailsFromFolder(folderId);
+                            getMailsFromFolder(currentMailFolderId);
 
                             String folderName = ((PrimaryDrawerItem) drawerItem).getName().getText().toString();
 
-                            setActionBarMail(folderName ,myToolbar);
+                            setActionBarTitle(folderName, myToolbar);
 
                         }
                         return false;
                     }
                 })
                 .build();
-
-        drawer.setSelection(0, false);
 
     }
 
