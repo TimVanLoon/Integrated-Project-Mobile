@@ -23,6 +23,7 @@
         <activity
             android:name=".Mail.ListMailsActvity"
             android:label="Inbox"
+            android:theme="@style/ContactsTheme"
             android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="adjustPan" />
 
@@ -45,8 +46,7 @@
             android:name=".Mail.DisplayMailActivity"
             android:label=""
             android:theme="@style/ContactsTheme"
-            android:windowSoftInputMode="adjustPan"/>
-
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".Mail.SendMailActivity"
             android:label="Compose"
@@ -81,6 +81,7 @@
         <activity
             android:name=".Contacts.EditContactActivity"
             android:label="Edit Contact"
+            android:theme="@style/ContactsTheme"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".SettingsActivity"
@@ -99,7 +100,7 @@
             android:name=".Mail.ReplyToMailActivity"
             android:label="Compose"
             android:theme="@style/ContactsTheme"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Calendar.AttendeeActivity"
             android:label="Contacts"
@@ -109,8 +110,7 @@
             android:name=".Mail.ForwardMailActivity"
             android:label="Compose"
             android:theme="@style/ContactsTheme"
-            android:windowSoftInputMode="adjustResize">
-        </activity>
+            android:windowSoftInputMode="adjustResize"></activity>
     </application>
 
 </manifest>

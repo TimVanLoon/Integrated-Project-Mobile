@@ -1,7 +1,9 @@
 package com.example.keiichi.project_mobile.Mail;
 
+
 import android.Manifest;
 import android.content.ActivityNotFoundException;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,14 +21,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.method.ScrollingMovementMethod;
+
 import android.util.Base64;
+
+import android.util.Log;
+import android.view.Display;
+
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,11 +54,16 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import android.webkit.WebSettings.ZoomDensity;
+
 import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
 import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
 
 import com.example.keiichi.project_mobile.DAL.POJOs.Attachment;
+import com.example.keiichi.project_mobile.DAL.POJOs.ItemBody;
 import com.example.keiichi.project_mobile.DAL.POJOs.Message;
+import com.example.keiichi.project_mobile.DAL.POJOs.Recipient;
+import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -76,7 +93,9 @@ import javax.json.JsonObjectBuilder;
 
 public class DisplayMailActivity extends AppCompatActivity {
 
+    final private String URL_MAIL_UPDATE = "https://graph.microsoft.com/v1.0/me/messages/";
     final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
+    private static final String TAG = MainActivity.class.getSimpleName();
     private JSONObject mail, body;
     private ImageButton AttachementButton;
     private TextView From;
@@ -85,7 +104,7 @@ public class DisplayMailActivity extends AppCompatActivity {
     private TextView senderNameTextView;
     private TextView receiverNameTextView;
     private TextView receiverMailTextView;
-    private TextView mailBodyTextView;
+    private WebView mailBodyWebView;
     private ImageView profilePicture;
     private Toolbar myToolbar;
     private String ACCES_TOKEN;
@@ -101,10 +120,15 @@ public class DisplayMailActivity extends AppCompatActivity {
     private String timeSent;
     private String receiverName;
     private String receiverMail;
+
     private  AlertDialog.Builder builder;
-    private FileOutputStream outputStream;
-    private File filePath = new File(Environment.DIRECTORY_DOWNLOADS);
+
     StrictMode.VmPolicy.Builder fileBuilder = new StrictMode.VmPolicy.Builder();
+
+
+
+    private String contentType;
+    private String isRead;
 
 
 
@@ -137,6 +161,10 @@ public class DisplayMailActivity extends AppCompatActivity {
         messageBody = getIntent().getStringExtra("messageBody");
         messageObject = (Message) getIntent().getSerializableExtra("mail");
 
+        contentType = getIntent().getStringExtra("contentType");
+        isRead = getIntent().getStringExtra("isRead");
+
+
 
         Intent intent = getIntent();
         ACCES_TOKEN = intent.getStringExtra("accestoken");
@@ -149,7 +177,7 @@ public class DisplayMailActivity extends AppCompatActivity {
         profilePicture = findViewById(R.id.profilePicture);
         receiverNameTextView = findViewById(R.id.receiverNameTextView);
         receiverMailTextView = findViewById(R.id.receiverMailTextView);
-        mailBodyTextView = findViewById(R.id.mailBodyTextView);
+
         AttachementButton = findViewById(R.id.AttachementButton);
 
         AttachementButton.setOnClickListener(new View.OnClickListener() {
@@ -163,6 +191,9 @@ public class DisplayMailActivity extends AppCompatActivity {
             }
         });
 
+        mailBodyWebView = findViewById(R.id.mailBodyWebView);
+
+
         ColorGenerator generator = ColorGenerator.MATERIAL;
 
         int color2 = generator.getColor(senderName.substring(0,1));
@@ -171,6 +202,19 @@ public class DisplayMailActivity extends AppCompatActivity {
                 .buildRoundRect(senderName.substring(0,1), color2, 3); // radius in px
 
         profilePicture.setImageDrawable(drawable1);
+
+
+        if(isRead != null){
+
+            messageObject.setRead(true);
+
+            try {
+                updateMailIsRead(messageObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
 
 
 
@@ -217,28 +261,6 @@ public class DisplayMailActivity extends AppCompatActivity {
 
             }
         });
-
-
-
-        try {
-            mail = new JSONObject(messageBody);
-            body = mail.getJSONObject("body");
-            JSONObject sender = mail.getJSONObject("from");
-            JSONObject emailAddress = sender.getJSONObject("emailAddress");
-            From.setText(emailAddress.getString("name"));
-            JSONArray recipient = mail.getJSONArray("toRecipients");
-            emailAddress = recipient.getJSONObject(0);
-
-            if (!messageObject.isRead()){
-                updateMail(messageObject);
-
-            }
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
 
 
 
@@ -337,7 +359,6 @@ public class DisplayMailActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(this);
 
         String postAddress = URL_DELETE + mailId;
-
 
         StringRequest stringRequest = new StringRequest(Request.Method.DELETE, postAddress,
 
@@ -471,6 +492,55 @@ public class DisplayMailActivity extends AppCompatActivity {
         }
     }
 
+    /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
+    private void updateMailIsRead(Message message) throws JSONException{
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        Message newMessage = new Message();
+
+        newMessage.setRead(true);
+
+        final JSONObject jsonObject = new JSONObject(buildJsonIsRead());
+
+        String patchUrl = URL_MAIL_UPDATE + message.getId();
+
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.PATCH, patchUrl , jsonObject,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Toast.makeText(getApplicationContext(), "Mail updated!", Toast.LENGTH_SHORT).show();
+                        System.out.println(response.toString());
+                    }
+
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+                headers.put("Content-Type", "application/json; charset=utf-8");
+
+                return headers;
+            }
+
+        };
+
+        queue.add(objectRequest);
+    }
+
+    private String buildJsonIsRead() {
+        JsonObjectBuilder factory = Json.createObjectBuilder()
+
+                        .add("isRead", true);
+
+        return factory.build().toString();
+    }
+
     public void displayMailData(){
 
         mailSubjectTextView.setText(mailSubject);
@@ -478,10 +548,39 @@ public class DisplayMailActivity extends AppCompatActivity {
         senderTimeTextView.setText(timeSent);
         receiverNameTextView.setText(receiverName);
         receiverMailTextView.setText(receiverMail);
-        mailBodyTextView.setMovementMethod(new ScrollingMovementMethod());
-        mailBodyTextView.setText(Html.fromHtml(messageBody));
+
+        System.out.println("Content type: " + contentType);
+
+        mailBodyWebView.setPadding(0,0,0,0);
+
+        mailBodyWebView.setInitialScale(1);
+
+        //setupWebView();
+
+        if(contentType.equals("html")){
+
+            mailBodyWebView.getSettings().setJavaScriptEnabled(true);
+            mailBodyWebView.getSettings().setLoadWithOverviewMode(true);
+            mailBodyWebView.getSettings().setUseWideViewPort(true);
+            mailBodyWebView.getSettings().setBuiltInZoomControls(true);
+            mailBodyWebView.getSettings().setDisplayZoomControls(false);
+            mailBodyWebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+            mailBodyWebView.setScrollbarFadingEnabled(false);
+            mailBodyWebView.loadDataWithBaseURL("", messageBody, "text/html", "utf-8","");
+
+        } else{
+
+            mailBodyWebView.loadDataWithBaseURL("", messageBody, "text", "utf-8","");
+
+        }
+
+
+
+        //mailBodyWebView.loadDataWithBaseURL("", messageBody, "text/html", "utf-8","");
+        //mailBodyWebView.getSettings().setLoadWithOverviewMode(true);
 
     }
+
 
 
     private boolean checkAndRequestPermissions() {
@@ -565,6 +664,36 @@ public class DisplayMailActivity extends AppCompatActivity {
 
 
 
+
+    private int getScale(){
+        Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        int width = display.getWidth();
+        Double val = new Double(width)/new Double(360);
+        val = val * 100d;
+        return val.intValue();
+    }
+
+    private void setupWebView() {
+        mailBodyWebView.getSettings().setJavaScriptEnabled(true);
+        mailBodyWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                mailBodyWebView.loadUrl("javascript:MyApp.resize(document.body.getBoundingClientRect().height)");
+                super.onPageFinished(view, url);
+            }
+        });
+        mailBodyWebView.addJavascriptInterface(this, "MyApp");
+    }
+
+    @JavascriptInterface
+    public void resize(final float height) {
+        DisplayMailActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mailBodyWebView.setLayoutParams(new LinearLayout.LayoutParams(getResources().getDisplayMetrics().widthPixels, (int) (height * getResources().getDisplayMetrics().density)));
+            }
+        });
+    }
 
 }
 

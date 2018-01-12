@@ -307,7 +307,7 @@ public class ListEventsActivity extends AppCompatActivity {
 
         if(events.size() != 0){
 
-            Event event = events.get(position);
+            Event event = eventAdapter.getItemAtPosition(position);
 
             Intent showEventDetails = new Intent(ListEventsActivity.this, EventDetailsActivity.class);
             showEventDetails.putExtra("userEmail", userEmail);
@@ -337,6 +337,12 @@ public class ListEventsActivity extends AppCompatActivity {
             }
             else {
                 showEventDetails.putExtra("notes", "");
+            }
+
+            if(event.getBody().getContentType() != null){
+
+                showEventDetails.putExtra("contentType", event.getBody().getContentType());
+
             }
 
             String eventBody = event.getBody().getContent();

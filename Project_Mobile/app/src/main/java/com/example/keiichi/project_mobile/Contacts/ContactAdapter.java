@@ -188,6 +188,11 @@ public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterab
         ContactAdapter.this.notifyDataSetChanged(); // notify data set change
     }
 
+    public Contact getItemAtPosition(int position){
+
+        return filteredData.get(position);
+
+    }
 
 }
 

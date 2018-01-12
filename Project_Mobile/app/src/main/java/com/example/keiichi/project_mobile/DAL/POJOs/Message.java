@@ -73,6 +73,10 @@ public class Message implements Serializable {
         this.singleValueLegacyExtendedProperty = singleValueLegacyExtendedProperty;
     }
 
+    public Message(){
+
+    }
+
     public Recipient[] getBccRecipients() {
         return bccRecipients;
     }

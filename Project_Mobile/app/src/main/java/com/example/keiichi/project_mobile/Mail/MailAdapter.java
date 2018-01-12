@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -33,6 +34,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
+import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.DAL.POJOs.Message;
 import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.MySingleton;
@@ -147,8 +150,20 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
 
             */
 
-            if (!isRead){
-                holder.subject.setTextColor(Color.CYAN);
+            if (message.isRead()) {
+
+                holder.from.setTypeface(null, Typeface.NORMAL);
+                holder.subject.setTypeface(null, Typeface.NORMAL);
+                holder.from.setTextColor(ContextCompat.getColor(mContext, R.color.subject));
+                holder.subject.setTextColor(ContextCompat.getColor(mContext, R.color.message));
+
+            } else {
+
+                holder.from.setTypeface(null, Typeface.BOLD);
+                holder.subject.setTypeface(null, Typeface.BOLD);
+                holder.from.setTextColor(ContextCompat.getColor(mContext, R.color.from));
+                holder.subject.setTextColor(ContextCompat.getColor(mContext, R.color.subject));
+
             }
 
 
@@ -200,7 +215,7 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
 
     @Override
     public int getItemCount() {
-        return filteredData.size();
+        return originalData.size();
     }
 
 
@@ -231,15 +246,9 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
 
     }
 
-
-
-    public Message getItem(int position) {
-
-      return filteredData.get(position);
-
+    public Message getItem(int i) {
+        return filteredData.get(i);
     }
-
-
 
     public interface ClickListener {
         void onClick(View view, int position);
@@ -294,6 +303,12 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
     public void setList(List<Message> data) {
         filteredData = data; // set the adapter list to data
         MailAdapter.this.notifyDataSetChanged(); // notify data set change
+    }
+
+    public Message getItemAtPosition(int position){
+
+        return filteredData.get(position);
+
     }
 
 }

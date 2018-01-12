@@ -115,6 +115,7 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
     private String finalDayOfMonth;
     private String eventNotes;
     private String fromEventDetails;
+    private String contentType;
     private int dayOfMonth;
     private int month;
     private int year;
@@ -153,6 +154,7 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         reminderMinutesBeforeStart = getIntent().getIntExtra("reminderMinutesBeforeStart", 0);
         attendees = (List<Attendee>)getIntent().getSerializableExtra("attendeesList");
         fromAttendeesActivity = getIntent().getStringExtra("fromAttendeesActivity");
+        contentType = getIntent().getStringExtra("contentType");
 
         // INITIALISEER DE INPUT FIELDS
         dateEvent = (EditText) findViewById(R.id.dateEvent);
@@ -198,6 +200,8 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
                 intentAttendees.putExtra("fromEdit", "yes");
                 intentAttendees.putExtra("sensitivity", sensitivity);
                 intentAttendees.putExtra("startDate", startDate);
+                intentAttendees.putExtra("id", id);
+                intentAttendees.putExtra("contentType", contentType);
 
                 startActivity(intentAttendees);
             }
@@ -651,6 +655,7 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
                 intentCalendar.putExtra("sensitivity", sensitivity);
                 intentCalendar.putExtra("responseRequested", responseRequested);
                 intentCalendar.putExtra("attendeesList", (Serializable) attendees);
+                intentCalendar.putExtra("contentType", contentType);
 
                 startActivity(intentCalendar);
 
@@ -683,6 +688,7 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
                             intentCalendar.putExtra("sensitivity", sensitivity);
                             intentCalendar.putExtra("responseRequested", responseRequested);
                             intentCalendar.putExtra("attendeesList", (Serializable) attendees);
+                            intentCalendar.putExtra("contentType", contentType);
 
                             startActivity(intentCalendar);
                         }
