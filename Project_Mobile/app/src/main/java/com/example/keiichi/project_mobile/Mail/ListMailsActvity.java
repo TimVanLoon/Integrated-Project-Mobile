@@ -253,6 +253,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                         intentCalendar.putExtra("userName", userName);
                         intentCalendar.putExtra("userEmail", userEmail);
                         startActivity(intentCalendar);
+
                         break;
                     case R.id.action_mail:
 
@@ -266,6 +267,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                         break;
 
                 }
+
 
                 return false;
             }
@@ -1008,6 +1010,18 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    public void onBackPressed(){
+        minimizeApp();
+    }
+
+    public void minimizeApp() {
+        Intent startMain = new Intent(Intent.ACTION_MAIN);
+        startMain.addCategory(Intent.CATEGORY_HOME);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(startMain);
     }
 
 }
