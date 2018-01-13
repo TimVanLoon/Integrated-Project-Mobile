@@ -40,7 +40,7 @@
 
         <ListView
             android:id="@+id/contactsListView"
-            android:layout_width="456dp"
+            android:layout_width="fill_parent"
             android:layout_height="501dp"
             android:divider="@drawable/list_divider"
             android:dividerHeight="4dip"
