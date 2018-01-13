@@ -98,6 +98,7 @@ public class DisplayMailActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private JSONObject mail, body;
     private ImageButton AttachementButton;
+    private ImageView replyIcon;
     private TextView From;
     private TextView mailSubjectTextView;
     private TextView senderTimeTextView;
@@ -174,8 +175,15 @@ public class DisplayMailActivity extends AppCompatActivity {
         profilePicture = findViewById(R.id.profilePicture);
         receiverNameTextView = findViewById(R.id.receiverNameTextView);
         receiverMailTextView = findViewById(R.id.receiverMailTextView);
-
         AttachementButton = findViewById(R.id.AttachementButton);
+        replyIcon = (ImageView) findViewById(R.id.replyIcon);
+
+        replyIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToReplyActivity();
+            }
+        });
 
         AttachementButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -484,11 +492,6 @@ public class DisplayMailActivity extends AppCompatActivity {
 
                 return true;
 
-            case R.id.action_reply:
-
-                goToReplyActivity();
-
-                return true;
 
             case R.id.action_delete:
 

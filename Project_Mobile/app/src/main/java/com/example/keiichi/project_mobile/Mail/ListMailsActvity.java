@@ -436,21 +436,17 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     @Override
     public void onRefresh() {
         swipeRefreshLayout.setRefreshing(true);
-        try {
 
-            if(currentMailFolderId == null){
+        if(currentMailFolderId == null){
 
-                getMails(graphResponse);
+            callGraphAPI();
 
-            } else{
+        } else{
 
-                getMailsFromFolder(currentMailFolderId);
+            getMailsFromFolder(currentMailFolderId);
 
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
+
         swipeRefreshLayout.setRefreshing(false);
 
     }
