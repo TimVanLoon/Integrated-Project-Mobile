@@ -44,15 +44,19 @@ public class ReplyToMailActivity extends AppCompatActivity {
     private String accessToken;
     private String userName;
     private String userEmail;
-    private String mailId;
     private String mailSubject;
     private String mailAddress;
+    private String mailId;
+    private String senderName;
+    private String timeSent;
+    private String receiverName;
+    private String receiverMail;
+    private String messageBody;
+    private String contentType;
+    private Message messageObject;
     private Toolbar myToolbar;
     private EditText TextMailAdress,TextMailSubject;
     private RichEditor Editor;
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +69,13 @@ public class ReplyToMailActivity extends AppCompatActivity {
         mailId = getIntent().getStringExtra("mailId");
         mailSubject = getIntent().getStringExtra("mailSubject");
         mailAddress = getIntent().getStringExtra("mailAddress");
+        senderName = getIntent().getStringExtra("senderName");
+        timeSent = getIntent().getStringExtra("timeSent");
+        receiverName = getIntent().getStringExtra("receiverName");
+        receiverMail = getIntent().getStringExtra("receiverMail");
+        messageBody = getIntent().getStringExtra("messageBody");
+        messageObject = (Message) getIntent().getSerializableExtra("mail");
+        contentType = getIntent().getStringExtra("contentType");
 
         Editor = findViewById(R.id.editor);
         TextMailAdress = findViewById(R.id.TextMailAdress);
@@ -143,15 +154,22 @@ public class ReplyToMailActivity extends AppCompatActivity {
 
             // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
             case android.R.id.home:
-                Intent intentListMails = new Intent(ReplyToMailActivity.this, DisplayMailActivity.class);
-                intentListMails.putExtra("AccessToken", accessToken);
-                intentListMails.putExtra("userName", userName);
-                intentListMails.putExtra("userEmail", userEmail);
-                intentListMails.putExtra("mailId", mailId);
-                intentListMails.putExtra("mailSubject", mailSubject);
-                intentListMails.putExtra("mailAddress", mailAddress);
+                Intent intentDisplayMail = new Intent(ReplyToMailActivity.this, DisplayMailActivity.class);
+                intentDisplayMail.putExtra("AccessToken", accessToken);
+                intentDisplayMail.putExtra("userName", userName);
+                intentDisplayMail.putExtra("userEmail", userEmail);
+                intentDisplayMail.putExtra("mailId", mailId);
+                intentDisplayMail.putExtra("mailSubject", mailSubject);
+                intentDisplayMail.putExtra("mailAddress", mailAddress);
+                intentDisplayMail.putExtra("senderName", senderName);
+                intentDisplayMail.putExtra("timeSent", timeSent);
+                intentDisplayMail.putExtra("receiverName", receiverName);
+                intentDisplayMail.putExtra("receiverMail", receiverMail);
+                intentDisplayMail.putExtra("messageBody", messageBody);
+                intentDisplayMail.putExtra("mail", messageObject);
+                intentDisplayMail.putExtra("contentType", contentType);
 
-                startActivity(intentListMails);
+                startActivity(intentDisplayMail);
 
                 ReplyToMailActivity.this.finish();
 
@@ -182,12 +200,22 @@ public class ReplyToMailActivity extends AppCompatActivity {
     }
 
     public void minimizeApp() {
-        Intent intentListMails = new Intent(ReplyToMailActivity.this, ListMailsActvity.class);
-        intentListMails.putExtra("AccessToken", accessToken);
-        intentListMails.putExtra("userName", userName);
-        intentListMails.putExtra("userEmail", userEmail);
+        Intent intentDisplayMail = new Intent(ReplyToMailActivity.this, DisplayMailActivity.class);
+        intentDisplayMail.putExtra("AccessToken", accessToken);
+        intentDisplayMail.putExtra("userName", userName);
+        intentDisplayMail.putExtra("userEmail", userEmail);
+        intentDisplayMail.putExtra("mailId", mailId);
+        intentDisplayMail.putExtra("mailSubject", mailSubject);
+        intentDisplayMail.putExtra("mailAddress", mailAddress);
+        intentDisplayMail.putExtra("senderName", senderName);
+        intentDisplayMail.putExtra("timeSent", timeSent);
+        intentDisplayMail.putExtra("receiverName", receiverName);
+        intentDisplayMail.putExtra("receiverMail", receiverMail);
+        intentDisplayMail.putExtra("messageBody", messageBody);
+        intentDisplayMail.putExtra("mail", messageObject);
+        intentDisplayMail.putExtra("contentType", contentType);
 
-        startActivity(intentListMails);
+        startActivity(intentDisplayMail);
 
         ReplyToMailActivity.this.finish();
     }

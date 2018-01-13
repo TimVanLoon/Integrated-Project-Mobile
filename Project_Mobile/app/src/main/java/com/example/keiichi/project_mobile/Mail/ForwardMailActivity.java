@@ -45,6 +45,13 @@ public class ForwardMailActivity extends AppCompatActivity {
     private String mailId;
     private String mailSubject;
     private String mailAddress;
+    private String senderName;
+    private String timeSent;
+    private String receiverName;
+    private String receiverMail;
+    private String messageBody;
+    private String contentType;
+    private Message messageObject;
     private Toolbar myToolbar;
     EditText TextMailAdress,TextMailSubject;
     RichEditor Editor;
@@ -60,6 +67,13 @@ public class ForwardMailActivity extends AppCompatActivity {
         mailId = getIntent().getStringExtra("mailId");
         mailSubject = getIntent().getStringExtra("mailSubject");
         mailAddress = getIntent().getStringExtra("mailAddress");
+        senderName = getIntent().getStringExtra("senderName");
+        timeSent = getIntent().getStringExtra("timeSent");
+        receiverName = getIntent().getStringExtra("receiverName");
+        receiverMail = getIntent().getStringExtra("receiverMail");
+        messageBody = getIntent().getStringExtra("messageBody");
+        messageObject = (Message) getIntent().getSerializableExtra("mail");
+        contentType = getIntent().getStringExtra("contentType");
 
         TextMailAdress = findViewById(R.id.TextMailAdress);
         TextMailSubject = findViewById(R.id.TextMailSubject);
@@ -155,15 +169,22 @@ public class ForwardMailActivity extends AppCompatActivity {
 
             // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
             case android.R.id.home:
-                Intent intentListMails = new Intent(ForwardMailActivity.this, DisplayMailActivity.class);
-                intentListMails.putExtra("AccessToken", accessToken);
-                intentListMails.putExtra("userName", userName);
-                intentListMails.putExtra("userEmail", userEmail);
-                intentListMails.putExtra("mailId", mailId);
-                intentListMails.putExtra("mailSubject", mailSubject);
-                intentListMails.putExtra("mailAddress", mailAddress);
+                Intent intentDisplayMail = new Intent(ForwardMailActivity.this, DisplayMailActivity.class);
+                intentDisplayMail.putExtra("AccessToken", accessToken);
+                intentDisplayMail.putExtra("userName", userName);
+                intentDisplayMail.putExtra("userEmail", userEmail);
+                intentDisplayMail.putExtra("mailId", mailId);
+                intentDisplayMail.putExtra("mailSubject", mailSubject);
+                intentDisplayMail.putExtra("mailAddress", mailAddress);
+                intentDisplayMail.putExtra("senderName", senderName);
+                intentDisplayMail.putExtra("timeSent", timeSent);
+                intentDisplayMail.putExtra("receiverName", receiverName);
+                intentDisplayMail.putExtra("receiverMail", receiverMail);
+                intentDisplayMail.putExtra("messageBody", messageBody);
+                intentDisplayMail.putExtra("mail", messageObject);
+                intentDisplayMail.putExtra("contentType", contentType);
 
-                startActivity(intentListMails);
+                startActivity(intentDisplayMail);
 
                 ForwardMailActivity.this.finish();
 
@@ -193,12 +214,22 @@ public class ForwardMailActivity extends AppCompatActivity {
     }
 
     public void minimizeApp() {
-        Intent intentListMails = new Intent(ForwardMailActivity.this, ListMailsActvity.class);
-        intentListMails.putExtra("AccessToken", accessToken);
-        intentListMails.putExtra("userName", userName);
-        intentListMails.putExtra("userEmail", userEmail);
+        Intent intentDisplayMail = new Intent(ForwardMailActivity.this, DisplayMailActivity.class);
+        intentDisplayMail.putExtra("AccessToken", accessToken);
+        intentDisplayMail.putExtra("userName", userName);
+        intentDisplayMail.putExtra("userEmail", userEmail);
+        intentDisplayMail.putExtra("mailId", mailId);
+        intentDisplayMail.putExtra("mailSubject", mailSubject);
+        intentDisplayMail.putExtra("mailAddress", mailAddress);
+        intentDisplayMail.putExtra("senderName", senderName);
+        intentDisplayMail.putExtra("timeSent", timeSent);
+        intentDisplayMail.putExtra("receiverName", receiverName);
+        intentDisplayMail.putExtra("receiverMail", receiverMail);
+        intentDisplayMail.putExtra("messageBody", messageBody);
+        intentDisplayMail.putExtra("mail", messageObject);
+        intentDisplayMail.putExtra("contentType", contentType);
 
-        startActivity(intentListMails);
+        startActivity(intentDisplayMail);
 
         ForwardMailActivity.this.finish();
     }
