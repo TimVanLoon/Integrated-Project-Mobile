@@ -3,6 +3,7 @@ package com.example.keiichi.project_mobile.Calendar;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -50,7 +51,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ListEventsActivity extends AppCompatActivity {
+public class ListEventsActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -65,7 +66,8 @@ public class ListEventsActivity extends AppCompatActivity {
     private ListView eventsListView;
     private List<Event> events = new ArrayList<>();
     private EventAdapter eventAdapter;
-   private  BottomNavigationView mBottomNav;
+    private  BottomNavigationView mBottomNav;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +78,8 @@ public class ListEventsActivity extends AppCompatActivity {
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         eventsListView = (ListView) findViewById(R.id.eventsListView);
         mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(this);
 
         eventsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -144,7 +148,7 @@ public class ListEventsActivity extends AppCompatActivity {
         userEmail = getIntent().getStringExtra("userEmail");
 
 
-        callGraphAPI();
+        getEvents();
     }
 
     private void fillEventsListView(List<Event> eventsList){
@@ -226,7 +230,7 @@ public class ListEventsActivity extends AppCompatActivity {
     }
 
     /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
-    private void callGraphAPI() {
+    private void getEvents() {
         Log.d(TAG, "Starting volley request to graph");
         Log.d(TAG, accessToken);
 
@@ -311,6 +315,16 @@ public class ListEventsActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+    }
+
+    @Override
+    public void onRefresh() {
+        swipeRefreshLayout.setRefreshing(true);
+
+        getEvents();
+
+        swipeRefreshLayout.setRefreshing(false);
 
     }
 
