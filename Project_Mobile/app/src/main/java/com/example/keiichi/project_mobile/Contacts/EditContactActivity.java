@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -135,6 +136,25 @@ public class EditContactActivity extends AppCompatActivity {
         personalNotesInput = (EditText) findViewById(R.id.personalNotes);
         nickNameInput = (EditText) findViewById(R.id.nickName);
         spouseNameInput = (EditText) findViewById(R.id.spouseName);
+
+        setEditTextOnFocusListener(firstNameInput);
+        setEditTextOnFocusListener(lastNameInput);
+        setEditTextOnFocusListener(emailInput);
+        setEditTextOnFocusListener(phoneInput);
+        setEditTextOnFocusListener(jobTitleInput);
+        setEditTextOnFocusListener(departmentInput);
+        setEditTextOnFocusListener(companyNameInput);
+        setEditTextOnFocusListener(officeLocationInput);
+        setEditTextOnFocusListener(managerInput);
+        setEditTextOnFocusListener(streetNameInput);
+        setEditTextOnFocusListener(streetNameInput);
+        setEditTextOnFocusListener(postalCodeInput);
+        setEditTextOnFocusListener(cityNameInput);
+        setEditTextOnFocusListener(stateNameInput);
+        setEditTextOnFocusListener(countryNameInput);
+        setEditTextOnFocusListener(personalNotesInput);
+        setEditTextOnFocusListener(nickNameInput);
+        setEditTextOnFocusListener(spouseNameInput);
 
         // VUL INPUTS MET DATA VAN CONTACT
         firstNameInput.setText(firstName);
@@ -441,5 +461,22 @@ public class EditContactActivity extends AppCompatActivity {
 
     private boolean isValidMobile(String phone) {
         return android.util.Patterns.PHONE.matcher(phone).matches();
+    }
+
+    public void setEditTextOnFocusListener(EditText et){
+
+        et.setOnFocusChangeListener( new View.OnFocusChangeListener(){
+
+            public void onFocusChange( View view, boolean hasfocus){
+                if(hasfocus){
+
+                    view.setBackgroundResource( R.drawable.edit_text_style_focused);
+                }
+                else{
+                    view.setBackgroundResource( R.drawable.edit_text_style);
+                }
+            }
+        });
+
     }
 }

@@ -215,7 +215,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
         userPicture = (ImageView) findViewById(R.id.userPicture);
         recyclerView = findViewById(R.id.ListViewMails);
-        signOutButton = findViewById(R.id.clearCache);
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(this);
 
@@ -265,11 +264,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             }
         });
 
-        signOutButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                onSignOutClicked();
-            }
-        });
 
         callGraphAPI();
 
@@ -401,7 +395,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     /* Set the UI for signed-out user */
     private void updateSignedOutUI() {
         //callGraphButton.setVisibility(View.VISIBLE);
-        signOutButton.setVisibility(View.INVISIBLE);
         findViewById(R.id.welcome).setVisibility(View.INVISIBLE);
     }
 

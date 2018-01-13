@@ -184,6 +184,14 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         privateCheckbox = (CheckBox) findViewById(R.id.privateCheckbox);
         responseCheckbox = (CheckBox) findViewById(R.id.responseCheckbox);
 
+        setEditTextOnFocusListener(eventInput);
+        setEditTextOnFocusListener(locationInput);
+        setEditTextOnFocusListener(personalNotes);
+        setSpinnerOnFocusListener(durationSpinner);
+        setSpinnerOnFocusListener(reminderSpinner);
+        setSpinnerOnFocusListener(repeatSpinner);
+        setSpinnerOnFocusListener(durationSpinner);
+
         attendeesTitle.setVisibility(View.GONE);
         plusAttendeeIcon.setVisibility(View.GONE);
         reminderSpinner.setVisibility(View.GONE);
@@ -1056,6 +1064,40 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
                 reminderSpinner.setSelection(startingValue);
                 break;
         }
+
+    }
+
+    public void setEditTextOnFocusListener(EditText et){
+
+        et.setOnFocusChangeListener( new View.OnFocusChangeListener(){
+
+            public void onFocusChange( View view, boolean hasfocus){
+                if(hasfocus){
+
+                    view.setBackgroundResource( R.drawable.edit_text_style_focused);
+                }
+                else{
+                    view.setBackgroundResource( R.drawable.edit_text_style);
+                }
+            }
+        });
+
+    }
+
+    public void setSpinnerOnFocusListener(Spinner spinnner){
+
+        spinnner.setOnFocusChangeListener( new View.OnFocusChangeListener(){
+
+            public void onFocusChange( View view, boolean hasfocus){
+                if(hasfocus){
+
+                    view.setBackgroundResource( R.drawable.edit_text_style_focused);
+                }
+                else{
+                    view.setBackgroundResource( R.drawable.edit_text_style);
+                }
+            }
+        });
 
     }
 }
