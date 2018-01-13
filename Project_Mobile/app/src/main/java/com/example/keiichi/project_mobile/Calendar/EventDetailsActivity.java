@@ -33,6 +33,7 @@ import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
 import com.example.keiichi.project_mobile.Contacts.EditContactActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Attendee;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
+import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 import com.example.keiichi.project_mobile.R;
 import com.example.keiichi.project_mobile.Utility;
 
@@ -361,6 +362,8 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
 
                             startActivity(intentListEvents);
 
+                            EventDetailsActivity.this.finish();
+
 
                         }
                     }, DELAY_TIME);
@@ -405,6 +408,8 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
 
                 startActivity(intentListEvents);
 
+                EventDetailsActivity.this.finish();
+
                 return true;
 
             case R.id.action_delete:
@@ -433,6 +438,8 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
                 intentEditEvent.putExtra("contentType", contentType);
 
                 startActivity(intentEditEvent);
+
+                EventDetailsActivity.this.finish();
 
                 return true;
 
@@ -487,4 +494,33 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
     public void onNothingSelected(AdapterView<?> adapterView) {
 
     }
+
+    @Override
+    public void onBackPressed(){
+
+        minimizeApp();
+
+    }
+
+    public void minimizeApp() {
+
+        Intent intentListEvents = new Intent(EventDetailsActivity.this, ListEventsActivity.class);
+        intentListEvents.putExtra("AccessToken", accessToken);
+        intentListEvents.putExtra("userName", userName);
+        intentListEvents.putExtra("userEmail", userEmail);
+        intentListEvents.putExtra("subject", subject);
+        intentListEvents.putExtra("location", location);
+        intentListEvents.putExtra("startDate", startDate);
+        intentListEvents.putExtra("displayAs", displayAs);
+        intentListEvents.putExtra("notes", notes);
+        intentListEvents.putExtra("id", id);
+        intentListEvents.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
+        intentListEvents.putExtra("contentType", contentType);
+
+        startActivity(intentListEvents);
+
+        EventDetailsActivity.this.finish();
+
+    }
+
 }

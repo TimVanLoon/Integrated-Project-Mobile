@@ -56,6 +56,7 @@ public class SendMailActivity extends AppCompatActivity {
     private String accessToken;
     private String userName;
     private String userEmail;
+    private String fromContactDetailsActivity;
     private RichEditor editor;
 
 
@@ -67,6 +68,7 @@ public class SendMailActivity extends AppCompatActivity {
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
+        fromContactDetailsActivity = getIntent().getStringExtra("fromContactDetailsActivity");
 
         MailAdress = findViewById(R.id.TextMailAdress);
         Subject = findViewById(R.id.TextMailSubject);
@@ -169,7 +171,10 @@ public class SendMailActivity extends AppCompatActivity {
                 intentListMails.putExtra("AccessToken", accessToken);
                 intentListMails.putExtra("userName", userName);
                 intentListMails.putExtra("userEmail", userEmail);
+
                 startActivity(intentListMails);
+
+                SendMailActivity.this.finish();
 
                 return true;
 
@@ -184,6 +189,8 @@ public class SendMailActivity extends AppCompatActivity {
 
                     startActivity(intentSendMail);
 
+                    SendMailActivity.this.finish();
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -197,5 +204,26 @@ public class SendMailActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed(){
+
+        if(fromContactDetailsActivity == null){
+            minimizeApp();
+        } else{
+            super.onBackPressed();
+        }
+
+    }
+
+    public void minimizeApp() {
+        Intent intentListMails = new Intent(SendMailActivity.this, ListMailsActvity.class);
+        intentListMails.putExtra("AccessToken", accessToken);
+        intentListMails.putExtra("userName", userName);
+        intentListMails.putExtra("userEmail", userEmail);
+
+        startActivity(intentListMails);
+
+        SendMailActivity.this.finish();
+    }
 
 }

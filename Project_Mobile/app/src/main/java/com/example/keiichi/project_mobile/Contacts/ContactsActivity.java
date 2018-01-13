@@ -163,14 +163,22 @@ public class ContactsActivity extends AppCompatActivity {
                         intentCalendar.putExtra("AccessToken", accessToken);
                         intentCalendar.putExtra("userName", userName);
                         intentCalendar.putExtra("userEmail", userEmail);
+
                         startActivity(intentCalendar);
+
+                        ContactsActivity.this.finish();
+
                         break;
                     case R.id.action_mail:
                         Intent intentMail = new Intent(ContactsActivity.this, ListMailsActvity.class);
                         intentMail.putExtra("AccessToken", accessToken);
                         intentMail.putExtra("userName", userName);
                         intentMail.putExtra("userEmail", userEmail);
+
                         startActivity(intentMail);
+
+                        ContactsActivity.this.finish();
+
                         break;
                     case R.id.action_user:
 
@@ -283,7 +291,11 @@ public class ContactsActivity extends AppCompatActivity {
                 intentAddContact.putExtra("AccessToken", accessToken);
                 intentAddContact.putExtra("userName", userName);
                 intentAddContact.putExtra("userEmail", userEmail);
+
                 startActivity(intentAddContact);
+
+                ContactsActivity.this.finish();
+
                 return true;
 
             default:
@@ -511,6 +523,8 @@ public class ContactsActivity extends AppCompatActivity {
 
 
             startActivity(showContactDetails);
+
+            ContactsActivity.this.finish();
 
         } else {
             Toast.makeText(getApplicationContext(), "Empty contact list!", Toast.LENGTH_SHORT).show();

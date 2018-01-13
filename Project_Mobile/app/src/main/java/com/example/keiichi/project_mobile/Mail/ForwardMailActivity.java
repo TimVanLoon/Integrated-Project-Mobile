@@ -165,6 +165,8 @@ public class ForwardMailActivity extends AppCompatActivity {
 
                 startActivity(intentListMails);
 
+                ForwardMailActivity.this.finish();
+
                 return true;
 
             case R.id.action_send:
@@ -183,5 +185,21 @@ public class ForwardMailActivity extends AppCompatActivity {
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onBackPressed(){
+        minimizeApp();
+    }
+
+    public void minimizeApp() {
+        Intent intentListMails = new Intent(ForwardMailActivity.this, ListMailsActvity.class);
+        intentListMails.putExtra("AccessToken", accessToken);
+        intentListMails.putExtra("userName", userName);
+        intentListMails.putExtra("userEmail", userEmail);
+
+        startActivity(intentListMails);
+
+        ForwardMailActivity.this.finish();
     }
 }

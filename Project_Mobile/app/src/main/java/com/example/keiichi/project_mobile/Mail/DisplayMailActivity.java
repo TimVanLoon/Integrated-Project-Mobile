@@ -338,19 +338,23 @@ public class DisplayMailActivity extends AppCompatActivity {
 
         startActivity(showMail);
 
+        DisplayMailActivity.this.finish();
+
     }
 
     private void goToReplyActivity() {
         Intent showMail = new Intent(DisplayMailActivity.this, ReplyToMailActivity.class);
 
-            showMail.putExtra("AccessToken", accessToken);
-            showMail.putExtra("userName", userName);
-            showMail.putExtra("userEmail", userEmail);
-            showMail.putExtra("mailId", mailId);
-            showMail.putExtra("mailSubject", mailSubject);
-            showMail.putExtra("mailAddress", mailAddress);
+        showMail.putExtra("AccessToken", accessToken);
+        showMail.putExtra("userName", userName);
+        showMail.putExtra("userEmail", userEmail);
+        showMail.putExtra("mailId", mailId);
+        showMail.putExtra("mailSubject", mailSubject);
+        showMail.putExtra("mailAddress", mailAddress);
 
         startActivity(showMail);
+
+        DisplayMailActivity.this.finish();
     }
 
 
@@ -464,6 +468,8 @@ public class DisplayMailActivity extends AppCompatActivity {
                 intentListMails.putExtra("userEmail", userEmail);
 
                 startActivity(intentListMails);
+
+                DisplayMailActivity.this.finish();
 
                 return true;
 
@@ -692,6 +698,22 @@ public class DisplayMailActivity extends AppCompatActivity {
                 mailBodyWebView.setLayoutParams(new LinearLayout.LayoutParams(getResources().getDisplayMetrics().widthPixels, (int) (height * getResources().getDisplayMetrics().density)));
             }
         });
+    }
+
+    @Override
+    public void onBackPressed(){
+        minimizeApp();
+    }
+
+    public void minimizeApp() {
+        Intent intentListMails = new Intent(DisplayMailActivity.this, ListMailsActvity.class);
+        intentListMails.putExtra("AccessToken", accessToken);
+        intentListMails.putExtra("userName", userName);
+        intentListMails.putExtra("userEmail", userEmail);
+
+        startActivity(intentListMails);
+
+        DisplayMailActivity.this.finish();
     }
 
 }

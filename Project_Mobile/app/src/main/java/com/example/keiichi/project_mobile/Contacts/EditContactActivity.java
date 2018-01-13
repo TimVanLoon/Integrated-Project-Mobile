@@ -232,6 +232,8 @@ public class EditContactActivity extends AppCompatActivity {
 
                 startActivity(intentContactDetails);
 
+                EditContactActivity.this.finish();
+
                 return true;
 
             // WANNEER SAVE ICON WORDT AANGEKLIKT
@@ -304,6 +306,9 @@ public class EditContactActivity extends AppCompatActivity {
                                         intentContactDetailsSaved.putExtra("id", id);
 
                                         startActivity(intentContactDetailsSaved);
+
+                                        EditContactActivity.this.finish();
+
                                     }
                                 }, DELAY_TIME);
 
@@ -479,4 +484,43 @@ public class EditContactActivity extends AppCompatActivity {
         });
 
     }
+
+    @Override
+    public void onBackPressed(){
+        minimizeApp();
+    }
+
+    public void minimizeApp() {
+        Intent intentContactDetails = new Intent(EditContactActivity.this, ContactsDetailsActivity.class);
+        intentContactDetails.putExtra("AccessToken", accessToken);
+        intentContactDetails.putExtra("userName", userName);
+        intentContactDetails.putExtra("userEmail", userEmail);
+        intentContactDetails.putExtra("givenName", givenName);
+        intentContactDetails.putExtra("displayName", displayName);
+        intentContactDetails.putExtra("userPhone", phoneNumber);
+        intentContactDetails.putExtra("emailList",(Serializable) emailList);
+        intentContactDetails.putExtra("email", email);
+        intentContactDetails.putExtra("notes", notes);
+        intentContactDetails.putExtra("nickname", nickname);
+        intentContactDetails.putExtra("spouse", spouse);
+        intentContactDetails.putExtra("street", street);
+        intentContactDetails.putExtra("postalcode", postalCode);
+        intentContactDetails.putExtra("city", city);
+        intentContactDetails.putExtra("state", state);
+        intentContactDetails.putExtra("country", country);
+        intentContactDetails.putExtra("job", job);
+        intentContactDetails.putExtra("department", department);
+        intentContactDetails.putExtra("company", company);
+        intentContactDetails.putExtra("office", office);
+        intentContactDetails.putExtra("manager", manager);
+        intentContactDetails.putExtra("assistant", assistant);
+        intentContactDetails.putExtra("firstname", firstName);
+        intentContactDetails.putExtra("lastname", lastName);
+        intentContactDetails.putExtra("id", id);
+
+        startActivity(intentContactDetails);
+
+        EditContactActivity.this.finish();
+    }
+
 }

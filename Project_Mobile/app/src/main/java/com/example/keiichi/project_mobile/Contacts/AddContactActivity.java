@@ -20,9 +20,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.Calendar.AddEventActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.PhysicalAddress;
+import com.example.keiichi.project_mobile.Mail.DisplayMailActivity;
+import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 import com.example.keiichi.project_mobile.R;
 import com.google.gson.Gson;
 
@@ -146,7 +149,10 @@ public class AddContactActivity extends AppCompatActivity {
                 intentContacts.putExtra("AccessToken", accessToken);
                 intentContacts.putExtra("userName", userName);
                 intentContacts.putExtra("userEmail", userEmail);
+
                 startActivity(intentContacts);
+
+                AddContactActivity.this.finish();
 
                 return true;
 
@@ -199,7 +205,11 @@ public class AddContactActivity extends AppCompatActivity {
                                             intentContacts.putExtra("AccessToken", accessToken);
                                             intentContacts.putExtra("userName", userName);
                                             intentContacts.putExtra("userEmail", userEmail);
+
                                             startActivity(intentContacts);
+
+                                            AddContactActivity.this.finish();
+
                                         }
                                     }, DELAY_TIME);
 
@@ -341,6 +351,22 @@ public class AddContactActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public void onBackPressed(){
+        minimizeApp();
+    }
+
+    public void minimizeApp() {
+        Intent intentListMails = new Intent(AddContactActivity.this, ContactsActivity.class);
+        intentListMails.putExtra("AccessToken", accessToken);
+        intentListMails.putExtra("userName", userName);
+        intentListMails.putExtra("userEmail", userEmail);
+
+        startActivity(intentListMails);
+
+        AddContactActivity.this.finish();
     }
 
 }

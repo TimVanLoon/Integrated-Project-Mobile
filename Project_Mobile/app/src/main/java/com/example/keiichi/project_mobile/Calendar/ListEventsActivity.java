@@ -111,6 +111,9 @@ public class ListEventsActivity extends AppCompatActivity {
                         intentMail.putExtra("userEmail", userEmail);
 
                         startActivity(intentMail);
+
+                        ListEventsActivity.this.finish();
+
                         break;
                     case R.id.action_user:
                         Intent intentContacts = new Intent(ListEventsActivity.this, ContactsActivity.class);
@@ -119,6 +122,9 @@ public class ListEventsActivity extends AppCompatActivity {
                         intentContacts.putExtra("userEmail", userEmail);
 
                         startActivity(intentContacts);
+
+                        ListEventsActivity.this.finish();
+
                         break;
 
                 }
@@ -192,7 +198,10 @@ public class ListEventsActivity extends AppCompatActivity {
                 intentCalendar.putExtra("AccessToken", accessToken);
                 intentCalendar.putExtra("userName", userName);
                 intentCalendar.putExtra("userEmail", userEmail);
+
                 startActivity(intentCalendar);
+
+                ListEventsActivity.this.finish();
 
                 return true;
 
@@ -204,6 +213,9 @@ public class ListEventsActivity extends AppCompatActivity {
                 intentAddEvent.putExtra("userEmail", userEmail);
 
                 startActivity(intentAddEvent);
+
+                ListEventsActivity.this.finish();
+
                 return true;
 
             default:
@@ -364,8 +376,28 @@ public class ListEventsActivity extends AppCompatActivity {
 
             startActivity(showEventDetails);
 
+            ListEventsActivity.this.finish();
+
+
         } else {
             Toast.makeText(getApplicationContext(), "Empty events list!", Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    public void onBackPressed(){
+        minimizeApp();
+    }
+
+    public void minimizeApp() {
+        Intent intentListMails = new Intent(ListEventsActivity.this, ContactsActivity.class);
+        intentListMails.putExtra("AccessToken", accessToken);
+        intentListMails.putExtra("userName", userName);
+        intentListMails.putExtra("userEmail", userEmail);
+
+        startActivity(intentListMails);
+
+        ListEventsActivity.this.finish();
+    }
+
 }

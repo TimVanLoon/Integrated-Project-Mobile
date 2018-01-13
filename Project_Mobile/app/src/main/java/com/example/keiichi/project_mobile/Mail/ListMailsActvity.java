@@ -254,6 +254,8 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                         intentCalendar.putExtra("userEmail", userEmail);
                         startActivity(intentCalendar);
 
+                        ListMailsActvity.this.finish();
+
                         break;
                     case R.id.action_mail:
 
@@ -264,6 +266,9 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                         intentContacts.putExtra("userName", userName);
                         intentContacts.putExtra("userEmail", userEmail);
                         startActivity(intentContacts);
+
+                        ListMailsActvity.this.finish();
+
                         break;
 
                 }
@@ -718,6 +723,8 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                     showMail.putExtra("messageObject", message);
 
                     startActivity(showMail);
+
+                    ListMailsActvity.this.finish();
                 }
 
             }
@@ -779,7 +786,11 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                 intentSendMail.putExtra("AccessToken", accessToken);
                 intentSendMail.putExtra("userName", userName);
                 intentSendMail.putExtra("userEmail", userEmail);
+
                 startActivity(intentSendMail);
+
+                ListMailsActvity.this.finish();
+
                 return true;
 
             default:

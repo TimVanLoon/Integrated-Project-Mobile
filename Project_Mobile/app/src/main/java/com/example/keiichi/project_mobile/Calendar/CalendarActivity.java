@@ -151,6 +151,9 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
                         intentMail.putExtra("userEmail", userEmail);
 
                         startActivity(intentMail);
+
+                        CalendarActivity.this.finish();
+
                         break;
                     case R.id.action_user:
                         Intent intentContacts = new Intent(CalendarActivity.this, ContactsActivity.class);
@@ -159,6 +162,9 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
                         intentContacts.putExtra("userEmail", userEmail);
 
                         startActivity(intentContacts);
+
+                        CalendarActivity.this.finish();
+
                         break;
 
                 }
@@ -221,6 +227,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
 
                 startActivity(intentListEvents);
 
+                CalendarActivity.this.finish();
 
                 return true;
 
@@ -233,6 +240,8 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
                 intentAddEvent.putExtra("userEmail", userEmail);
 
                 startActivity(intentAddEvent);
+
+                CalendarActivity.this.finish();
 
                 return true;
 

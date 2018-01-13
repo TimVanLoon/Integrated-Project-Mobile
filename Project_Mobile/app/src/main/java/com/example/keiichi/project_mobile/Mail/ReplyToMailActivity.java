@@ -153,6 +153,8 @@ public class ReplyToMailActivity extends AppCompatActivity {
 
                 startActivity(intentListMails);
 
+                ReplyToMailActivity.this.finish();
+
                 return true;
 
             case R.id.action_send:
@@ -173,4 +175,21 @@ public class ReplyToMailActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    @Override
+    public void onBackPressed(){
+        minimizeApp();
+    }
+
+    public void minimizeApp() {
+        Intent intentListMails = new Intent(ReplyToMailActivity.this, ListMailsActvity.class);
+        intentListMails.putExtra("AccessToken", accessToken);
+        intentListMails.putExtra("userName", userName);
+        intentListMails.putExtra("userEmail", userEmail);
+
+        startActivity(intentListMails);
+
+        ReplyToMailActivity.this.finish();
+    }
+
 }

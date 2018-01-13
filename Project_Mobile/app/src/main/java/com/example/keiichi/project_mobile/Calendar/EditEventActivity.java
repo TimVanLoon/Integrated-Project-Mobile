@@ -37,6 +37,7 @@ import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.DAL.POJOs.ItemBody;
 import com.example.keiichi.project_mobile.DAL.POJOs.Location;
+import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 import com.example.keiichi.project_mobile.R;
 import com.example.keiichi.project_mobile.Utility;
 import com.google.gson.Gson;
@@ -212,6 +213,9 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
                 intentAttendees.putExtra("contentType", contentType);
 
                 startActivity(intentAttendees);
+
+                EditEventActivity.this.finish();
+
             }
         });
 
@@ -649,23 +653,25 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
 
             // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
             case android.R.id.home:
-                Intent intentCalendar = new Intent(EditEventActivity.this, EventDetailsActivity.class);
-                intentCalendar.putExtra("AccessToken", accessToken);
-                intentCalendar.putExtra("userName", userName);
-                intentCalendar.putExtra("userEmail", userEmail);
-                intentCalendar.putExtra("subject", subject);
-                intentCalendar.putExtra("location", location);
-                intentCalendar.putExtra("startDate", startDate);
-                intentCalendar.putExtra("displayAs", displayAs);
-                intentCalendar.putExtra("notes", notes);
-                intentCalendar.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
-                intentCalendar.putExtra("id", id);
-                intentCalendar.putExtra("sensitivity", sensitivity);
-                intentCalendar.putExtra("responseRequested", responseRequested);
-                intentCalendar.putExtra("attendeesList", (Serializable) attendees);
-                intentCalendar.putExtra("contentType", contentType);
+                Intent intentEventDetails = new Intent(EditEventActivity.this, EventDetailsActivity.class);
+                intentEventDetails.putExtra("AccessToken", accessToken);
+                intentEventDetails.putExtra("userName", userName);
+                intentEventDetails.putExtra("userEmail", userEmail);
+                intentEventDetails.putExtra("subject", subject);
+                intentEventDetails.putExtra("location", location);
+                intentEventDetails.putExtra("startDate", startDate);
+                intentEventDetails.putExtra("displayAs", displayAs);
+                intentEventDetails.putExtra("notes", notes);
+                intentEventDetails.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
+                intentEventDetails.putExtra("id", id);
+                intentEventDetails.putExtra("sensitivity", sensitivity);
+                intentEventDetails.putExtra("responseRequested", responseRequested);
+                intentEventDetails.putExtra("attendeesList", (Serializable) attendees);
+                intentEventDetails.putExtra("contentType", contentType);
 
-                startActivity(intentCalendar);
+                startActivity(intentEventDetails);
+
+                EditEventActivity.this.finish();
 
                 return true;
 
@@ -699,6 +705,9 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
                             intentCalendar.putExtra("contentType", contentType);
 
                             startActivity(intentCalendar);
+
+                            EditEventActivity.this.finish();
+
                         }
                     }, DELAY_TIME);
 
@@ -1124,4 +1133,36 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         });
 
     }
+
+    @Override
+    public void onBackPressed(){
+
+        minimizeApp();
+
+    }
+
+    public void minimizeApp() {
+
+        Intent intentEventDetails = new Intent(EditEventActivity.this, EventDetailsActivity.class);
+        intentEventDetails.putExtra("AccessToken", accessToken);
+        intentEventDetails.putExtra("userName", userName);
+        intentEventDetails.putExtra("userEmail", userEmail);
+        intentEventDetails.putExtra("subject", subject);
+        intentEventDetails.putExtra("location", location);
+        intentEventDetails.putExtra("startDate", startDate);
+        intentEventDetails.putExtra("displayAs", displayAs);
+        intentEventDetails.putExtra("notes", notes);
+        intentEventDetails.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
+        intentEventDetails.putExtra("id", id);
+        intentEventDetails.putExtra("sensitivity", sensitivity);
+        intentEventDetails.putExtra("responseRequested", responseRequested);
+        intentEventDetails.putExtra("attendeesList", (Serializable) attendees);
+        intentEventDetails.putExtra("contentType", contentType);
+
+        startActivity(intentEventDetails);
+
+        EditEventActivity.this.finish();
+
+    }
+
 }

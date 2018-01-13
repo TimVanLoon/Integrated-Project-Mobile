@@ -247,7 +247,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(loginIntent);
 
             this.finish();
-
         }
 
 

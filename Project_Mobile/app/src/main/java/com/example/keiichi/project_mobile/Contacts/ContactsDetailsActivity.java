@@ -198,8 +198,10 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                     sendMail.putExtra("userEmail", emailList.get(0).getAddress());
                     sendMail.putExtra("userMailName", emailList.get(0).getName());
                     sendMail.putExtra("emailAddress", emailAddress);
+                    sendMail.putExtra("fromContactDetailsActivity", "yes");
 
                     startActivity(sendMail);
+
 
                 }
             });
@@ -217,6 +219,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                     addEventActivity.putExtra("fromContactDetailsActivity", "yes");
 
                     startActivity(addEventActivity);
+
 
                 }
             });
@@ -450,6 +453,8 @@ public class ContactsDetailsActivity extends AppCompatActivity {
 
                             startActivity(intentContacts);
 
+                            ContactsDetailsActivity.this.finish();
+
 
                         }
                     }, DELAY_TIME);
@@ -507,6 +512,8 @@ public class ContactsDetailsActivity extends AppCompatActivity {
 
                 startActivity(intentContacts);
 
+                ContactsDetailsActivity.this.finish();
+
                 return true;
 
             case R.id.action_delete:
@@ -544,6 +551,8 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                 intentEditContact.putExtra("id", id);
 
                 startActivity(intentEditContact);
+
+                ContactsDetailsActivity.this.finish();
 
                 return true;
 
@@ -588,4 +597,21 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         queue.add(stringRequest);
 
     }
+
+    @Override
+    public void onBackPressed(){
+        minimizeApp();
+    }
+
+    public void minimizeApp() {
+        Intent intentListMails = new Intent(ContactsDetailsActivity.this, ContactsActivity.class);
+        intentListMails.putExtra("AccessToken", accessToken);
+        intentListMails.putExtra("userName", userName);
+        intentListMails.putExtra("userEmail", userEmail);
+
+        startActivity(intentListMails);
+
+        ContactsDetailsActivity.this.finish();
+    }
+
 }
