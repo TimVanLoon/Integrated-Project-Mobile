@@ -856,7 +856,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             }
 
             item.withTag(folder);
-            item.withBadge(String.valueOf(folder.getUnreadItemCount())).withBadgeStyle(new BadgeStyle().withTextColor(Color.WHITE).withColorRes(R.color.action_bar));
+            item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
             drawerItems.add(item);
 
         }

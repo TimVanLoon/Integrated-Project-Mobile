@@ -232,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(accessToken == null){
 
-            getAuthSilentCallback();
+            getAuthInteractiveCallback();
 
         } else {
 
