@@ -241,7 +241,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
 
                 startActivity(intentAddEvent);
 
-                CalendarActivity.this.finish();
+
 
                 return true;
 
@@ -271,7 +271,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
             int color1 = generator.getRandomColor();
 
             BaseCalendarEvent event1 = new BaseCalendarEvent(event.getSubject(), event.getBodyPreview(), event.getLocation().getDisplayName(),
-                    color1, startTime1, endTime1, true);
+                    ContextCompat.getColor(this, R.color.action_bar), startTime1, endTime1, true);
             eventList.add(event1);
         }
 
