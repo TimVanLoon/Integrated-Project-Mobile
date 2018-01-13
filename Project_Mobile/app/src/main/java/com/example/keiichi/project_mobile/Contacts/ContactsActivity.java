@@ -12,6 +12,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -80,7 +81,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ContactsActivity extends AppCompatActivity {
+public class ContactsActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     private BottomNavigationView mBottomNav;
     private Toolbar myToolbar;
@@ -99,6 +100,7 @@ public class ContactsActivity extends AppCompatActivity {
     private Contact testContact;
     private ImageView mImageView;
     private Drawer drawer;
+    private SwipeRefreshLayout swipeRefreshLayout;
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts?$orderBy=displayName&$top=500&$count=true";
     final static String MSGRAPH_URL_FOTO = "https://graph.microsoft.com/beta/me/contacts/";
     final static String MSGRAPH_URL_FOTO2 = "/photo/$value";
@@ -117,7 +119,11 @@ public class ContactsActivity extends AppCompatActivity {
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
         contactsListView = (ListView) findViewById(R.id.contactsListView);
+
 
         contactsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -150,7 +156,7 @@ public class ContactsActivity extends AppCompatActivity {
         MenuItem menuItem = menu.getItem(2);
         menuItem.setChecked(true);
 
-        callGraphAPI();
+        getContacts();
 
         mBottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -306,7 +312,7 @@ public class ContactsActivity extends AppCompatActivity {
     }
 
     /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
-    private void callGraphAPI() {
+    private void getContacts() {
         Log.d(TAG, "Starting volley request to graph");
         Log.d(TAG, accessToken);
 
@@ -535,6 +541,16 @@ public class ContactsActivity extends AppCompatActivity {
         countactsFiltered = new ArrayList<>();
         countactsFiltered.addAll(contactFilterted);
         contactAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onRefresh() {
+        swipeRefreshLayout.setRefreshing(true);
+
+        getContacts();
+
+        swipeRefreshLayout.setRefreshing(false);
+
     }
 
     public void buildDrawer(String name, String email, Toolbar toolbar, List<MailFolder> folders){
