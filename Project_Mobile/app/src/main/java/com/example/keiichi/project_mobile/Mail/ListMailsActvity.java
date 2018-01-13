@@ -267,8 +267,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
         callGraphAPI();
 
-        getMailFolders();
-
         mailFolders = new ArrayList<>();
         mailFolders.add(new MailFolder("1", "Not found", 0, 0));
 
@@ -653,6 +651,8 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         recyclerView.setLayoutManager(manager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+
+        getMailFolders();
 
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new ClickListener() {
             @Override
