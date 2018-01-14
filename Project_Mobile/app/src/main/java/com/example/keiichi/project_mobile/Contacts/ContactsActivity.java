@@ -133,6 +133,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
     final private String URL_DELETE = "https://graph.microsoft.com/beta/me/contacts/";
     final static String URL_CONTACTFOLDERS = "https://graph.microsoft.com/v1.0/me/contactFolders/";
     final static String URL_ROOMS = "https://graph.microsoft.com/beta/me/findRooms?$top=999&$count=true";
+    final static String URL_USERS = "https://graph.microsoft.com/v1.0/users";
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
