@@ -194,10 +194,12 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             }
         });
 
-        List<MailFolder> mailFolders = new ArrayList<>();
-        mailFolders.add(new MailFolder("1", "Not found", 0, 0));
+        List<String> navigationItems = new ArrayList<>();
+        navigationItems.add("Contacts");
+        navigationItems.add("Users");
+        navigationItems.add("Rooms");
 
-        buildDrawer(userName, userEmail, myToolbar, mailFolders);
+        buildDrawer(userName, userEmail, myToolbar, navigationItems);
 
     }
 
@@ -659,21 +661,16 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
     }
 
 
-    public void buildDrawer(String name, String email, Toolbar toolbar, List<MailFolder> folders){
+    public void buildDrawer(String name, String email, Toolbar toolbar, List<String> navigationItems){
 
         ArrayList<IDrawerItem> drawerItems = new ArrayList<>();
 
-        for(MailFolder folder : folders) {
+        for(String navigationItem : navigationItems) {
             PrimaryDrawerItem item = new PrimaryDrawerItem();
 
-            String folderName = folder.getDisplayName().toLowerCase();
-
-            switch(folderName) {
-
-            }
-
-            item.withTag(folder);
-            item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+            item.withName(navigationItem);
+            item.withTag(navigationItem);
+            item.withTextColor(Color.BLACK);
             drawerItems.add(item);
 
         }
@@ -707,7 +704,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
                 .withTranslucentStatusBar(false)
                 .withAccountHeader(headerResult)
                 .withDrawerItems(drawerItems)
-                .withSelectedItemByPosition(7)
+                .withSelectedItemByPosition(0)
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
