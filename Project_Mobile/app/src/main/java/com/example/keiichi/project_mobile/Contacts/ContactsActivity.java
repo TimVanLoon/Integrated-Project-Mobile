@@ -70,6 +70,7 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.holder.BadgeStyle;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
@@ -198,14 +199,10 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             }
         });
 
-        navigationItems.add("Contacts");
-        navigationItems.add("Users");
-        navigationItems.add("Rooms");
-
         contactFolders = new ArrayList<>();
-        contactFolders.add(new ContactFolder("Not found", "Not found", "Not found"));
+        contactFolders.add(new ContactFolder("", "", ""));
 
-        buildDrawer(userName, userEmail, myToolbar, navigationItems, contactFolders);
+        buildDrawer(userName, userEmail, myToolbar, contactFolders);
 
     }
 
@@ -739,7 +736,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
             contactFolders = new Gson().fromJson(String.valueOf(folders), listType);
 
-            buildDrawer(userName, userEmail, myToolbar, navigationItems, contactFolders);
+            buildDrawer(userName, userEmail, myToolbar, contactFolders);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -748,19 +745,13 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
     }
 
-    public void buildDrawer(String name, String email, Toolbar toolbar, List<String> navigationItems, List<ContactFolder> contactFolders){
+    public void buildDrawer(String name, String email, Toolbar toolbar, List<ContactFolder> contactFolders){
 
         ArrayList<IDrawerItem> drawerItems = new ArrayList<>();
 
-        for(String navigationItem : navigationItems) {
-            PrimaryDrawerItem item = new PrimaryDrawerItem();
+        SectionDrawerItem sectionDrawerItem = new SectionDrawerItem().withName("Contact Folders").withDivider(false);
 
-            item.withName(navigationItem);
-            item.withTag(navigationItem);
-            item.withTextColor(Color.BLACK);
-            drawerItems.add(item);
-
-        }
+        drawerItems.add(sectionDrawerItem);
 
         for(ContactFolder contactFolder : contactFolders) {
             PrimaryDrawerItem item = new PrimaryDrawerItem();
@@ -792,6 +783,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
                         return false;
                     }
                 })
+                .withDividerBelowHeader(true)
                 .build();
 
         drawer = new DrawerBuilder()
@@ -800,7 +792,14 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
                 .withTranslucentStatusBar(false)
                 .withAccountHeader(headerResult)
                 .withDrawerItems(drawerItems)
-                .withSelectedItemByPosition(0)
+                .addDrawerItems(
+                        new SectionDrawerItem().withName("Directories"),
+                        new PrimaryDrawerItem().withName("Contacts").withIdentifier(1),
+                        new PrimaryDrawerItem().withName("Users"),
+                        new PrimaryDrawerItem().withName("Rooms")
+
+                )
+                .withSelectedItem(1)
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
