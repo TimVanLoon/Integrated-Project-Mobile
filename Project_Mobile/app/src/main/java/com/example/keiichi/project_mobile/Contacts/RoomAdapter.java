@@ -1,100 +1,78 @@
 package com.example.keiichi.project_mobile.Contacts;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.Filterable;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
-import com.android.volley.AuthFailureError;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
-import com.example.keiichi.project_mobile.DAL.POJOs.Message;
-import com.example.keiichi.project_mobile.Mail.MailAdapter;
+import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.R;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.MyViewHolder> implements Filterable {
+public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> implements Filterable {
 
-    private ImageView profilePicture;
     private final Context context;
-    private Contact contact;
+    private EmailAddress room;
     private SparseBooleanArray animeationItemsIndex;
     private SparseBooleanArray selectedItems;
     private boolean reverseAllAnimations = false;
 
     // Ongefilterde list
-    private List<Contact> originalData = null;
+    private List<EmailAddress> originalData = null;
     // Gefilterde list
-    private List<Contact> filteredData = null;
+    private List<EmailAddress> filteredData = null;
 
-    private ContactAdapter.CustomFilter mFilter = new ContactAdapter.CustomFilter();
+    private RoomAdapter.CustomFilter mFilter = new RoomAdapter.CustomFilter();
     private String accessToken;
 
-    public ContactAdapter(Context context, List<Contact> values, String accessToken) {
+    public RoomAdapter(Context context, List<EmailAddress> values) {
         this.context = context;
         this.originalData = values;
         this.filteredData = values;
-        this.accessToken = accessToken;
         this.selectedItems = new SparseBooleanArray();
         this.animeationItemsIndex = new SparseBooleanArray();
     }
 
-    public Contact getItem(int i) {
+
+
+    public EmailAddress getItem(int i) {
         return filteredData.get(i);
     }
 
+
     @Override
-    public ContactAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RoomAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.contact_items, parent, false);
-        return new ContactAdapter.MyViewHolder(itemView);
+        return new RoomAdapter.MyViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(ContactAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(RoomAdapter.MyViewHolder holder, int position) {
 
-        contact = getItem(position);
+        room = getItem(position);
 
-        String contactName = contact.getDisplayName();
+        String roomName = room.getName();
 
-        holder.contactName.setText(contactName);
+        holder.roomName.setText(roomName);
 
         ColorGenerator generator = ColorGenerator.MATERIAL;
 
-        int color2 = generator.getColor(contact.getDisplayName().substring(0,1));
+        int color2 = generator.getColor(room.getName().substring(0,1));
 
         TextDrawable drawable1 = TextDrawable.builder()
-                .buildRoundRect(contact.getDisplayName().toUpperCase().substring(0,1), color2, 3); // radius in px
+                .buildRoundRect(room.getName().toUpperCase().substring(0,1), color2, 3); // radius in px
 
         holder.profilePicture.setImageDrawable(drawable1);
 
@@ -117,12 +95,12 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.MyViewHo
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView contactName;
+        TextView roomName;
         ImageView profilePicture;
 
         MyViewHolder(View view) {
             super(view);
-            contactName = view.findViewById(R.id.contactName);
+            roomName = view.findViewById(R.id.contactName);
             profilePicture = view.findViewById(R.id.profilePicture);
 
         }
@@ -143,10 +121,10 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.MyViewHo
             constraint = constraint.toString().toLowerCase();
             FilterResults result = new FilterResults();
             if (constraint != null && constraint.toString().length() > 0) {
-                List<Contact> filt = new ArrayList<Contact>(); //filtered list
+                List<EmailAddress> filt = new ArrayList<EmailAddress>(); //filtered list
                 for (int i = 0; i < originalData.size(); i++) {
-                    Contact c = originalData.get(i);
-                    if (c.getDisplayName().toLowerCase().contains(constraint)) {
+                    EmailAddress c = originalData.get(i);
+                    if (c.getName().toLowerCase().contains(constraint) || c.getAddress().toLowerCase().contains(constraint)) {
                         filt.add(c); //add only items which matches
                     }
                 }
@@ -165,23 +143,21 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.MyViewHo
         protected void publishResults(CharSequence constraint,
                                       FilterResults results) {
             if (results != null) {
-                setList((List<Contact>) results.values); // notify data set changed
+                setList((List<EmailAddress>) results.values); // notify data set changed
             } else {
-                setList((List<Contact>) originalData);
+                setList((List<EmailAddress>) originalData);
             }
         }
     }
 
-    public void setList(List<Contact> data) {
+    public void setList(List<EmailAddress> data) {
         filteredData = data; // set the adapter list to data
-        ContactAdapter.this.notifyDataSetChanged(); // notify data set change
+        RoomAdapter.this.notifyDataSetChanged(); // notify data set change
     }
 
-    public Contact getItemAtPosition(int position){
+    public EmailAddress getItemAtPosition(int position){
 
         return filteredData.get(position);
 
     }
-
 }
-

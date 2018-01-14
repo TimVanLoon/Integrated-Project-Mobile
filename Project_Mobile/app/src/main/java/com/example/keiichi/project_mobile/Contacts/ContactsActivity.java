@@ -104,7 +104,9 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
     private ListView contactsListView;
     private SearchView searchView;
     private ContactAdapter contactAdapter;
+    private RoomAdapter roomAdapter;
     private List<Contact> contacts = new ArrayList<>();
+    private List<EmailAddress> rooms = new ArrayList<>();
     private List<Contact> countactsFiltered;
     private List<EmailAddress> emailList;
     private String accessToken;
@@ -130,6 +132,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
     final static String MSGRAPH_URL_FOTO2 = "/photo/$value";
     final private String URL_DELETE = "https://graph.microsoft.com/beta/me/contacts/";
     final static String URL_CONTACTFOLDERS = "https://graph.microsoft.com/v1.0/me/contactFolders/";
+    final static String URL_ROOMS = "https://graph.microsoft.com/beta/me/findRooms?$top=999&$count=true";
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -580,6 +583,87 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
         contactAdapter.notifyDataSetChanged();
     }
 
+    /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
+    private void getRooms() {
+        Log.d(TAG, "Starting volley request to graph");
+        Log.d(TAG, accessToken);
+
+    /* Make sure we have a token to send to graph */
+        if (accessToken == null) {
+            return;
+        }
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        JSONObject parameters = new JSONObject();
+
+        try {
+            parameters.put("key", "value");
+        } catch (Exception e) {
+            Log.d(TAG, "Failed to put parameters: " + e.toString());
+        }
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, URL_ROOMS,
+                parameters, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+            /* Successfully called graph, process data and send to UI */
+                Log.d(TAG, "Response: " + response.toString());
+
+                try {
+                    updateRooms(response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d(TAG, "Error: " + error.toString());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+                return headers;
+            }
+        };
+
+        Log.d(TAG, "Adding HTTP GET to Queue, Request: " + request.toString());
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                3000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(request);
+    }
+
+    /* Sets the Graph response */
+    private void updateRooms(JSONObject graphResponse) throws JSONException {
+
+        // Haal de rooms binnen
+        try {
+            JSONObject roomList = graphResponse;
+
+            JSONArray roomArray = roomList.getJSONArray("value");
+
+
+            // VUL POJO
+            Type listType = new TypeToken<List<EmailAddress>>() {
+            }.getType();
+
+            rooms = new Gson().fromJson(String.valueOf(roomArray), listType);
+
+            roomAdapter = new RoomAdapter(this, rooms);
+            contactsRecyclerView.setAdapter(roomAdapter);
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
     @Override
     public void onRefresh() {
         swipeRefreshLayout.setRefreshing(true);
@@ -905,7 +989,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
                         new SectionDrawerItem().withName("Directories"),
                         new PrimaryDrawerItem().withName("Contacts").withIdentifier(1),
                         new PrimaryDrawerItem().withName("Users").withIdentifier(2),
-                        new PrimaryDrawerItem().withName("Rooms").withIdentifier(3)
+                        new PrimaryDrawerItem().withName("All Rooms").withIdentifier(3)
 
                 )
                 .withSelectedItem(1)
@@ -938,10 +1022,10 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
                             } else if(drawerItem.getIdentifier() == 3){
 
-                                setActionBarTitle("Rooms", myToolbar);
+                                getRooms();
+                                setActionBarTitle("All Rooms", myToolbar);
 
                             }
-
 
                         }
                         return false;
