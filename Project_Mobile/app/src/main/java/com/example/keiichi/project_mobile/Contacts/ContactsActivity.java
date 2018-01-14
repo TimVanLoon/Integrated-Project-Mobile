@@ -143,7 +143,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
 
                 onContactClicked(position);
-                
+
             }
         });
 

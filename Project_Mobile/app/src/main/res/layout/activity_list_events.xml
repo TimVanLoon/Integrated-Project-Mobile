@@ -78,6 +78,7 @@
         android:layout_height="501dp"
         android:divider="@drawable/list_divider"
         android:dividerHeight="4dip"
+        android:choiceMode="multipleChoiceModal"
         app:layout_constraintBottom_toTopOf="@+id/navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
