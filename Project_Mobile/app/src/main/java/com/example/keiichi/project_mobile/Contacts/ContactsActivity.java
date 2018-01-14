@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -55,8 +56,10 @@ import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.ContactFolder;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.MailFolder;
+import com.example.keiichi.project_mobile.DAL.POJOs.Message;
 import com.example.keiichi.project_mobile.DAL.POJOs.PhysicalAddress;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
+import com.example.keiichi.project_mobile.Mail.MailAdapter;
 import com.example.keiichi.project_mobile.Mail.RecyclerTouchListener;
 import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
@@ -108,6 +111,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
     private String userName;
     private String userEmail;
     private String id;
+    private String currentContactFolderId;
     private boolean multiSelect = false;
     private boolean actionModeEnabled = false;
     private Contact testContact;
@@ -125,7 +129,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
     final static String MSGRAPH_URL_FOTO = "https://graph.microsoft.com/beta/me/contacts/";
     final static String MSGRAPH_URL_FOTO2 = "/photo/$value";
     final private String URL_DELETE = "https://graph.microsoft.com/beta/me/contacts/";
-    final static String URL_CONTACTFOLDERS = "https://graph.microsoft.com/v1.0/me/contactFolders";
+    final static String URL_CONTACTFOLDERS = "https://graph.microsoft.com/v1.0/me/contactFolders/";
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -745,6 +749,107 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
     }
 
+    public void getContactsFromFolder(String id){
+
+        Log.d(TAG, "Starting volley request to graph");
+        Log.d(TAG, accessToken);
+
+    /* Make sure we have a token to send to graph */
+        if (accessToken == null) {
+            return;
+        }
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        JSONObject parameters = new JSONObject();
+
+        try {
+            parameters.put("key", "value");
+        } catch (Exception e) {
+            Log.d(TAG, "Failed to put parameters: " + e.toString());
+        }
+
+        String getUrl = URL_CONTACTFOLDERS + id + "/contacts";
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, getUrl,
+                parameters, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+            /* Successfully called graph, process data and send to UI */
+                Log.d(TAG, "Response: " + response.toString());
+
+                try {
+                    updateWithContactFolder(response);
+
+                    System.out.println("hey bootjes! " + response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d(TAG, "Error: " + error.toString());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+                return headers;
+            }
+        };
+
+        Log.d(TAG, "Adding HTTP GET to Queue, Request: " + request.toString());
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                3000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(request);
+
+    }
+
+    private void updateWithContactFolder(JSONObject graphResponse) throws JSONException {
+
+        try {
+            //haal mails binnen
+
+            JSONObject contactList = graphResponse;
+
+            JSONArray contactArray = contactList.getJSONArray("value");
+
+            System.out.println("test response: " + contactArray);
+
+
+            // VUL POJO
+            Type listType = new TypeToken<List<Contact>>() {
+            }.getType();
+
+            contacts = new Gson().fromJson(String.valueOf(contactArray), listType);
+
+            System.out.println("papa je doet me pijn :(");
+
+            contactAdapter = new ContactAdapter(this, contacts, accessToken);
+            contactsRecyclerView.setAdapter(contactAdapter);
+
+            contactAdapter.notifyDataSetChanged();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void setActionBarTitle(String title, Toolbar toolbar) {
+
+        toolbar.setTitle(title);
+        toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+        toolbar.setSubtitleTextColor(ContextCompat.getColor(this, R.color.white));
+        // THIS LINE REMOVES ANNOYING LEFT MARGIN
+        toolbar.setTitleMarginStart(30);
+
+    }
+
     public void buildDrawer(String name, String email, Toolbar toolbar, List<ContactFolder> contactFolders){
 
         ArrayList<IDrawerItem> drawerItems = new ArrayList<>();
@@ -753,12 +858,16 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
         drawerItems.add(sectionDrawerItem);
 
+        int identifier = 4;
+
         for(ContactFolder contactFolder : contactFolders) {
             PrimaryDrawerItem item = new PrimaryDrawerItem();
 
             item.withName(contactFolder.getDisplayName());
             item.withTag(contactFolder);
             item.withTextColor(Color.BLACK);
+            item.withIdentifier(identifier);
+            identifier++;
             drawerItems.add(item);
         }
 
@@ -766,7 +875,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
         int color2 = generator.getColor(userName.substring(0,1));
 
-        TextDrawable drawable = TextDrawable.builder()
+        final TextDrawable drawable = TextDrawable.builder()
                 .buildRound(userName.substring(0,1), color2); // radius in px
 
         AccountHeader headerResult = new AccountHeaderBuilder()
@@ -795,8 +904,8 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
                 .addDrawerItems(
                         new SectionDrawerItem().withName("Directories"),
                         new PrimaryDrawerItem().withName("Contacts").withIdentifier(1),
-                        new PrimaryDrawerItem().withName("Users"),
-                        new PrimaryDrawerItem().withName("Rooms")
+                        new PrimaryDrawerItem().withName("Users").withIdentifier(2),
+                        new PrimaryDrawerItem().withName("Rooms").withIdentifier(3)
 
                 )
                 .withSelectedItem(1)
@@ -804,6 +913,34 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         if (drawerItem instanceof PrimaryDrawerItem){
+
+                            if(drawerItem.getIdentifier() > 3){
+                                ContactFolder contactFolder = (ContactFolder) drawerItem.getTag();
+
+                                currentContactFolderId = contactFolder.getId();
+
+                                System.out.println("id xd: " + currentContactFolderId);
+
+                                getContactsFromFolder(currentContactFolderId);
+
+                                String folderName = ((PrimaryDrawerItem) drawerItem).getName().getText().toString();
+
+                                setActionBarTitle(folderName, myToolbar);
+
+                            } else if(drawerItem.getIdentifier() == 1){
+
+                                getContacts();
+                                setActionBarTitle("My Contacts", myToolbar);
+
+                            } else if(drawerItem.getIdentifier() == 2){
+
+                                setActionBarTitle("Users", myToolbar);
+
+                            } else if(drawerItem.getIdentifier() == 3){
+
+                                setActionBarTitle("Rooms", myToolbar);
+
+                            }
 
 
                         }

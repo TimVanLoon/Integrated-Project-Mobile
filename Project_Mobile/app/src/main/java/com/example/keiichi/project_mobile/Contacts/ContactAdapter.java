@@ -97,7 +97,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.MyViewHo
         int color2 = generator.getColor(contact.getDisplayName().substring(0,1));
 
         TextDrawable drawable1 = TextDrawable.builder()
-                .buildRoundRect(contact.getDisplayName().substring(0,1), color2, 3); // radius in px
+                .buildRoundRect(contact.getDisplayName().toUpperCase().substring(0,1), color2, 3); // radius in px
 
         holder.profilePicture.setImageDrawable(drawable1);
 
