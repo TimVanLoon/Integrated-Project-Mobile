@@ -145,7 +145,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         @Override
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
             MenuInflater menuInflater = getMenuInflater();
-            menuInflater.inflate(R.menu.delete_navigation, menu);
+            menuInflater.inflate(R.menu.multi_select_mail_navigation, menu);
             multiSelect = true;
             actionModeEnabled = true;
             mailActionMode = actionMode;
@@ -171,7 +171,12 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                 actionModeEnabled = false;
                 actionMode.finish();
                 return true;
+            } else if(menuItem.getItemId() == R.id.actionn_junk){
+
+                //MultiMoveToJunk();
+
             }
+
 
             return false;
         }
