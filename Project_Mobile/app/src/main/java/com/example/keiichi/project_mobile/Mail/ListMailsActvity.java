@@ -177,7 +177,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
             }
 
-
             return false;
         }
 

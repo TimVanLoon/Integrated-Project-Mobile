@@ -82,7 +82,21 @@
 
     <string name="firstNameTitle">First name *</string>
     <string name="lastNameTitle">Last name *</string>
+    <string name="middleNameTitle">Middle name</string>
+    <string name="titleTitle">Title</string>
+    <string name="suffixTitle">Suffix</string>
+    <string name="yomiFirstNameTitle">Yomi first name</string>
+    <string name="yomiLastNameTitle">Yomi last name</string>
+    <string name="displayAsTitle1">Display as</string>
     <string name="emailTitleInput">E-mail</string>
+    <string name="businessPhoneTitle">Business</string>
+    <string name="businessPhoneTitle2">Business 2</string>
+    <string name="homePhoneTitle">Home</string>
+    <string name="homePhoneTitle2">Home 2</string>
+    <string name="mobilePhoneTitle">Mobile</string>
+    <string name="mobilePhoneTitle2">Mobile 2</string>
+    <string name="emailTitleInput2">E-mail 2</string>
+    <string name="emailTitleInput3">E-mail 3</string>
     <string name="jobTitle">Job title</string>
     <string name="department">Department</string>
     <string name="companyName">Company Name</string>
