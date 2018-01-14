@@ -3,6 +3,7 @@ package com.example.keiichi.project_mobile.Calendar;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -58,6 +59,7 @@ public class AttendeeActivity extends AppCompatActivity {
     private Toolbar myToolbar;
     private ListView contactsListView;
     private SearchView searchView;
+    private RecyclerView contactsRecyclerView;
     private String accessToken;
     private String userName;
     private String userEmail;
@@ -350,11 +352,7 @@ public class AttendeeActivity extends AppCompatActivity {
 
 
             contactAdapter = new ContactAdapter(this, contacts, accessToken);
-            contactsListView.setAdapter(contactAdapter);
-
-
-
-
+            contactsRecyclerView.setAdapter(contactAdapter);
 
 
         } catch (JSONException e) {
@@ -363,7 +361,7 @@ public class AttendeeActivity extends AppCompatActivity {
         assert contactsJsonArray != null;
 
         contactAdapter = new ContactAdapter(this, contacts, accessToken);
-        contactsListView.setAdapter(contactAdapter);
+        contactsRecyclerView.setAdapter(contactAdapter);
 
     }
 

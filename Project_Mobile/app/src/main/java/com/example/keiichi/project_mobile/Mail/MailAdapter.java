@@ -237,10 +237,7 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
             iconContainer = view.findViewById(R.id.icon_container);
             profilePicture = view.findViewById(R.id.profilePicture);
 
-
-
         }
-
 
     }
 

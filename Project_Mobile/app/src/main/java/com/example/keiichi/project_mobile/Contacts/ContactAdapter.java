@@ -5,13 +5,17 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import android.widget.Filter;
@@ -26,6 +30,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
+import com.example.keiichi.project_mobile.DAL.POJOs.Message;
+import com.example.keiichi.project_mobile.Mail.MailAdapter;
 import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONArray;
@@ -37,59 +43,54 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterable {
+public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.MyViewHolder> implements Filterable {
 
-    private TextDrawable drawable;
     private ImageView profilePicture;
     private final Context context;
-    //private final JSONArray values;
     private Contact contact;
+    private SparseBooleanArray animeationItemsIndex;
+    private SparseBooleanArray selectedItems;
+    private boolean reverseAllAnimations = false;
 
     // Ongefilterde list
     private List<Contact> originalData = null;
     // Gefilterde list
     private List<Contact> filteredData = null;
 
-    private CustomFilter mFilter = new CustomFilter();
+    private ContactAdapter.CustomFilter mFilter = new ContactAdapter.CustomFilter();
     private String accessToken;
 
     public ContactAdapter(Context context, List<Contact> values, String accessToken) {
         this.context = context;
-
         this.originalData = values;
         this.filteredData = values;
         this.accessToken = accessToken;
+        this.selectedItems = new SparseBooleanArray();
+        this.animeationItemsIndex = new SparseBooleanArray();
     }
 
 
-    @Override
-    public int getCount() {
-        return filteredData.size();
-    }
 
-    @Override
     public Contact getItem(int i) {
         return filteredData.get(i);
     }
 
+
     @Override
-    public long getItemId(int i) {
-        return i;
+    public ContactAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.contact_items, parent, false);
+        return new ContactAdapter.MyViewHolder(itemView);
     }
 
-    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater layoutInflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = layoutInflater.inflate(R.layout.contact_items, parent, false);
-        TextView name = rowView.findViewById(R.id.contactName);
-
-        profilePicture = (ImageView)rowView.findViewById(R.id.profilePicture);
+    public void onBindViewHolder(ContactAdapter.MyViewHolder holder, int position) {
 
         contact = getItem(position);
 
-        name.setText(contact.getDisplayName());
+        String contactName = contact.getDisplayName();
+
+        holder.contactName.setText(contactName);
 
         ColorGenerator generator = ColorGenerator.MATERIAL;
 
@@ -98,46 +99,37 @@ public class ContactAdapter extends BaseAdapter implements ListAdapter, Filterab
         TextDrawable drawable1 = TextDrawable.builder()
                 .buildRoundRect(contact.getDisplayName().substring(0,1), color2, 3); // radius in px
 
-        profilePicture.setImageDrawable(drawable1);
+        holder.profilePicture.setImageDrawable(drawable1);
 
-        /*
-        RequestQueue queue = Volley.newRequestQueue(context);
-        String url = "https://graph.microsoft.com/v1.0/users/" + contact.getEmailAddresses().get(0).getAddress() + "/photo/$value";
-        System.out.println("hit");
-        ImageRequest request = new ImageRequest(url,
-                new Response.Listener<Bitmap>() {
-                    @Override
-                    public void onResponse(Bitmap bitmap) {
-                        System.out.println("hit1");
-                        profilePicture.setImageBitmap(bitmap);
-                    }
-                }, 0, 0, null,
-                new Response.ErrorListener() {
-                    public void onErrorResponse(VolleyError error) {
-                        System.out.println("hit2");
-                        ColorGenerator generator = ColorGenerator.MATERIAL;
-                        int color2 = generator.getColor(contact.getDisplayName().substring(0, 1));
-                        TextDrawable drawable = TextDrawable.builder()
-                                .buildRound(contact.getDisplayName().substring(0, 1), color2); // radius in px
-                        profilePicture.setImageDrawable(drawable);
-                    }
-                }){
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + accessToken);
-                System.out.println(accessToken);
-                return headers;
-            }
-        };
+    }
 
-        queue.add(request);
+    @Override
+    public long getItemId(int i) {
+        return i;
+    }
 
+    @Override
+    public int getItemCount() {
+        return filteredData.size();
+    }
 
+    public interface ClickListener {
+        void onClick(View view, int position);
 
-        */
+        void onLongClick(View view, int position);
+    }
 
-        return rowView;
+    class MyViewHolder extends RecyclerView.ViewHolder {
+        TextView contactName;
+        ImageView profilePicture;
+
+        MyViewHolder(View view) {
+            super(view);
+            contactName = view.findViewById(R.id.contactName);
+            profilePicture = view.findViewById(R.id.profilePicture);
+
+        }
+
     }
 
     public Filter getFilter() {

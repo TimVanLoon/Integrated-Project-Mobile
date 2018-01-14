@@ -16,6 +16,10 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.ActionMode;
@@ -52,6 +56,7 @@ import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.MailFolder;
 import com.example.keiichi.project_mobile.DAL.POJOs.PhysicalAddress;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
+import com.example.keiichi.project_mobile.Mail.RecyclerTouchListener;
 import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
 import com.google.gson.Gson;
@@ -83,7 +88,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ContactsActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class ContactsActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, Serializable {
 
     private BottomNavigationView mBottomNav;
     private Toolbar myToolbar;
@@ -104,9 +109,11 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
     private Contact testContact;
     private ImageView mImageView;
     private Drawer drawer;
+    private RecyclerView contactsRecyclerView;
     private int contactsClickedCount = 0;
     private SwipeRefreshLayout swipeRefreshLayout;
     private List<Contact> selectedContacts = new ArrayList<>();
+    private ArrayList<Integer> selectedItems = new ArrayList<>();
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts?$orderBy=displayName&$top=500&$count=true";
     final static String MSGRAPH_URL_FOTO = "https://graph.microsoft.com/beta/me/contacts/";
     final static String MSGRAPH_URL_FOTO2 = "/photo/$value";
@@ -129,92 +136,14 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(this);
 
-        contactsListView = (ListView) findViewById(R.id.contactsListView);
-
-
-        contactsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-
-                // Start an alpha animation for clicked item
-                Animation animation1 = new AlphaAnimation(0.3f, 1.0f);
-                animation1.setDuration(1000);
-                view.startAnimation(animation1);
-
-
-                onContactClicked(position);
-
-            }
-        });
-
-
-        contactsListView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
-
-        contactsListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-            @Override
-            public void onItemCheckedStateChanged(ActionMode actionMode, int position, long l, boolean checked) {
-                if(checked) {
-                    contactsListView.getChildAt(position).setBackgroundColor(Color.LTGRAY);
-                    selectedContacts.add(contactAdapter.getItemAtPosition(position));
-                    contactsClickedCount++;
-                    actionMode.setTitle(contactsClickedCount+ " Selected");
-                } else {
-                    selectedContacts.remove(contactAdapter.getItemAtPosition(position));
-                    contactsClickedCount--;
-                    actionMode.setTitle(contactsClickedCount+ " Selected");
-                    contactsListView.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
-                }
-            }
-
-            @Override
-            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-                MenuInflater menuInflater = getMenuInflater();
-                menuInflater.inflate(R.menu.delete_navigation, menu);
-                actionModeEnabled = true;
-                return true;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-                if(menuItem.getItemId() == R.id.action_delete){
-                    for(Contact contact : selectedContacts){
-                        try {
-                            deleteContact(contact.getId());
-                            getContacts();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    getContacts();
-                    actionMode.finish();
-                    return true;
-                }
-
-                return false;
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode actionMode) {
-                contactsClickedCount = 0;
-                selectedContacts.clear();
-            }
-        });
-
+        contactsRecyclerView = findViewById(R.id.contactsRecyclerView);
 
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
         id = getIntent().getStringExtra("id");
 
-
         //getProfilePhotos();
-
 
         mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
 
@@ -261,34 +190,6 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
                 return false;
             }
         });
-
-        //RequestQueue queue = Volley.newRequestQueue(this);
-
-        /*
-        String url = "http://i.imgur.com/7spzG.png";
-        System.out.println("hit");
-        ImageRequest request = new ImageRequest(url,
-                new Response.Listener<Bitmap>() {
-                    @Override
-                    public void onResponse(Bitmap bitmap) {
-                        System.out.println("hit1");
-                        mImageView.setImageBitmap(bitmap);
-                    }
-                }, 0, 0, null,
-                new Response.ErrorListener() {
-                    public void onErrorResponse(VolleyError error) {
-                        System.out.println("hit2");
-                        ColorGenerator generator = ColorGenerator.MATERIAL;
-                        int color2 = generator.getColor(userName.substring(0, 1));
-                        TextDrawable drawable = TextDrawable.builder()
-                                .buildRound(userName.substring(0, 1), color2); // radius in px
-                        mImageView.setImageDrawable(drawable);
-                    }
-                });
-
-        queue.add(request);
-
-        */
 
         List<MailFolder> mailFolders = new ArrayList<>();
         mailFolders.add(new MailFolder("1", "Not found", 0, 0));
@@ -360,6 +261,58 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    public interface ClickListener {
+        void onClick(View view, int position);
+
+        void onLongClick(View view, int position);
+    }
+
+    private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            MenuInflater menuInflater = getMenuInflater();
+            menuInflater.inflate(R.menu.delete_navigation, menu);
+            multiSelect = true;
+            actionModeEnabled = true;
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            if(menuItem.getItemId() == R.id.action_delete){
+                for(Contact contact : selectedContacts){
+                    try {
+                        deleteContact(contact.getId());
+                        getContacts();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                getContacts();
+                actionMode.finish();
+                return true;
+            }
+
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode actionMode) {
+            multiSelect = false;
+            actionModeEnabled = false;
+            contactsClickedCount = 0;
+            selectedContacts.clear();
+            contactAdapter.notifyDataSetChanged();
+
+        }
+    };
 
     /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
     private void getContacts() {
@@ -440,9 +393,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
 
             contactAdapter = new ContactAdapter(this, contacts, accessToken);
-            contactsListView.setAdapter(contactAdapter);
-
-
+            contactsRecyclerView.setAdapter(contactAdapter);
 
 
         } catch (JSONException e) {
@@ -450,150 +401,168 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
         }
         assert contactsJsonArray != null;
 
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(getApplicationContext());
+        contactsRecyclerView.setLayoutManager(manager);
+        contactsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        contactsRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+
         contactAdapter = new ContactAdapter(this, contacts, accessToken);
-        contactsListView.setAdapter(contactAdapter);
-        
-    }
+        contactsRecyclerView.setAdapter(contactAdapter);
 
-    private void onContactClicked(int position) {
+        contactsRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), contactsRecyclerView, new ListMailsActvity.ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                if (actionModeEnabled) {
 
-        if (actionModeEnabled) {
+                    Toast.makeText(getApplicationContext(), String.valueOf(position), Toast.LENGTH_SHORT).show();
 
 
-
-        } else {
-
-            if (contacts.size() != 0) {
-
-                Contact contact = contactAdapter.getItemAtPosition(position);
-
-                Intent showContactDetails = new Intent(ContactsActivity.this, ContactsDetailsActivity.class);
-                showContactDetails.putExtra("givenName", contact.getGivenName());
-                showContactDetails.putExtra("displayName", contact.getDisplayName());
-                showContactDetails.putExtra("id", contact.getId());
-
-                if (contact.getMobilePhone() == null) {
-                    showContactDetails.putExtra("userPhone", "");
                 } else {
-                    showContactDetails.putExtra("userPhone", contact.getMobilePhone());
+
+                    if (contacts.size() != 0) {
+
+                        Contact contact = contactAdapter.getItemAtPosition(position);
+
+                        Intent showContactDetails = new Intent(ContactsActivity.this, ContactsDetailsActivity.class);
+                        showContactDetails.putExtra("givenName", contact.getGivenName());
+                        showContactDetails.putExtra("displayName", contact.getDisplayName());
+                        showContactDetails.putExtra("id", contact.getId());
+
+                        if (contact.getMobilePhone() == null) {
+                            showContactDetails.putExtra("userPhone", "");
+                        } else {
+                            showContactDetails.putExtra("userPhone", contact.getMobilePhone());
+                        }
+
+                        if (contact.getEmailAddresses() != null) {
+                            showContactDetails.putExtra("emailList", (Serializable) contact.getEmailAddresses());
+                        }
+
+                        if (contact.getPersonalNotes() != null) {
+                            showContactDetails.putExtra("notes", contact.getPersonalNotes());
+                        } else {
+                            showContactDetails.putExtra("notes", "");
+                        }
+
+                        if (contact.getSpouseName() != null) {
+                            showContactDetails.putExtra("spouse", contact.getSpouseName());
+                        } else {
+                            showContactDetails.putExtra("spouse", "");
+                        }
+
+                        if (contact.getNickName() != null) {
+                            showContactDetails.putExtra("nickname", contact.getNickName());
+                        } else {
+                            showContactDetails.putExtra("nickname", "");
+                        }
+
+                        if (contact.getJobTitle() != null) {
+                            showContactDetails.putExtra("job", contact.getJobTitle());
+                        } else {
+                            showContactDetails.putExtra("job", "");
+                        }
+
+                        if (contact.getDepartment() != null) {
+                            showContactDetails.putExtra("department", contact.getDepartment());
+                        } else {
+                            showContactDetails.putExtra("department", "");
+                        }
+
+                        if (contact.getCompanyName() != null) {
+                            showContactDetails.putExtra("company", contact.getCompanyName());
+                        } else {
+                            showContactDetails.putExtra("company", "");
+                        }
+
+                        if (contact.getOfficeLocation() != null) {
+                            showContactDetails.putExtra("office", contact.getOfficeLocation());
+                        } else {
+                            showContactDetails.putExtra("office", "");
+                        }
+
+                        if (contact.getManager() != null) {
+                            showContactDetails.putExtra("manager", contact.getManager());
+                        } else {
+                            showContactDetails.putExtra("manager", "");
+                        }
+
+                        if (contact.getAssistantName() != null) {
+                            showContactDetails.putExtra("assistant", contact.getAssistantName());
+                        } else {
+                            showContactDetails.putExtra("assistant", "");
+                        }
+
+                        if (contact.getHomeAddress() != null) {
+                            showContactDetails.putExtra("street", contact.getHomeAddress().getStreet());
+                            showContactDetails.putExtra("postalcode", contact.getHomeAddress().getPostalCode());
+                            showContactDetails.putExtra("city", contact.getHomeAddress().getCity());
+                            showContactDetails.putExtra("state", contact.getHomeAddress().getState());
+                            showContactDetails.putExtra("country", contact.getHomeAddress().getCountryOrRegion());
+                        } else {
+                            showContactDetails.putExtra("street", "");
+                            showContactDetails.putExtra("postalcode", "");
+                            showContactDetails.putExtra("city", "");
+                            showContactDetails.putExtra("state", "");
+                            showContactDetails.putExtra("country", "");
+                        }
+
+                        if (contact.getHomeAddress().getStreet() == null) {
+                            showContactDetails.putExtra("street", "");
+                        }
+
+                        if (contact.getHomeAddress().getPostalCode() == null) {
+                            showContactDetails.putExtra("postalcode", "");
+                        }
+
+                        if (contact.getHomeAddress().getCity() == null) {
+                            showContactDetails.putExtra("city", "");
+                        }
+
+                        if (contact.getHomeAddress().getState() == null) {
+                            showContactDetails.putExtra("state", "");
+                        }
+
+                        if (contact.getHomeAddress().getCountryOrRegion() == null) {
+                            showContactDetails.putExtra("country", "");
+                        }
+
+                        if (contact.getGivenName() != null) {
+                            showContactDetails.putExtra("firstname", contact.getGivenName());
+                        }
+
+                        if (contact.getSurname() != null) {
+                            showContactDetails.putExtra("lastname", contact.getSurname());
+                        }
+
+                        showContactDetails.putExtra("userEmail", userEmail);
+                        showContactDetails.putExtra("AccessToken", accessToken);
+                        showContactDetails.putExtra("userName", userName);
+
+
+                        startActivity(showContactDetails);
+
+                        ContactsActivity.this.finish();
+
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Empty contact list!", Toast.LENGTH_SHORT).show();
+                    }
+
                 }
 
-                if (contact.getEmailAddresses() != null) {
-                    showContactDetails.putExtra("emailList", (Serializable) contact.getEmailAddresses());
-                }
 
-                if (contact.getPersonalNotes() != null) {
-                    showContactDetails.putExtra("notes", contact.getPersonalNotes());
-                } else {
-                    showContactDetails.putExtra("notes", "");
-                }
-
-                if (contact.getSpouseName() != null) {
-                    showContactDetails.putExtra("spouse", contact.getSpouseName());
-                } else {
-                    showContactDetails.putExtra("spouse", "");
-                }
-
-                if (contact.getNickName() != null) {
-                    showContactDetails.putExtra("nickname", contact.getNickName());
-                } else {
-                    showContactDetails.putExtra("nickname", "");
-                }
-
-                if (contact.getJobTitle() != null) {
-                    showContactDetails.putExtra("job", contact.getJobTitle());
-                } else {
-                    showContactDetails.putExtra("job", "");
-                }
-
-                if (contact.getDepartment() != null) {
-                    showContactDetails.putExtra("department", contact.getDepartment());
-                } else {
-                    showContactDetails.putExtra("department", "");
-                }
-
-                if (contact.getCompanyName() != null) {
-                    showContactDetails.putExtra("company", contact.getCompanyName());
-                } else {
-                    showContactDetails.putExtra("company", "");
-                }
-
-                if (contact.getOfficeLocation() != null) {
-                    showContactDetails.putExtra("office", contact.getOfficeLocation());
-                } else {
-                    showContactDetails.putExtra("office", "");
-                }
-
-                if (contact.getManager() != null) {
-                    showContactDetails.putExtra("manager", contact.getManager());
-                } else {
-                    showContactDetails.putExtra("manager", "");
-                }
-
-                if (contact.getAssistantName() != null) {
-                    showContactDetails.putExtra("assistant", contact.getAssistantName());
-                } else {
-                    showContactDetails.putExtra("assistant", "");
-                }
-
-                if (contact.getHomeAddress() != null) {
-                    showContactDetails.putExtra("street", contact.getHomeAddress().getStreet());
-                    showContactDetails.putExtra("postalcode", contact.getHomeAddress().getPostalCode());
-                    showContactDetails.putExtra("city", contact.getHomeAddress().getCity());
-                    showContactDetails.putExtra("state", contact.getHomeAddress().getState());
-                    showContactDetails.putExtra("country", contact.getHomeAddress().getCountryOrRegion());
-                } else {
-                    showContactDetails.putExtra("street", "");
-                    showContactDetails.putExtra("postalcode", "");
-                    showContactDetails.putExtra("city", "");
-                    showContactDetails.putExtra("state", "");
-                    showContactDetails.putExtra("country", "");
-                }
-
-                if (contact.getHomeAddress().getStreet() == null) {
-                    showContactDetails.putExtra("street", "");
-                }
-
-                if (contact.getHomeAddress().getPostalCode() == null) {
-                    showContactDetails.putExtra("postalcode", "");
-                }
-
-                if (contact.getHomeAddress().getCity() == null) {
-                    showContactDetails.putExtra("city", "");
-                }
-
-                if (contact.getHomeAddress().getState() == null) {
-                    showContactDetails.putExtra("state", "");
-                }
-
-                if (contact.getHomeAddress().getCountryOrRegion() == null) {
-                    showContactDetails.putExtra("country", "");
-                }
-
-                if (contact.getGivenName() != null) {
-                    showContactDetails.putExtra("firstname", contact.getGivenName());
-                }
-
-                if (contact.getSurname() != null) {
-                    showContactDetails.putExtra("lastname", contact.getSurname());
-                }
-
-                showContactDetails.putExtra("userEmail", userEmail);
-                showContactDetails.putExtra("AccessToken", accessToken);
-                showContactDetails.putExtra("userName", userName);
-
-
-                startActivity(showContactDetails);
-
-                ContactsActivity.this.finish();
-
-            } else {
-                Toast.makeText(getApplicationContext(), "Empty contact list!", Toast.LENGTH_SHORT).show();
             }
-        }
+
+            @Override
+            public void onLongClick(View view, int position) {
+                view.startActionMode(actionModeCallback);
+                selectedItem(position);
+            }
+        }));
+
     }
 
-    public void setFilter(List<Contact> contactFilterted) {
+
+            public void setFilter(List<Contact> contactFilterted) {
         countactsFiltered = new ArrayList<>();
         countactsFiltered.addAll(contactFilterted);
         contactAdapter.notifyDataSetChanged();
@@ -643,6 +612,19 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
         queue.add(stringRequest);
 
     }
+
+    private void selectedItem(Integer item) {
+        if (multiSelect) {
+            if (selectedItems.contains(item)) {
+                selectedItems.remove(item);
+                contactsRecyclerView.getChildAt(item).setBackgroundColor(Color.TRANSPARENT);
+            } else {
+                selectedItems.add(item);
+                contactsRecyclerView.getChildAt(item).setBackgroundColor(Color.LTGRAY);
+            }
+        }
+    }
+
 
     public void buildDrawer(String name, String email, Toolbar toolbar, List<MailFolder> folders){
 
