@@ -164,20 +164,27 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             if (menuItem.getItemId() == R.id.action_delete) {
                 try {
                     deleteMails(selectedItems);
+                    actionModeEnabled = false;
+                    actionMode.finish();
+
+                    onRefresh();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                actionModeEnabled = false;
-                actionMode.finish();
+
                 return true;
             } else if(menuItem.getItemId() == R.id.actionn_junk){
 
                 try {
                     MultiMoveToJunk(selectedItems);
+                    actionModeEnabled = false;
+                    actionMode.finish();
+                    onRefresh();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                return true;
 
             }
 
