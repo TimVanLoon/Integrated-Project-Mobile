@@ -164,16 +164,27 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             if (menuItem.getItemId() == R.id.action_delete) {
                 try {
                     deleteMails(selectedItems);
+                    actionModeEnabled = false;
+                    actionMode.finish();
+
+                    onRefresh();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                actionModeEnabled = false;
-                actionMode.finish();
+
                 return true;
             } else if(menuItem.getItemId() == R.id.actionn_junk){
 
-                //MultiMoveToJunk();
+                try {
+                    MultiMoveToJunk(selectedItems);
+                    actionModeEnabled = false;
+                    actionMode.finish();
+                    onRefresh();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return true;
 
             }
 
@@ -1081,40 +1092,43 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         startActivity(startMain);
     }
 
-    private void MultiMoveToJunk(Message message) throws JSONException {
+    private void MultiMoveToJunk(ArrayList<Integer> selectedItems) throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
 
+        for (Integer integer: selectedItems){
+            Message message = messages.get(integer);
 
-        final JSONObject jsonObject = new JSONObject(buildJsonJunk(JUNK_FOLDER_ID));
+            final JSONObject jsonObject = new JSONObject(buildJsonJunk(JUNK_FOLDER_ID));
 
-        String junkUrl = URL_MAIL + message.getId() + "/move";
+            String junkUrl = URL_MAIL + message.getId() + "/move";
 
-        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, junkUrl , jsonObject,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        System.out.println(response.toString());
-                    }
+            JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, junkUrl , jsonObject,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            System.out.println(response.toString());
+                        }
 
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.e("Error: ", error.getMessage());
-                error.printStackTrace();
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + accessToken);
-                headers.put("Content-Type", "application/json; charset=utf-8");
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyLog.e("Error: ", error.getMessage());
+                    error.printStackTrace();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("Authorization", "Bearer " + accessToken);
+                    headers.put("Content-Type", "application/json; charset=utf-8");
 
-                return headers;
-            }
+                    return headers;
+                }
 
-        };
+            };
 
-        queue.add(objectRequest);
+            queue.add(objectRequest);
+        }
 
     }
 
