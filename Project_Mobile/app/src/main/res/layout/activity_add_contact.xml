@@ -39,6 +39,7 @@
         </TextView>
 
         <LinearLayout
+            android:layout_marginTop="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
@@ -47,14 +48,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/nameTitle"
+                android:layout_marginTop="2dp"
                 android:textColor="@color/black"
                 android:layout_marginLeft="15dp"
-                android:textSize="13pt">
+                android:textSize="10pt">
             </TextView>
 
             <ImageView
                 android:id="@+id/plusNameIcon"
-                android:layout_marginTop="5dp"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:src="@drawable/ic_add_black"/>

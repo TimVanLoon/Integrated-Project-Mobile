@@ -9,6 +9,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +33,7 @@ import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,6 +66,16 @@ public class AddContactActivity extends AppCompatActivity {
     private EditText personalNotes;
     private EditText nickName;
     private EditText spouseName;
+    private EditText middleNameInput;
+    private EditText titleInput;
+    private EditText suffixInput;
+    private EditText yomiFirstNameInput;
+    private EditText yomiLastNameInput;
+    private TextView middleNameTitle;
+    private TextView titleTitle;
+    private TextView suffixTitle;
+    private TextView yomiFirstNameTitle;
+    private TextView yomiLastNameTitle;
     private String userName;
     private String userEmail;
     private String attendeeName;
@@ -71,6 +84,7 @@ public class AddContactActivity extends AppCompatActivity {
     private boolean isValidEmail;
     private boolean myItemShouldBeEnabled = true;
     private MenuItem saveItem;
+    private ImageView plusNameIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +121,19 @@ public class AddContactActivity extends AppCompatActivity {
         personalNotes = (EditText) findViewById(R.id.personalNotes);
         nickName = (EditText) findViewById(R.id.nickName);
         spouseName = (EditText) findViewById(R.id.spouseName);
+        middleNameInput = (EditText) findViewById(R.id.middleNameInput);
+        titleInput = (EditText) findViewById(R.id.titleInput);
+        suffixInput = (EditText) findViewById(R.id.suffixInput);
+        yomiFirstNameInput = (EditText) findViewById(R.id.yomiFirstNameInput);
+        yomiLastNameInput = (EditText) findViewById(R.id.yomiLastNameInput);
+        middleNameTitle = (TextView) findViewById(R.id.middleNameTitle);
+        titleTitle = (TextView) findViewById(R.id.titleTitle);
+        suffixTitle = (TextView) findViewById(R.id.suffixTitle);
+        yomiFirstNameTitle = (TextView) findViewById(R.id.yomiFirstNameTitle);
+        yomiLastNameTitle = (TextView) findViewById(R.id.yomiLastNameTitle);
+        plusNameIcon = (ImageView) findViewById(R.id.plusNameIcon);
+
+        makeExtraInvisible();
 
         setEditTextOnFocusListener(firstNameInput);
         setEditTextOnFocusListener(lastNameInput);
@@ -126,6 +153,58 @@ public class AddContactActivity extends AppCompatActivity {
         setEditTextOnFocusListener(personalNotes);
         setEditTextOnFocusListener(nickName);
         setEditTextOnFocusListener(spouseName);
+        setEditTextOnFocusListener(middleNameInput);
+        setEditTextOnFocusListener(titleInput);
+        setEditTextOnFocusListener(suffixInput);
+        setEditTextOnFocusListener(yomiFirstNameInput);
+        setEditTextOnFocusListener(yomiLastNameInput);
+
+        plusNameIcon.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+
+                final PopupMenu popupMenu = new PopupMenu(getApplicationContext(), view);
+
+                popupMenu.inflate(R.menu.name_options);
+
+                popupMenu.show();
+
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+
+                        Menu menu = popupMenu.getMenu();
+
+                        switch(menuItem.getItemId()){
+                            case R.id.action_middleName:
+                                middleNameInput.setVisibility(View.VISIBLE);
+                                middleNameTitle.setVisibility(View.VISIBLE);
+                                break;
+
+                            case R.id.action_title:
+                                titleInput.setVisibility(View.VISIBLE);
+                                titleTitle.setVisibility(View.VISIBLE);
+                                break;
+
+                            case R.id.action_suffix:
+                                suffixInput.setVisibility(View.VISIBLE);
+                                suffixTitle.setVisibility(View.VISIBLE);
+                                break;
+
+                            case R.id.action_yomiName:
+                                yomiFirstNameInput.setVisibility(View.VISIBLE);
+                                yomiLastNameInput.setVisibility(View.VISIBLE);
+                                yomiFirstNameTitle.setVisibility(View.VISIBLE);
+                                yomiLastNameTitle.setVisibility(View.VISIBLE);
+                                break;
+
+                        }
+
+                        return false;
+                    }
+                });
+            }
+        });
 
     }
 
@@ -249,6 +328,26 @@ public class AddContactActivity extends AppCompatActivity {
         String displayName = firstNameInput.getText().toString() + " " + lastNameInput.getText().toString();
         contact.setDisplayName(displayName);
 
+        if(!middleNameInput.getText().toString().isEmpty()){
+            contact.setMiddleName(middleNameInput.getText().toString());
+        }
+
+        if(!titleInput.getText().toString().isEmpty()){
+            contact.setTitle(titleInput.getText().toString());
+        }
+
+        if(!suffixInput.getText().toString().isEmpty()){
+            contact.setInitials(suffixInput.getText().toString());
+        }
+
+        if(!yomiFirstNameInput.getText().toString().isEmpty()){
+            contact.setYomiGivenName(yomiFirstNameInput.getText().toString());
+        }
+
+        if(!yomiLastNameInput.getText().toString().isEmpty()){
+            contact.setYomiSurname(yomiLastNameInput.getText().toString());
+        }
+
         if (emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+" ) && !emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+.[a-z]+")) {
             EmailAddress contactEmail = new EmailAddress(emailInput.getText().toString(), displayName);
             List<EmailAddress> listEmails = new ArrayList<>();
@@ -368,6 +467,21 @@ public class AddContactActivity extends AppCompatActivity {
         startActivity(intentListMails);
 
         AddContactActivity.this.finish();
+    }
+
+    public void makeExtraInvisible(){
+
+        middleNameInput.setVisibility(View.GONE);
+        titleInput.setVisibility(View.GONE);
+        suffixInput.setVisibility(View.GONE);
+        yomiFirstNameInput.setVisibility(View.GONE);
+        yomiLastNameInput.setVisibility(View.GONE);
+        middleNameTitle.setVisibility(View.GONE);
+        titleTitle.setVisibility(View.GONE);
+        suffixTitle.setVisibility(View.GONE);
+        yomiFirstNameTitle.setVisibility(View.GONE);
+        yomiLastNameTitle.setVisibility(View.GONE);
+
     }
 
 }
