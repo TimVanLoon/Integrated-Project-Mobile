@@ -7,10 +7,12 @@
         app:showAsAction="always"
         />
 
-    <item android:id="@+id/action_downloadAttachments"
-        android:title="Edit"
+    <item
+        android:id="@+id/action_downloadAttachments"
         android:icon="@drawable/attachmentvector"
-        app:showAsAction="always"/>
+        android:title="Edit"
+        android:visible="false"
+        app:showAsAction="always" />
 
     <item android:id="@+id/action_forward"
         android:title="@string/edit"

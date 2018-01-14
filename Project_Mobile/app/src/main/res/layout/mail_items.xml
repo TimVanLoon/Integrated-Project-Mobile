@@ -112,6 +112,15 @@
             android:textColor="@color/timestamp"
             android:textSize="@dimen/timestamp"
             android:textStyle="bold" />
+        <ImageView
+            android:id="@+id/AttachmentImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/icon_container"
+            android:layout_alignStart="@+id/icon_star"
+            android:contentDescription="shows if mail has atatchments"
+            android:visibility="invisible"
+            app:srcCompat="@drawable/attachmentfile" />
 
         <ImageView
             android:id="@+id/icon_star"

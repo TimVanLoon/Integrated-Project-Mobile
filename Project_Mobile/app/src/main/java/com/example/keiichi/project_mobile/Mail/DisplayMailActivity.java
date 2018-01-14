@@ -97,6 +97,7 @@ public class DisplayMailActivity extends AppCompatActivity {
     private String receiverName;
     private String receiverMail;
 
+
     private  AlertDialog.Builder builder;
 
     StrictMode.VmPolicy.Builder fileBuilder = new StrictMode.VmPolicy.Builder();
@@ -115,6 +116,7 @@ public class DisplayMailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_mail);
+
 
         myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
@@ -427,6 +429,11 @@ public class DisplayMailActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.display_navigation, menu);
         MenuItem addItem = menu.findItem(R.id.action_send);
+        MenuItem attachmentItem = menu.findItem(R.id.action_downloadAttachments);
+
+        if (messageObject.isHasAttachments()){
+            attachmentItem.setVisible(true);
+        }
 
 
 
