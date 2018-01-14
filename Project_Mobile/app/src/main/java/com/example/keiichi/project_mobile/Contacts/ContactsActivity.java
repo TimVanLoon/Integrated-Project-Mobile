@@ -52,6 +52,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.Calendar.CalendarActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
+import com.example.keiichi.project_mobile.DAL.POJOs.ContactFolder;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.MailFolder;
 import com.example.keiichi.project_mobile.DAL.POJOs.PhysicalAddress;
@@ -117,10 +118,13 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
     private ActionMode contactActionMode;
     private List<Contact> selectedContacts = new ArrayList<>();
     private ArrayList<Integer> selectedItems = new ArrayList<>();
+    private List<ContactFolder> contactFolders;
+    List<String> navigationItems = new ArrayList<>();
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts?$orderBy=displayName&$top=500&$count=true";
     final static String MSGRAPH_URL_FOTO = "https://graph.microsoft.com/beta/me/contacts/";
     final static String MSGRAPH_URL_FOTO2 = "/photo/$value";
     final private String URL_DELETE = "https://graph.microsoft.com/beta/me/contacts/";
+    final static String URL_CONTACTFOLDERS = "https://graph.microsoft.com/v1.0/me/contactFolders";
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -194,12 +198,14 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             }
         });
 
-        List<String> navigationItems = new ArrayList<>();
         navigationItems.add("Contacts");
         navigationItems.add("Users");
         navigationItems.add("Rooms");
 
-        buildDrawer(userName, userEmail, myToolbar, navigationItems);
+        contactFolders = new ArrayList<>();
+        contactFolders.add(new ContactFolder("Not found", "Not found", "Not found"));
+
+        buildDrawer(userName, userEmail, myToolbar, navigationItems, contactFolders);
 
     }
 
@@ -401,6 +407,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             contactAdapter = new ContactAdapter(this, contacts, accessToken);
             contactsRecyclerView.setAdapter(contactAdapter);
 
+            getContactFolders();
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -660,8 +667,88 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
         }
     }
 
+    /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
+    private void getContactFolders() {
+        Log.d(TAG, "Starting volley request to graph");
+        Log.d(TAG, accessToken);
 
-    public void buildDrawer(String name, String email, Toolbar toolbar, List<String> navigationItems){
+    /* Make sure we have a token to send to graph */
+        if (accessToken == null) {
+            return;
+        }
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        JSONObject parameters = new JSONObject();
+
+        try {
+            parameters.put("key", "value");
+        } catch (Exception e) {
+            Log.d(TAG, "Failed to put parameters: " + e.toString());
+        }
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, URL_CONTACTFOLDERS,
+                parameters, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+            /* Successfully called graph, process data and send to UI */
+                Log.d(TAG, "Response: " + response.toString());
+
+                try {
+                    updateFolders(response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d(TAG, "Error: " + error.toString());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+                return headers;
+            }
+        };
+
+        Log.d(TAG, "Adding HTTP GET to Queue, Request: " + request.toString());
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                3000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(request);
+    }
+
+    /* Sets the Graph response */
+    private void updateFolders(JSONObject graphResponse) throws JSONException {
+
+        // Test de response
+        JSONArray contactsJsonArray = null;
+
+        // Haal de contactFolders binnen
+        try {
+            JSONObject contactList = graphResponse;
+
+            JSONArray folders = contactList.getJSONArray("value");
+
+            // VUL POJO
+            Type listType = new TypeToken<List<ContactFolder>>() {
+            }.getType();
+
+            contactFolders = new Gson().fromJson(String.valueOf(folders), listType);
+
+            buildDrawer(userName, userEmail, myToolbar, navigationItems, contactFolders);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public void buildDrawer(String name, String email, Toolbar toolbar, List<String> navigationItems, List<ContactFolder> contactFolders){
 
         ArrayList<IDrawerItem> drawerItems = new ArrayList<>();
 
@@ -673,6 +760,15 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             item.withTextColor(Color.BLACK);
             drawerItems.add(item);
 
+        }
+
+        for(ContactFolder contactFolder : contactFolders) {
+            PrimaryDrawerItem item = new PrimaryDrawerItem();
+
+            item.withName(contactFolder.getDisplayName());
+            item.withTag(contactFolder);
+            item.withTextColor(Color.BLACK);
+            drawerItems.add(item);
         }
 
         ColorGenerator generator = ColorGenerator.MATERIAL;

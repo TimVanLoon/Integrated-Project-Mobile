@@ -822,8 +822,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
             String folderName = folder.getDisplayName().toLowerCase();
 
-            System.out.println("naam: " + folderName);
-
             switch(folderName) {
 
                 case "archive":
