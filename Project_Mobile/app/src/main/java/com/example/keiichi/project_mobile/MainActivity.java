@@ -48,7 +48,7 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity {
 
     final static int DELAY_TIME=1000;
-    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/mailFolders('Inbox')/messages?$top=25";
+    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/policies";
     private String accessToken;
     private String userName;
     private String userEmail;
@@ -79,12 +79,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         Push.setSenderId("{SenderId}");
+
         AppCenter.start(getApplication(), "0dad3b08-3653-41ea-9c9b-689e0d88fbcf",
                 Analytics.class, Crashes.class, Push.class);
-
-
-        // Intent intent = new Intent(this, ListMailsActvity.class);
-        // startActivity(intent);
 
         /* Configure your sample app and save state for this activity */
         sampleApp = null;
@@ -100,7 +97,10 @@ public class MainActivity extends AppCompatActivity {
         List<User> users = null;
 
         try {
+
             users = sampleApp.getUsers();
+
+            System.out.println("users ? " + sampleApp.getUsers().toString());
 
             if (users != null && users.size() == 1) {
           /* We have 1 user */
@@ -110,7 +110,8 @@ public class MainActivity extends AppCompatActivity {
           /* We have no user */
 
           /* Let's do an interactive request */
-                sampleApp.acquireToken(this, SCOPES, getAuthInteractiveCallback());
+
+                sampleApp.acquireToken(this, SCOPES, getAuthSilentCallback());
             }
         } catch (MsalClientException e) {
             Log.d(TAG, "MSAL Exception Generated while getting users: " + e.toString());
@@ -119,20 +120,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "User at this position does not exist: " + e.toString());
         }
 
-
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-
-                onCallGraphClicked();
-
-            }
-        }, DELAY_TIME);
-
-
-
-
-
+        onCallGraphClicked();
 
     }
 
@@ -159,6 +147,8 @@ public class MainActivity extends AppCompatActivity {
 
                 // accesstoken en andere user vars in var steken
                 accessToken = authResult.getAccessToken();
+
+                System.out.println("expires on: " + authResult.getExpiresOn());
 
                 System.out.println(accessToken);
                 userName = authResult.getUser().getName();
@@ -198,14 +188,13 @@ public class MainActivity extends AppCompatActivity {
          */
     private AuthenticationCallback getAuthInteractiveCallback() {
         return new AuthenticationCallback() {
+
             @Override
             public void onSuccess(AuthenticationResult authenticationResult) {
             /* Successfully got a token, call graph now */
                 Log.d(TAG, "Successfully authenticated");
                 Log.d(TAG, "ID Token: " + authenticationResult.getIdToken());
                 Log.d(TAG, "Acces Token: " + authenticationResult.getAccessToken());
-
-
 
             }
 
@@ -233,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
      * Callback will call Graph api w/ access token & update UI
      */
     private void onCallGraphClicked() {
-        sampleApp.acquireToken(getActivity(), SCOPES, getAuthInteractiveCallback());
+        sampleApp.acquireToken(getActivity(), SCOPES, getAuthSilentCallback());
     }
 
     /* Handles the redirect from the System Browser */
@@ -241,20 +230,32 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         sampleApp.handleInteractiveRequestRedirect(requestCode, resultCode, data);
 
-        Intent loginIntent = new Intent(MainActivity.this, ListMailsActvity.class);
-        loginIntent.putExtra("AccessToken", accessToken);
-        loginIntent.putExtra("userName", userName);
-        loginIntent.putExtra("userEmail", userEmail);
+        if(accessToken == null){
 
-        startActivity(loginIntent);
+            getAuthInteractiveCallback();
+
+        } else {
+
+            Intent loginIntent = new Intent(MainActivity.this, ListMailsActvity.class);
+
+            System.out.println("token, usernname, usermail: " + accessToken + " " + userName + " " + userEmail);
+
+            loginIntent.putExtra("AccessToken", accessToken);
+            loginIntent.putExtra("userName", userName);
+            loginIntent.putExtra("userEmail", userEmail);
+
+            startActivity(loginIntent);
+
+            this.finish();
+        }
+
+
     }
 
     /* Set the UI for successful token acquisition data */
     private void updateSuccessUI() {
 
     }
-
-
 
 
 }

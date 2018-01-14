@@ -1,19 +1,23 @@
 package com.example.keiichi.project_mobile.Calendar;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -25,7 +29,9 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.Contacts.AddContactActivity;
 import com.example.keiichi.project_mobile.Contacts.ContactAdapter;
@@ -50,12 +56,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ListEventsActivity extends AppCompatActivity {
+public class ListEventsActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
 
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/events?$orderby=start/dateTime&$top=500&$count=true";
+    final private String URL_DELETE = "https://graph.microsoft.com/beta/me/events/";
 
     private String accessToken;
     private String userName;
@@ -65,7 +72,11 @@ public class ListEventsActivity extends AppCompatActivity {
     private ListView eventsListView;
     private List<Event> events = new ArrayList<>();
     private EventAdapter eventAdapter;
-   private  BottomNavigationView mBottomNav;
+    private  BottomNavigationView mBottomNav;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private boolean actionModeEnabled = false;
+    private int eventsClickedCount = 0;
+    private List<Event> selectedEvents = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +87,8 @@ public class ListEventsActivity extends AppCompatActivity {
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         eventsListView = (ListView) findViewById(R.id.eventsListView);
         mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(this);
 
         eventsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -111,6 +124,9 @@ public class ListEventsActivity extends AppCompatActivity {
                         intentMail.putExtra("userEmail", userEmail);
 
                         startActivity(intentMail);
+
+                        ListEventsActivity.this.finish();
+
                         break;
                     case R.id.action_user:
                         Intent intentContacts = new Intent(ListEventsActivity.this, ContactsActivity.class);
@@ -119,11 +135,72 @@ public class ListEventsActivity extends AppCompatActivity {
                         intentContacts.putExtra("userEmail", userEmail);
 
                         startActivity(intentContacts);
+
+                        ListEventsActivity.this.finish();
+
                         break;
 
                 }
 
                 return false;
+            }
+        });
+
+        eventsListView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
+
+        eventsListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+            @Override
+            public void onItemCheckedStateChanged(ActionMode actionMode, int position, long l, boolean checked) {
+                if(checked) {
+                    eventsListView.getChildAt(position).setBackgroundColor(Color.LTGRAY);
+                    selectedEvents.add(eventAdapter.getItemAtPosition(position));
+                    eventsClickedCount++;
+                    actionMode.setTitle(eventsClickedCount+ " Selected");
+                } else {
+                    selectedEvents.remove(eventAdapter.getItemAtPosition(position));
+                    eventsClickedCount--;
+                    actionMode.setTitle(eventsClickedCount+ " Selected");
+                    eventsListView.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
+                }
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+                MenuInflater menuInflater = getMenuInflater();
+                menuInflater.inflate(R.menu.delete_navigation, menu);
+                actionModeEnabled = true;
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+                if(menuItem.getItemId() == R.id.action_delete){
+                    for(Event event : selectedEvents){
+                        try {
+                            deleteEvent(event.getId());
+                            getEvents();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    getEvents();
+                    actionMode.finish();
+                    return true;
+                }
+
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode actionMode) {
+                eventsClickedCount = 0;
+                selectedEvents.clear();
             }
         });
 
@@ -138,7 +215,7 @@ public class ListEventsActivity extends AppCompatActivity {
         userEmail = getIntent().getStringExtra("userEmail");
 
 
-        callGraphAPI();
+        getEvents();
     }
 
     private void fillEventsListView(List<Event> eventsList){
@@ -192,7 +269,10 @@ public class ListEventsActivity extends AppCompatActivity {
                 intentCalendar.putExtra("AccessToken", accessToken);
                 intentCalendar.putExtra("userName", userName);
                 intentCalendar.putExtra("userEmail", userEmail);
+
                 startActivity(intentCalendar);
+
+                ListEventsActivity.this.finish();
 
                 return true;
 
@@ -204,6 +284,9 @@ public class ListEventsActivity extends AppCompatActivity {
                 intentAddEvent.putExtra("userEmail", userEmail);
 
                 startActivity(intentAddEvent);
+
+                ListEventsActivity.this.finish();
+
                 return true;
 
             default:
@@ -214,7 +297,7 @@ public class ListEventsActivity extends AppCompatActivity {
     }
 
     /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
-    private void callGraphAPI() {
+    private void getEvents() {
         Log.d(TAG, "Starting volley request to graph");
         Log.d(TAG, accessToken);
 
@@ -302,6 +385,51 @@ public class ListEventsActivity extends AppCompatActivity {
 
     }
 
+    // PATCH REQUEST VOOR DELETEN EVENT
+    private void deleteEvent(String eventId) throws JSONException {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        String postAddress = URL_DELETE + eventId;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.DELETE, postAddress,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Toast.makeText(getApplicationContext(), "Event deleted!", Toast.LENGTH_SHORT).show();
+                    }
+
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+                headers.put("Content-Type", "application/json; charset=utf-8");
+
+                return headers;
+            }
+
+        };
+
+        queue.add(stringRequest);
+
+    }
+
+    @Override
+    public void onRefresh() {
+        swipeRefreshLayout.setRefreshing(true);
+
+        getEvents();
+
+        swipeRefreshLayout.setRefreshing(false);
+
+    }
+
     public void onEventClicked(int position){
 
 
@@ -347,16 +475,8 @@ public class ListEventsActivity extends AppCompatActivity {
 
             String eventBody = event.getBody().getContent();
 
-            int substring1 = eventBody.indexOf("<!--");
-            int substring2 = eventBody.lastIndexOf("-->") + 2;
-
-            String filterable = eventBody.substring(substring1, substring2);
-            String eventBodyFiltered = eventBody.replace(filterable, "");
-
-            System.out.println("test filter: " + Html.fromHtml(eventBodyFiltered));
-
             if(eventBody != null){
-                showEventDetails.putExtra("notes", eventBodyFiltered);
+                showEventDetails.putExtra("notes", eventBody);
             }
             else {
                 showEventDetails.putExtra("notes", "");
@@ -372,8 +492,28 @@ public class ListEventsActivity extends AppCompatActivity {
 
             startActivity(showEventDetails);
 
+            ListEventsActivity.this.finish();
+
+
         } else {
             Toast.makeText(getApplicationContext(), "Empty events list!", Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    public void onBackPressed(){
+        minimizeApp();
+    }
+
+    public void minimizeApp() {
+        Intent intentListMails = new Intent(ListEventsActivity.this, ContactsActivity.class);
+        intentListMails.putExtra("AccessToken", accessToken);
+        intentListMails.putExtra("userName", userName);
+        intentListMails.putExtra("userEmail", userEmail);
+
+        startActivity(intentListMails);
+
+        ListEventsActivity.this.finish();
+    }
+
 }

@@ -12,17 +12,20 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -46,6 +49,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.Calendar.CalendarActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
+import com.example.keiichi.project_mobile.DAL.POJOs.MailFolder;
 import com.example.keiichi.project_mobile.DAL.POJOs.PhysicalAddress;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 import com.example.keiichi.project_mobile.MainActivity;
@@ -53,7 +57,15 @@ import com.example.keiichi.project_mobile.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.microsoft.appcenter.ingestion.models.Model;
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.holder.BadgeStyle;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -71,17 +83,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ContactsActivity extends AppCompatActivity {
+public class ContactsActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     private BottomNavigationView mBottomNav;
     private Toolbar myToolbar;
     private TextDrawable drawable;
     private ImageView profilePicture;
-    private DrawerLayout mDrawerLayout;
-    private ActionBarDrawerToggle actionBarDrawerToggle;
     private ListView contactsListView;
     private SearchView searchView;
-    private NavigationView contactNavigationView;
     private ContactAdapter contactAdapter;
     private List<Contact> contacts = new ArrayList<>();
     private List<Contact> countactsFiltered;
@@ -90,11 +99,18 @@ public class ContactsActivity extends AppCompatActivity {
     private String userName;
     private String userEmail;
     private String id;
+    private boolean multiSelect = false;
+    private boolean actionModeEnabled = false;
     private Contact testContact;
     private ImageView mImageView;
+    private Drawer drawer;
+    private int contactsClickedCount = 0;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private List<Contact> selectedContacts = new ArrayList<>();
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts?$orderBy=displayName&$top=500&$count=true";
     final static String MSGRAPH_URL_FOTO = "https://graph.microsoft.com/beta/me/contacts/";
     final static String MSGRAPH_URL_FOTO2 = "/photo/$value";
+    final private String URL_DELETE = "https://graph.microsoft.com/beta/me/contacts/";
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -110,16 +126,11 @@ public class ContactsActivity extends AppCompatActivity {
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, myToolbar, R.string.drawer_open,
-                R.string.drawer_close);
-
-        mDrawerLayout.addDrawerListener(actionBarDrawerToggle);
-
-        actionBarDrawerToggle.syncState();
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(this);
 
         contactsListView = (ListView) findViewById(R.id.contactsListView);
+
 
         contactsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -137,6 +148,65 @@ public class ContactsActivity extends AppCompatActivity {
         });
 
 
+        contactsListView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
+
+        contactsListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+            @Override
+            public void onItemCheckedStateChanged(ActionMode actionMode, int position, long l, boolean checked) {
+                if(checked) {
+                    contactsListView.getChildAt(position).setBackgroundColor(Color.LTGRAY);
+                    selectedContacts.add(contactAdapter.getItemAtPosition(position));
+                    contactsClickedCount++;
+                    actionMode.setTitle(contactsClickedCount+ " Selected");
+                } else {
+                    selectedContacts.remove(contactAdapter.getItemAtPosition(position));
+                    contactsClickedCount--;
+                    actionMode.setTitle(contactsClickedCount+ " Selected");
+                    contactsListView.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
+                }
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+                MenuInflater menuInflater = getMenuInflater();
+                menuInflater.inflate(R.menu.delete_navigation, menu);
+                actionModeEnabled = true;
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+                if(menuItem.getItemId() == R.id.action_delete){
+                    for(Contact contact : selectedContacts){
+                        try {
+                            deleteContact(contact.getId());
+                            getContacts();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    getContacts();
+                    actionMode.finish();
+                    return true;
+                }
+
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode actionMode) {
+                contactsClickedCount = 0;
+                selectedContacts.clear();
+            }
+        });
+
+
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
@@ -148,19 +218,11 @@ public class ContactsActivity extends AppCompatActivity {
 
         mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
 
-        contactNavigationView = (NavigationView) findViewById(R.id.contactNavigationView);
-        View hView = contactNavigationView.getHeaderView(0);
-        TextView nav_userName = (TextView) hView.findViewById(R.id.userName);
-        TextView nav_userEmail = (TextView) hView.findViewById(R.id.userEmail);
-        nav_userName.setText(userName);
-        nav_userEmail.setText(userEmail);
-
-
         Menu menu = mBottomNav.getMenu();
         MenuItem menuItem = menu.getItem(2);
         menuItem.setChecked(true);
 
-        callGraphAPI();
+        getContacts();
 
         mBottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -173,14 +235,22 @@ public class ContactsActivity extends AppCompatActivity {
                         intentCalendar.putExtra("AccessToken", accessToken);
                         intentCalendar.putExtra("userName", userName);
                         intentCalendar.putExtra("userEmail", userEmail);
+
                         startActivity(intentCalendar);
+
+                        ContactsActivity.this.finish();
+
                         break;
                     case R.id.action_mail:
                         Intent intentMail = new Intent(ContactsActivity.this, ListMailsActvity.class);
                         intentMail.putExtra("AccessToken", accessToken);
                         intentMail.putExtra("userName", userName);
                         intentMail.putExtra("userEmail", userEmail);
+
                         startActivity(intentMail);
+
+                        ContactsActivity.this.finish();
+
                         break;
                     case R.id.action_user:
 
@@ -192,10 +262,7 @@ public class ContactsActivity extends AppCompatActivity {
             }
         });
 
-        View navView = contactNavigationView.getHeaderView(0);
-        mImageView = (ImageView) navView.findViewById(R.id.userPicture);
-
-        RequestQueue queue = Volley.newRequestQueue(this);
+        //RequestQueue queue = Volley.newRequestQueue(this);
 
         /*
         String url = "http://i.imgur.com/7spzG.png";
@@ -223,23 +290,19 @@ public class ContactsActivity extends AppCompatActivity {
 
         */
 
-        ColorGenerator generator = ColorGenerator.MATERIAL;
+        List<MailFolder> mailFolders = new ArrayList<>();
+        mailFolders.add(new MailFolder("1", "Not found", 0, 0));
 
-        int color2 = generator.getColor(userName.substring(0,1));
-
-        TextDrawable drawable = TextDrawable.builder()
-                .buildRound(userName.substring(0,1), color2); // radius in px
-
-        mImageView.setImageDrawable(drawable);
-
+        buildDrawer(userName, userEmail, myToolbar, mailFolders);
 
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        actionBarDrawerToggle.syncState();
+
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -270,23 +333,6 @@ public class ContactsActivity extends AppCompatActivity {
 
         });
 
-        MenuItemCompat.setOnActionExpandListener(searchItem,
-                new MenuItemCompat.OnActionExpandListener() {
-                    @Override
-                    public boolean onMenuItemActionCollapse(MenuItem item) {
-// Do something when collapsed
-                        setFilter(contacts);
-                        return true; // Return true to collapse action view
-                    }
-
-                    @Override
-                    public boolean onMenuItemActionExpand(MenuItem item) {
-// Do something when expanded
-                        return true; // Return true to expand action view
-                    }
-                });
-
-
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -301,7 +347,11 @@ public class ContactsActivity extends AppCompatActivity {
                 intentAddContact.putExtra("AccessToken", accessToken);
                 intentAddContact.putExtra("userName", userName);
                 intentAddContact.putExtra("userEmail", userEmail);
+
                 startActivity(intentAddContact);
+
+                ContactsActivity.this.finish();
+
                 return true;
 
             default:
@@ -312,7 +362,7 @@ public class ContactsActivity extends AppCompatActivity {
     }
 
     /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
-    private void callGraphAPI() {
+    private void getContacts() {
         Log.d(TAG, "Starting volley request to graph");
         Log.d(TAG, accessToken);
 
@@ -407,139 +457,266 @@ public class ContactsActivity extends AppCompatActivity {
 
     private void onContactClicked(int position) {
 
-
-        if (contacts.size() != 0) {
-
-            Contact contact = contactAdapter.getItemAtPosition(position);
-
-            Intent showContactDetails = new Intent(ContactsActivity.this, ContactsDetailsActivity.class);
-            showContactDetails.putExtra("givenName", contact.getGivenName());
-            showContactDetails.putExtra("displayName", contact.getDisplayName());
-            showContactDetails.putExtra("id", contact.getId());
-
-            if (contact.getMobilePhone() == null) {
-                showContactDetails.putExtra("userPhone", "");
-            } else {
-                showContactDetails.putExtra("userPhone", contact.getMobilePhone());
-            }
-
-            if (contact.getEmailAddresses() != null) {
-                showContactDetails.putExtra("emailList", (Serializable) contact.getEmailAddresses());
-            }
-
-            if (contact.getPersonalNotes() != null) {
-                showContactDetails.putExtra("notes", contact.getPersonalNotes());
-            } else {
-                showContactDetails.putExtra("notes", "");
-            }
-
-            if (contact.getSpouseName() != null) {
-                showContactDetails.putExtra("spouse", contact.getSpouseName());
-            } else {
-                showContactDetails.putExtra("spouse", "");
-            }
-
-            if (contact.getNickName() != null) {
-                showContactDetails.putExtra("nickname", contact.getNickName());
-            } else {
-                showContactDetails.putExtra("nickname", "");
-            }
-
-            if (contact.getJobTitle() != null) {
-                showContactDetails.putExtra("job", contact.getJobTitle());
-            } else {
-                showContactDetails.putExtra("job", "");
-            }
-
-            if (contact.getDepartment() != null) {
-                showContactDetails.putExtra("department", contact.getDepartment());
-            } else {
-                showContactDetails.putExtra("department", "");
-            }
-
-            if (contact.getCompanyName() != null) {
-                showContactDetails.putExtra("company", contact.getCompanyName());
-            } else {
-                showContactDetails.putExtra("company", "");
-            }
-
-            if (contact.getOfficeLocation() != null) {
-                showContactDetails.putExtra("office", contact.getOfficeLocation());
-            } else {
-                showContactDetails.putExtra("office", "");
-            }
-
-            if (contact.getManager() != null) {
-                showContactDetails.putExtra("manager", contact.getManager());
-            } else {
-                showContactDetails.putExtra("manager", "");
-            }
-
-            if (contact.getAssistantName() != null) {
-                showContactDetails.putExtra("assistant", contact.getAssistantName());
-            } else {
-                showContactDetails.putExtra("assistant", "");
-            }
-
-            if (contact.getHomeAddress() != null) {
-                showContactDetails.putExtra("street", contact.getHomeAddress().getStreet());
-                showContactDetails.putExtra("postalcode", contact.getHomeAddress().getPostalCode());
-                showContactDetails.putExtra("city", contact.getHomeAddress().getCity());
-                showContactDetails.putExtra("state", contact.getHomeAddress().getState());
-                showContactDetails.putExtra("country", contact.getHomeAddress().getCountryOrRegion());
-            } else {
-                showContactDetails.putExtra("street", "");
-                showContactDetails.putExtra("postalcode", "");
-                showContactDetails.putExtra("city", "");
-                showContactDetails.putExtra("state", "");
-                showContactDetails.putExtra("country", "");
-            }
-
-            if (contact.getHomeAddress().getStreet() == null) {
-                showContactDetails.putExtra("street", "");
-            }
-
-            if (contact.getHomeAddress().getPostalCode() == null) {
-                showContactDetails.putExtra("postalcode", "");
-            }
-
-            if (contact.getHomeAddress().getCity() == null) {
-                showContactDetails.putExtra("city", "");
-            }
-
-            if (contact.getHomeAddress().getState() == null) {
-                showContactDetails.putExtra("state", "");
-            }
-
-            if (contact.getHomeAddress().getCountryOrRegion() == null) {
-                showContactDetails.putExtra("country", "");
-            }
-
-            if (contact.getGivenName() != null) {
-                showContactDetails.putExtra("firstname", contact.getGivenName());
-            }
-
-            if (contact.getSurname() != null) {
-                showContactDetails.putExtra("lastname", contact.getSurname());
-            }
-
-            showContactDetails.putExtra("userEmail", userEmail);
-            showContactDetails.putExtra("AccessToken", accessToken);
-            showContactDetails.putExtra("userName", userName);
+        if (actionModeEnabled) {
 
 
-            startActivity(showContactDetails);
 
         } else {
-            Toast.makeText(getApplicationContext(), "Empty contact list!", Toast.LENGTH_SHORT).show();
+
+            if (contacts.size() != 0) {
+
+                Contact contact = contactAdapter.getItemAtPosition(position);
+
+                Intent showContactDetails = new Intent(ContactsActivity.this, ContactsDetailsActivity.class);
+                showContactDetails.putExtra("givenName", contact.getGivenName());
+                showContactDetails.putExtra("displayName", contact.getDisplayName());
+                showContactDetails.putExtra("id", contact.getId());
+
+                if (contact.getMobilePhone() == null) {
+                    showContactDetails.putExtra("userPhone", "");
+                } else {
+                    showContactDetails.putExtra("userPhone", contact.getMobilePhone());
+                }
+
+                if (contact.getEmailAddresses() != null) {
+                    showContactDetails.putExtra("emailList", (Serializable) contact.getEmailAddresses());
+                }
+
+                if (contact.getPersonalNotes() != null) {
+                    showContactDetails.putExtra("notes", contact.getPersonalNotes());
+                } else {
+                    showContactDetails.putExtra("notes", "");
+                }
+
+                if (contact.getSpouseName() != null) {
+                    showContactDetails.putExtra("spouse", contact.getSpouseName());
+                } else {
+                    showContactDetails.putExtra("spouse", "");
+                }
+
+                if (contact.getNickName() != null) {
+                    showContactDetails.putExtra("nickname", contact.getNickName());
+                } else {
+                    showContactDetails.putExtra("nickname", "");
+                }
+
+                if (contact.getJobTitle() != null) {
+                    showContactDetails.putExtra("job", contact.getJobTitle());
+                } else {
+                    showContactDetails.putExtra("job", "");
+                }
+
+                if (contact.getDepartment() != null) {
+                    showContactDetails.putExtra("department", contact.getDepartment());
+                } else {
+                    showContactDetails.putExtra("department", "");
+                }
+
+                if (contact.getCompanyName() != null) {
+                    showContactDetails.putExtra("company", contact.getCompanyName());
+                } else {
+                    showContactDetails.putExtra("company", "");
+                }
+
+                if (contact.getOfficeLocation() != null) {
+                    showContactDetails.putExtra("office", contact.getOfficeLocation());
+                } else {
+                    showContactDetails.putExtra("office", "");
+                }
+
+                if (contact.getManager() != null) {
+                    showContactDetails.putExtra("manager", contact.getManager());
+                } else {
+                    showContactDetails.putExtra("manager", "");
+                }
+
+                if (contact.getAssistantName() != null) {
+                    showContactDetails.putExtra("assistant", contact.getAssistantName());
+                } else {
+                    showContactDetails.putExtra("assistant", "");
+                }
+
+                if (contact.getHomeAddress() != null) {
+                    showContactDetails.putExtra("street", contact.getHomeAddress().getStreet());
+                    showContactDetails.putExtra("postalcode", contact.getHomeAddress().getPostalCode());
+                    showContactDetails.putExtra("city", contact.getHomeAddress().getCity());
+                    showContactDetails.putExtra("state", contact.getHomeAddress().getState());
+                    showContactDetails.putExtra("country", contact.getHomeAddress().getCountryOrRegion());
+                } else {
+                    showContactDetails.putExtra("street", "");
+                    showContactDetails.putExtra("postalcode", "");
+                    showContactDetails.putExtra("city", "");
+                    showContactDetails.putExtra("state", "");
+                    showContactDetails.putExtra("country", "");
+                }
+
+                if (contact.getHomeAddress().getStreet() == null) {
+                    showContactDetails.putExtra("street", "");
+                }
+
+                if (contact.getHomeAddress().getPostalCode() == null) {
+                    showContactDetails.putExtra("postalcode", "");
+                }
+
+                if (contact.getHomeAddress().getCity() == null) {
+                    showContactDetails.putExtra("city", "");
+                }
+
+                if (contact.getHomeAddress().getState() == null) {
+                    showContactDetails.putExtra("state", "");
+                }
+
+                if (contact.getHomeAddress().getCountryOrRegion() == null) {
+                    showContactDetails.putExtra("country", "");
+                }
+
+                if (contact.getGivenName() != null) {
+                    showContactDetails.putExtra("firstname", contact.getGivenName());
+                }
+
+                if (contact.getSurname() != null) {
+                    showContactDetails.putExtra("lastname", contact.getSurname());
+                }
+
+                showContactDetails.putExtra("userEmail", userEmail);
+                showContactDetails.putExtra("AccessToken", accessToken);
+                showContactDetails.putExtra("userName", userName);
+
+
+                startActivity(showContactDetails);
+
+                ContactsActivity.this.finish();
+
+            } else {
+                Toast.makeText(getApplicationContext(), "Empty contact list!", Toast.LENGTH_SHORT).show();
+            }
         }
     }
-
 
     public void setFilter(List<Contact> contactFilterted) {
         countactsFiltered = new ArrayList<>();
         countactsFiltered.addAll(contactFilterted);
         contactAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onRefresh() {
+        swipeRefreshLayout.setRefreshing(true);
+
+        getContacts();
+
+        swipeRefreshLayout.setRefreshing(false);
+
+    }
+
+    // PATCH REQUEST VOOR DELETEN CONTACTPERSOON
+    private void deleteContact(String contactId) throws JSONException {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        String postAddress = URL_DELETE + contactId;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.DELETE, postAddress,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Toast.makeText(getApplicationContext(), "Contact deleted!", Toast.LENGTH_SHORT).show();
+                    }
+
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+                headers.put("Content-Type", "application/json; charset=utf-8");
+
+                return headers;
+            }
+
+        };
+
+        queue.add(stringRequest);
+
+    }
+
+    public void buildDrawer(String name, String email, Toolbar toolbar, List<MailFolder> folders){
+
+        ArrayList<IDrawerItem> drawerItems = new ArrayList<>();
+
+        for(MailFolder folder : folders) {
+            PrimaryDrawerItem item = new PrimaryDrawerItem();
+
+            String folderName = folder.getDisplayName().toLowerCase();
+
+            switch(folderName) {
+
+            }
+
+            item.withTag(folder);
+            item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+            drawerItems.add(item);
+
+        }
+
+        ColorGenerator generator = ColorGenerator.MATERIAL;
+
+        int color2 = generator.getColor(userName.substring(0,1));
+
+        TextDrawable drawable = TextDrawable.builder()
+                .buildRound(userName.substring(0,1), color2); // radius in px
+
+        AccountHeader headerResult = new AccountHeaderBuilder()
+                .withActivity(this)
+                .withHeaderBackground(R.color.colorWhite)
+                .withSelectionListEnabledForSingleProfile(false)
+                .withTextColor(Color.BLACK)
+                .addProfiles(
+                        new ProfileDrawerItem().withName(name).withEmail(email).withIcon(drawable)
+                )
+                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
+                    @Override
+                    public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
+                        return false;
+                    }
+                })
+                .build();
+
+        drawer = new DrawerBuilder()
+                .withActivity(this)
+                .withToolbar(toolbar)
+                .withTranslucentStatusBar(false)
+                .withAccountHeader(headerResult)
+                .withDrawerItems(drawerItems)
+                .withSelectedItemByPosition(7)
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        if (drawerItem instanceof PrimaryDrawerItem){
+
+
+                        }
+                        return false;
+                    }
+                })
+                .build();
+
+    }
+
+    @Override
+    public void onBackPressed(){
+        minimizeApp();
+    }
+
+    public void minimizeApp() {
+        Intent startMain = new Intent(Intent.ACTION_MAIN);
+        startMain.addCategory(Intent.CATEGORY_HOME);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(startMain);
     }
 
 }

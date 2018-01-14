@@ -34,12 +34,15 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.Contacts.ContactAdapter;
+import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
+import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Attendee;
 import com.example.keiichi.project_mobile.DAL.POJOs.DateTimeTimeZone;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.DAL.POJOs.ItemBody;
 import com.example.keiichi.project_mobile.DAL.POJOs.Location;
+import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 import com.example.keiichi.project_mobile.R;
 import com.example.keiichi.project_mobile.Utility;
 import com.google.gson.Gson;
@@ -184,6 +187,14 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         privateCheckbox = (CheckBox) findViewById(R.id.privateCheckbox);
         responseCheckbox = (CheckBox) findViewById(R.id.responseCheckbox);
 
+        setEditTextOnFocusListener(eventInput);
+        setEditTextOnFocusListener(locationInput);
+        setEditTextOnFocusListener(personalNotes);
+        setSpinnerOnFocusListener(durationSpinner);
+        setSpinnerOnFocusListener(reminderSpinner);
+        setSpinnerOnFocusListener(repeatSpinner);
+        setSpinnerOnFocusListener(durationSpinner);
+
         attendeesTitle.setVisibility(View.GONE);
         plusAttendeeIcon.setVisibility(View.GONE);
         reminderSpinner.setVisibility(View.GONE);
@@ -221,6 +232,8 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
                 intentAttendees.putExtra("eventRequestResponses", responseRequested);
 
                 startActivity(intentAttendees);
+
+                AddEventActivity.this.finish();
             }
         });
 
@@ -471,6 +484,8 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
 
                 startActivity(intentCalendar);
 
+                AddEventActivity.this.finish();
+
                 return true;
 
             // WANNEER SAVE ICON WORDT AANGEKLIKT
@@ -491,6 +506,9 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
                             intentCalendar.putExtra("userEmail", userEmail);
 
                             startActivity(intentCalendar);
+
+                            AddEventActivity.this.finish();
+
                         }
                     }, DELAY_TIME);
 
@@ -1058,4 +1076,62 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         }
 
     }
+
+    public void setEditTextOnFocusListener(EditText et){
+
+        et.setOnFocusChangeListener( new View.OnFocusChangeListener(){
+
+            public void onFocusChange( View view, boolean hasfocus){
+                if(hasfocus){
+
+                    view.setBackgroundResource( R.drawable.edit_text_style_focused);
+                }
+                else{
+                    view.setBackgroundResource( R.drawable.edit_text_style);
+                }
+            }
+        });
+
+    }
+
+    public void setSpinnerOnFocusListener(Spinner spinnner){
+
+        spinnner.setOnFocusChangeListener( new View.OnFocusChangeListener(){
+
+            public void onFocusChange( View view, boolean hasfocus){
+                if(hasfocus){
+
+                    view.setBackgroundResource( R.drawable.edit_text_style_focused);
+                }
+                else{
+                    view.setBackgroundResource( R.drawable.edit_text_style);
+                }
+            }
+        });
+
+    }
+
+    @Override
+    public void onBackPressed(){
+
+        if(fromContactDetailsActivity == null){
+            minimizeApp();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    public void minimizeApp() {
+
+        Intent intentListMails = new Intent(AddEventActivity.this, ListEventsActivity.class);
+        intentListMails.putExtra("AccessToken", accessToken);
+        intentListMails.putExtra("userName", userName);
+        intentListMails.putExtra("userEmail", userEmail);
+
+        startActivity(intentListMails);
+
+        AddEventActivity.this.finish();
+
+    }
+
 }

@@ -57,6 +57,9 @@ public class SendMailActivity extends AppCompatActivity {
     private String userName;
     private String userEmail;
 
+    private String fromContactDetailsActivity;
+    private RichEditor editor;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +69,7 @@ public class SendMailActivity extends AppCompatActivity {
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
+        fromContactDetailsActivity = getIntent().getStringExtra("fromContactDetailsActivity");
 
         MailAdress = findViewById(R.id.TextMailAdress);
         Subject = findViewById(R.id.TextMailSubject);
@@ -164,12 +168,9 @@ public class SendMailActivity extends AppCompatActivity {
 
             // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
             case android.R.id.home:
-                /*Intent intentListMails = new Intent(SendMailActivity.this, ListMailsActvity.class);
-                intentListMails.putExtra("AccessToken", accessToken);
-                intentListMails.putExtra("userName", userName);
-                intentListMails.putExtra("userEmail", userEmail);
-                startActivity(intentListMails);*/
+
                 finish();
+
 
                 return true;
 
@@ -178,6 +179,8 @@ public class SendMailActivity extends AppCompatActivity {
                     SendMail();
                     finish();
 
+
+                    SendMailActivity.this.finish();
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -192,5 +195,26 @@ public class SendMailActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed(){
+
+        if(fromContactDetailsActivity == null){
+            minimizeApp();
+        } else{
+            super.onBackPressed();
+        }
+
+    }
+
+    public void minimizeApp() {
+        Intent intentListMails = new Intent(SendMailActivity.this, ListMailsActvity.class);
+        intentListMails.putExtra("AccessToken", accessToken);
+        intentListMails.putExtra("userName", userName);
+        intentListMails.putExtra("userEmail", userEmail);
+
+        startActivity(intentListMails);
+
+        SendMailActivity.this.finish();
+    }
 
 }

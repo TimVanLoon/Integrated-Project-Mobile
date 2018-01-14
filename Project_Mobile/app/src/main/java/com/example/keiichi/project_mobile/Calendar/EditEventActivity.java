@@ -37,6 +37,7 @@ import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.DAL.POJOs.ItemBody;
 import com.example.keiichi.project_mobile.DAL.POJOs.Location;
+import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 import com.example.keiichi.project_mobile.R;
 import com.example.keiichi.project_mobile.Utility;
 import com.google.gson.Gson;
@@ -175,6 +176,14 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         responseCheckbox = (CheckBox) findViewById(R.id.responseCheckbox);
         plusAttendeeIcon = (ImageView) findViewById(R.id.plusAttendeeIcon);
 
+        setEditTextOnFocusListener(eventInput);
+        setEditTextOnFocusListener(locationInput);
+        setEditTextOnFocusListener(personalNotes);
+        setSpinnerOnFocusListener(durationSpinner);
+        setSpinnerOnFocusListener(reminderSpinner);
+        setSpinnerOnFocusListener(repeatSpinner);
+        setSpinnerOnFocusListener(durationSpinner);
+
         plusAttendeeIcon.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
@@ -204,6 +213,9 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
                 intentAttendees.putExtra("contentType", contentType);
 
                 startActivity(intentAttendees);
+
+                EditEventActivity.this.finish();
+
             }
         });
 
@@ -482,7 +494,7 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
 
                                 isCurrentDate = false;
 
-                                setStartDate(year, monthOfYearPicked++, dayOfMonthPicked);
+                                setStartDate(year, monthOfYearPicked, dayOfMonthPicked);
 
                                 dayOfMonth = dayOfMonthPicked;
                                 month = monthOfYearPicked + 1;
@@ -641,23 +653,25 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
 
             // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
             case android.R.id.home:
-                Intent intentCalendar = new Intent(EditEventActivity.this, EventDetailsActivity.class);
-                intentCalendar.putExtra("AccessToken", accessToken);
-                intentCalendar.putExtra("userName", userName);
-                intentCalendar.putExtra("userEmail", userEmail);
-                intentCalendar.putExtra("subject", subject);
-                intentCalendar.putExtra("location", location);
-                intentCalendar.putExtra("startDate", startDate);
-                intentCalendar.putExtra("displayAs", displayAs);
-                intentCalendar.putExtra("notes", notes);
-                intentCalendar.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
-                intentCalendar.putExtra("id", id);
-                intentCalendar.putExtra("sensitivity", sensitivity);
-                intentCalendar.putExtra("responseRequested", responseRequested);
-                intentCalendar.putExtra("attendeesList", (Serializable) attendees);
-                intentCalendar.putExtra("contentType", contentType);
+                Intent intentEventDetails = new Intent(EditEventActivity.this, EventDetailsActivity.class);
+                intentEventDetails.putExtra("AccessToken", accessToken);
+                intentEventDetails.putExtra("userName", userName);
+                intentEventDetails.putExtra("userEmail", userEmail);
+                intentEventDetails.putExtra("subject", subject);
+                intentEventDetails.putExtra("location", location);
+                intentEventDetails.putExtra("startDate", startDate);
+                intentEventDetails.putExtra("displayAs", displayAs);
+                intentEventDetails.putExtra("notes", notes);
+                intentEventDetails.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
+                intentEventDetails.putExtra("id", id);
+                intentEventDetails.putExtra("sensitivity", sensitivity);
+                intentEventDetails.putExtra("responseRequested", responseRequested);
+                intentEventDetails.putExtra("attendeesList", (Serializable) attendees);
+                intentEventDetails.putExtra("contentType", contentType);
 
-                startActivity(intentCalendar);
+                startActivity(intentEventDetails);
+
+                EditEventActivity.this.finish();
 
                 return true;
 
@@ -691,6 +705,9 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
                             intentCalendar.putExtra("contentType", contentType);
 
                             startActivity(intentCalendar);
+
+                            EditEventActivity.this.finish();
+
                         }
                     }, DELAY_TIME);
 
@@ -1082,4 +1099,70 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         timeEvent.setText(finalHourOfDay + ":" + finalMinuteOfHour);
 
     }
+
+    public void setEditTextOnFocusListener(EditText et){
+
+        et.setOnFocusChangeListener( new View.OnFocusChangeListener(){
+
+            public void onFocusChange( View view, boolean hasfocus){
+                if(hasfocus){
+
+                    view.setBackgroundResource( R.drawable.edit_text_style_focused);
+                }
+                else{
+                    view.setBackgroundResource( R.drawable.edit_text_style);
+                }
+            }
+        });
+
+    }
+
+    public void setSpinnerOnFocusListener(Spinner spinnner){
+
+        spinnner.setOnFocusChangeListener( new View.OnFocusChangeListener(){
+
+            public void onFocusChange( View view, boolean hasfocus){
+                if(hasfocus){
+
+                    view.setBackgroundResource( R.drawable.edit_text_style_focused);
+                }
+                else{
+                    view.setBackgroundResource( R.drawable.edit_text_style);
+                }
+            }
+        });
+
+    }
+
+    @Override
+    public void onBackPressed(){
+
+        minimizeApp();
+
+    }
+
+    public void minimizeApp() {
+
+        Intent intentEventDetails = new Intent(EditEventActivity.this, EventDetailsActivity.class);
+        intentEventDetails.putExtra("AccessToken", accessToken);
+        intentEventDetails.putExtra("userName", userName);
+        intentEventDetails.putExtra("userEmail", userEmail);
+        intentEventDetails.putExtra("subject", subject);
+        intentEventDetails.putExtra("location", location);
+        intentEventDetails.putExtra("startDate", startDate);
+        intentEventDetails.putExtra("displayAs", displayAs);
+        intentEventDetails.putExtra("notes", notes);
+        intentEventDetails.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
+        intentEventDetails.putExtra("id", id);
+        intentEventDetails.putExtra("sensitivity", sensitivity);
+        intentEventDetails.putExtra("responseRequested", responseRequested);
+        intentEventDetails.putExtra("attendeesList", (Serializable) attendees);
+        intentEventDetails.putExtra("contentType", contentType);
+
+        startActivity(intentEventDetails);
+
+        EditEventActivity.this.finish();
+
+    }
+
 }

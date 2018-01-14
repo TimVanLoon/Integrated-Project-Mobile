@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -25,8 +26,10 @@
             android:name=".Mail.ListMailsActvity"
             android:label="Inbox"
             android:parentActivityName=".MainActivity"
+
             android:theme="@style/ContactsTheme"
-            android:windowSoftInputMode="adjustPan" />
+
+            android:windowSoftInputMode="adjustResize|adjustPan" />
 
         <!-- Intent filter to capture System Browser calling back to our app after Sign In -->
         <activity android:name="com.microsoft.identity.client.BrowserTabActivity">
@@ -48,72 +51,83 @@
             android:label=""
             android:launchMode="singleInstance"
             android:theme="@style/ContactsTheme"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustResize|adjustPan" />
         <activity
             android:name=".Mail.SendMailActivity"
             android:label="Compose"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustResize|adjustPan" />
         <activity
             android:name=".Calendar.CalendarActivity"
             android:label="My Calendar"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustResize|adjustPan" />
         <activity
             android:name=".Calendar.ListEventsActivity"
             android:label="My Events"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustResize|adjustPan" />
         <activity
             android:name=".Contacts.ContactsActivity"
             android:label="My Contacts"
             android:theme="@style/ContactsTheme"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustResize|adjustPan" />
         <activity
             android:name=".Contacts.AddContactActivity"
             android:label="Add Contact"
             android:theme="@style/ContactsTheme"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize|adjustPan" />
         <activity
             android:name=".Calendar.AddEventActivity"
             android:label="New event"
             android:theme="@style/ContactsTheme"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustResize|adjustPan" />
         <activity
             android:name=".Contacts.ContactsDetailsActivity"
             android:label="Contact Details"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize|adjustPan" />
         <activity
             android:name=".Contacts.EditContactActivity"
             android:label="Edit Contact"
             android:theme="@style/ContactsTheme"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize|adjustPan" />
         <activity
             android:name=".SettingsActivity"
-            android:label="Settings" />
+            android:label="Settings"
+            android:windowSoftInputMode="adjustResize|adjustPan"/>
         <activity
             android:name=".Calendar.EventDetailsActivity"
             android:label="Event Details"
             android:theme="@style/ContactsTheme"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize|adjustPan" />
         <activity
             android:name=".Calendar.EditEventActivity"
             android:label="Edit Event"
             android:theme="@style/ContactsTheme"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize|adjustPan"/>
         <activity
             android:name=".Mail.ReplyToMailActivity"
             android:label="Compose"
             android:theme="@style/ContactsTheme"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize|adjustPan"/>
         <activity
             android:name=".Calendar.AttendeeActivity"
             android:label="Contacts"
             android:theme="@style/ContactsTheme"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize|adjustPan" />
         <activity
             android:name=".Mail.ForwardMailActivity"
             android:label="Compose"
             android:theme="@style/ContactsTheme"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".Mail.ReplyAllActivity"></activity>
+        <activity android:name=".Mail.ReplyAllActivity"
+
+            android:windowSoftInputMode="adjustResize|adjustPan"/>
+
+        <service
+            android:name=".MyFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

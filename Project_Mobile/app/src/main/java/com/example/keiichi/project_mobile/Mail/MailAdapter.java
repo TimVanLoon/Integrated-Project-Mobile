@@ -109,12 +109,8 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
             holder.from.setText(from);
             holder.message.setText(bodyPreview);
             holder.subject.setText(subject);
-
-
-
             //Row state tot active zetten
             holder.itemView.setActivated(selectedItems.get(position, false));
-
 
             RequestQueue queue = Volley.newRequestQueue(mContext);
 
@@ -215,7 +211,9 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
 
     @Override
     public int getItemCount() {
-        return originalData.size();
+
+        return filteredData.size();
+
     }
 
 

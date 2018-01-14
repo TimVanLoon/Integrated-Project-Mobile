@@ -7,7 +7,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -18,9 +20,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.Calendar.AddEventActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.PhysicalAddress;
+import com.example.keiichi.project_mobile.Mail.DisplayMailActivity;
+import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 import com.example.keiichi.project_mobile.R;
 import com.google.gson.Gson;
 
@@ -101,6 +106,25 @@ public class AddContactActivity extends AppCompatActivity {
         nickName = (EditText) findViewById(R.id.nickName);
         spouseName = (EditText) findViewById(R.id.spouseName);
 
+        setEditTextOnFocusListener(firstNameInput);
+        setEditTextOnFocusListener(lastNameInput);
+        setEditTextOnFocusListener(emailInput);
+        setEditTextOnFocusListener(phoneInput);
+        setEditTextOnFocusListener(jobTitle);
+        setEditTextOnFocusListener(department);
+        setEditTextOnFocusListener(companyName);
+        setEditTextOnFocusListener(officeLocation);
+        setEditTextOnFocusListener(manager);
+        setEditTextOnFocusListener(assistantName);
+        setEditTextOnFocusListener(streetName);
+        setEditTextOnFocusListener(postalCode);
+        setEditTextOnFocusListener(cityName);
+        setEditTextOnFocusListener(stateName);
+        setEditTextOnFocusListener(countryName);
+        setEditTextOnFocusListener(personalNotes);
+        setEditTextOnFocusListener(nickName);
+        setEditTextOnFocusListener(spouseName);
+
     }
 
     // VOEG ICONS TOE AAN DE ACTION BAR
@@ -125,7 +149,10 @@ public class AddContactActivity extends AppCompatActivity {
                 intentContacts.putExtra("AccessToken", accessToken);
                 intentContacts.putExtra("userName", userName);
                 intentContacts.putExtra("userEmail", userEmail);
+
                 startActivity(intentContacts);
+
+                AddContactActivity.this.finish();
 
                 return true;
 
@@ -152,7 +179,7 @@ public class AddContactActivity extends AppCompatActivity {
                     }
                     else {
 
-                        if (!emailInput.getText().toString().isEmpty() && !emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+")) {
+                        if (!emailInput.getText().toString().isEmpty() && (!emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+" ) && !emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+.[a-z]+"))) {
                             emailInput.setError("Invalid Email Address!");
 
                             if(!phoneInput.getText().toString().isEmpty() && !isValidMobile(phoneInput.getText().toString())){
@@ -178,7 +205,11 @@ public class AddContactActivity extends AppCompatActivity {
                                             intentContacts.putExtra("AccessToken", accessToken);
                                             intentContacts.putExtra("userName", userName);
                                             intentContacts.putExtra("userEmail", userEmail);
+
                                             startActivity(intentContacts);
+
+                                            AddContactActivity.this.finish();
+
                                         }
                                     }, DELAY_TIME);
 
@@ -212,17 +243,12 @@ public class AddContactActivity extends AppCompatActivity {
         String displayName = firstNameInput.getText().toString() + " " + lastNameInput.getText().toString();
         contact.setDisplayName(displayName);
 
-        if (!emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+")) {
-            emailInput.setError("Invalid Email Address");
-        }
-        else {
+        if (emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+" ) && !emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+.[a-z]+")) {
             EmailAddress contactEmail = new EmailAddress(emailInput.getText().toString(), displayName);
             List<EmailAddress> listEmails = new ArrayList<>();
             listEmails.add(contactEmail);
             contact.setEmailAddresses(listEmails);
         }
-
-
 
         if(!phoneInput.getText().toString().isEmpty()){
             contact.setMobilePhone(phoneInput.getText().toString());
@@ -301,9 +327,41 @@ public class AddContactActivity extends AppCompatActivity {
 
     }
 
-
     private boolean isValidMobile(String phone) {
         return android.util.Patterns.PHONE.matcher(phone).matches();
+    }
+
+    public void setEditTextOnFocusListener(EditText et){
+
+        et.setOnFocusChangeListener( new View.OnFocusChangeListener(){
+
+            public void onFocusChange( View view, boolean hasfocus){
+                if(hasfocus){
+
+                    view.setBackgroundResource( R.drawable.edit_text_style_focused);
+                }
+                else{
+                    view.setBackgroundResource( R.drawable.edit_text_style);
+                }
+            }
+        });
+
+    }
+
+    @Override
+    public void onBackPressed(){
+        minimizeApp();
+    }
+
+    public void minimizeApp() {
+        Intent intentListMails = new Intent(AddContactActivity.this, ContactsActivity.class);
+        intentListMails.putExtra("AccessToken", accessToken);
+        intentListMails.putExtra("userName", userName);
+        intentListMails.putExtra("userEmail", userEmail);
+
+        startActivity(intentListMails);
+
+        AddContactActivity.this.finish();
     }
 
 }

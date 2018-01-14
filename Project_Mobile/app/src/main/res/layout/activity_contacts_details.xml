@@ -18,7 +18,7 @@
 
     <LinearLayout
         android:id="@+id/headerView"
-        android:layout_width="385dp"
+        android:layout_width="fill_parent"
         android:layout_height="280dp"
         android:orientation="vertical"
         android:layout_below="@+id/toolbar"

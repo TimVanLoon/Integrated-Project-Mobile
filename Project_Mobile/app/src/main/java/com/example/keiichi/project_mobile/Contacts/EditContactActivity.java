@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -35,9 +36,12 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
+
 public class EditContactActivity extends AppCompatActivity {
 
-    final private String URL_POSTADRESS = "https://graph.microsoft.com/beta/me/contacts/";
+    final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/contacts/";
     private Toolbar myToolbar;
     private String userName;
     private String userEmail;
@@ -133,6 +137,25 @@ public class EditContactActivity extends AppCompatActivity {
         nickNameInput = (EditText) findViewById(R.id.nickName);
         spouseNameInput = (EditText) findViewById(R.id.spouseName);
 
+        setEditTextOnFocusListener(firstNameInput);
+        setEditTextOnFocusListener(lastNameInput);
+        setEditTextOnFocusListener(emailInput);
+        setEditTextOnFocusListener(phoneInput);
+        setEditTextOnFocusListener(jobTitleInput);
+        setEditTextOnFocusListener(departmentInput);
+        setEditTextOnFocusListener(companyNameInput);
+        setEditTextOnFocusListener(officeLocationInput);
+        setEditTextOnFocusListener(managerInput);
+        setEditTextOnFocusListener(streetNameInput);
+        setEditTextOnFocusListener(streetNameInput);
+        setEditTextOnFocusListener(postalCodeInput);
+        setEditTextOnFocusListener(cityNameInput);
+        setEditTextOnFocusListener(stateNameInput);
+        setEditTextOnFocusListener(countryNameInput);
+        setEditTextOnFocusListener(personalNotesInput);
+        setEditTextOnFocusListener(nickNameInput);
+        setEditTextOnFocusListener(spouseNameInput);
+
         // VUL INPUTS MET DATA VAN CONTACT
         firstNameInput.setText(firstName);
         lastNameInput.setText(lastName);
@@ -209,6 +232,8 @@ public class EditContactActivity extends AppCompatActivity {
 
                 startActivity(intentContactDetails);
 
+                EditContactActivity.this.finish();
+
                 return true;
 
             // WANNEER SAVE ICON WORDT AANGEKLIKT
@@ -281,6 +306,9 @@ public class EditContactActivity extends AppCompatActivity {
                                         intentContactDetailsSaved.putExtra("id", id);
 
                                         startActivity(intentContactDetailsSaved);
+
+                                        EditContactActivity.this.finish();
+
                                     }
                                 }, DELAY_TIME);
 
@@ -390,11 +418,15 @@ public class EditContactActivity extends AppCompatActivity {
             notes = personalNotesInput.getText().toString();
         }
 
-        System.out.println("wanna cuddle?" +contact);
+        System.out.println("wanna cuddle?" + contact);
 
         String postAddress = URL_POSTADRESS + id;
 
-        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.PATCH, postAddress,new JSONObject(new Gson().toJson(contact)),
+        System.out.println("test contact: " + new Gson().toJson(contact));
+
+        //final JSONObject jsonObject = new JSONObject(buildJsonEditContact());
+
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.PATCH, postAddress, new JSONObject(new Gson().toJson(contact)),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -424,7 +456,71 @@ public class EditContactActivity extends AppCompatActivity {
 
     }
 
+    private String buildJsonEditContact() {
+        JsonObjectBuilder factory = Json.createObjectBuilder()
+
+                .add("isRead", true);
+
+        return factory.build().toString();
+    }
+
     private boolean isValidMobile(String phone) {
         return android.util.Patterns.PHONE.matcher(phone).matches();
     }
+
+    public void setEditTextOnFocusListener(EditText et){
+
+        et.setOnFocusChangeListener( new View.OnFocusChangeListener(){
+
+            public void onFocusChange( View view, boolean hasfocus){
+                if(hasfocus){
+
+                    view.setBackgroundResource( R.drawable.edit_text_style_focused);
+                }
+                else{
+                    view.setBackgroundResource( R.drawable.edit_text_style);
+                }
+            }
+        });
+
+    }
+
+    @Override
+    public void onBackPressed(){
+        minimizeApp();
+    }
+
+    public void minimizeApp() {
+        Intent intentContactDetails = new Intent(EditContactActivity.this, ContactsDetailsActivity.class);
+        intentContactDetails.putExtra("AccessToken", accessToken);
+        intentContactDetails.putExtra("userName", userName);
+        intentContactDetails.putExtra("userEmail", userEmail);
+        intentContactDetails.putExtra("givenName", givenName);
+        intentContactDetails.putExtra("displayName", displayName);
+        intentContactDetails.putExtra("userPhone", phoneNumber);
+        intentContactDetails.putExtra("emailList",(Serializable) emailList);
+        intentContactDetails.putExtra("email", email);
+        intentContactDetails.putExtra("notes", notes);
+        intentContactDetails.putExtra("nickname", nickname);
+        intentContactDetails.putExtra("spouse", spouse);
+        intentContactDetails.putExtra("street", street);
+        intentContactDetails.putExtra("postalcode", postalCode);
+        intentContactDetails.putExtra("city", city);
+        intentContactDetails.putExtra("state", state);
+        intentContactDetails.putExtra("country", country);
+        intentContactDetails.putExtra("job", job);
+        intentContactDetails.putExtra("department", department);
+        intentContactDetails.putExtra("company", company);
+        intentContactDetails.putExtra("office", office);
+        intentContactDetails.putExtra("manager", manager);
+        intentContactDetails.putExtra("assistant", assistant);
+        intentContactDetails.putExtra("firstname", firstName);
+        intentContactDetails.putExtra("lastname", lastName);
+        intentContactDetails.putExtra("id", id);
+
+        startActivity(intentContactDetails);
+
+        EditContactActivity.this.finish();
+    }
+
 }

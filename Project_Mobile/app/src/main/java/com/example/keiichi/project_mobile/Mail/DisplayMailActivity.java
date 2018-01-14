@@ -74,7 +74,6 @@ public class DisplayMailActivity extends AppCompatActivity {
     final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
     private static final String TAG = MainActivity.class.getSimpleName();
 
-
     private TextView mailSubjectTextView;
     private TextView senderTimeTextView;
     private TextView senderNameTextView;
@@ -135,11 +134,8 @@ public class DisplayMailActivity extends AppCompatActivity {
         receiverMail = getIntent().getStringExtra("receiverMail");
         messageBody = getIntent().getStringExtra("messageBody");
         messageObject = (Message) getIntent().getSerializableExtra("mail");
-
         contentType = getIntent().getStringExtra("contentType");
         isRead = getIntent().getStringExtra("isRead");
-
-
 
         Intent intent = getIntent();
         ACCES_TOKEN = intent.getStringExtra("accestoken");
@@ -288,30 +284,48 @@ public class DisplayMailActivity extends AppCompatActivity {
     }
 
     private void toForwardMail() {
-        Intent showMail = new Intent(DisplayMailActivity.this, ForwardMailActivity.class);
+        Intent forwardMailIntent = new Intent(DisplayMailActivity.this, ForwardMailActivity.class);
 
-        showMail.putExtra("AccessToken", accessToken);
-        showMail.putExtra("userName", userName);
-        showMail.putExtra("userEmail", userEmail);
-        showMail.putExtra("mailId", mailId);
-        showMail.putExtra("mailSubject", mailSubject);
-        showMail.putExtra("mailAddress", mailAddress);
+        forwardMailIntent.putExtra("AccessToken", accessToken);
+        forwardMailIntent.putExtra("userName", userName);
+        forwardMailIntent.putExtra("userEmail", userEmail);
+        forwardMailIntent.putExtra("mailId", mailId);
+        forwardMailIntent.putExtra("mailSubject", mailSubject);
+        forwardMailIntent.putExtra("mailAddress", mailAddress);
+        forwardMailIntent.putExtra("senderName", senderName);
+        forwardMailIntent.putExtra("timeSent", timeSent);
+        forwardMailIntent.putExtra("receiverName", receiverName);
+        forwardMailIntent.putExtra("receiverMail", receiverMail);
+        forwardMailIntent.putExtra("messageBody", messageBody);
+        forwardMailIntent.putExtra("mail", messageObject);
+        forwardMailIntent.putExtra("contentType", contentType);
 
-        startActivity(showMail);
+        startActivity(forwardMailIntent);
+
+        DisplayMailActivity.this.finish();
 
     }
 
     private void goToReplyActivity() {
-        Intent showMail = new Intent(DisplayMailActivity.this, ReplyToMailActivity.class);
+        Intent replyMailIntent = new Intent(DisplayMailActivity.this, ReplyToMailActivity.class);
 
-            showMail.putExtra("AccessToken", accessToken);
-            showMail.putExtra("userName", userName);
-            showMail.putExtra("userEmail", userEmail);
-            showMail.putExtra("mailId", mailId);
-            showMail.putExtra("mailSubject", mailSubject);
-            showMail.putExtra("mailAddress", mailAddress);
+        replyMailIntent.putExtra("AccessToken", accessToken);
+        replyMailIntent.putExtra("userName", userName);
+        replyMailIntent.putExtra("userEmail", userEmail);
+        replyMailIntent.putExtra("mailId", mailId);
+        replyMailIntent.putExtra("mailSubject", mailSubject);
+        replyMailIntent.putExtra("mailAddress", mailAddress);
+        replyMailIntent.putExtra("senderName", senderName);
+        replyMailIntent.putExtra("timeSent", timeSent);
+        replyMailIntent.putExtra("receiverName", receiverName);
+        replyMailIntent.putExtra("receiverMail", receiverMail);
+        replyMailIntent.putExtra("messageBody", messageBody);
+        replyMailIntent.putExtra("mail", messageObject);
+        replyMailIntent.putExtra("contentType", contentType);
 
-        startActivity(showMail);
+        startActivity(replyMailIntent);
+
+        DisplayMailActivity.this.finish();
     }
 
 
@@ -431,7 +445,11 @@ public class DisplayMailActivity extends AppCompatActivity {
 
                 goToReplyActivity();
 
+                DisplayMailActivity.this.finish();
+
+
                 return true;
+
 
             case R.id.action_delete:
 
@@ -486,7 +504,6 @@ public class DisplayMailActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Toast.makeText(getApplicationContext(), "Mail updated!", Toast.LENGTH_SHORT).show();
                         System.out.println(response.toString());
                     }
 
@@ -671,6 +688,22 @@ public class DisplayMailActivity extends AppCompatActivity {
                 mailBodyWebView.setLayoutParams(new LinearLayout.LayoutParams(getResources().getDisplayMetrics().widthPixels, (int) (height * getResources().getDisplayMetrics().density)));
             }
         });
+    }
+
+    @Override
+    public void onBackPressed(){
+        minimizeApp();
+    }
+
+    public void minimizeApp() {
+        Intent intentListMails = new Intent(DisplayMailActivity.this, ListMailsActvity.class);
+        intentListMails.putExtra("AccessToken", accessToken);
+        intentListMails.putExtra("userName", userName);
+        intentListMails.putExtra("userEmail", userEmail);
+
+        startActivity(intentListMails);
+
+        DisplayMailActivity.this.finish();
     }
 
 }
