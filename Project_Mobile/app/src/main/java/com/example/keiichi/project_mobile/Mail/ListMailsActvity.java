@@ -122,7 +122,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     final static String URL_MAILFOLDERS = "https://graph.microsoft.com/v1.0/me/mailFolders";
     final static String URL_MAILFOLDER = "https://graph.microsoft.com/v1.0/me/mailFolders/";
     private String JUNK_FOLDER_ID;
-
+    private ActionMode mailActionMode;
     private NavigationView mailNavigationView;
     private ImageView userPicture;
     private String test;
@@ -139,14 +139,16 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     private Button attachmentButton;
     private String folderData;
     private String currentMailFolderId;
+    private int mailsClickedCount = 0;
 
     private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            MenuInflater menuInflater = getMenuInflater();
+            menuInflater.inflate(R.menu.delete_navigation, menu);
             multiSelect = true;
             actionModeEnabled = true;
-            menu.add("Delete");
-            menu.add("Junk mail");
+            mailActionMode = actionMode;
 
             return true;
         }
@@ -159,29 +161,27 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         @Override
         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
 
+            if (menuItem.getItemId() == R.id.action_delete) {
+                try {
+                    deleteMails(selectedItems);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
+                actionModeEnabled = false;
+                actionMode.finish();
+                return true;
+            }
 
-                    try {
-                        deleteMails(selectedItems);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    for (Integer integer : selectedItems) {
-                        finalMailJsonArray.remove(integer);
-                    }
-
-
-
-
-
-            actionModeEnabled = false;
-            actionMode.finish();
-            return true;
+            return false;
         }
 
         @Override
         public void onDestroyActionMode(ActionMode actionMode) {
             multiSelect = false;
+            actionModeEnabled = false;
+            mailsClickedCount = 0;
+
             for (Integer item : selectedItems) {
                 recyclerView.getChildAt(item).setBackgroundColor(Color.TRANSPARENT);
             }
@@ -288,7 +288,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                         break;
 
                 }
-
 
                 return false;
             }
@@ -471,26 +470,40 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             if (selectedItems.contains(item)) {
                 selectedItems.remove(item);
                 recyclerView.getChildAt(item).setBackgroundColor(Color.TRANSPARENT);
+                mailsClickedCount--;
+                mailActionMode.setTitle(mailsClickedCount+ " Selected");
+
+                if(mailsClickedCount == 0){
+                    mailActionMode.finish();
+                    actionModeEnabled = false;
+                }
+
             } else {
                 selectedItems.add(item);
                 recyclerView.getChildAt(item).setBackgroundColor(Color.LTGRAY);
+                mailsClickedCount++;
+                mailActionMode.setTitle(mailsClickedCount+ " Selected");
+
             }
         }
     }
 
     private void deleteMails(ArrayList<Integer> selectedItems) throws JSONException {
+
         this.selectedItems = selectedItems;
 
         for (Integer integer : selectedItems) {
             RequestQueue queue = Volley.newRequestQueue(this);
-            JSONObject mail = finalMailJsonArray.getJSONObject(integer);
 
+            Message message = messages.get(integer);
 
-            StringRequest objectRequest = new StringRequest(Request.Method.DELETE, URL_MAIL + mail.getString("id"),
+            String postAddress = URL_DELETE + message.getId();
+
+            StringRequest objectRequest = new StringRequest(Request.Method.DELETE, postAddress,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            Toast.makeText(getApplicationContext(), "Mail deleted!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Mails deleted!", Toast.LENGTH_SHORT).show();
                             System.out.println(response);
                         }
 
@@ -514,6 +527,20 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
             queue.add(objectRequest);
         }
+
+        mailAdapter.notifyDataSetChanged();
+
+        int DELAY_TIME=2000;
+
+        //start your animation
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                //this code will run after the delay time which is 2 seconds.
+
+                callGraphAPI();
+            }
+        }, DELAY_TIME);
 
     }
 
@@ -685,9 +712,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             public void onClick(View view, int position) {
                 if (actionModeEnabled) {
                     selectedItem(position);
-
-                    Toast.makeText(getApplicationContext(), String.valueOf(position), Toast.LENGTH_SHORT).show();
-
 
                 } else {
                     Message message = mailAdapter.getItemAtPosition(position);

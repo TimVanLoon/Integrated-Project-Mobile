@@ -569,7 +569,6 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
                 }
 
-
             }
 
             @Override
@@ -580,7 +579,6 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
         }));
 
     }
-
 
             public void setFilter(List<Contact> contactFilterted) {
         countactsFiltered = new ArrayList<>();
