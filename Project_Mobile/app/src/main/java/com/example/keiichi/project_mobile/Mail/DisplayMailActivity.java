@@ -81,6 +81,7 @@ public class DisplayMailActivity extends AppCompatActivity {
     private TextView receiverMailTextView;
     private WebView mailBodyWebView;
     private ImageView profilePicture;
+    private ImageView replyIcon;
     private Toolbar myToolbar;
     private String ACCES_TOKEN;
     private String messageBody;
@@ -146,9 +147,15 @@ public class DisplayMailActivity extends AppCompatActivity {
         profilePicture = findViewById(R.id.profilePicture);
         receiverNameTextView = findViewById(R.id.receiverNameTextView);
         receiverMailTextView = findViewById(R.id.receiverMailTextView);
-
-
         mailBodyWebView = findViewById(R.id.mailBodyWebView);
+        replyIcon = (ImageView) findViewById(R.id.replyIcon);
+
+        replyIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToReplyActivity();
+            }
+        });
 
 
         ColorGenerator generator = ColorGenerator.MATERIAL;
@@ -434,22 +441,20 @@ public class DisplayMailActivity extends AppCompatActivity {
             // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
             case android.R.id.home:
 
-                finish();
+                Intent intentListMails = new Intent(DisplayMailActivity.this, ListMailsActvity.class);
+                intentListMails.putExtra("AccessToken", accessToken);
+                intentListMails.putExtra("userName", userName);
+                intentListMails.putExtra("userEmail", userEmail);
+
+                startActivity(intentListMails);
+
+                DisplayMailActivity.this.finish();
+
                 return true;
 
             case R.id.action_replyAll:
                 goToReplyAllActivity();
                 return true;
-
-            case R.id.action_reply:
-
-                goToReplyActivity();
-
-                DisplayMailActivity.this.finish();
-
-
-                return true;
-
 
             case R.id.action_delete:
 

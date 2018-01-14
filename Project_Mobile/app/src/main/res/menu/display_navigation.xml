@@ -24,11 +24,4 @@
         app:showAsAction="always"
         />
 
-    <item android:id="@+id/action_reply"
-        android:title="@string/edit"
-        android:icon="@drawable/ic_reply"
-        app:showAsAction="always"
-        />
-
-
 </menu>
