@@ -5,7 +5,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.widget.ImageView;
 
-public class ProfilePhoto {
+import java.io.Serializable;
+
+public class ProfilePhoto implements Serializable {
 
     private String id;
     private int height;

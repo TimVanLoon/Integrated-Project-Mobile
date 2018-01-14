@@ -1,8 +1,9 @@
 package com.example.keiichi.project_mobile.DAL.POJOs;
 
 
+import java.io.Serializable;
 
-public class PhysicalAddress {
+public class PhysicalAddress implements Serializable {
 
     private String street;
     private String city;

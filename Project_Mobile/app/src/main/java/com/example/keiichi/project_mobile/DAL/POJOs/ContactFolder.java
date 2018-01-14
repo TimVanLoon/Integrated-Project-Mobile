@@ -1,6 +1,8 @@
 package com.example.keiichi.project_mobile.DAL.POJOs;
 
-public class ContactFolder {
+import java.io.Serializable;
+
+public class ContactFolder implements Serializable {
 
     private String displayName;
     private String id;

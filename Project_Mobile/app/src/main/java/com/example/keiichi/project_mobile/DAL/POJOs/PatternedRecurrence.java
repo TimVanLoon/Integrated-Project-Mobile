@@ -1,7 +1,9 @@
 package com.example.keiichi.project_mobile.DAL.POJOs;
 
 
-public class PatternedRecurrence {
+import java.io.Serializable;
+
+public class PatternedRecurrence implements Serializable {
     private RecurrencePattern pattern;
     private RecurrenceRange range;
 

@@ -1,9 +1,10 @@
 package com.example.keiichi.project_mobile.DAL.POJOs;
 
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class RecurrenceRange {
+public class RecurrenceRange implements Serializable {
 
     private String type;
     private Date startDate;
