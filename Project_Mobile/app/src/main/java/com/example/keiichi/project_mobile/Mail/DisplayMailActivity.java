@@ -96,6 +96,7 @@ public class DisplayMailActivity extends AppCompatActivity {
     private String timeSent;
     private String receiverName;
     private String receiverMail;
+    private String junkID;
 
 
     private  AlertDialog.Builder builder;
@@ -140,6 +141,8 @@ public class DisplayMailActivity extends AppCompatActivity {
         contentType = getIntent().getStringExtra("contentType");
         isRead = getIntent().getStringExtra("isRead");
 
+        junkID = getIntent().getStringExtra("junkID");
+
         Intent intent = getIntent();
         ACCES_TOKEN = intent.getStringExtra("accestoken");
 
@@ -150,7 +153,7 @@ public class DisplayMailActivity extends AppCompatActivity {
         receiverNameTextView = findViewById(R.id.receiverNameTextView);
         receiverMailTextView = findViewById(R.id.receiverMailTextView);
         mailBodyWebView = findViewById(R.id.mailBodyWebView);
-        replyIcon = (ImageView) findViewById(R.id.replyIcon);
+        replyIcon = findViewById(R.id.replyIcon);
 
         replyIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -459,6 +462,22 @@ public class DisplayMailActivity extends AppCompatActivity {
 
                 return true;
 
+            case R.id.action_unread:
+                try {
+                    updateMailToUnread(messageObject);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return true;
+
+            case R.id.action_junk:
+                try {
+                    moveToJunk();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return true;
+
             case R.id.action_replyAll:
                 goToReplyAllActivity();
                 return true;
@@ -492,6 +511,43 @@ public class DisplayMailActivity extends AppCompatActivity {
         }
     }
 
+    private void moveToJunk() throws JSONException {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+
+        final JSONObject jsonObject = new JSONObject(buildJsonJunk(junkID));
+
+        String junkUrl = URL_MAIL_UPDATE + messageObject.getId() + "/move";
+
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, junkUrl , jsonObject,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        System.out.println(response.toString());
+                    }
+
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+                headers.put("Content-Type", "application/json; charset=utf-8");
+
+                return headers;
+            }
+
+        };
+
+        queue.add(objectRequest);
+
+    }
+
     private void goToReplyAllActivity() {
         Intent replyAllIntent = new Intent(DisplayMailActivity.this,ReplyAllActivity.class);
         replyAllIntent.putExtra("mail",messageObject );
@@ -508,7 +564,7 @@ public class DisplayMailActivity extends AppCompatActivity {
 
         newMessage.setRead(true);
 
-        final JSONObject jsonObject = new JSONObject(buildJsonIsRead());
+        final JSONObject jsonObject = new JSONObject(buildJsonIsRead(true));
 
         String patchUrl = URL_MAIL_UPDATE + message.getId();
 
@@ -540,10 +596,58 @@ public class DisplayMailActivity extends AppCompatActivity {
         queue.add(objectRequest);
     }
 
-    private String buildJsonIsRead() {
+    private void updateMailToUnread(Message message) throws JSONException{
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        Message newMessage = new Message();
+
+        newMessage.setRead(true);
+
+        final JSONObject jsonObject = new JSONObject(buildJsonIsRead(false));
+
+        String patchUrl = URL_MAIL_UPDATE + message.getId();
+
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.PATCH, patchUrl , jsonObject,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        System.out.println(response.toString());
+                    }
+
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+                headers.put("Content-Type", "application/json; charset=utf-8");
+
+                return headers;
+            }
+
+        };
+
+        queue.add(objectRequest);
+    }
+
+    private String buildJsonJunk(String junkFolderId) {
+        JsonObjectBuilder factory = Json.createObjectBuilder()
+                .add("DestinationId", junkFolderId);
+
+
+        return factory.build().toString();
+    }
+
+
+    private String buildJsonIsRead(boolean isread) {
         JsonObjectBuilder factory = Json.createObjectBuilder()
 
-                        .add("isRead", true);
+                        .add("isRead", isread);
 
         return factory.build().toString();
     }
@@ -717,6 +821,7 @@ public class DisplayMailActivity extends AppCompatActivity {
 
         DisplayMailActivity.this.finish();
     }
+
 
 }
 

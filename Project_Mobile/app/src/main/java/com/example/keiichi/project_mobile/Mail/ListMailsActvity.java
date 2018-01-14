@@ -108,6 +108,9 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
+
 public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, Serializable {
 
     final private String URL_MAIL = "https://graph.microsoft.com/v1.0/me/messages/";
@@ -118,6 +121,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     final static String CHANNEL_ID = "my_channel_01";
     final static String URL_MAILFOLDERS = "https://graph.microsoft.com/v1.0/me/mailFolders";
     final static String URL_MAILFOLDER = "https://graph.microsoft.com/v1.0/me/mailFolders/";
+    private String JUNK_FOLDER_ID;
 
     private NavigationView mailNavigationView;
     private ImageView userPicture;
@@ -142,6 +146,8 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             multiSelect = true;
             actionModeEnabled = true;
             menu.add("Delete");
+            menu.add("Junk mail");
+
             return true;
         }
 
@@ -152,14 +158,22 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
         @Override
         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-            try {
-                deleteMails(selectedItems);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            for (Integer integer : selectedItems) {
-                finalMailJsonArray.remove(integer);
-            }
+
+
+
+                    try {
+                        deleteMails(selectedItems);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    for (Integer integer : selectedItems) {
+                        finalMailJsonArray.remove(integer);
+                    }
+
+
+
+
+
             actionModeEnabled = false;
             actionMode.finish();
             return true;
@@ -575,6 +589,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
             mailFolders = new Gson().fromJson(String.valueOf(folders), listType);
 
+
             buildDrawer(userName, userEmail, myToolbar, mailFolders);
 
         } catch (JSONException e) {
@@ -702,6 +717,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                     showMail.putExtra("mailAddress", message.getFrom().getEmailAddress().getAddress());
                     showMail.putExtra("senderName", message.getFrom().getEmailAddress().getName());
                     showMail.putExtra("timeSent", message.getReceivedDateTime());
+                    showMail.putExtra("junkID", JUNK_FOLDER_ID);
 
                     showMail.putExtra("receiverName", message.getToRecipients().get(0).getEmailAddress().getName());
                     showMail.putExtra("receiverMail", message.getToRecipients().get(0).getEmailAddress().getAddress());
@@ -847,6 +863,12 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
                 case "ongewenste e-mail":
                     item.withName("Junk E-Mail");
+                    JUNK_FOLDER_ID = folder.getId();
+                    break;
+
+                case "junk email":
+                    item.withName("Junk E-Mail");
+                    JUNK_FOLDER_ID = folder.getId();
                     break;
 
                 case "postvak in":
@@ -914,6 +936,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                             MailFolder folder = (MailFolder) drawerItem.getTag();
 
                             currentMailFolderId = folder.getId();
+
 
                             getMailsFromFolder(currentMailFolderId);
 
@@ -1029,5 +1052,51 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(startMain);
     }
+
+    private void MultiMoveToJunk(Message message) throws JSONException {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+
+        final JSONObject jsonObject = new JSONObject(buildJsonJunk(JUNK_FOLDER_ID));
+
+        String junkUrl = URL_MAIL + message.getId() + "/move";
+
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, junkUrl , jsonObject,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        System.out.println(response.toString());
+                    }
+
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+                headers.put("Content-Type", "application/json; charset=utf-8");
+
+                return headers;
+            }
+
+        };
+
+        queue.add(objectRequest);
+
+    }
+
+    private String buildJsonJunk(String junkFolderId) {
+        JsonObjectBuilder factory = Json.createObjectBuilder()
+                .add("DestinationId", junkFolderId);
+
+
+        return factory.build().toString();
+    }
+
 
 }
