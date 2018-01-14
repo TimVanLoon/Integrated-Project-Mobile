@@ -872,6 +872,16 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
         ArrayList<IDrawerItem> drawerItems = new ArrayList<>();
 
+        for(MailFolder folder : folders){
+            if(folder.getDisplayName().toLowerCase().equals("postvak in")){
+                PrimaryDrawerItem item = new PrimaryDrawerItem();
+                item.withName("Inbox");
+                item.withTag(folder);
+                item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+                drawerItems.add(item);
+            }
+        }
+
         for(MailFolder folder : folders) {
             PrimaryDrawerItem item = new PrimaryDrawerItem();
 
@@ -881,59 +891,88 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
                 case "archive":
                     item.withName("Archive");
+                    item.withTag(folder);
+                    item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+                    drawerItems.add(item);
 
                     break;
 
                 case "boxer":
                     item.withName("Boxer");
+                    item.withTag(folder);
+                    item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+                    drawerItems.add(item);
                     break;
 
                 case "concepten":
                     item.withName("Drafts");
+                    item.withTag(folder);
+                    item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+                    drawerItems.add(item);
                     break;
 
                 case "conversation history":
                     item.withName("Conversation History");
+                    item.withTag(folder);
+                    item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+                    drawerItems.add(item);
                     break;
 
                 case "onbelangrijke e-mail":
                     item.withName("Unimportant E-Mail");
+                    item.withTag(folder);
+                    item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+                    drawerItems.add(item);
                     break;
 
                 case "ongewenste e-mail":
                     item.withName("Junk E-Mail");
                     JUNK_FOLDER_ID = folder.getId();
+                    item.withTag(folder);
+                    item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+                    drawerItems.add(item);
                     break;
 
                 case "junk email":
                     item.withName("Junk E-Mail");
                     JUNK_FOLDER_ID = folder.getId();
+                    item.withTag(folder);
+                    item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+                    drawerItems.add(item);
                     break;
 
                 case "postvak in":
-                    item.withName("Inbox");
                     break;
 
                 case "postvak uit":
                     item.withName("Outbox");
+                    item.withTag(folder);
+                    item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+                    drawerItems.add(item);
                     break;
 
                 case "verwijderde items":
                     item.withName("Deleted Items");
+                    item.withTag(folder);
+                    item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+                    drawerItems.add(item);
                     break;
 
                 case "verzonden items":
                     item.withName("Sent Items");
+                    item.withTag(folder);
+                    item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+                    drawerItems.add(item);
                     break;
 
                 default:
                     item.withName(folder.getDisplayName());
+                    item.withTag(folder);
+                    item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+                    drawerItems.add(item);
                     break;
             }
 
-            item.withTag(folder);
-            item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
-            drawerItems.add(item);
 
         }
 
@@ -966,7 +1005,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                 .withTranslucentStatusBar(false)
                 .withAccountHeader(headerResult)
                 .withDrawerItems(drawerItems)
-                .withSelectedItemByPosition(7)
+                .withSelectedItemByPosition(0)
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
