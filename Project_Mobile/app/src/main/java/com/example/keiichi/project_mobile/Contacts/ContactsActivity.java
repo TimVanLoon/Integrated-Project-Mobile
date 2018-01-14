@@ -779,7 +779,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             }
 
         }
-        
+
         swipeRefreshLayout.setRefreshing(false);
 
     }
