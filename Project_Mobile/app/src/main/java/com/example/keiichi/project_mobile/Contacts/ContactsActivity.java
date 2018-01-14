@@ -117,6 +117,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
     private String userEmail;
     private String id;
     private String currentContactFolderId;
+    private int navIdentifier;
     private boolean multiSelect = false;
     private boolean actionModeEnabled = false;
     private Contact testContact;
@@ -136,7 +137,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
     final private String URL_DELETE = "https://graph.microsoft.com/beta/me/contacts/";
     final static String URL_CONTACTFOLDERS = "https://graph.microsoft.com/v1.0/me/contactFolders/";
     final static String URL_ROOMS = "https://graph.microsoft.com/beta/me/findRooms?$top=999&$count=true";
-    final static String URL_USERS = "https://graph.microsoft.com/v1.0/users";
+    final static String URL_USERS = "https://graph.microsoft.com/v1.0/users?$top=999&$count=true";
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -753,8 +754,32 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
     public void onRefresh() {
         swipeRefreshLayout.setRefreshing(true);
 
-        getContacts();
+        if(currentContactFolderId == null){
 
+            getContacts();
+
+        } else{
+
+            if(navIdentifier == 4){
+
+                getContactsFromFolder(currentContactFolderId);
+
+            }else if(navIdentifier == 1){
+
+                getContacts();
+
+            } else if(navIdentifier == 2){
+
+                getUsers();
+
+            } else if(navIdentifier == 3){
+
+                getRooms();
+
+            }
+
+        }
+        
         swipeRefreshLayout.setRefreshing(false);
 
     }
@@ -1084,6 +1109,9 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
                         if (drawerItem instanceof PrimaryDrawerItem){
 
                             if(drawerItem.getIdentifier() > 3){
+
+                                navIdentifier = 4;
+
                                 ContactFolder contactFolder = (ContactFolder) drawerItem.getTag();
 
                                 currentContactFolderId = contactFolder.getId();
@@ -1097,17 +1125,17 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
                                 setActionBarTitle(folderName, myToolbar);
 
                             } else if(drawerItem.getIdentifier() == 1){
-
+                                navIdentifier = 1;
                                 getContacts();
                                 setActionBarTitle("My Contacts", myToolbar);
 
                             } else if(drawerItem.getIdentifier() == 2){
-
+                                navIdentifier = 2;
                                 getUsers();
                                 setActionBarTitle("All Users", myToolbar);
 
                             } else if(drawerItem.getIdentifier() == 3){
-
+                                navIdentifier = 3;
                                 getRooms();
                                 setActionBarTitle("All Rooms", myToolbar);
 
