@@ -28,8 +28,6 @@
             android:textColor="#3f3f3f"
             android:textSize="50px"
             android:visibility="invisible"
-
-            app:layout_constraintEnd_toStartOf="@+id/ButtonSendMail"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
