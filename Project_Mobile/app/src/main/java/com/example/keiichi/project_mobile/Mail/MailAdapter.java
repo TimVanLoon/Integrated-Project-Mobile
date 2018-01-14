@@ -100,6 +100,7 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
             String bodyPreview = message.getBodyPreview();
             String subject = message.getSubject();
             Boolean isRead = message.isRead();
+            Boolean hasAttachment = message.isHasAttachments();
 
             //Data weergeven
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -145,6 +146,10 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
             queue.add(request);
 
             */
+
+            if (message.isHasAttachments()){
+                holder.attachmentView.setVisibility(View.VISIBLE);
+            }
 
             if (message.isRead()) {
 
@@ -220,7 +225,7 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         TextView from, subject, message, iconText, timestamp;
-        ImageView iconImp, imgProfile, profilePicture;
+        ImageView iconImp, imgProfile, profilePicture, attachmentView;
         LinearLayout messageContainer;
         RelativeLayout iconContainer, iconBack, iconFront;
 
@@ -236,6 +241,7 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
             messageContainer = view.findViewById(R.id.message_container);
             iconContainer = view.findViewById(R.id.icon_container);
             profilePicture = view.findViewById(R.id.profilePicture);
+            attachmentView = view.findViewById(R.id.AttachmentImage);
 
 
 
