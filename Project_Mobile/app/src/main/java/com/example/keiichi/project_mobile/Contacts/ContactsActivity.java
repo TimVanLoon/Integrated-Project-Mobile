@@ -18,12 +18,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -97,13 +99,18 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
     private String userName;
     private String userEmail;
     private String id;
+    private boolean multiSelect = false;
+    private boolean actionModeEnabled = false;
     private Contact testContact;
     private ImageView mImageView;
     private Drawer drawer;
+    private int contactsClickedCount = 0;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private List<Contact> selectedContacts = new ArrayList<>();
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts?$orderBy=displayName&$top=500&$count=true";
     final static String MSGRAPH_URL_FOTO = "https://graph.microsoft.com/beta/me/contacts/";
     final static String MSGRAPH_URL_FOTO2 = "/photo/$value";
+    final private String URL_DELETE = "https://graph.microsoft.com/beta/me/contacts/";
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -136,7 +143,66 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
 
                 onContactClicked(position);
+                
+            }
+        });
 
+
+        contactsListView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
+
+        contactsListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+            @Override
+            public void onItemCheckedStateChanged(ActionMode actionMode, int position, long l, boolean checked) {
+                if(checked) {
+                    contactsListView.getChildAt(position).setBackgroundColor(Color.LTGRAY);
+                    selectedContacts.add(contactAdapter.getItemAtPosition(position));
+                    contactsClickedCount++;
+                    actionMode.setTitle(contactsClickedCount+ " Selected");
+                } else {
+                    selectedContacts.remove(contactAdapter.getItemAtPosition(position));
+                    contactsClickedCount--;
+                    actionMode.setTitle(contactsClickedCount+ " Selected");
+                    contactsListView.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
+                }
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+                MenuInflater menuInflater = getMenuInflater();
+                menuInflater.inflate(R.menu.delete_navigation, menu);
+                actionModeEnabled = true;
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+                if(menuItem.getItemId() == R.id.action_delete){
+                    for(Contact contact : selectedContacts){
+                        try {
+                            deleteContact(contact.getId());
+                            getContacts();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    getContacts();
+                    actionMode.finish();
+                    return true;
+                }
+
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode actionMode) {
+                contactsClickedCount = 0;
+                selectedContacts.clear();
             }
         });
 
@@ -237,6 +303,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -265,23 +332,6 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             }
 
         });
-
-        MenuItemCompat.setOnActionExpandListener(searchItem,
-                new MenuItemCompat.OnActionExpandListener() {
-                    @Override
-                    public boolean onMenuItemActionCollapse(MenuItem item) {
-// Do something when collapsed
-                        setFilter(contacts);
-                        return true; // Return true to collapse action view
-                    }
-
-                    @Override
-                    public boolean onMenuItemActionExpand(MenuItem item) {
-// Do something when expanded
-                        return true; // Return true to expand action view
-                    }
-                });
-
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -407,133 +457,139 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
     private void onContactClicked(int position) {
 
-
-        if (contacts.size() != 0) {
-
-            Contact contact = contactAdapter.getItemAtPosition(position);
-
-            Intent showContactDetails = new Intent(ContactsActivity.this, ContactsDetailsActivity.class);
-            showContactDetails.putExtra("givenName", contact.getGivenName());
-            showContactDetails.putExtra("displayName", contact.getDisplayName());
-            showContactDetails.putExtra("id", contact.getId());
-
-            if (contact.getMobilePhone() == null) {
-                showContactDetails.putExtra("userPhone", "");
-            } else {
-                showContactDetails.putExtra("userPhone", contact.getMobilePhone());
-            }
-
-            if (contact.getEmailAddresses() != null) {
-                showContactDetails.putExtra("emailList", (Serializable) contact.getEmailAddresses());
-            }
-
-            if (contact.getPersonalNotes() != null) {
-                showContactDetails.putExtra("notes", contact.getPersonalNotes());
-            } else {
-                showContactDetails.putExtra("notes", "");
-            }
-
-            if (contact.getSpouseName() != null) {
-                showContactDetails.putExtra("spouse", contact.getSpouseName());
-            } else {
-                showContactDetails.putExtra("spouse", "");
-            }
-
-            if (contact.getNickName() != null) {
-                showContactDetails.putExtra("nickname", contact.getNickName());
-            } else {
-                showContactDetails.putExtra("nickname", "");
-            }
-
-            if (contact.getJobTitle() != null) {
-                showContactDetails.putExtra("job", contact.getJobTitle());
-            } else {
-                showContactDetails.putExtra("job", "");
-            }
-
-            if (contact.getDepartment() != null) {
-                showContactDetails.putExtra("department", contact.getDepartment());
-            } else {
-                showContactDetails.putExtra("department", "");
-            }
-
-            if (contact.getCompanyName() != null) {
-                showContactDetails.putExtra("company", contact.getCompanyName());
-            } else {
-                showContactDetails.putExtra("company", "");
-            }
-
-            if (contact.getOfficeLocation() != null) {
-                showContactDetails.putExtra("office", contact.getOfficeLocation());
-            } else {
-                showContactDetails.putExtra("office", "");
-            }
-
-            if (contact.getManager() != null) {
-                showContactDetails.putExtra("manager", contact.getManager());
-            } else {
-                showContactDetails.putExtra("manager", "");
-            }
-
-            if (contact.getAssistantName() != null) {
-                showContactDetails.putExtra("assistant", contact.getAssistantName());
-            } else {
-                showContactDetails.putExtra("assistant", "");
-            }
-
-            if (contact.getHomeAddress() != null) {
-                showContactDetails.putExtra("street", contact.getHomeAddress().getStreet());
-                showContactDetails.putExtra("postalcode", contact.getHomeAddress().getPostalCode());
-                showContactDetails.putExtra("city", contact.getHomeAddress().getCity());
-                showContactDetails.putExtra("state", contact.getHomeAddress().getState());
-                showContactDetails.putExtra("country", contact.getHomeAddress().getCountryOrRegion());
-            } else {
-                showContactDetails.putExtra("street", "");
-                showContactDetails.putExtra("postalcode", "");
-                showContactDetails.putExtra("city", "");
-                showContactDetails.putExtra("state", "");
-                showContactDetails.putExtra("country", "");
-            }
-
-            if (contact.getHomeAddress().getStreet() == null) {
-                showContactDetails.putExtra("street", "");
-            }
-
-            if (contact.getHomeAddress().getPostalCode() == null) {
-                showContactDetails.putExtra("postalcode", "");
-            }
-
-            if (contact.getHomeAddress().getCity() == null) {
-                showContactDetails.putExtra("city", "");
-            }
-
-            if (contact.getHomeAddress().getState() == null) {
-                showContactDetails.putExtra("state", "");
-            }
-
-            if (contact.getHomeAddress().getCountryOrRegion() == null) {
-                showContactDetails.putExtra("country", "");
-            }
-
-            if (contact.getGivenName() != null) {
-                showContactDetails.putExtra("firstname", contact.getGivenName());
-            }
-
-            if (contact.getSurname() != null) {
-                showContactDetails.putExtra("lastname", contact.getSurname());
-            }
-
-            showContactDetails.putExtra("userEmail", userEmail);
-            showContactDetails.putExtra("AccessToken", accessToken);
-            showContactDetails.putExtra("userName", userName);
+        if (actionModeEnabled) {
 
 
-            startActivity(showContactDetails);
-
-            ContactsActivity.this.finish();
 
         } else {
-            Toast.makeText(getApplicationContext(), "Empty contact list!", Toast.LENGTH_SHORT).show();
+
+            if (contacts.size() != 0) {
+
+                Contact contact = contactAdapter.getItemAtPosition(position);
+
+                Intent showContactDetails = new Intent(ContactsActivity.this, ContactsDetailsActivity.class);
+                showContactDetails.putExtra("givenName", contact.getGivenName());
+                showContactDetails.putExtra("displayName", contact.getDisplayName());
+                showContactDetails.putExtra("id", contact.getId());
+
+                if (contact.getMobilePhone() == null) {
+                    showContactDetails.putExtra("userPhone", "");
+                } else {
+                    showContactDetails.putExtra("userPhone", contact.getMobilePhone());
+                }
+
+                if (contact.getEmailAddresses() != null) {
+                    showContactDetails.putExtra("emailList", (Serializable) contact.getEmailAddresses());
+                }
+
+                if (contact.getPersonalNotes() != null) {
+                    showContactDetails.putExtra("notes", contact.getPersonalNotes());
+                } else {
+                    showContactDetails.putExtra("notes", "");
+                }
+
+                if (contact.getSpouseName() != null) {
+                    showContactDetails.putExtra("spouse", contact.getSpouseName());
+                } else {
+                    showContactDetails.putExtra("spouse", "");
+                }
+
+                if (contact.getNickName() != null) {
+                    showContactDetails.putExtra("nickname", contact.getNickName());
+                } else {
+                    showContactDetails.putExtra("nickname", "");
+                }
+
+                if (contact.getJobTitle() != null) {
+                    showContactDetails.putExtra("job", contact.getJobTitle());
+                } else {
+                    showContactDetails.putExtra("job", "");
+                }
+
+                if (contact.getDepartment() != null) {
+                    showContactDetails.putExtra("department", contact.getDepartment());
+                } else {
+                    showContactDetails.putExtra("department", "");
+                }
+
+                if (contact.getCompanyName() != null) {
+                    showContactDetails.putExtra("company", contact.getCompanyName());
+                } else {
+                    showContactDetails.putExtra("company", "");
+                }
+
+                if (contact.getOfficeLocation() != null) {
+                    showContactDetails.putExtra("office", contact.getOfficeLocation());
+                } else {
+                    showContactDetails.putExtra("office", "");
+                }
+
+                if (contact.getManager() != null) {
+                    showContactDetails.putExtra("manager", contact.getManager());
+                } else {
+                    showContactDetails.putExtra("manager", "");
+                }
+
+                if (contact.getAssistantName() != null) {
+                    showContactDetails.putExtra("assistant", contact.getAssistantName());
+                } else {
+                    showContactDetails.putExtra("assistant", "");
+                }
+
+                if (contact.getHomeAddress() != null) {
+                    showContactDetails.putExtra("street", contact.getHomeAddress().getStreet());
+                    showContactDetails.putExtra("postalcode", contact.getHomeAddress().getPostalCode());
+                    showContactDetails.putExtra("city", contact.getHomeAddress().getCity());
+                    showContactDetails.putExtra("state", contact.getHomeAddress().getState());
+                    showContactDetails.putExtra("country", contact.getHomeAddress().getCountryOrRegion());
+                } else {
+                    showContactDetails.putExtra("street", "");
+                    showContactDetails.putExtra("postalcode", "");
+                    showContactDetails.putExtra("city", "");
+                    showContactDetails.putExtra("state", "");
+                    showContactDetails.putExtra("country", "");
+                }
+
+                if (contact.getHomeAddress().getStreet() == null) {
+                    showContactDetails.putExtra("street", "");
+                }
+
+                if (contact.getHomeAddress().getPostalCode() == null) {
+                    showContactDetails.putExtra("postalcode", "");
+                }
+
+                if (contact.getHomeAddress().getCity() == null) {
+                    showContactDetails.putExtra("city", "");
+                }
+
+                if (contact.getHomeAddress().getState() == null) {
+                    showContactDetails.putExtra("state", "");
+                }
+
+                if (contact.getHomeAddress().getCountryOrRegion() == null) {
+                    showContactDetails.putExtra("country", "");
+                }
+
+                if (contact.getGivenName() != null) {
+                    showContactDetails.putExtra("firstname", contact.getGivenName());
+                }
+
+                if (contact.getSurname() != null) {
+                    showContactDetails.putExtra("lastname", contact.getSurname());
+                }
+
+                showContactDetails.putExtra("userEmail", userEmail);
+                showContactDetails.putExtra("AccessToken", accessToken);
+                showContactDetails.putExtra("userName", userName);
+
+
+                startActivity(showContactDetails);
+
+                ContactsActivity.this.finish();
+
+            } else {
+                Toast.makeText(getApplicationContext(), "Empty contact list!", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -550,6 +606,41 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
         getContacts();
 
         swipeRefreshLayout.setRefreshing(false);
+
+    }
+
+    // PATCH REQUEST VOOR DELETEN CONTACTPERSOON
+    private void deleteContact(String contactId) throws JSONException {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        String postAddress = URL_DELETE + contactId;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.DELETE, postAddress,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Toast.makeText(getApplicationContext(), "Contact deleted!", Toast.LENGTH_SHORT).show();
+                    }
+
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+                headers.put("Content-Type", "application/json; charset=utf-8");
+
+                return headers;
+            }
+
+        };
+
+        queue.add(stringRequest);
 
     }
 

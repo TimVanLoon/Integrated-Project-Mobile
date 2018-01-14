@@ -451,7 +451,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
     }
 
-    void selectedItem(Integer item) {
+    private void selectedItem(Integer item) {
         if (multiSelect) {
             if (selectedItems.contains(item)) {
                 selectedItems.remove(item);
