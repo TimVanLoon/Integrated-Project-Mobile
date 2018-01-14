@@ -69,6 +69,8 @@ public class AddContactActivity extends AppCompatActivity {
     private String attendeeMail;
     private String accessToken;
     private boolean isValidEmail;
+    private boolean myItemShouldBeEnabled = true;
+    private MenuItem saveItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,9 +135,11 @@ public class AddContactActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.add_navigation, menu);
 
+        saveItem = menu.findItem(R.id.action_save);
 
         return super.onCreateOptionsMenu(menu);
     }
+
 
     // METHODE VOOR DE CLICKABLE ICOONTJES IN DE ACTION BAR
     @Override
@@ -192,6 +196,8 @@ public class AddContactActivity extends AppCompatActivity {
                                 phoneInput.setError("Invalid phone number!");
                             } else {
                                 try {
+                                    saveItem.setEnabled(false);
+
                                     saveContact();
 
                                     int DELAY_TIME=2000;
