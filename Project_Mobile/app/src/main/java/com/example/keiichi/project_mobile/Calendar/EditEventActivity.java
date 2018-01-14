@@ -63,11 +63,9 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
     final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/events/";
 
     private String [] DURATIONSPINNERLIST = {"0 Minutes", "15 Minutes", "30 Minutes", "45 Minutes", "1 Hour", "90 Minutes", " 2 Hours", "Entire day"};
-    private String [] REMINDERSPINNERLIST = {"0 Minutes", "15 Minutes", "30 Minutes", "45 Minutes", "1 Hour", "90 Minutes", " 2 Hours", "3 Hours", "4 Hours", "8 Hours", "12 Hours",
-            "1 Day", "2 Days", "3 Days", "1 Week", "2 Weeks"};
+    private String [] REMINDERSPINNERLIST = {"0 Minutes", "15 Minutes", "30 Minutes", "45 Minutes", "1 Hour", "90 Minutes", " 2 Hours", "3 Hours", "4 Hours", "8 Hours", "12 Hours", "1 Day", "2 Days", "3 Days", "1 Week", "2 Weeks"};
     private String [] DISPLAYASSPINNERLIST = {"Free", "Working elsewhere", "Tentative", "Busy", "Away"};
     private String [] REPEATSPINNERLIST = {"Never", "Each day", "Every sunday", "Every workday", "Day 31 of every month", "Ever last sunday", "Every 31st of december"};
-
     private List<Attendee> attendees;
     private List<EmailAddress> emailList = new ArrayList<>();
     private Toolbar myToolbar;
@@ -134,6 +132,7 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
     private ArrayAdapter<String> adapterReminder;
     private ArrayAdapter<String> adapterDisplayAs;
     private ArrayAdapter<String> adapterRepeat;
+    private MenuItem saveItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -641,6 +640,7 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.add_navigation, menu);
 
+        saveItem = menu.findItem(R.id.action_save);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -679,6 +679,8 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
             // WANNEER SAVE ICON WORDT AANGEKLIKT
             case R.id.action_save:
                 try {
+                    saveItem.setEnabled(false);
+
                     updateEvent();
 
                     int DELAY_TIME=2000;

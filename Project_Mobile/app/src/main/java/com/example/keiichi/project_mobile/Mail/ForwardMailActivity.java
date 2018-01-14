@@ -52,8 +52,8 @@ public class ForwardMailActivity extends AppCompatActivity {
     private String contentType;
     private Message messageObject;
     private Toolbar myToolbar;
-    EditText TextMailAdress,TextMailSubject;
-    RichEditor Editor;
+    private EditText TextMailAdress,TextMailSubject;
+    private RichEditor Editor;
     private MenuItem sendItem;
 
     @Override

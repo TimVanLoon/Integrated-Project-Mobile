@@ -86,6 +86,7 @@ public class EditContactActivity extends AppCompatActivity {
     private EditText personalNotesInput;
     private EditText nickNameInput;
     private EditText spouseNameInput;
+    private MenuItem saveItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,6 +192,7 @@ public class EditContactActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.add_navigation, menu);
 
+        saveItem = menu.findItem(R.id.action_save);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -271,6 +273,8 @@ public class EditContactActivity extends AppCompatActivity {
                             phoneInput.setError("Invalid phone number!");
                         }else {
                             try {
+                                saveItem.setEnabled(false);
+
                                 updateContact();
 
                                 int DELAY_TIME=2000;
@@ -321,8 +325,6 @@ public class EditContactActivity extends AppCompatActivity {
                     }
 
                 }
-
-
 
             default:
                 // If we got here, the user's action was not recognized.
