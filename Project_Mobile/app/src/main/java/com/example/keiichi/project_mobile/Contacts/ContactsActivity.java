@@ -87,6 +87,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ContactsActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, Serializable {
 
@@ -112,6 +114,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
     private RecyclerView contactsRecyclerView;
     private int contactsClickedCount = 0;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private ActionMode contactActionMode;
     private List<Contact> selectedContacts = new ArrayList<>();
     private ArrayList<Integer> selectedItems = new ArrayList<>();
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts?$orderBy=displayName&$top=500&$count=true";
@@ -275,6 +278,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             menuInflater.inflate(R.menu.delete_navigation, menu);
             multiSelect = true;
             actionModeEnabled = true;
+            contactActionMode = actionMode;
             return true;
         }
 
@@ -286,20 +290,16 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
         @Override
         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
             if(menuItem.getItemId() == R.id.action_delete){
-                for(Contact contact : selectedContacts){
-                    try {
-                        deleteContact(contact.getId());
-                        getContacts();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                try {
+                    deleteContacts(selectedItems);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
 
-                getContacts();
+                actionModeEnabled = false;
                 actionMode.finish();
                 return true;
             }
-
             return false;
         }
 
@@ -308,8 +308,12 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             multiSelect = false;
             actionModeEnabled = false;
             contactsClickedCount = 0;
+
+            for (Integer item : selectedItems) {
+                contactsRecyclerView.getChildAt(item).setBackgroundColor(Color.TRANSPARENT);
+            }
+
             selectedContacts.clear();
-            contactAdapter.notifyDataSetChanged();
 
         }
     };
@@ -413,9 +417,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             @Override
             public void onClick(View view, int position) {
                 if (actionModeEnabled) {
-
-                    Toast.makeText(getApplicationContext(), String.valueOf(position), Toast.LENGTH_SHORT).show();
-
+                    selectedItem(position);
 
                 } else {
 
@@ -579,38 +581,60 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
     }
 
     // PATCH REQUEST VOOR DELETEN CONTACTPERSOON
-    private void deleteContact(String contactId) throws JSONException {
-        RequestQueue queue = Volley.newRequestQueue(this);
+    private void deleteContacts(ArrayList<Integer> selectedItems) throws JSONException {
 
-        String postAddress = URL_DELETE + contactId;
+        this.selectedItems = selectedItems;
 
-        StringRequest stringRequest = new StringRequest(Request.Method.DELETE, postAddress,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Toast.makeText(getApplicationContext(), "Contact deleted!", Toast.LENGTH_SHORT).show();
-                    }
+        for (Integer integer : selectedItems) {
+            RequestQueue queue = Volley.newRequestQueue(this);
 
-                }, new Response.ErrorListener() {
+            Contact contact = contacts.get(integer);
+
+            String postAddress = URL_DELETE + contact.getId();
+
+            StringRequest stringRequest = new StringRequest(Request.Method.DELETE, postAddress,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Toast.makeText(getApplicationContext(), "Contacts deleted!", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyLog.e("Error: ", error.getMessage());
+                    error.printStackTrace();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("Authorization", "Bearer " + accessToken);
+                    headers.put("Content-Type", "application/json; charset=utf-8");
+
+                    return headers;
+                }
+
+            };
+
+            queue.add(stringRequest);
+
+        }
+
+
+        contactAdapter.notifyDataSetChanged();
+
+        int DELAY_TIME=2000;
+
+        //start your animation
+        new Timer().schedule(new TimerTask() {
             @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.e("Error: ", error.getMessage());
-                error.printStackTrace();
+            public void run() {
+                //this code will run after the delay time which is 2 seconds.
+
+                getContacts();
             }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + accessToken);
-                headers.put("Content-Type", "application/json; charset=utf-8");
-
-                return headers;
-            }
-
-        };
-
-        queue.add(stringRequest);
-
+        }, DELAY_TIME);
     }
 
     private void selectedItem(Integer item) {
@@ -618,9 +642,18 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             if (selectedItems.contains(item)) {
                 selectedItems.remove(item);
                 contactsRecyclerView.getChildAt(item).setBackgroundColor(Color.TRANSPARENT);
+                contactsClickedCount--;
+                contactActionMode.setTitle(contactsClickedCount+ " Selected");
+
+                if(contactsClickedCount == 0){
+                    contactActionMode.finish();
+                    actionModeEnabled = false;
+                }
             } else {
                 selectedItems.add(item);
                 contactsRecyclerView.getChildAt(item).setBackgroundColor(Color.LTGRAY);
+                contactsClickedCount++;
+                contactActionMode.setTitle(contactsClickedCount+ " Selected");
             }
         }
     }
