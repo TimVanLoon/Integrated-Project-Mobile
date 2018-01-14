@@ -57,6 +57,7 @@ public class ReplyToMailActivity extends AppCompatActivity {
     private Toolbar myToolbar;
     private EditText TextMailAdress,TextMailSubject;
     private RichEditor Editor;
+    private MenuItem sendItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,6 +143,8 @@ public class ReplyToMailActivity extends AppCompatActivity {
         inflater.inflate(R.menu.send_navigation, menu);
         MenuItem addItem = menu.findItem(R.id.action_send);
 
+        sendItem = menu.findItem(R.id.action_send);
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -176,6 +179,8 @@ public class ReplyToMailActivity extends AppCompatActivity {
 
             case R.id.action_send:
                 try {
+                    sendItem.setEnabled(false);
+
                     ReplyToMail();
                     finish();
                 } catch (JSONException e) {

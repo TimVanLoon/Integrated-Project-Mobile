@@ -37,9 +37,8 @@ import jp.wasabeef.richeditor.RichEditor;
 public class ReplyAllActivity extends AppCompatActivity {
     private String accestoken;
     private Message message;
-
-
     private RichEditor Editor;
+    private MenuItem sendItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,7 +116,7 @@ public class ReplyAllActivity extends AppCompatActivity {
         inflater.inflate(R.menu.send_navigation, menu);
         MenuItem addItem = menu.findItem(R.id.action_send);
 
-
+        sendItem = menu.findItem(R.id.action_send);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -136,6 +135,8 @@ public class ReplyAllActivity extends AppCompatActivity {
 
             case R.id.action_send:
                 try {
+                    sendItem.setEnabled(false);
+
                     ReplyToMail();
                     finish();
                 } catch (JSONException e) {

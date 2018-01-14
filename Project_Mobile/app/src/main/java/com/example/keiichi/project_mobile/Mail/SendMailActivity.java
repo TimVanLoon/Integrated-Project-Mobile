@@ -56,10 +56,9 @@ public class SendMailActivity extends AppCompatActivity {
     private String accessToken;
     private String userName;
     private String userEmail;
-
     private String fromContactDetailsActivity;
     private RichEditor editor;
-
+    private MenuItem sendItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,7 +155,7 @@ public class SendMailActivity extends AppCompatActivity {
         inflater.inflate(R.menu.send_navigation, menu);
         MenuItem addItem = menu.findItem(R.id.action_send);
 
-
+        sendItem = menu.findItem(R.id.action_send);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -171,14 +170,14 @@ public class SendMailActivity extends AppCompatActivity {
 
                 finish();
 
-
                 return true;
 
             case R.id.action_send:
                 try {
+                    sendItem.setEnabled(false);
+
                     SendMail();
                     finish();
-
 
                     SendMailActivity.this.finish();
 

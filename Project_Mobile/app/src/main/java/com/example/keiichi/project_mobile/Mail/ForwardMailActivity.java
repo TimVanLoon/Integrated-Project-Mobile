@@ -38,7 +38,6 @@ import jp.wasabeef.richeditor.RichEditor;
 public class ForwardMailActivity extends AppCompatActivity {
 
     final private String URL_FORWARD = "https://graph.microsoft.com/v1.0/me/messages/";
-
     private String accessToken;
     private String userName;
     private String userEmail;
@@ -55,6 +54,7 @@ public class ForwardMailActivity extends AppCompatActivity {
     private Toolbar myToolbar;
     EditText TextMailAdress,TextMailSubject;
     RichEditor Editor;
+    private MenuItem sendItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,7 +157,7 @@ public class ForwardMailActivity extends AppCompatActivity {
         inflater.inflate(R.menu.send_navigation, menu);
         MenuItem addItem = menu.findItem(R.id.action_send);
 
-
+        sendItem = menu.findItem(R.id.action_send);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -194,6 +194,8 @@ public class ForwardMailActivity extends AppCompatActivity {
 
             case R.id.action_send:
                 try {
+                    sendItem.setEnabled(false);
+
                     forwardMail();
                 } catch (JSONException e) {
                     e.printStackTrace();
