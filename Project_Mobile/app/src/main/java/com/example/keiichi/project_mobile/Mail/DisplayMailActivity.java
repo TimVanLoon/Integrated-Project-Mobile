@@ -832,7 +832,7 @@ public class DisplayMailActivity extends AppCompatActivity {
                         .setContentTitle(title)
                         .setContentText(text)
                         .setVibrate(new long[]{100, 200, 300})
-                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
 
 
 
