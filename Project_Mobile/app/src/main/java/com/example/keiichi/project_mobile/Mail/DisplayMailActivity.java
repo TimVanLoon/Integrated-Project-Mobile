@@ -2,12 +2,15 @@ package com.example.keiichi.project_mobile.Mail;
 
 
 import android.Manifest;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +20,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.view.Display;
@@ -746,7 +750,7 @@ public class DisplayMailActivity extends AppCompatActivity {
                     os.close();
                     Uri path = Uri.fromFile(filePath);
 
-                    Toast.makeText(DisplayMailActivity.this,"saved!", Toast.LENGTH_SHORT).show();
+                   addNotification("attachments downloaded", "attachments downloaded to download folder");
                 }
             } catch (IOException e) {
                 Toast.makeText(DisplayMailActivity.this, "save fail", Toast.LENGTH_SHORT).show();
@@ -820,6 +824,25 @@ public class DisplayMailActivity extends AppCompatActivity {
         startActivity(intentListMails);
 
         DisplayMailActivity.this.finish();
+    }
+
+    private void addNotification(String title, String text) {
+        android.support.v4.app.NotificationCompat.Builder notification =
+                new NotificationCompat.Builder(this)
+                        .setContentTitle(title)
+                        .setContentText(text)
+                        .setVibrate(new long[]{100, 200, 300})
+                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+
+
+
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        notification.setContentIntent(contentIntent);
+
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(0, notification.build());
     }
 
 
