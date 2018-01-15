@@ -1,5 +1,6 @@
 package com.example.keiichi.project_mobile.Contacts;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -48,6 +50,7 @@ import java.util.regex.Pattern;
 public class AddContactActivity extends AppCompatActivity {
 
     final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/contacts";
+    final private int DELAY_TIME = 100;
     private List<String> mobilePhones = new ArrayList<>();
     private List<String> homePhones = new ArrayList<>();
     private List<String> businessPhones = new ArrayList<>();
@@ -86,6 +89,7 @@ public class AddContactActivity extends AppCompatActivity {
     private EditText mobilePhoneInput;
     private EditText yomiCompanyInput;
     private EditText imInput;
+    private EditText input;
     private TextView businessPhoneTitle2;
     private TextView homePhoneTitle;
     private TextView homePhoneTitle2;
@@ -268,6 +272,15 @@ public class AddContactActivity extends AppCompatActivity {
                                 middleNameInput.setFocusableInTouchMode(true);
                                 middleNameInput.requestFocus();
 
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+
+                                        autoFocus(middleNameInput);
+
+                                    }
+                                }, DELAY_TIME);
+
                                 break;
 
                             case R.id.action_title:
@@ -277,14 +290,32 @@ public class AddContactActivity extends AppCompatActivity {
                                 titleInput.setFocusableInTouchMode(true);
                                 titleInput.requestFocus();
 
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+
+                                        autoFocus(titleInput);
+
+                                    }
+                                }, DELAY_TIME);
+
                                 break;
 
                             case R.id.action_suffix:
                                 suffixInput.setVisibility(View.VISIBLE);
                                 suffixTitle.setVisibility(View.VISIBLE);
 
-                                titleInput.setFocusableInTouchMode(true);
-                                titleInput.requestFocus();
+                                suffixInput.setFocusableInTouchMode(true);
+                                suffixInput.requestFocus();
+
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+
+                                        autoFocus(suffixInput);
+
+                                    }
+                                }, DELAY_TIME);
 
                                 break;
 
@@ -296,6 +327,15 @@ public class AddContactActivity extends AppCompatActivity {
 
                                 yomiFirstNameInput.setFocusableInTouchMode(true);
                                 yomiFirstNameInput.requestFocus();
+
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+
+                                        autoFocus(yomiFirstNameInput);
+
+                                    }
+                                }, DELAY_TIME);
 
                                 break;
 
@@ -333,6 +373,15 @@ public class AddContactActivity extends AppCompatActivity {
                                 emailInput2.setFocusableInTouchMode(true);
                                 emailInput2.requestFocus();
 
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+
+                                        autoFocus(emailInput2);
+
+                                    }
+                                }, DELAY_TIME);
+
                                 break;
 
                             case R.id.action_email3:
@@ -343,6 +392,15 @@ public class AddContactActivity extends AppCompatActivity {
 
                                 emailInput3.setFocusableInTouchMode(true);
                                 emailInput3.requestFocus();
+
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+
+                                        autoFocus(emailInput3);
+
+                                    }
+                                }, DELAY_TIME);
 
                                 break;
 
@@ -378,6 +436,15 @@ public class AddContactActivity extends AppCompatActivity {
                                 businessPhoneInput2.setFocusableInTouchMode(true);
                                 businessPhoneInput2.requestFocus();
 
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+
+                                        autoFocus(businessPhoneInput2);
+
+                                    }
+                                }, DELAY_TIME);
+
                                 break;
 
                             case R.id.action_homePhone:
@@ -386,6 +453,15 @@ public class AddContactActivity extends AppCompatActivity {
 
                                 homePhoneInput.setFocusableInTouchMode(true);
                                 homePhoneInput.requestFocus();
+
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+
+                                        autoFocus(homePhoneInput);
+
+                                    }
+                                }, DELAY_TIME);
 
                                 break;
 
@@ -396,6 +472,14 @@ public class AddContactActivity extends AppCompatActivity {
                                 homePhoneInput2.setFocusableInTouchMode(true);
                                 homePhoneInput2.requestFocus();
 
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+
+                                        autoFocus(homePhoneInput2);
+
+                                    }
+                                }, DELAY_TIME);
 
                                 break;
 
@@ -405,6 +489,15 @@ public class AddContactActivity extends AppCompatActivity {
 
                                 mobilePhoneInput.setFocusableInTouchMode(true);
                                 mobilePhoneInput.requestFocus();
+
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+
+                                        autoFocus(mobilePhoneInput);
+
+                                    }
+                                }, DELAY_TIME);
 
                                 break;
 
@@ -437,6 +530,7 @@ public class AddContactActivity extends AppCompatActivity {
 
                 jobInput.setFocusableInTouchMode(true);
                 jobInput.requestFocus();
+                autoFocus(jobInput);
 
             }
         });
@@ -450,6 +544,7 @@ public class AddContactActivity extends AppCompatActivity {
 
                 imInput.setFocusableInTouchMode(true);
                 imInput.requestFocus();
+                autoFocus(imInput);
             }
         });
 
@@ -461,6 +556,7 @@ public class AddContactActivity extends AppCompatActivity {
 
                 personalNotes.setFocusableInTouchMode(true);
                 personalNotes.requestFocus();
+                autoFocus(personalNotes);
             }
         });
 
@@ -793,6 +889,12 @@ public class AddContactActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void autoFocus(EditText editText){
+        final InputMethodManager inputMethodManager = (InputMethodManager) AddContactActivity.this
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
     }
 
     @Override
