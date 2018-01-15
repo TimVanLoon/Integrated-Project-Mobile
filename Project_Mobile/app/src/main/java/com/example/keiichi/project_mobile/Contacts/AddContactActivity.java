@@ -50,7 +50,6 @@ public class AddContactActivity extends AppCompatActivity {
     private Toolbar myToolbar;
     private EditText firstNameInput;
     private EditText lastNameInput;
-    private EditText emailInput;
     private EditText phoneInput;
     private EditText jobTitle;
     private EditText department;
@@ -71,11 +70,23 @@ public class AddContactActivity extends AppCompatActivity {
     private EditText suffixInput;
     private EditText yomiFirstNameInput;
     private EditText yomiLastNameInput;
+    private EditText emailInput;
+    private EditText emailInput2;
+    private EditText displayAsInput2;
+    private EditText displayAsInput;
+    private EditText emailInput3;
+    private EditText displayAsInput3;
     private TextView middleNameTitle;
     private TextView titleTitle;
     private TextView suffixTitle;
     private TextView yomiFirstNameTitle;
     private TextView yomiLastNameTitle;
+    private TextView displayAsTitle;
+    private TextView emailSubTitle2;
+    private TextView displayAsTitle2;
+    private TextView emailSubTitle3;
+    private TextView displayAsTitle3;
+    private TextView emailSubTitle;
     private String userName;
     private String userEmail;
     private String attendeeName;
@@ -85,6 +96,7 @@ public class AddContactActivity extends AppCompatActivity {
     private boolean myItemShouldBeEnabled = true;
     private MenuItem saveItem;
     private ImageView plusNameIcon;
+    private ImageView plusEmailIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,12 +138,25 @@ public class AddContactActivity extends AppCompatActivity {
         suffixInput = (EditText) findViewById(R.id.suffixInput);
         yomiFirstNameInput = (EditText) findViewById(R.id.yomiFirstNameInput);
         yomiLastNameInput = (EditText) findViewById(R.id.yomiLastNameInput);
+
+        emailInput2 = (EditText) findViewById(R.id.emailInput2);
+        displayAsInput2 = (EditText) findViewById(R.id.displayAsInput2);
+        displayAsInput = (EditText) findViewById(R.id.displayAsInput);
+        emailInput3 = (EditText) findViewById(R.id.emailInput3);
+        displayAsInput3 = (EditText) findViewById(R.id.displayAsInput3);
         middleNameTitle = (TextView) findViewById(R.id.middleNameTitle);
         titleTitle = (TextView) findViewById(R.id.titleTitle);
         suffixTitle = (TextView) findViewById(R.id.suffixTitle);
         yomiFirstNameTitle = (TextView) findViewById(R.id.yomiFirstNameTitle);
         yomiLastNameTitle = (TextView) findViewById(R.id.yomiLastNameTitle);
+        displayAsTitle = (TextView) findViewById(R.id.displayAsTitle);
+        emailSubTitle2 = (TextView) findViewById(R.id.emailSubTitle2);
+        displayAsTitle2 = (TextView) findViewById(R.id.displayAsTitle2);
+        emailSubTitle3 = (TextView) findViewById(R.id.emailSubTitle3);
+        displayAsTitle3 = (TextView) findViewById(R.id.displayAsTitle3);
+        emailSubTitle = (TextView) findViewById(R.id.emailSubTitle);
         plusNameIcon = (ImageView) findViewById(R.id.plusNameIcon);
+        plusEmailIcon = (ImageView) findViewById(R.id.plusEmailIcon);
 
         makeExtraInvisible();
 
@@ -158,6 +183,11 @@ public class AddContactActivity extends AppCompatActivity {
         setEditTextOnFocusListener(suffixInput);
         setEditTextOnFocusListener(yomiFirstNameInput);
         setEditTextOnFocusListener(yomiLastNameInput);
+        setEditTextOnFocusListener(emailInput2);
+        setEditTextOnFocusListener(displayAsInput2);
+        setEditTextOnFocusListener(displayAsInput);
+        setEditTextOnFocusListener(emailInput3);
+        setEditTextOnFocusListener(displayAsInput3);
 
         plusNameIcon.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -196,6 +226,45 @@ public class AddContactActivity extends AppCompatActivity {
                                 yomiLastNameInput.setVisibility(View.VISIBLE);
                                 yomiFirstNameTitle.setVisibility(View.VISIBLE);
                                 yomiLastNameTitle.setVisibility(View.VISIBLE);
+                                break;
+
+                        }
+
+                        return false;
+                    }
+                });
+            }
+        });
+
+        plusEmailIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                final PopupMenu popupMenu = new PopupMenu(getApplicationContext(), view);
+
+                popupMenu.inflate(R.menu.email_options);
+
+                popupMenu.show();
+
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+
+                        Menu menu = popupMenu.getMenu();
+
+                        switch(menuItem.getItemId()){
+                            case R.id.action_email2:
+                                emailInput2.setVisibility(View.VISIBLE);
+                                emailSubTitle2.setVisibility(View.VISIBLE);
+                                displayAsInput2.setVisibility(View.VISIBLE);
+                                displayAsTitle2.setVisibility(View.VISIBLE);
+                                break;
+
+                            case R.id.action_email3:
+                                emailInput3.setVisibility(View.VISIBLE);
+                                emailSubTitle3.setVisibility(View.VISIBLE);
+                                displayAsInput3.setVisibility(View.VISIBLE);
+                                displayAsTitle3.setVisibility(View.VISIBLE);
                                 break;
 
                         }
@@ -247,6 +316,13 @@ public class AddContactActivity extends AppCompatActivity {
                             emailInput.setError("Invalid Email Address!");
                         }
 
+                        if (!emailInput2.getText().toString().isEmpty() && (!emailInput2.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+") && !emailInput2.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+.[a-z]+"))) {
+                            emailInput2.setError("Invalid Email Address!");
+                        }
+
+                        if (!emailInput3.getText().toString().isEmpty() && (!emailInput3.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+") && !emailInput3.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+.[a-z]+"))) {
+                            emailInput3.setError("Invalid Email Address!");
+
                         if(!phoneInput.getText().toString().isEmpty() && !isValidMobile(phoneInput.getText().toString())){
                             phoneInput.setError("Invalid phone number!");
                         }
@@ -262,54 +338,59 @@ public class AddContactActivity extends AppCompatActivity {
                     }
                     else {
 
-                        if (!emailInput.getText().toString().isEmpty() && (!emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+" ) && !emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+.[a-z]+"))) {
-                            emailInput.setError("Invalid Email Address!");
-
-                            if(!phoneInput.getText().toString().isEmpty() && !isValidMobile(phoneInput.getText().toString())){
-                                phoneInput.setError("Invalid phone number!");
+                            if (!emailInput2.getText().toString().isEmpty() && (!emailInput2.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+") && !emailInput2.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+.[a-z]+"))) {
+                                emailInput2.setError("Invalid Email Address!");
                             }
 
-                        } else {
+                            if (!emailInput3.getText().toString().isEmpty() && (!emailInput3.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+") && !emailInput3.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+.[a-z]+"))) {
+                                emailInput3.setError("Invalid Email Address!");
+                            }
 
-                            if(!phoneInput.getText().toString().isEmpty() && !isValidMobile(phoneInput.getText().toString())){
-                                phoneInput.setError("Invalid phone number!");
-                            } else {
-                                try {
-                                    saveItem.setEnabled(false);
+                            if (!emailInput.getText().toString().isEmpty() && (!emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+") && !emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+.[a-z]+"))) {
+                                emailInput.setError("Invalid Email Address!");
 
-                                    saveContact();
-
-                                    int DELAY_TIME=2000;
-
-                                    //start your animation
-                                    new Timer().schedule(new TimerTask() {
-                                        @Override
-                                        public void run() {
-                                            //this code will run after the delay time which is 2 seconds.
-                                            Intent intentContacts = new Intent(AddContactActivity.this, ContactsActivity.class);
-                                            intentContacts.putExtra("AccessToken", accessToken);
-                                            intentContacts.putExtra("userName", userName);
-                                            intentContacts.putExtra("userEmail", userEmail);
-
-                                            startActivity(intentContacts);
-
-                                            AddContactActivity.this.finish();
-
-                                        }
-                                    }, DELAY_TIME);
-
-
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                                if (!phoneInput.getText().toString().isEmpty() && !isValidMobile(phoneInput.getText().toString())) {
+                                    phoneInput.setError("Invalid phone number!");
                                 }
-                                return true;
-                            }
-                            }
 
+                            } else {
+
+                                if (!phoneInput.getText().toString().isEmpty() && !isValidMobile(phoneInput.getText().toString())) {
+                                    phoneInput.setError("Invalid phone number!");
+                                } else {
+                                    try {
+                                        saveItem.setEnabled(false);
+
+                                        saveContact();
+
+                                        int DELAY_TIME = 2000;
+
+                                        //start your animation
+                                        new Timer().schedule(new TimerTask() {
+                                            @Override
+                                            public void run() {
+                                                //this code will run after the delay time which is 2 seconds.
+                                                Intent intentContacts = new Intent(AddContactActivity.this, ContactsActivity.class);
+                                                intentContacts.putExtra("AccessToken", accessToken);
+                                                intentContacts.putExtra("userName", userName);
+                                                intentContacts.putExtra("userEmail", userEmail);
+
+                                                startActivity(intentContacts);
+
+                                                AddContactActivity.this.finish();
+
+                                            }
+                                        }, DELAY_TIME);
+
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    return true;
+                                }
+                            }
+                        }
                     }
-
-
-
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
@@ -348,17 +429,49 @@ public class AddContactActivity extends AppCompatActivity {
             contact.setYomiSurname(yomiLastNameInput.getText().toString());
         }
 
-        if (emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+" ) && !emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+.[a-z]+")) {
-            EmailAddress contactEmail = new EmailAddress(emailInput.getText().toString(), displayName);
+        if (emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+" ) || emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+.[a-z]+")) {
+
             List<EmailAddress> listEmails = new ArrayList<>();
-            listEmails.add(contactEmail);
+
+            if(!displayAsInput.getText().toString().isEmpty()){
+                EmailAddress contactEmail = new EmailAddress(emailInput.getText().toString(), displayAsInput.getText().toString());
+                listEmails.add(contactEmail);
+            } else {
+                EmailAddress contactEmail = new EmailAddress(emailInput.getText().toString(), "");
+                listEmails.add(contactEmail);
+            }
+
+            if(emailInput2.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+" ) || emailInput2.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+.[a-z]+")){
+
+                if(!displayAsInput2.getText().toString().isEmpty()){
+                    EmailAddress contactEmail = new EmailAddress(emailInput2.getText().toString(), displayAsInput2.getText().toString());
+                    listEmails.add(contactEmail);
+                } else {
+                    EmailAddress contactEmail = new EmailAddress(emailInput2.getText().toString(), "");
+                    listEmails.add(contactEmail);
+                }
+
+            }
+
+            if(emailInput3.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+" ) || emailInput3.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+.[a-z]+")){
+
+                if(!displayAsInput3.getText().toString().isEmpty()){
+                    EmailAddress contactEmail = new EmailAddress(emailInput3.getText().toString(), displayAsInput3.getText().toString());
+                    listEmails.add(contactEmail);
+                } else {
+                    EmailAddress contactEmail = new EmailAddress(emailInput3.getText().toString(), "");
+                    listEmails.add(contactEmail);
+                }
+
+            }
+
             contact.setEmailAddresses(listEmails);
+
         }
 
         if(!phoneInput.getText().toString().isEmpty()){
             contact.setMobilePhone(phoneInput.getText().toString());
         }
-
 
         if(!jobTitle.getText().toString().isEmpty()){
             contact.setJobTitle(jobTitle.getText().toString());
@@ -481,6 +594,14 @@ public class AddContactActivity extends AppCompatActivity {
         suffixTitle.setVisibility(View.GONE);
         yomiFirstNameTitle.setVisibility(View.GONE);
         yomiLastNameTitle.setVisibility(View.GONE);
+        emailInput2.setVisibility(View.GONE);
+        displayAsInput2.setVisibility(View.GONE);
+        emailInput3.setVisibility(View.GONE);
+        displayAsInput3.setVisibility(View.GONE);
+        displayAsTitle2.setVisibility(View.GONE);
+        displayAsTitle3.setVisibility(View.GONE);
+        emailSubTitle2.setVisibility(View.GONE);
+        emailSubTitle3.setVisibility(View.GONE);
 
     }
 
