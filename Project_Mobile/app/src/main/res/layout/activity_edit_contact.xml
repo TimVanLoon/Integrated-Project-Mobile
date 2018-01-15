@@ -27,10 +27,10 @@
             <!--Put form controls here-->
 
             <TextView
-                android:id="@+id/addContactTitle"
+                android:id="@+id/editContactTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/addContactTitle"
+                android:text="@string/editContactTitle"
                 android:textStyle="bold"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp"
