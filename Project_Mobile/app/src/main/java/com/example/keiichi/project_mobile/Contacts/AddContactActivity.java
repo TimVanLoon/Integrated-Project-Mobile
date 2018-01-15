@@ -119,6 +119,7 @@ public class AddContactActivity extends AppCompatActivity {
     private ImageView plusEmailIcon;
     private ImageView plusPhoneIcon;
     private ImageView plusWorkIcon;
+    private ImageView plusNotesIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -196,6 +197,7 @@ public class AddContactActivity extends AppCompatActivity {
         plusEmailIcon = (ImageView) findViewById(R.id.plusEmailIcon);
         plusPhoneIcon = (ImageView) findViewById(R.id.plusPhoneIcon);
         plusWorkIcon = (ImageView) findViewById(R.id.plusWorkIcon);
+        plusNotesIcon = (ImageView) findViewById(R.id.plusNotesIcon);
 
         makeExtraInvisible();
 
@@ -382,6 +384,15 @@ public class AddContactActivity extends AppCompatActivity {
                 assistantNameInput.setVisibility(View.VISIBLE);
                 yomiCompanyTitle.setVisibility(View.VISIBLE);
                 yomiCompanyInput.setVisibility(View.VISIBLE);
+
+            }
+        });
+
+        plusNotesIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                personalNotes.setVisibility(View.VISIBLE);
 
             }
         });
@@ -769,6 +780,7 @@ public class AddContactActivity extends AppCompatActivity {
         assistantNameInput.setVisibility(View.GONE);
         yomiCompanyTitle.setVisibility(View.GONE);
         yomiCompanyInput.setVisibility(View.GONE);
+        personalNotes.setVisibility(View.GONE);
 
     }
 

@@ -1024,17 +1024,29 @@
             android:layout_width="fill_parent">
         </EditText>
 
-
-        <TextView
-            android:id="@+id/notesTitle"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/notesTitle"
-            android:layout_marginTop="30dp"
-            android:layout_marginLeft="15dp"
-            android:textColor="@color/black"
-            android:textSize="10pt">
-        </TextView>
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/notesTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/notesTitle"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="15dp"
+                android:textColor="@color/black"
+                android:textSize="10pt">
+            </TextView>
+
+            <ImageView
+                android:id="@+id/plusNotesIcon"
+                android:layout_marginTop="28dp"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/ic_add_black"/>
+
+        </LinearLayout>
 
         <EditText
             android:id="@+id/personalNotes"
