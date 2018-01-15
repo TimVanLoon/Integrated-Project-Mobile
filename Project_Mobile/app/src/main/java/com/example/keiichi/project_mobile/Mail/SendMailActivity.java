@@ -28,6 +28,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.Calendar.CalendarActivity;
 import com.example.keiichi.project_mobile.Calendar.ListEventsActivity;
+import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
+import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONException;
@@ -52,7 +54,6 @@ public class SendMailActivity extends AppCompatActivity {
     private TextView MailAdress;
     private TextView Subject;
     private RichEditor MailBody;
-    private String Acces_Token;
     private String emailAddress;
     private String accessToken;
     private String userName;
@@ -60,6 +61,7 @@ public class SendMailActivity extends AppCompatActivity {
     private String fromContactDetailsActivity;
     private RichEditor editor;
     private MenuItem sendItem;
+    private Contact contact;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,9 +86,11 @@ public class SendMailActivity extends AppCompatActivity {
 
 
 
+        contact = (Contact) getIntent().getSerializableExtra("contact");
 
 
 
+        
 
     }
 
@@ -166,7 +170,23 @@ public class SendMailActivity extends AppCompatActivity {
             // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
             case android.R.id.home:
 
-                finish();
+                if(fromContactDetailsActivity == null){
+
+                    finish();
+
+                } else {
+
+                    Intent intentContactDetails = new Intent(SendMailActivity.this, ContactsDetailsActivity.class);
+                    intentContactDetails.putExtra("AccessToken", accessToken);
+                    intentContactDetails.putExtra("userName", userName);
+                    intentContactDetails.putExtra("userEmail", userEmail);
+                    intentContactDetails.putExtra("contact", contact);
+
+                    startActivity(intentContactDetails);
+
+                    SendMailActivity.this.finish();
+
+                }
 
                 return true;
 
@@ -198,7 +218,15 @@ public class SendMailActivity extends AppCompatActivity {
         if(fromContactDetailsActivity == null){
             minimizeApp();
         } else{
-            super.onBackPressed();
+            Intent intentContactDetails = new Intent(SendMailActivity.this, ContactsDetailsActivity.class);
+            intentContactDetails.putExtra("AccessToken", accessToken);
+            intentContactDetails.putExtra("userName", userName);
+            intentContactDetails.putExtra("userEmail", userEmail);
+            intentContactDetails.putExtra("contact", contact);
+
+            startActivity(intentContactDetails);
+
+            SendMailActivity.this.finish();
         }
 
     }
