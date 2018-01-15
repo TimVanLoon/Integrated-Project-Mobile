@@ -85,6 +85,7 @@ public class AddContactActivity extends AppCompatActivity {
     private EditText homePhoneInput2;
     private EditText mobilePhoneInput;
     private EditText yomiCompanyInput;
+    private EditText imInput;
     private TextView businessPhoneTitle2;
     private TextView homePhoneTitle;
     private TextView homePhoneTitle2;
@@ -107,6 +108,8 @@ public class AddContactActivity extends AppCompatActivity {
     private TextView managerTitle;
     private TextView assistantTitle;
     private TextView yomiCompanyTitle;
+    private TextView imTitle;
+    private TextView imSubTitle;
     private String userName;
     private String userEmail;
     private String attendeeName;
@@ -120,6 +123,7 @@ public class AddContactActivity extends AppCompatActivity {
     private ImageView plusPhoneIcon;
     private ImageView plusWorkIcon;
     private ImageView plusNotesIcon;
+    private ImageView plusImIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,6 +175,7 @@ public class AddContactActivity extends AppCompatActivity {
         homePhoneInput2 = (EditText) findViewById(R.id.homePhoneInput2);
         mobilePhoneInput = (EditText) findViewById(R.id.mobilePhoneInput);
         yomiCompanyInput = (EditText) findViewById(R.id.yomiCompanyInput);
+        imInput = (EditText) findViewById(R.id.imInput);
         middleNameTitle = (TextView) findViewById(R.id.middleNameTitle);
         titleTitle = (TextView) findViewById(R.id.titleTitle);
         suffixTitle = (TextView) findViewById(R.id.suffixTitle);
@@ -193,11 +198,14 @@ public class AddContactActivity extends AppCompatActivity {
         managerTitle = (TextView) findViewById(R.id.managerTitle);
         yomiCompanyTitle = (TextView) findViewById(R.id.yomiCompanyTitle);
         assistantTitle = (TextView) findViewById(R.id.assistantTitle);
+        imTitle = (TextView) findViewById(R.id.imTitle);
+        imSubTitle = (TextView) findViewById(R.id.imSubTitle);
         plusNameIcon = (ImageView) findViewById(R.id.plusNameIcon);
         plusEmailIcon = (ImageView) findViewById(R.id.plusEmailIcon);
         plusPhoneIcon = (ImageView) findViewById(R.id.plusPhoneIcon);
         plusWorkIcon = (ImageView) findViewById(R.id.plusWorkIcon);
         plusNotesIcon = (ImageView) findViewById(R.id.plusNotesIcon);
+        plusImIcon = (ImageView) findViewById(R.id.plusImIcon);
 
         makeExtraInvisible();
 
@@ -234,6 +242,7 @@ public class AddContactActivity extends AppCompatActivity {
         setEditTextOnFocusListener(homePhoneInput2);
         setEditTextOnFocusListener(mobilePhoneInput);
         setEditTextOnFocusListener(yomiCompanyInput);
+        setEditTextOnFocusListener(imInput);
 
         plusNameIcon.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -393,6 +402,16 @@ public class AddContactActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 personalNotes.setVisibility(View.VISIBLE);
+
+            }
+        });
+
+        plusImIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                imSubTitle.setVisibility(View.VISIBLE);
+                imInput.setVisibility(View.VISIBLE);
 
             }
         });
@@ -666,7 +685,13 @@ public class AddContactActivity extends AppCompatActivity {
             contact.setSpouseName(spouseName.getText().toString());
         }
 
+        if(!imInput.getText().toString().isEmpty()){
+            List<String> imAddresses = new ArrayList<>();
 
+            imAddresses.add(imInput.getText().toString());
+
+            contact.setImAddresses(imAddresses);
+        }
 
         if(!personalNotes.getText().toString().isEmpty()){
             contact.setPersonalNotes(personalNotes.getText().toString());
@@ -781,6 +806,8 @@ public class AddContactActivity extends AppCompatActivity {
         yomiCompanyTitle.setVisibility(View.GONE);
         yomiCompanyInput.setVisibility(View.GONE);
         personalNotes.setVisibility(View.GONE);
+        imInput.setVisibility(View.GONE);
+        imSubTitle.setVisibility(View.GONE);
 
     }
 

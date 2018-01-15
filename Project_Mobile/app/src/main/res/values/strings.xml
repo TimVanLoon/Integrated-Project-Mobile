@@ -141,4 +141,5 @@
 
     <string name="yomiName">Yomi name</string>
     <string name="yomiCompanyTitle">Yomi company name</string>
+    <string name="imTitle">IM</string>
 </resources>

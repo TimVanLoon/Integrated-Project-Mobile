@@ -1029,6 +1029,57 @@
             android:layout_height="wrap_content">
 
             <TextView
+                android:id="@+id/imTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/imTitle"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="15dp"
+                android:textColor="@color/black"
+                android:textSize="10pt">
+            </TextView>
+
+            <ImageView
+                android:id="@+id/plusImIcon"
+                android:layout_marginTop="28dp"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/ic_add_black"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/imSubTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/imTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
+        </TextView>
+
+        <EditText
+            android:id="@+id/imInput"
+            android:layout_height="37dp"
+            android:hint="@string/spouseName"
+            android:textSize="12dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textColor="@color/black"
+            android:textCursorDrawable="@null"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/edit_text_style"
+            android:inputType="textCapSentences|textPersonName"
+            android:layout_width="fill_parent">
+        </EditText>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
                 android:id="@+id/notesTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -1059,13 +1110,18 @@
             android:textCursorDrawable="@null"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
-            android:layout_marginBottom="20dp"
             android:background="@drawable/edit_text_style"
             android:inputType="textCapSentences|textMultiLine"
             android:maxLength="2000"
             android:maxLines="10"
             android:layout_width="fill_parent">
         </EditText>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="50dp">
+        </LinearLayout>
 
     </android.support.v7.widget.LinearLayoutCompat>
 

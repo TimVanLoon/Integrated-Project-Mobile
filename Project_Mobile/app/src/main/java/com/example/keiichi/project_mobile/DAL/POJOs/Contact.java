@@ -28,7 +28,7 @@ public class Contact implements Serializable {
     private PhysicalAddress homeAddress;
     private List<String> homePhones;
     private String id;
-    private String[] imAddresses;
+    private List<String> imAddresses;
     private String initials;
     private String jobTitle;
     private String lastModifiedDateTime;
@@ -208,11 +208,11 @@ public class Contact implements Serializable {
         this.id = id;
     }
 
-    public String[] getImAddresses() {
+    public List<String> getImAddresses() {
         return imAddresses;
     }
 
-    public void setImAddresses(String[] imAddresses) {
+    public void setImAddresses(List<String> imAddresses) {
         this.imAddresses = imAddresses;
     }
 
