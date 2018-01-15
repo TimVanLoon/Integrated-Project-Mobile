@@ -37,12 +37,14 @@ import com.example.keiichi.project_mobile.Contacts.ContactAdapter;
 import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
 import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Attendee;
+import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.DateTimeTimeZone;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.DAL.POJOs.ItemBody;
 import com.example.keiichi.project_mobile.DAL.POJOs.Location;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
+import com.example.keiichi.project_mobile.Mail.SendMailActivity;
 import com.example.keiichi.project_mobile.R;
 import com.example.keiichi.project_mobile.Utility;
 import com.google.gson.Gson;
@@ -139,6 +141,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private ArrayAdapter<String> adapterDisplayAs;
     private ArrayAdapter<String> adapterRepeat;
     private MenuItem saveItem;
+    private Contact contact;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,6 +156,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         fromContactDetailsActivity = getIntent().getStringExtra("fromContactDetailsActivity");
         attendeeName = getIntent().getStringExtra("attendeeName");
         attendeeMail = getIntent().getStringExtra("attendeeMail");
+        contact = (Contact) getIntent().getSerializableExtra("contact");
 
         // INITIALISEER ACTION BAR
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -476,14 +480,32 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
 
             // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
             case android.R.id.home:
-                Intent intentCalendar = new Intent(AddEventActivity.this, CalendarActivity.class);
-                intentCalendar.putExtra("AccessToken", accessToken);
-                intentCalendar.putExtra("userName", userName);
-                intentCalendar.putExtra("userEmail", userEmail);
 
-                startActivity(intentCalendar);
+                if(fromContactDetailsActivity == null){
 
-                AddEventActivity.this.finish();
+                    Intent intentCalendar = new Intent(AddEventActivity.this, CalendarActivity.class);
+                    intentCalendar.putExtra("AccessToken", accessToken);
+                    intentCalendar.putExtra("userName", userName);
+                    intentCalendar.putExtra("userEmail", userEmail);
+
+                    startActivity(intentCalendar);
+
+                    AddEventActivity.this.finish();
+
+                } else {
+
+                    Intent intentContactDetails = new Intent(AddEventActivity.this, ContactsDetailsActivity.class);
+                    intentContactDetails.putExtra("AccessToken", accessToken);
+                    intentContactDetails.putExtra("userName", userName);
+                    intentContactDetails.putExtra("userEmail", userEmail);
+                    intentContactDetails.putExtra("contact", contact);
+
+                    startActivity(intentContactDetails);
+
+                    AddEventActivity.this.finish();
+
+                }
+
 
                 return true;
 
@@ -1118,7 +1140,16 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         if(fromContactDetailsActivity == null){
             minimizeApp();
         } else {
-            super.onBackPressed();
+
+            Intent intentContactDetails = new Intent(AddEventActivity.this, ContactsDetailsActivity.class);
+            intentContactDetails.putExtra("AccessToken", accessToken);
+            intentContactDetails.putExtra("userName", userName);
+            intentContactDetails.putExtra("userEmail", userEmail);
+            intentContactDetails.putExtra("contact", contact);
+
+            startActivity(intentContactDetails);
+
+            AddEventActivity.this.finish();
         }
     }
 

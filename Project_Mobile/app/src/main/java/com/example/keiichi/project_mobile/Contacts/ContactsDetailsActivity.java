@@ -211,8 +211,6 @@ public class ContactsDetailsActivity extends AppCompatActivity {
 
         contact = (Contact) getIntent().getSerializableExtra("contact");
 
-        System.out.println("contact: " + contact);
-
         // INITIALISEER ACTION BAR
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
@@ -287,17 +285,27 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                 email.setText(emailList.get(0).getAddress());
                 userEmail2.setVisibility(View.GONE);
                 userEmail3.setVisibility(View.GONE);
+
+                setMailClickListener(email, emailList.get(0).getAddress());
             }
 
             if( emailList.size() > 1 && emailList.size() < 3){
                 email.setText(emailList.get(0).getAddress());
                 userEmail2.setText(emailList.get(1).getAddress());
+                userEmail3.setVisibility(View.GONE);
+
+                setMailClickListener(email, emailList.get(0).getAddress());
+                setMailClickListener(userEmail2, emailList.get(1).getAddress());
             }
 
             if( emailList.size() > 2 && emailList.size() < 4){
                 email.setText(emailList.get(0).getAddress());
                 userEmail2.setText(emailList.get(1).getAddress());
                 userEmail3.setText(emailList.get(2).getAddress());
+
+                setMailClickListener(email, emailList.get(0).getAddress());
+                setMailClickListener(userEmail2, emailList.get(1).getAddress());
+                setMailClickListener(userEmail3, emailList.get(2).getAddress());
             }
 
             mailButton.setOnClickListener(new View.OnClickListener() {
@@ -306,9 +314,9 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                     Intent sendMail = new Intent(ContactsDetailsActivity.this, SendMailActivity.class);
                     sendMail.putExtra("AccessToken", accessToken);
                     sendMail.putExtra("userName", userName);
-                    sendMail.putExtra("userEmail", emailList.get(0).getAddress());
-                    sendMail.putExtra("userMailName", emailList.get(0).getName());
-                    sendMail.putExtra("emailAddress", emailAddress);
+                    sendMail.putExtra("userEmail", userEmail);
+                    sendMail.putExtra("emailAddress", emailList.get(0).getAddress());
+                    sendMail.putExtra("contact", contact);
                     sendMail.putExtra("fromContactDetailsActivity", "yes");
 
                     startActivity(sendMail);
@@ -324,9 +332,10 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                     addEventActivity.putExtra("AccessToken", accessToken);
                     addEventActivity.putExtra("userName", userName);
                     addEventActivity.putExtra("userEmail", userEmail);
-                    addEventActivity.putExtra("emailAddress", emailAddress);
+                    addEventActivity.putExtra("emailAddress", emailList.get(0).getAddress());
                     addEventActivity.putExtra("attendeeMail", emailList.get(0).getAddress());
                     addEventActivity.putExtra("attendeeName", emailList.get(0).getName());
+                    addEventActivity.putExtra("contact", contact);
                     addEventActivity.putExtra("fromContactDetailsActivity", "yes");
 
                     startActivity(addEventActivity);
@@ -359,10 +368,13 @@ public class ContactsDetailsActivity extends AppCompatActivity {
             });
         }
 
+        System.out.println("phonenumber:: " +phoneNumber);
 
-        if (phoneNumber != null){
+        if (phoneNumber == null && businessPhones.isEmpty() && homePhones.isEmpty()){
             smsButton.setColorFilter(Color.GRAY);
             phoneButton.setColorFilter(Color.GRAY);
+
+            System.out.println("papa auw 1");
 
             phoneButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -377,7 +389,91 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "No Phone Number found!", Toast.LENGTH_SHORT).show();
                 }
             });
-        } else{
+
+        } else if((phoneNumber == null) || !businessPhones.isEmpty() || !homePhones.isEmpty()){
+
+            if(phoneNumber == null){
+                smsButton.setColorFilter(Color.GRAY);
+
+                smsButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+
+                        Toast.makeText(getApplicationContext(), "No Phone Number found!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                smsButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+
+                        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                        sendIntent.setData(Uri.parse("sms:"));
+                        sendIntent.putExtra("address", phoneNumber);
+                        startActivity(sendIntent);
+                    }
+                });
+            }
+
+
+            if(businessPhones.isEmpty()){
+
+                phoneButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+
+                        Intent intent = new Intent(Intent.ACTION_DIAL);
+                        intent.setData(Uri.parse("tel:" + homePhones.get(0)));
+                        startActivity(intent);
+                    }
+                });
+
+            } else if (homePhones.isEmpty()){
+
+                phoneButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+
+                        Intent intent = new Intent(Intent.ACTION_DIAL);
+                        intent.setData(Uri.parse("tel:" + businessPhones.get(0)));
+                        startActivity(intent);
+                    }
+                });
+
+            } else {
+
+                phoneButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+
+                        Intent intent = new Intent(Intent.ACTION_DIAL);
+                        intent.setData(Uri.parse("tel:" + businessPhones.get(0)));
+                        startActivity(intent);
+                    }
+                });
+
+            }
+
+
+        } else if(phoneNumber!= null && businessPhones.isEmpty() && homePhones.isEmpty()){
+
+            System.out.println("papa auw!3");
+
+            phoneButton.setColorFilter(Color.GRAY);
+
+            phoneButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+
+                    Toast.makeText(getApplicationContext(), "No Phone Number found!", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            smsButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+
+                    Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                    sendIntent.setData(Uri.parse("sms:"));
+                    sendIntent.putExtra("address", phoneNumber);
+                    startActivity(sendIntent);
+                }
+            });
+
+        } else if(phoneNumber != null && !homePhones.isEmpty() && !businessPhones.isEmpty()){
 
             phoneButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -387,6 +483,8 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             });
+
+            System.out.println("papa auw!4");
 
             smsButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -404,6 +502,9 @@ public class ContactsDetailsActivity extends AppCompatActivity {
 
         if (phoneNumber != null){
             mobilePhone.setText(phoneNumber);
+
+            setPhoneNumberClickListener(mobilePhone, phoneNumber);
+
         } else {
             mobilePhone.setText("(Empty)");
             mobilePhone.setTextColor(Color.parseColor("#F4E7D7"));
@@ -414,9 +515,18 @@ public class ContactsDetailsActivity extends AppCompatActivity {
             if (businessPhones.size() == 1) {
                 businessPhone1.setText(businessPhones.get(0));
                 businessPhone2.setVisibility(View.GONE);
+
+                businessPhone1.setTextColor(Color.BLUE);
+
+                setPhoneNumberClickListener(businessPhone1, businessPhones.get(0));
+
             } else if (businessPhones.size() > 1) {
                 businessPhone1.setText(businessPhones.get(0));
                 businessPhone2.setText(businessPhones.get(1));
+
+                setPhoneNumberClickListener(businessPhone1, businessPhones.get(0));
+                setPhoneNumberClickListener(businessPhone2, businessPhones.get(1));
+
             } else {
 
             }
@@ -431,9 +541,16 @@ public class ContactsDetailsActivity extends AppCompatActivity {
             if (homePhones.size() == 1) {
                 homePhone1.setText(homePhones.get(0));
                 homePhone2.setVisibility(View.GONE);
+
+                setPhoneNumberClickListener(homePhone1, homePhones.get(0));
+
             } else if (homePhones.size() > 1) {
                 homePhone1.setText(homePhones.get(0));
                 homePhone2.setText(homePhones.get(1));
+
+                setPhoneNumberClickListener(homePhone1, homePhones.get(0));
+                setPhoneNumberClickListener(homePhone2, homePhones.get(1));
+
             } else {
 
             }
@@ -562,42 +679,42 @@ public class ContactsDetailsActivity extends AppCompatActivity {
             otherCountryText.setVisibility(View.GONE);
         }
 
-        if((job.equals("")) && (department.equals("")) && (company.equals("")) && (office.equals("")) && (manager.equals("")) && (assistant.equals("") && (contactYomiCompanyName == null))){
+        if((job == null) && (department == null) && (company == null) && (office == null) && (manager == null) && (assistant == null && (contactYomiCompanyName == null))){
             workTitle.setVisibility(View.GONE);
         }
 
-        if(!job.equals("")){
+        if(job != null){
             jobText.setText("Job title: " + job);
         } else {
             jobText.setVisibility(View.GONE);
         }
 
-        if(!department.equals("")){
+        if(department != null){
             departmentText.setText("Department: " + department);
         } else {
             departmentText.setVisibility(View.GONE);
         }
 
-        if(!company.equals("")){
+        if(company != null){
             companyText.setText("Company: " + company);
         } else {
             companyText.setVisibility(View.GONE);
         }
 
-        if(!office.equals("")){
+        if(office != null){
             officeText.setText("Office: " + office);
         } else {
             officeText.setVisibility(View.GONE);
             officeText.setVisibility(View.GONE);
         }
 
-        if(!manager.equals("")){
+        if(manager != null){
             managerText.setText("Manager: " + manager);
         } else {
             managerText.setVisibility(View.GONE);
         }
 
-        if(!assistant.equals("")){
+        if(assistant != null){
             assisantText.setText("Assistant: " + assistant);
         } else {
             assisantText.setVisibility(View.GONE);
@@ -790,6 +907,40 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         };
 
         queue.add(stringRequest);
+
+    }
+
+    public void setMailClickListener(TextView textView, final String mail){
+
+
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent sendMail = new Intent(ContactsDetailsActivity.this, SendMailActivity.class);
+                sendMail.putExtra("AccessToken", accessToken);
+                sendMail.putExtra("userName", userName);
+                sendMail.putExtra("emailAddress", mail);
+                sendMail.putExtra("contact", contact);
+                sendMail.putExtra("fromContactDetailsActivity", "yes");
+
+                startActivity(sendMail);
+
+                ContactsDetailsActivity.this.finish();
+            }
+        });
+
+    }
+
+    public void setPhoneNumberClickListener(TextView textView, final String number){
+
+        textView.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:" + number));
+                startActivity(intent);
+            }
+        });
 
     }
 

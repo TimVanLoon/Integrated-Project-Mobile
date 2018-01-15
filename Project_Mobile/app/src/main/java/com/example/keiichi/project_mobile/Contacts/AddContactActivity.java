@@ -1028,7 +1028,7 @@ public class AddContactActivity extends AppCompatActivity {
                 EmailAddress contactEmail = new EmailAddress(emailInput.getText().toString(), displayAsInput.getText().toString());
                 listEmails.add(contactEmail);
             } else {
-                EmailAddress contactEmail = new EmailAddress(emailInput.getText().toString(), "");
+                EmailAddress contactEmail = new EmailAddress(emailInput.getText().toString(), displayName);
                 listEmails.add(contactEmail);
             }
 
@@ -1038,7 +1038,7 @@ public class AddContactActivity extends AppCompatActivity {
                     EmailAddress contactEmail = new EmailAddress(emailInput2.getText().toString(), displayAsInput2.getText().toString());
                     listEmails.add(contactEmail);
                 } else {
-                    EmailAddress contactEmail = new EmailAddress(emailInput2.getText().toString(), "");
+                    EmailAddress contactEmail = new EmailAddress(emailInput2.getText().toString(), displayName);
                     listEmails.add(contactEmail);
                 }
 
@@ -1050,7 +1050,7 @@ public class AddContactActivity extends AppCompatActivity {
                     EmailAddress contactEmail = new EmailAddress(emailInput3.getText().toString(), displayAsInput3.getText().toString());
                     listEmails.add(contactEmail);
                 } else {
-                    EmailAddress contactEmail = new EmailAddress(emailInput3.getText().toString(), "");
+                    EmailAddress contactEmail = new EmailAddress(emailInput3.getText().toString(), displayName);
                     listEmails.add(contactEmail);
                 }
 
