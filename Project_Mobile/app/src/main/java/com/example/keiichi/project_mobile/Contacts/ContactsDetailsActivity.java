@@ -258,6 +258,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         contactTitle = contact.getTitle();
         contactSuffix = contact.getInitials();
         contactYomiCompanyName = contact.getYomiCompanyName();
+        id = contact.getId();
 
         if(contact.getYomiGivenName() != null && contact.getYomiSurname() != null){
             contactYomiName = contact.getYomiGivenName() +" " + contact.getYomiSurname();
@@ -266,16 +267,6 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
-        givenName = getIntent().getStringExtra("givenName");
-
-        job = getIntent().getStringExtra("job");
-        department = getIntent().getStringExtra("department");
-        company = getIntent().getStringExtra("company");
-        office = getIntent().getStringExtra("office");
-        manager = getIntent().getStringExtra("manager");
-        assistant = getIntent().getStringExtra("assistant");
-
-        id = getIntent().getStringExtra("id");
 
         ColorGenerator generator = ColorGenerator.MATERIAL;
 
@@ -694,20 +685,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                             intentContacts.putExtra("AccessToken", accessToken);
                             intentContacts.putExtra("userName", userName);
                             intentContacts.putExtra("userEmail", userEmail);
-                            intentContacts.putExtra("givenName", givenName);
-                            intentContacts.putExtra("displayName", displayName);
-                            intentContacts.putExtra("emailList",(Serializable) emailList);
-                            intentContacts.putExtra("notes", notes);
-                            intentContacts.putExtra("nickname", nickname);
-                            intentContacts.putExtra("spouse", spouse);
-                            intentContacts.putExtra("job", job);
-                            intentContacts.putExtra("department", department);
-                            intentContacts.putExtra("company", company);
-                            intentContacts.putExtra("office", office);
-                            intentContacts.putExtra("manager", manager);
-                            intentContacts.putExtra("assistant", assistant);
-                            intentContacts.putExtra("firstname", firstName);
-                            intentContacts.putExtra("lastname", lastName);
+                            intentContacts.putExtra("contact", contact);
 
                             startActivity(intentContacts);
 
@@ -746,21 +724,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                 intentContacts.putExtra("AccessToken", accessToken);
                 intentContacts.putExtra("userName", userName);
                 intentContacts.putExtra("userEmail", userEmail);
-                intentContacts.putExtra("givenName", givenName);
-                intentContacts.putExtra("displayName", displayName);
-                intentContacts.putExtra("emailList",(Serializable) emailList);
-                intentContacts.putExtra("notes", notes);
-                intentContacts.putExtra("nickname", nickname);
-                intentContacts.putExtra("spouse", spouse);
-                intentContacts.putExtra("job", job);
-                intentContacts.putExtra("department", department);
-                intentContacts.putExtra("company", company);
-                intentContacts.putExtra("office", office);
-                intentContacts.putExtra("manager", manager);
-                intentContacts.putExtra("assistant", assistant);
-                intentContacts.putExtra("firstname", firstName);
-                intentContacts.putExtra("lastname", lastName);
-                intentContacts.putExtra("id", id);
+                intentContacts.putExtra("contact", contact);
 
                 startActivity(intentContacts);
 
@@ -779,22 +743,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                 intentEditContact.putExtra("AccessToken", accessToken);
                 intentEditContact.putExtra("userName", userName);
                 intentEditContact.putExtra("userEmail", userEmail);
-                intentEditContact.putExtra("givenName", givenName);
-                intentEditContact.putExtra("displayName", displayName);
-                intentEditContact.putExtra("emailList",(Serializable) emailList);
-                intentEditContact.putExtra("email", emailAddress);
-                intentEditContact.putExtra("notes", notes);
-                intentEditContact.putExtra("nickname", nickname);
-                intentEditContact.putExtra("spouse", spouse);
-                intentEditContact.putExtra("job", job);
-                intentEditContact.putExtra("department", department);
-                intentEditContact.putExtra("company", company);
-                intentEditContact.putExtra("office", office);
-                intentEditContact.putExtra("manager", manager);
-                intentEditContact.putExtra("assistant", assistant);
-                intentEditContact.putExtra("firstname", firstName);
-                intentEditContact.putExtra("lastname", lastName);
-                intentEditContact.putExtra("id", id);
+                intentEditContact.putExtra("contact", contact);
 
                 startActivity(intentEditContact);
 
@@ -854,6 +803,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         intentListMails.putExtra("AccessToken", accessToken);
         intentListMails.putExtra("userName", userName);
         intentListMails.putExtra("userEmail", userEmail);
+        intentListMails.putExtra("contact", contact);
 
         startActivity(intentListMails);
 
