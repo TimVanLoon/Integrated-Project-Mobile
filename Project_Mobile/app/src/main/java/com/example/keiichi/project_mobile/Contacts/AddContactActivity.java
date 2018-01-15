@@ -25,6 +25,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.Calendar.AddEventActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
+import com.example.keiichi.project_mobile.DAL.POJOs.Phone;
 import com.example.keiichi.project_mobile.DAL.POJOs.PhysicalAddress;
 import com.example.keiichi.project_mobile.Mail.DisplayMailActivity;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
@@ -47,6 +48,9 @@ import java.util.regex.Pattern;
 public class AddContactActivity extends AppCompatActivity {
 
     final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/contacts";
+    List<String> mobilePhones = new ArrayList<>();
+    List<String> homePhones = new ArrayList<>();
+    List<String> businessPhones = new ArrayList<>();
     private Toolbar myToolbar;
     private EditText firstNameInput;
     private EditText lastNameInput;
@@ -76,6 +80,14 @@ public class AddContactActivity extends AppCompatActivity {
     private EditText displayAsInput;
     private EditText emailInput3;
     private EditText displayAsInput3;
+    private EditText businessPhoneInput2;
+    private EditText homePhoneInput;
+    private EditText homePhoneInput2;
+    private EditText mobilePhoneInput;
+    private TextView businessPhoneTitle2;
+    private TextView homePhoneTitle;
+    private TextView homePhoneTitle2;
+    private TextView mobilePhoneTitle;
     private TextView middleNameTitle;
     private TextView titleTitle;
     private TextView suffixTitle;
@@ -97,6 +109,7 @@ public class AddContactActivity extends AppCompatActivity {
     private MenuItem saveItem;
     private ImageView plusNameIcon;
     private ImageView plusEmailIcon;
+    private ImageView plusPhoneIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,12 +151,15 @@ public class AddContactActivity extends AppCompatActivity {
         suffixInput = (EditText) findViewById(R.id.suffixInput);
         yomiFirstNameInput = (EditText) findViewById(R.id.yomiFirstNameInput);
         yomiLastNameInput = (EditText) findViewById(R.id.yomiLastNameInput);
-
         emailInput2 = (EditText) findViewById(R.id.emailInput2);
         displayAsInput2 = (EditText) findViewById(R.id.displayAsInput2);
         displayAsInput = (EditText) findViewById(R.id.displayAsInput);
         emailInput3 = (EditText) findViewById(R.id.emailInput3);
         displayAsInput3 = (EditText) findViewById(R.id.displayAsInput3);
+        businessPhoneInput2 = (EditText) findViewById(R.id.businessPhoneInput2);
+        homePhoneInput = (EditText) findViewById(R.id.homePhoneInput);
+        homePhoneInput2 = (EditText) findViewById(R.id.homePhoneInput2);
+        mobilePhoneInput = (EditText) findViewById(R.id.mobilePhoneInput);
         middleNameTitle = (TextView) findViewById(R.id.middleNameTitle);
         titleTitle = (TextView) findViewById(R.id.titleTitle);
         suffixTitle = (TextView) findViewById(R.id.suffixTitle);
@@ -155,8 +171,13 @@ public class AddContactActivity extends AppCompatActivity {
         emailSubTitle3 = (TextView) findViewById(R.id.emailSubTitle3);
         displayAsTitle3 = (TextView) findViewById(R.id.displayAsTitle3);
         emailSubTitle = (TextView) findViewById(R.id.emailSubTitle);
+        businessPhoneTitle2 = (TextView) findViewById(R.id.businessPhoneTitle2);
+        homePhoneTitle = (TextView) findViewById(R.id.homePhoneTitle);
+        homePhoneTitle2 = (TextView) findViewById(R.id.homePhoneTitle2);
+        mobilePhoneTitle = (TextView) findViewById(R.id.mobilePhoneTitle);
         plusNameIcon = (ImageView) findViewById(R.id.plusNameIcon);
         plusEmailIcon = (ImageView) findViewById(R.id.plusEmailIcon);
+        plusPhoneIcon = (ImageView) findViewById(R.id.plusPhoneIcon);
 
         makeExtraInvisible();
 
@@ -188,6 +209,10 @@ public class AddContactActivity extends AppCompatActivity {
         setEditTextOnFocusListener(displayAsInput);
         setEditTextOnFocusListener(emailInput3);
         setEditTextOnFocusListener(displayAsInput3);
+        setEditTextOnFocusListener(businessPhoneInput2);
+        setEditTextOnFocusListener(homePhoneInput);
+        setEditTextOnFocusListener(homePhoneInput2);
+        setEditTextOnFocusListener(mobilePhoneInput);
 
         plusNameIcon.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -275,6 +300,51 @@ public class AddContactActivity extends AppCompatActivity {
             }
         });
 
+        plusPhoneIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                final PopupMenu popupMenu = new PopupMenu(getApplicationContext(), view);
+
+                popupMenu.inflate(R.menu.phone_options);
+
+                popupMenu.show();
+
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+
+                        Menu menu = popupMenu.getMenu();
+
+                        switch(menuItem.getItemId()){
+                            case R.id.action_businessPhone:
+                                businessPhoneInput2.setVisibility(View.VISIBLE);
+                                businessPhoneTitle2.setVisibility(View.VISIBLE);
+                                break;
+
+                            case R.id.action_homePhone:
+                                homePhoneInput.setVisibility(View.VISIBLE);
+                                homePhoneTitle.setVisibility(View.VISIBLE);
+                                break;
+
+                            case R.id.action_homePhone2:
+                                homePhoneInput2.setVisibility(View.VISIBLE);
+                                homePhoneTitle2.setVisibility(View.VISIBLE);
+                                break;
+
+                            case R.id.action_mobilePhone:
+                                mobilePhoneInput.setVisibility(View.VISIBLE);
+                                mobilePhoneTitle.setVisibility(View.VISIBLE);
+                                break;
+
+                        }
+
+                        return false;
+                    }
+                });
+            }
+        });
+
     }
 
     // VOEG ICONS TOE AAN DE ACTION BAR
@@ -322,6 +392,7 @@ public class AddContactActivity extends AppCompatActivity {
 
                         if (!emailInput3.getText().toString().isEmpty() && (!emailInput3.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+") && !emailInput3.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+.[a-z]+"))) {
                             emailInput3.setError("Invalid Email Address!");
+                        }
 
                         if(!phoneInput.getText().toString().isEmpty() && !isValidMobile(phoneInput.getText().toString())){
                             phoneInput.setError("Invalid phone number!");
@@ -357,6 +428,7 @@ public class AddContactActivity extends AppCompatActivity {
 
                                 if (!phoneInput.getText().toString().isEmpty() && !isValidMobile(phoneInput.getText().toString())) {
                                     phoneInput.setError("Invalid phone number!");
+
                                 } else {
                                     try {
                                         saveItem.setEnabled(false);
@@ -390,13 +462,13 @@ public class AddContactActivity extends AppCompatActivity {
                                 }
                             }
                         }
-                    }
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
         }
     }
+
 
     // POST REQUEST VOOR NIEWE CONTACTSPERSOON
     private void saveContact() throws JSONException {
@@ -469,8 +541,36 @@ public class AddContactActivity extends AppCompatActivity {
 
         }
 
+        if(!mobilePhoneInput.getText().toString().isEmpty()){
+            contact.setMobilePhone(mobilePhoneInput.getText().toString());
+        }
+
         if(!phoneInput.getText().toString().isEmpty()){
-            contact.setMobilePhone(phoneInput.getText().toString());
+
+            businessPhones.add(phoneInput.getText().toString());
+
+            contact.setBusinessPhones(businessPhones);
+        }
+
+        if(!businessPhoneInput2.getText().toString().isEmpty()){
+
+            businessPhones.add(businessPhoneInput2.getText().toString());
+
+            contact.setBusinessPhones(businessPhones);
+        }
+
+        if(!homePhoneInput.getText().toString().isEmpty()){
+
+            homePhones.add(homePhoneInput.getText().toString());
+
+            contact.setHomePhones(homePhones);
+        }
+
+        if(!homePhoneInput2.getText().toString().isEmpty()){
+
+            homePhones.add(homePhoneInput2.getText().toString());
+
+            contact.setHomePhones(homePhones);
         }
 
         if(!jobTitle.getText().toString().isEmpty()){
@@ -602,7 +702,14 @@ public class AddContactActivity extends AppCompatActivity {
         displayAsTitle3.setVisibility(View.GONE);
         emailSubTitle2.setVisibility(View.GONE);
         emailSubTitle3.setVisibility(View.GONE);
-
+        businessPhoneInput2.setVisibility(View.GONE);
+        homePhoneInput.setVisibility(View.GONE);
+        homePhoneInput2.setVisibility(View.GONE);
+        mobilePhoneInput.setVisibility(View.GONE);
+        businessPhoneTitle2.setVisibility(View.GONE);
+        homePhoneTitle.setVisibility(View.GONE);
+        homePhoneTitle2.setVisibility(View.GONE);
+        mobilePhoneTitle.setVisibility(View.GONE);
     }
 
 }

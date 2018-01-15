@@ -595,33 +595,6 @@
             android:layout_width="fill_parent">
         </EditText>
 
-        <TextView
-            android:id="@+id/mobilePhoneTitle2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/mobilePhoneTitle2"
-            android:textColor="@color/black"
-            android:layout_marginLeft="15dp"
-            android:textSize="7pt">
-        </TextView>
-
-        <EditText
-            android:id="@+id/mobilePhoneInput2"
-            android:layout_height="37dp"
-            android:hint="@string/phoneInput"
-            android:textSize="12dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:textCursorDrawable="@null"
-            android:inputType="textCapSentences|textPersonName"
-            android:textColor="@color/black"
-            android:background="@drawable/edit_text_style"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="72dp"
-            android:layout_marginBottom="10dp"
-            android:layout_width="fill_parent">
-        </EditText>
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">

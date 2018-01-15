@@ -13,6 +13,14 @@ public class EmailAddress implements Serializable {
         this.name = name;
     }
 
+    public EmailAddress(String address) {
+        this.address = address;
+    }
+
+    public EmailAddress() {
+
+    }
+
     public String getName() {
         return name;
     }

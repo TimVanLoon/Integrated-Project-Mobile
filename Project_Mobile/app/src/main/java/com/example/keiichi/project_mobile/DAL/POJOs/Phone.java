@@ -7,9 +7,17 @@ public class Phone implements Serializable {
     private String number;
     private String type;
 
+    public Phone(String number, String type) {
+        this.number = number;
+        this.type = type;
+    }
 
     public Phone(String number) {
         this.number = number;
+    }
+
+    public Phone(){
+
     }
 
     public String getNumber() {

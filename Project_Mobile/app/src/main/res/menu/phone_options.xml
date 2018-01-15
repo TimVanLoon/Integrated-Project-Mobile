@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/action_businessPhone"
+        android:title="@string/businessPhoneTitle2"
+        />
+
+    <item android:id="@+id/action_homePhone"
+        android:title="@string/homePhoneTitle"
+        />
+
+    <item android:id="@+id/action_homePhone2"
+        android:title="@string/homePhoneTitle2"
+        />
+
+    <item android:id="@+id/action_mobilePhone"
+        android:title="@string/mobilePhoneTitle"
+        />
+
+</menu>
