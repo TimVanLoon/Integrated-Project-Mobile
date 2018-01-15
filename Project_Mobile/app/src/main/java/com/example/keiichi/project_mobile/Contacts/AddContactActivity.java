@@ -1,5 +1,6 @@
 package com.example.keiichi.project_mobile.Contacts;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -39,6 +41,7 @@ import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +54,7 @@ public class AddContactActivity extends AppCompatActivity {
 
     final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/contacts";
     final private int DELAY_TIME = 100;
+    private DatePickerDialog datePickerDialog;
     private List<String> mobilePhones = new ArrayList<>();
     private List<String> homePhones = new ArrayList<>();
     private List<String> businessPhones = new ArrayList<>();
@@ -80,8 +84,8 @@ public class AddContactActivity extends AppCompatActivity {
     private EditText otherStateNameInput;
     private EditText otherCountryNameInput;
     private EditText personalNotes;
-    private EditText nickName;
-    private EditText spouseName;
+    private EditText nickNameInput;
+    private EditText spouseNameInput;
     private EditText middleNameInput;
     private EditText titleInput;
     private EditText suffixInput;
@@ -99,7 +103,7 @@ public class AddContactActivity extends AppCompatActivity {
     private EditText mobilePhoneInput;
     private EditText yomiCompanyInput;
     private EditText imInput;
-    private EditText input;
+    private EditText birthdayInput;
     private TextView businessPhoneTitle2;
     private TextView homePhoneTitle;
     private TextView homePhoneTitle2;
@@ -142,13 +146,17 @@ public class AddContactActivity extends AppCompatActivity {
     private TextView otherCityNameTitle;
     private TextView otherStateTitle;
     private TextView otherCountryTitle;
+    private TextView nickNameTitle;
+    private TextView spouseNameTitle;
+    private TextView birthdayTitle;
     private String userName;
     private String userEmail;
-    private String attendeeName;
-    private String attendeeMail;
     private String accessToken;
-    private boolean isValidEmail;
-    private boolean myItemShouldBeEnabled = true;
+    private String finalMonth;
+    private String finalDayOfMonth;
+    private int dayOfMonth;
+    private int month;
+    private int year;
     private MenuItem saveItem;
     private ImageView plusNameIcon;
     private ImageView plusEmailIcon;
@@ -157,6 +165,7 @@ public class AddContactActivity extends AppCompatActivity {
     private ImageView plusNotesIcon;
     private ImageView plusImIcon;
     private ImageView plusAddressIcon;
+    private ImageView plusOtherIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -202,8 +211,8 @@ public class AddContactActivity extends AppCompatActivity {
         otherStateNameInput = (EditText) findViewById(R.id.otherStateNameInput);
         otherCountryNameInput = (EditText) findViewById(R.id.otherCountryNameInput);
         personalNotes = (EditText) findViewById(R.id.personalNotes);
-        nickName = (EditText) findViewById(R.id.nickName);
-        spouseName = (EditText) findViewById(R.id.spouseName);
+        nickNameInput = (EditText) findViewById(R.id.nickNameInput);
+        spouseNameInput = (EditText) findViewById(R.id.spouseNameInput);
         middleNameInput = (EditText) findViewById(R.id.middleNameInput);
         titleInput = (EditText) findViewById(R.id.titleInput);
         suffixInput = (EditText) findViewById(R.id.suffixInput);
@@ -220,6 +229,7 @@ public class AddContactActivity extends AppCompatActivity {
         mobilePhoneInput = (EditText) findViewById(R.id.mobilePhoneInput);
         yomiCompanyInput = (EditText) findViewById(R.id.yomiCompanyInput);
         imInput = (EditText) findViewById(R.id.imInput);
+        birthdayInput = (EditText) findViewById(R.id.birthdayInput);
         middleNameTitle = (TextView) findViewById(R.id.middleNameTitle);
         titleTitle = (TextView) findViewById(R.id.titleTitle);
         suffixTitle = (TextView) findViewById(R.id.suffixTitle);
@@ -262,6 +272,11 @@ public class AddContactActivity extends AppCompatActivity {
         otherCityNameTitle = (TextView) findViewById(R.id.otherCityNameTitle);
         otherStateTitle = (TextView) findViewById(R.id.otherStateTitle);
         otherCountryTitle = (TextView) findViewById(R.id.otherCountryTitle);
+
+        nickNameTitle = (TextView) findViewById(R.id.nickNameTitle);
+        spouseNameTitle = (TextView) findViewById(R.id.spouseNameTitle);
+        birthdayTitle = (TextView) findViewById(R.id.birthdayTitle);
+
         plusNameIcon = (ImageView) findViewById(R.id.plusNameIcon);
         plusEmailIcon = (ImageView) findViewById(R.id.plusEmailIcon);
         plusPhoneIcon = (ImageView) findViewById(R.id.plusPhoneIcon);
@@ -269,6 +284,7 @@ public class AddContactActivity extends AppCompatActivity {
         plusNotesIcon = (ImageView) findViewById(R.id.plusNotesIcon);
         plusImIcon = (ImageView) findViewById(R.id.plusImIcon);
         plusAddressIcon = (ImageView) findViewById(R.id.plusAddressIcon);
+        plusOtherIcon = (ImageView) findViewById(R.id.plusOtherIcon);
 
         makeExtraInvisible();
 
@@ -288,8 +304,8 @@ public class AddContactActivity extends AppCompatActivity {
         setEditTextOnFocusListener(businessStateNameInput);
         setEditTextOnFocusListener(businessCountryNameInput);
         setEditTextOnFocusListener(personalNotes);
-        setEditTextOnFocusListener(nickName);
-        setEditTextOnFocusListener(spouseName);
+        setEditTextOnFocusListener(nickNameInput);
+        setEditTextOnFocusListener(spouseNameInput);
         setEditTextOnFocusListener(middleNameInput);
         setEditTextOnFocusListener(titleInput);
         setEditTextOnFocusListener(suffixInput);
@@ -316,6 +332,9 @@ public class AddContactActivity extends AppCompatActivity {
         setEditTextOnFocusListener(otherCityNameInput);
         setEditTextOnFocusListener(otherStateNameInput);
         setEditTextOnFocusListener(otherCountryNameInput);
+        setEditTextOnFocusListener(nickNameInput);
+        setEditTextOnFocusListener(spouseNameInput);
+        setEditTextOnFocusListener(birthdayInput);
 
         plusNameIcon.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -735,6 +754,122 @@ public class AddContactActivity extends AppCompatActivity {
             }
         });
 
+        plusOtherIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                final PopupMenu popupMenu = new PopupMenu(getApplicationContext(), view);
+
+                popupMenu.inflate(R.menu.other_options);
+
+                popupMenu.show();
+
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+
+                        Menu menu = popupMenu.getMenu();
+
+                        switch(menuItem.getItemId()){
+                            case R.id.action_nickName:
+                                nickNameInput.setVisibility(View.VISIBLE);
+                                nickNameTitle.setVisibility(View.VISIBLE);
+
+                                nickNameInput.setFocusableInTouchMode(true);
+                                nickNameInput.requestFocus();
+
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+
+                                        autoFocus(nickNameInput);
+
+                                    }
+                                }, DELAY_TIME);
+
+                                break;
+
+                            case R.id.action_spouseName:
+                                spouseNameTitle.setVisibility(View.VISIBLE);
+                                spouseNameInput.setVisibility(View.VISIBLE);
+
+                                spouseNameInput.setFocusableInTouchMode(true);
+                                spouseNameInput.requestFocus();
+
+                                new Timer().schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+
+                                        autoFocus(spouseNameInput);
+
+                                    }
+                                }, DELAY_TIME);
+
+                                break;
+
+                            case R.id.action_birthday:
+                                birthdayTitle.setVisibility(View.VISIBLE);
+                                birthdayInput.setVisibility(View.VISIBLE);
+
+                                // ZET CLICK EVENT OP DE DATE INPUT
+                                birthdayInput.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        // calender class's instance and get current date , month and year from calender
+                                        final Calendar c = Calendar.getInstance();
+                                        int mYear = c.get(Calendar.YEAR); // current year
+                                        int mMonth = c.get(Calendar.MONTH); // current month
+                                        int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
+                                        // date picker dialog
+                                        datePickerDialog = new DatePickerDialog(AddContactActivity.this,
+                                                new DatePickerDialog.OnDateSetListener() {
+
+                                                    @Override
+                                                    public void onDateSet(DatePicker view, int yearPicked,
+                                                                          int monthOfYearPicked, int dayOfMonthPicked) {
+
+                                                        dayOfMonth = dayOfMonthPicked;
+                                                        month = monthOfYearPicked + 1;
+                                                        year = yearPicked;
+
+                                                        if(month <10) {
+                                                            finalMonth = "0" + month;
+                                                        } else {
+                                                            finalMonth = String.valueOf(month);
+                                                        }
+
+                                                        if(dayOfMonth <10) {
+                                                            finalDayOfMonth = "0" + dayOfMonth;
+                                                        } else {
+                                                            finalDayOfMonth = String.valueOf(dayOfMonth);
+                                                        }
+
+
+                                                        birthdayInput.setText(finalDayOfMonth + "-" + finalMonth + "-" + year);
+
+                                                    }
+                                                }, mYear, mMonth, mDay);
+                                        datePickerDialog.show();
+
+                                    }
+                                });
+
+                                birthdayInput.setFocusableInTouchMode(true);
+                                birthdayInput.requestFocus();
+
+
+                                break;
+
+                        }
+
+                        return false;
+                    }
+                });
+            }
+        });
+
+        birthdayInput.setFocusable(false);
+
     }
 
     // VOEG ICONS TOE AAN DE ACTION BAR
@@ -1006,12 +1141,16 @@ public class AddContactActivity extends AppCompatActivity {
             contact.setHomeAddress(contactOtherPhysicalAddress);
         }
 
-        if(!nickName.getText().toString().isEmpty()){
-            contact.setNickName(nickName.getText().toString());
+        if(!nickNameInput.getText().toString().isEmpty()){
+            contact.setNickName(nickNameInput.getText().toString());
         }
 
-        if(!spouseName.getText().toString().isEmpty()){
-            contact.setSpouseName(spouseName.getText().toString());
+        if(!spouseNameInput.getText().toString().isEmpty()){
+            contact.setSpouseName(spouseNameInput.getText().toString());
+        }
+
+        if(!birthdayInput.getText().toString().isEmpty()){
+            contact.setBirthday(birthdayInput.getText().toString());
         }
 
         if(!imInput.getText().toString().isEmpty()){
@@ -1165,7 +1304,6 @@ public class AddContactActivity extends AppCompatActivity {
         homeCityNameTitle.setVisibility(View.GONE);
         homeStateTitle.setVisibility(View.GONE);
         homeCountryTitle.setVisibility(View.GONE);
-
         otherStreetNameInput.setVisibility(View.GONE);
         otherPostalCodeInput.setVisibility(View.GONE);
         otherCityNameInput.setVisibility(View.GONE);
@@ -1177,6 +1315,12 @@ public class AddContactActivity extends AppCompatActivity {
         otherCityNameTitle.setVisibility(View.GONE);
         otherStateTitle.setVisibility(View.GONE);
         otherCountryTitle.setVisibility(View.GONE);
+        nickNameInput.setVisibility(View.GONE);
+        nickNameTitle.setVisibility(View.GONE);
+        spouseNameTitle.setVisibility(View.GONE);
+        spouseNameInput.setVisibility(View.GONE);
+        birthdayTitle.setVisibility(View.GONE);
+        birthdayInput.setVisibility(View.GONE);
 
     }
 
