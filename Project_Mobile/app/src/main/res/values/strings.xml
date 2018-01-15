@@ -57,7 +57,7 @@
     <string name="streetName">Street</string>
     <string name="postalCode">Postal Code</string>
     <string name="cityName">City</string>
-    <string name="stateName">State</string>
+    <string name="stateName">State/Province</string>
     <string name="countryName">Country</string>
 
     <string name="notesTitle">Notes</string>
@@ -109,10 +109,10 @@
     <string name="managerTitle">Manager</string>
     <string name="assistantTitle">Assistant</string>
     <string name="streetNameTitle">Street</string>
-    <string name="postalCodeTitle">Postal code</string>
+    <string name="postalCodeTitle">ZIP/Postal code</string>
     <string name="cityNameTitle">City</string>
     <string name="stateTitle">State</string>
-    <string name="countryTitle">Country/region</string>
+    <string name="countryTitle">Country/Region</string>
 
     <string name="inbox">Inbox</string>
 
@@ -142,4 +142,6 @@
     <string name="yomiName">Yomi name</string>
     <string name="yomiCompanyTitle">Yomi company name</string>
     <string name="imTitle">IM</string>
+    <string name="businessAddressTitle">Business</string>
+    <string name="otherTitle">Other</string>
 </resources>
