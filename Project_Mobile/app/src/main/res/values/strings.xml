@@ -144,4 +144,6 @@
     <string name="imTitle">IM</string>
     <string name="businessAddressTitle">Business</string>
     <string name="otherTitle">Other</string>
+    <string name="homeAddressTitle">Home</string>
+
 </resources>

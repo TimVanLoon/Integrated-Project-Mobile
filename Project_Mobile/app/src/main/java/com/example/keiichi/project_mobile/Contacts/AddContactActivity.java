@@ -71,6 +71,12 @@ public class AddContactActivity extends AppCompatActivity {
     private EditText businessStateNameInput;
     private EditText businessCountryNameInput;
 
+    private EditText homeStreetNameInput;
+    private EditText homePostalCodeInput;
+    private EditText homeCityNameInput;
+    private EditText homeStateNameInput;
+    private EditText homeCountryNameInput;
+
     private EditText personalNotes;
     private EditText nickName;
     private EditText spouseName;
@@ -124,6 +130,13 @@ public class AddContactActivity extends AppCompatActivity {
     private TextView businessStateTitle;
     private TextView businessCountryTitle;
 
+    private TextView homeAddressTitle;
+    private TextView homeStreetNameTitle;
+    private TextView homePostalCodeTitle;
+    private TextView homeCityNameTitle;
+    private TextView homeStateTitle;
+    private TextView homeCountryTitle;
+
     private String userName;
     private String userEmail;
     private String attendeeName;
@@ -170,11 +183,17 @@ public class AddContactActivity extends AppCompatActivity {
 
         businessStreetNameInput = (EditText) findViewById(R.id.businessStreetNameInput);
         businessPostalCodeInput = (EditText) findViewById(R.id.businessPostalCodeInput);
-
         businessPostalCodeInput = (EditText) findViewById(R.id.businessPostalCodeInput);
         businessCityNameInput = (EditText) findViewById(R.id.businessCityNameInput);
         businessStateNameInput = (EditText) findViewById(R.id.businessStateNameInput);
         businessCountryNameInput = (EditText) findViewById(R.id.businessCountryNameInput);
+
+        homeStreetNameInput = (EditText) findViewById(R.id.homeStreetNameInput);
+        homePostalCodeInput = (EditText) findViewById(R.id.homePostalCodeInput);
+        homeCityNameInput = (EditText) findViewById(R.id.homeCityNameInput);
+        homeStateNameInput = (EditText) findViewById(R.id.homeStateNameInput);
+        homeCountryNameInput = (EditText) findViewById(R.id.homeCountryNameInput);
+
         personalNotes = (EditText) findViewById(R.id.personalNotes);
         nickName = (EditText) findViewById(R.id.nickName);
         spouseName = (EditText) findViewById(R.id.spouseName);
@@ -226,6 +245,13 @@ public class AddContactActivity extends AppCompatActivity {
         businessStateTitle = (TextView) findViewById(R.id.businessStateTitle);
         businessCountryTitle = (TextView) findViewById(R.id.businessCountryTitle);
 
+        homeAddressTitle = (TextView) findViewById(R.id.homeAddressTitle);
+        homeStreetNameTitle = (TextView) findViewById(R.id.homeStreetNameTitle);
+        homePostalCodeTitle = (TextView) findViewById(R.id.homePostalCodeTitle);
+        homeCityNameTitle = (TextView) findViewById(R.id.homeCityNameTitle);
+        homeStateTitle = (TextView) findViewById(R.id.homeStateTitle);
+        homeCountryTitle = (TextView) findViewById(R.id.homeCountryTitle);
+
         plusNameIcon = (ImageView) findViewById(R.id.plusNameIcon);
         plusEmailIcon = (ImageView) findViewById(R.id.plusEmailIcon);
         plusPhoneIcon = (ImageView) findViewById(R.id.plusPhoneIcon);
@@ -270,6 +296,11 @@ public class AddContactActivity extends AppCompatActivity {
         setEditTextOnFocusListener(mobilePhoneInput);
         setEditTextOnFocusListener(yomiCompanyInput);
         setEditTextOnFocusListener(imInput);
+        setEditTextOnFocusListener(homeStreetNameInput);
+        setEditTextOnFocusListener(homePostalCodeInput);
+        setEditTextOnFocusListener(homeCityNameInput);
+        setEditTextOnFocusListener(homeStateNameInput);
+        setEditTextOnFocusListener(homeCountryNameInput);
 
         plusNameIcon.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -628,19 +659,26 @@ public class AddContactActivity extends AppCompatActivity {
                                 break;
 
                             case R.id.action_homeAddress:
-                                emailInput3.setVisibility(View.VISIBLE);
-                                emailSubTitle3.setVisibility(View.VISIBLE);
-                                displayAsInput3.setVisibility(View.VISIBLE);
-                                displayAsTitle3.setVisibility(View.VISIBLE);
+                                homeStreetNameInput.setVisibility(View.VISIBLE);
+                                homePostalCodeInput.setVisibility(View.VISIBLE);
+                                homeCityNameInput.setVisibility(View.VISIBLE);
+                                homeStateNameInput.setVisibility(View.VISIBLE);
+                                homeCountryNameInput.setVisibility(View.VISIBLE);
+                                homeAddressTitle.setVisibility(View.VISIBLE);
+                                homeStreetNameTitle.setVisibility(View.VISIBLE);
+                                homePostalCodeTitle.setVisibility(View.VISIBLE);
+                                homeCityNameTitle.setVisibility(View.VISIBLE);
+                                homeStateTitle.setVisibility(View.VISIBLE);
+                                homeCountryTitle.setVisibility(View.VISIBLE);
 
-                                emailInput3.setFocusableInTouchMode(true);
-                                emailInput3.requestFocus();
+                                homeStreetNameInput.setFocusableInTouchMode(true);
+                                homeStreetNameInput.requestFocus();
 
                                 new Timer().schedule(new TimerTask() {
                                     @Override
                                     public void run() {
 
-                                        autoFocus(emailInput3);
+                                        autoFocus(homeStreetNameInput);
 
                                     }
                                 }, DELAY_TIME);
@@ -936,6 +974,11 @@ public class AddContactActivity extends AppCompatActivity {
             contact.setBusinessAddress(contactBusinessPhysicalAddress);
         }
 
+        if(!homeStateNameInput.getText().toString().isEmpty()){
+            PhysicalAddress contactHomePhysicalAddress = new PhysicalAddress(homeStreetNameInput.getText().toString(), homeCityNameInput.getText().toString(), homeStateNameInput.getText().toString(), homeCountryNameInput.getText().toString(), homePostalCodeInput.getText().toString());
+            contact.setHomeAddress(contactHomePhysicalAddress);
+        }
+
         if(!nickName.getText().toString().isEmpty()){
             contact.setNickName(nickName.getText().toString());
         }
@@ -1084,6 +1127,19 @@ public class AddContactActivity extends AppCompatActivity {
         businessStateNameInput.setVisibility(View.GONE);
         businessCountryTitle.setVisibility(View.GONE);
         businessCountryNameInput.setVisibility(View.GONE);
+
+        homeStreetNameInput.setVisibility(View.GONE);
+        homePostalCodeInput.setVisibility(View.GONE);
+        homeCityNameInput.setVisibility(View.GONE);
+        homeStateNameInput.setVisibility(View.GONE);
+        homeCountryNameInput.setVisibility(View.GONE);
+        homeAddressTitle.setVisibility(View.GONE);
+        homeStreetNameTitle.setVisibility(View.GONE);
+        homePostalCodeTitle.setVisibility(View.GONE);
+        homeCityNameTitle.setVisibility(View.GONE);
+        homeStateTitle.setVisibility(View.GONE);
+        homeCountryTitle.setVisibility(View.GONE);
+
 
     }
 

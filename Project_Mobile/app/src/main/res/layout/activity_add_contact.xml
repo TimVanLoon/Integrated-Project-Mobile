@@ -978,6 +978,156 @@
         </EditText>
 
 
+
+
+
+        <TextView
+            android:id="@+id/homeAddressTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/homeAddressTitle"
+            android:layout_marginLeft="15dp"
+            android:textColor="@color/black"
+            android:textSize="10pt">
+        </TextView>
+
+        <TextView
+            android:id="@+id/homeStreetNameTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/streetNameTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
+        </TextView>
+
+        <EditText
+            android:id="@+id/homeStreetNameInput"
+            android:layout_height="37dp"
+            android:hint="@string/streetName"
+            android:textSize="12dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:inputType="textPersonName"
+            android:textColor="@color/black"
+            android:textCursorDrawable="@null"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/edit_text_style"
+            android:layout_width="fill_parent">
+        </EditText>
+
+        <TextView
+            android:id="@+id/homeCityNameTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cityNameTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
+        </TextView>
+
+        <EditText
+            android:id="@+id/homeCityNameInput"
+            android:layout_height="37dp"
+            android:hint="@string/cityName"
+            android:textSize="12dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textColor="@color/black"
+            android:textCursorDrawable="@null"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/edit_text_style"
+            android:inputType="textCapSentences|textPersonName"
+            android:layout_width="fill_parent">
+        </EditText>
+
+        <TextView
+            android:id="@+id/homeStateTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stateTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
+        </TextView>
+
+        <EditText
+            android:id="@+id/homeStateNameInput"
+            android:layout_height="37dp"
+            android:hint="@string/stateName"
+            android:textSize="12dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textColor="@color/black"
+            android:textCursorDrawable="@null"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/edit_text_style"
+            android:inputType="textCapSentences|textPersonName"
+            android:layout_width="fill_parent">
+        </EditText>
+
+        <TextView
+            android:id="@+id/homePostalCodeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/postalCodeTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
+        </TextView>
+
+        <EditText
+            android:id="@+id/homePostalCodeInput"
+            android:layout_height="37dp"
+            android:hint="@string/postalCode"
+            android:textSize="12dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textColor="@color/black"
+            android:textCursorDrawable="@null"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/edit_text_style"
+            android:inputType="textCapSentences|textPersonName"
+            android:layout_width="fill_parent">
+        </EditText>
+
+        <TextView
+            android:id="@+id/homeCountryTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/countryTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
+        </TextView>
+
+        <EditText
+            android:id="@+id/homeCountryNameInput"
+            android:layout_height="37dp"
+            android:hint="@string/countryName"
+            android:textSize="12dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:textColor="@color/black"
+            android:textCursorDrawable="@null"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/edit_text_style"
+            android:inputType="textCapSentences|textPersonName"
+            android:layout_width="fill_parent">
+        </EditText>
+
+
+
         <TextView
             android:id="@+id/nickNameTitle"
             android:layout_width="wrap_content"
