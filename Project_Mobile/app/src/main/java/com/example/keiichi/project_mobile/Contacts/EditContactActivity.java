@@ -78,11 +78,11 @@ public class EditContactActivity extends AppCompatActivity {
     private EditText officeLocationInput;
     private EditText managerInput;
     private EditText assistantNameInput;
-    private EditText streetNameInput;
-    private EditText postalCodeInput;
-    private EditText cityNameInput;
-    private EditText stateNameInput;
-    private EditText countryNameInput;
+    private EditText homeStreetNameInput;
+    private EditText homePostalCodeInput;
+    private EditText homeCityNameInput;
+    private EditText homeStateNameInput;
+    private EditText homeCountryNameInput;
     private EditText personalNotesInput;
     private EditText nickNameInput;
     private EditText spouseNameInput;
@@ -129,14 +129,14 @@ public class EditContactActivity extends AppCompatActivity {
         officeLocationInput = (EditText) findViewById(R.id.officeLocation);
         managerInput = (EditText) findViewById(R.id.manager);
         assistantNameInput = (EditText) findViewById(R.id.assistantName);
-        streetNameInput = (EditText) findViewById(R.id.streetName);
-        postalCodeInput = (EditText) findViewById(R.id.postalCode);
-        cityNameInput = (EditText) findViewById(R.id.cityName);
-        stateNameInput = (EditText) findViewById(R.id.stateName);
-        countryNameInput = (EditText) findViewById(R.id.countryName);
+        homeStreetNameInput = (EditText) findViewById(R.id.homeStreetNameInput);
+        homePostalCodeInput = (EditText) findViewById(R.id.homePostalCodeInput);
+        homeCityNameInput = (EditText) findViewById(R.id.homeCityNameInput);
+        homeStateNameInput = (EditText) findViewById(R.id.homeStateNameInput);
+        homeCountryNameInput = (EditText) findViewById(R.id.homeCountryNameInput);
         personalNotesInput = (EditText) findViewById(R.id.personalNotes);
-        nickNameInput = (EditText) findViewById(R.id.nickName);
-        spouseNameInput = (EditText) findViewById(R.id.spouseName);
+        nickNameInput = (EditText) findViewById(R.id.nickNameInput);
+        spouseNameInput = (EditText) findViewById(R.id.spouseNameInput);
 
         setEditTextOnFocusListener(firstNameInput);
         setEditTextOnFocusListener(lastNameInput);
@@ -147,12 +147,11 @@ public class EditContactActivity extends AppCompatActivity {
         setEditTextOnFocusListener(companyNameInput);
         setEditTextOnFocusListener(officeLocationInput);
         setEditTextOnFocusListener(managerInput);
-        setEditTextOnFocusListener(streetNameInput);
-        setEditTextOnFocusListener(streetNameInput);
-        setEditTextOnFocusListener(postalCodeInput);
-        setEditTextOnFocusListener(cityNameInput);
-        setEditTextOnFocusListener(stateNameInput);
-        setEditTextOnFocusListener(countryNameInput);
+        setEditTextOnFocusListener(homeStreetNameInput);
+        setEditTextOnFocusListener(homePostalCodeInput);
+        setEditTextOnFocusListener(homeCityNameInput);
+        setEditTextOnFocusListener(homeStateNameInput);
+        setEditTextOnFocusListener(homeCountryNameInput);
         setEditTextOnFocusListener(personalNotesInput);
         setEditTextOnFocusListener(nickNameInput);
         setEditTextOnFocusListener(spouseNameInput);
@@ -168,11 +167,11 @@ public class EditContactActivity extends AppCompatActivity {
         officeLocationInput.setText(office);
         managerInput.setText(manager);
         assistantNameInput.setText(assistant);
-        streetNameInput.setText(street);
-        postalCodeInput.setText(postalCode);
-        cityNameInput.setText(city);
-        stateNameInput.setText(state);
-        countryNameInput.setText(country);
+        homeStreetNameInput.setText(street);
+        homePostalCodeInput.setText(postalCode);
+        homeCityNameInput.setText(city);
+        homeStateNameInput.setText(state);
+        homeCountryNameInput.setText(country);
         personalNotesInput.setText(notes);
         nickNameInput.setText(nickname);
         spouseNameInput.setText(spouse);
@@ -395,14 +394,14 @@ public class EditContactActivity extends AppCompatActivity {
             assistant = assistantNameInput.getText().toString();
         }
 
-        if(!streetNameInput.getText().toString().isEmpty()){
-            PhysicalAddress contactPhysicalAddress = new PhysicalAddress(streetNameInput.getText().toString(), cityNameInput.getText().toString(), stateNameInput.getText().toString(), countryNameInput.getText().toString(), postalCodeInput.getText().toString());
-            contact.setHomeAddress(contactPhysicalAddress);
-            street = streetNameInput.getText().toString();
-            postalCode = postalCodeInput.getText().toString();
-            city = cityNameInput.getText().toString();
-            state = stateNameInput.getText().toString();
-            country = countryNameInput.getText().toString();
+        if(!homeStreetNameInput.getText().toString().isEmpty()){
+            PhysicalAddress contactHomePhysicalAddress = new PhysicalAddress(homeStreetNameInput.getText().toString(), homeCityNameInput.getText().toString(), homeStateNameInput.getText().toString(), homeCountryNameInput.getText().toString(), homePostalCodeInput.getText().toString());
+            contact.setHomeAddress(contactHomePhysicalAddress);
+            street = homeStreetNameInput.getText().toString();
+            postalCode = homePostalCodeInput.getText().toString();
+            city = homeCityNameInput.getText().toString();
+            state = homeStateNameInput.getText().toString();
+            country = homeCountryNameInput.getText().toString();
         }
 
         if(!nickNameInput.getText().toString().isEmpty()){

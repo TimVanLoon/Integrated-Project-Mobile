@@ -272,11 +272,9 @@ public class AddContactActivity extends AppCompatActivity {
         otherCityNameTitle = (TextView) findViewById(R.id.otherCityNameTitle);
         otherStateTitle = (TextView) findViewById(R.id.otherStateTitle);
         otherCountryTitle = (TextView) findViewById(R.id.otherCountryTitle);
-
         nickNameTitle = (TextView) findViewById(R.id.nickNameTitle);
         spouseNameTitle = (TextView) findViewById(R.id.spouseNameTitle);
         birthdayTitle = (TextView) findViewById(R.id.birthdayTitle);
-
         plusNameIcon = (ImageView) findViewById(R.id.plusNameIcon);
         plusEmailIcon = (ImageView) findViewById(R.id.plusEmailIcon);
         plusPhoneIcon = (ImageView) findViewById(R.id.plusPhoneIcon);
