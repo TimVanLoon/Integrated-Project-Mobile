@@ -1,7 +1,9 @@
 package com.example.keiichi.project_mobile.DAL.POJOs;
 
 
-public class GeoCoordinates {
+import java.io.Serializable;
+
+public class GeoCoordinates implements Serializable {
 
     private double altitude;
     private double latitude;

@@ -8,8 +8,17 @@ public class EmailAddress implements Serializable {
     private String name;
     private String address;
 
+    public EmailAddress(String address, String name) {
+        this.address = address;
+        this.name = name;
+    }
+
     public EmailAddress(String address) {
         this.address = address;
+    }
+
+    public EmailAddress() {
+
     }
 
     public String getName() {

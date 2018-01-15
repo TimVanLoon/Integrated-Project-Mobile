@@ -1,17 +1,22 @@
 package com.example.keiichi.project_mobile.Mail;
 
 import android.app.Activity;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.RingtoneManager;
+import android.os.Build;
 import android.os.Bundle;
 
 
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -60,12 +65,17 @@ import com.example.keiichi.project_mobile.Contacts.ContactAdapter;
 import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
 import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
+import com.example.keiichi.project_mobile.DAL.POJOs.MailFolder;
 import com.example.keiichi.project_mobile.DAL.POJOs.Message;
 import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
 import com.example.keiichi.project_mobile.SimpleDividerItemDecoration;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.microsoft.appcenter.AppCenter;
+import com.microsoft.appcenter.analytics.Analytics;
+import com.microsoft.appcenter.crashes.Crashes;
+import com.microsoft.appcenter.push.Push;
 import com.microsoft.identity.client.AuthenticationCallback;
 import com.microsoft.identity.client.AuthenticationResult;
 import com.microsoft.identity.client.MsalClientException;
@@ -74,6 +84,15 @@ import com.microsoft.identity.client.MsalServiceException;
 import com.microsoft.identity.client.MsalUiRequiredException;
 import com.microsoft.identity.client.PublicClientApplication;
 import com.microsoft.identity.client.User;
+import com.mikepenz.materialdrawer.AccountHeader;
+import com.mikepenz.materialdrawer.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.holder.BadgeStyle;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -86,27 +105,51 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
 
 public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, Serializable {
 
-    NavigationView mailNavigationView;
+    final private String URL_MAIL = "https://graph.microsoft.com/v1.0/me/messages/";
+    final private String URL_MAIL_UPDATE = "https://graph.microsoft.com/beta/me/messages/";
+    final private String PHOTO_REQUEST = "https://graph.microsoft.com/v1.0/me/photo/$value";
+    final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
+    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/mailFolders('Inbox')/messages?$top=25";
+    final static String CHANNEL_ID = "my_channel_01";
+    final static String URL_MAILFOLDERS = "https://graph.microsoft.com/v1.0/me/mailFolders";
+    final static String URL_MAILFOLDER = "https://graph.microsoft.com/v1.0/me/mailFolders/";
+    private String JUNK_FOLDER_ID;
+    private ActionMode mailActionMode;
+    private NavigationView mailNavigationView;
     private ImageView userPicture;
-    private DrawerLayout mDrawerLayout;
     private String test;
     private Toolbar myToolbar;
     private SearchView searchView;
     private ActionBarDrawerToggle actionBarDrawerToggle;
+    private Drawer drawer;
     private boolean multiSelect = false;
     private boolean actionModeEnabled = false;
     private ArrayList<Integer> selectedItems = new ArrayList<>();
     private List<Message> messages = new ArrayList<>();
+    private List<MailFolder> mailFolders;
+    private List<String> mailFolderNames;
+    private Button attachmentButton;
+    private String folderData;
+    private String currentMailFolderId;
+    private int mailsClickedCount = 0;
 
     private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            MenuInflater menuInflater = getMenuInflater();
+            menuInflater.inflate(R.menu.multi_select_mail_navigation, menu);
             multiSelect = true;
             actionModeEnabled = true;
-            menu.add("Delete");
+            mailActionMode = actionMode;
+
             return true;
         }
 
@@ -117,22 +160,43 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
         @Override
         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-            try {
-                deleteMails(selectedItems);
-            } catch (JSONException e) {
-                e.printStackTrace();
+
+            if (menuItem.getItemId() == R.id.action_delete) {
+                try {
+                    deleteMails(selectedItems);
+                    actionModeEnabled = false;
+                    actionMode.finish();
+
+                    onRefresh();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
+                return true;
+            } else if(menuItem.getItemId() == R.id.actionn_junk){
+
+                try {
+                    MultiMoveToJunk(selectedItems);
+                    actionModeEnabled = false;
+                    actionMode.finish();
+                    onRefresh();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return true;
+
             }
-            for (Integer integer : selectedItems) {
-                finalMailJsonArray.remove(integer);
-            }
-            actionModeEnabled = false;
-            actionMode.finish();
-            return true;
+
+            return false;
         }
 
         @Override
         public void onDestroyActionMode(ActionMode actionMode) {
             multiSelect = false;
+            actionModeEnabled = false;
+            mailsClickedCount = 0;
+
             for (Integer item : selectedItems) {
                 recyclerView.getChildAt(item).setBackgroundColor(Color.TRANSPARENT);
             }
@@ -154,15 +218,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             "https://graph.microsoft.com/Calendars.ReadWrite"};
 
     //final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me";
-
-    final private String URL_MAIL = "https://graph.microsoft.com/v1.0/me/messages/";
-
-    final private String PHOTO_REQUEST = "https://graph.microsoft.com/v1.0/me/photo/$value";
-
-    final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
-
-    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/mailFolders('Inbox')/messages?$top=25";
-    final static String CHANNEL_ID = "my_channel_01";
 
     private JSONObject graphResponse;
     private RecyclerView recyclerView;
@@ -191,36 +246,27 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_mails);
 
+        AppCenter.start(getApplication(), "0dad3b08-3653-41ea-9c9b-689e0d88fbcf",
+                Analytics.class, Crashes.class, Push.class);
+
         userPicture = (ImageView) findViewById(R.id.userPicture);
         recyclerView = findViewById(R.id.ListViewMails);
-        signOutButton = findViewById(R.id.clearCache);
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(this);
 
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
+        folderData = getIntent().getStringExtra("folderInfo");
 
         myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
-        mDrawerLayout = findViewById(R.id.drawer_layout);
 
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, myToolbar, R.string.drawer_open,
-                R.string.drawer_close);
+        //addNotification();
 
-        mDrawerLayout.setDrawerListener(actionBarDrawerToggle);
-
-        addNotification();
 
         mBottomNav = findViewById(R.id.navigation);
-
-        mailNavigationView = findViewById(R.id.mailNavigationView);
-        View hView = mailNavigationView.getHeaderView(0);
-        TextView nav_userName = hView.findViewById(R.id.userName);
-        TextView nav_userEmail = hView.findViewById(R.id.userEmail);
-        nav_userName.setText(userName);
-        nav_userEmail.setText(userEmail);
 
         Menu menu = mBottomNav.getMenu();
         MenuItem menuItem = menu.getItem(0);
@@ -238,6 +284,9 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                         intentCalendar.putExtra("userName", userName);
                         intentCalendar.putExtra("userEmail", userEmail);
                         startActivity(intentCalendar);
+
+                        ListMailsActvity.this.finish();
+
                         break;
                     case R.id.action_mail:
 
@@ -248,6 +297,9 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                         intentContacts.putExtra("userName", userName);
                         intentContacts.putExtra("userEmail", userEmail);
                         startActivity(intentContacts);
+
+                        ListMailsActvity.this.finish();
+
                         break;
 
                 }
@@ -256,35 +308,20 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             }
         });
 
-        signOutButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                onSignOutClicked();
-            }
-        });
-
 
         callGraphAPI();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.mailNavigationView);
-        View navView =  navigationView.getHeaderView(0);
-        ImageView userPicture = (ImageView)navView.findViewById(R.id.userPicture);
+        mailFolders = new ArrayList<>();
+        mailFolders.add(new MailFolder("1", "Not found", 0, 0));
 
-        ColorGenerator generator = ColorGenerator.MATERIAL;
-
-        int color2 = generator.getColor(userName.substring(0,1));
-
-        TextDrawable drawable = TextDrawable.builder()
-                .buildRound(userName.substring(0,1), color2); // radius in px
-
-        userPicture.setImageDrawable(drawable);
+        buildDrawer(userName, userEmail, myToolbar, mailFolders);
 
     }
-
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        actionBarDrawerToggle.syncState();
+        //actionBarDrawerToggle.syncState();
     }
 
 
@@ -400,9 +437,9 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     /* Set the UI for signed-out user */
     private void updateSignedOutUI() {
         //callGraphButton.setVisibility(View.VISIBLE);
-        signOutButton.setVisibility(View.INVISIBLE);
         findViewById(R.id.welcome).setVisibility(View.INVISIBLE);
     }
+
 
 
     private void addNotification() {
@@ -410,7 +447,10 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                 new NotificationCompat.Builder(this)
                         .setContentTitle("Hey boo")
                         .setContentText("Wanna cuddle?")
+                        .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400})
+                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                         .setSmallIcon(R.drawable.bootje);
+
 
 
         Intent notificationIntent = new Intent(this, MainActivity.class);
@@ -425,41 +465,60 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     @Override
     public void onRefresh() {
         swipeRefreshLayout.setRefreshing(true);
-        try {
-            getMails(graphResponse);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        swipeRefreshLayout.setRefreshing(false);
 
+        if(currentMailFolderId == null){
+
+            callGraphAPI();
+
+        } else{
+
+            getMailsFromFolder(currentMailFolderId);
+
+        }
+
+        swipeRefreshLayout.setRefreshing(false);
 
     }
 
-    void selectedItem(Integer item) {
+    private void selectedItem(Integer item) {
         if (multiSelect) {
             if (selectedItems.contains(item)) {
                 selectedItems.remove(item);
                 recyclerView.getChildAt(item).setBackgroundColor(Color.TRANSPARENT);
+                mailsClickedCount--;
+                mailActionMode.setTitle(mailsClickedCount+ " Selected");
+
+                if(mailsClickedCount == 0){
+                    mailActionMode.finish();
+                    actionModeEnabled = false;
+                }
+
             } else {
                 selectedItems.add(item);
-                recyclerView.getChildAt(item).setBackgroundColor(Color.WHITE);
+                recyclerView.getChildAt(item).setBackgroundColor(Color.LTGRAY);
+                mailsClickedCount++;
+                mailActionMode.setTitle(mailsClickedCount+ " Selected");
+
             }
         }
     }
 
     private void deleteMails(ArrayList<Integer> selectedItems) throws JSONException {
+
         this.selectedItems = selectedItems;
 
         for (Integer integer : selectedItems) {
             RequestQueue queue = Volley.newRequestQueue(this);
-            JSONObject mail = finalMailJsonArray.getJSONObject(integer);
 
+            Message message = messages.get(integer);
 
-            StringRequest objectRequest = new StringRequest(Request.Method.DELETE, URL_MAIL + mail.getString("id"),
+            String postAddress = URL_DELETE + message.getId();
+
+            StringRequest objectRequest = new StringRequest(Request.Method.DELETE, postAddress,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            Toast.makeText(getApplicationContext(), "Mail deleted!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Mails deleted!", Toast.LENGTH_SHORT).show();
                             System.out.println(response);
                         }
 
@@ -484,6 +543,157 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             queue.add(objectRequest);
         }
 
+        mailAdapter.notifyDataSetChanged();
+
+        int DELAY_TIME=2000;
+
+        //start your animation
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                //this code will run after the delay time which is 2 seconds.
+
+                callGraphAPI();
+            }
+        }, DELAY_TIME);
+
+    }
+
+    /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
+    private void getMailFolders() {
+        Log.d(TAG, "Starting volley request to graph");
+        Log.d(TAG, accessToken);
+
+    /* Make sure we have a token to send to graph */
+        if (accessToken == null) {
+            return;
+        }
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        JSONObject parameters = new JSONObject();
+
+        try {
+            parameters.put("key", "value");
+        } catch (Exception e) {
+            Log.d(TAG, "Failed to put parameters: " + e.toString());
+        }
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, URL_MAILFOLDERS,
+                parameters, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+            /* Successfully called graph, process data and send to UI */
+                Log.d(TAG, "Response: " + response.toString());
+
+                try {
+                    updateFolders(response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d(TAG, "Error: " + error.toString());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+                return headers;
+            }
+        };
+
+        Log.d(TAG, "Adding HTTP GET to Queue, Request: " + request.toString());
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                3000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(request);
+    }
+
+    /* Sets the Graph response */
+    private void updateFolders(JSONObject graphResponse) throws JSONException {
+
+        // Test de response
+        JSONArray contactsJsonArray = null;
+
+        // Haal de mailfolders binnen
+        try {
+            JSONObject folderList = graphResponse;
+
+            JSONArray folders = folderList.getJSONArray("value");
+
+            // VUL POJO
+            Type listType = new TypeToken<List<MailFolder>>() {
+            }.getType();
+
+            mailFolders = new Gson().fromJson(String.valueOf(folders), listType);
+
+
+            buildDrawer(userName, userEmail, myToolbar, mailFolders);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
+    private void updateMailIsRead(Message message, String id) {
+        Log.d(TAG, "Starting volley request to graph");
+        Log.d(TAG, accessToken);
+
+    /* Make sure we have a token to send to graph */
+        if (accessToken == null) {
+            return;
+        }
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        JSONObject parameters = new JSONObject();
+
+        try {
+            parameters.put("key", "value");
+        } catch (Exception e) {
+            Log.d(TAG, "Failed to put parameters: " + e.toString());
+        }
+
+        String patchUrl = URL_MAIL_UPDATE + id;
+
+        JsonObjectRequest objectRequest = null;
+        try {
+            objectRequest = new JsonObjectRequest(Request.Method.PATCH, patchUrl, new JSONObject(new Gson().toJson(message)),
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Toast.makeText(getApplicationContext(), "Mail updated!", Toast.LENGTH_SHORT).show();
+                            System.out.println(response.toString());
+                        }
+
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyLog.e("Error: ", error.getMessage());
+                    error.printStackTrace();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("Authorization", "Bearer " + accessToken);
+                    headers.put("Content-Type", "application/json; charset=utf-8");
+
+                    return headers;
+                }
+
+            };
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        queue.add(objectRequest);
     }
 
     private void getMails(JSONObject graphResponse) throws JSONException {
@@ -510,26 +720,63 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
 
+        getMailFolders();
+
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 if (actionModeEnabled) {
                     selectedItem(position);
-                    Toast.makeText(getApplicationContext(), String.valueOf(position), Toast.LENGTH_SHORT).show();
-
 
                 } else {
-                    Message message = messages.get(position);
+                    Message message = mailAdapter.getItemAtPosition(position);
+
 
                     Intent showMail = new Intent(ListMailsActvity.this, DisplayMailActivity.class);
 
+                    if (!message.isRead()){
+
+                        System.out.println("KEVIN BECKWEE");
+
+                        String id = message.getId();
+                        message.setRead(true);
+
+                        showMail.putExtra("isRead", "yes");
+
+                        //updateMailIsRead(message, id);
+
+                    }
+
                     showMail.putExtra("messageBody", message.getBody().getContent());
-                    showMail.putExtra("accestoken", accessToken);
+                    showMail.putExtra("AccessToken", accessToken);
                     showMail.putExtra("userName", userName);
                     showMail.putExtra("userEmail", userEmail);
-                    showMail.putExtra("mailObject", message);
+                    showMail.putExtra("mailId", message.getId());
+                    showMail.putExtra("mailSubject", message.getSubject());
+                    showMail.putExtra("mailAddress", message.getFrom().getEmailAddress().getAddress());
+                    showMail.putExtra("senderName", message.getFrom().getEmailAddress().getName());
+                    showMail.putExtra("timeSent", message.getReceivedDateTime());
+                    showMail.putExtra("junkID", JUNK_FOLDER_ID);
+
+                    showMail.putExtra("receiverName", message.getToRecipients().get(0).getEmailAddress().getName());
+                    showMail.putExtra("receiverMail", message.getToRecipients().get(0).getEmailAddress().getAddress());
+                    showMail.putExtra("mail",message);
+
+
+                    if(!message.getToRecipients().isEmpty()){
+                        showMail.putExtra("receiverName", message.getToRecipients().get(0).getEmailAddress().getName());
+                    }
+
+                    if(!message.getToRecipients().isEmpty()){
+                        showMail.putExtra("receiverMail", message.getToRecipients().get(0).getEmailAddress().getAddress());
+                    }
+
+                    showMail.putExtra("contentType", message.getBody().getContentType());
+                    showMail.putExtra("messageObject", message);
 
                     startActivity(showMail);
+
+                    ListMailsActvity.this.finish();
                 }
 
             }
@@ -538,7 +785,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             public void onLongClick(View view, int position) {
                 view.startActionMode(actionModeCallback);
                 selectedItem(position);
-
 
             }
         }));
@@ -578,6 +824,8 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         return super.onCreateOptionsMenu(menu);
     }
 
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
 
@@ -590,7 +838,11 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                 intentSendMail.putExtra("AccessToken", accessToken);
                 intentSendMail.putExtra("userName", userName);
                 intentSendMail.putExtra("userEmail", userEmail);
+
                 startActivity(intentSendMail);
+
+                ListMailsActvity.this.finish();
+
                 return true;
 
             default:
@@ -600,11 +852,331 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         }
     }
 
-
     public interface ClickListener {
         void onClick(View view, int position);
 
         void onLongClick(View view, int position);
+    }
+
+    private void setActionBarTitle(String title, Toolbar toolbar) {
+
+        toolbar.setTitle(title);
+        toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+        toolbar.setSubtitleTextColor(ContextCompat.getColor(this, R.color.white));
+        // THIS LINE REMOVES ANNOYING LEFT MARGIN
+        toolbar.setTitleMarginStart(30);
+
+    }
+
+    public void buildDrawer(String name, String email, Toolbar toolbar, List<MailFolder> folders){
+
+        ArrayList<IDrawerItem> drawerItems = new ArrayList<>();
+
+        for(MailFolder folder : folders){
+            if(folder.getDisplayName().toLowerCase().equals("postvak in")){
+                PrimaryDrawerItem item = new PrimaryDrawerItem();
+                item.withName("Inbox");
+                item.withTag(folder);
+                item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+                drawerItems.add(item);
+            }
+        }
+
+        for(MailFolder folder : folders) {
+            PrimaryDrawerItem item = new PrimaryDrawerItem();
+
+            String folderName = folder.getDisplayName().toLowerCase();
+
+            switch(folderName) {
+
+                case "archive":
+                    item.withName("Archive");
+                    item.withTag(folder);
+                    item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+                    drawerItems.add(item);
+
+                    break;
+
+                case "boxer":
+                    item.withName("Boxer");
+                    item.withTag(folder);
+                    item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+                    drawerItems.add(item);
+                    break;
+
+                case "concepten":
+                    item.withName("Drafts");
+                    item.withTag(folder);
+                    item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+                    drawerItems.add(item);
+                    break;
+
+                case "conversation history":
+                    item.withName("Conversation History");
+                    item.withTag(folder);
+                    item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+                    drawerItems.add(item);
+                    break;
+
+                case "onbelangrijke e-mail":
+                    item.withName("Unimportant E-Mail");
+                    item.withTag(folder);
+                    item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+                    drawerItems.add(item);
+                    break;
+
+                case "ongewenste e-mail":
+                    item.withName("Junk E-Mail");
+                    JUNK_FOLDER_ID = folder.getId();
+                    item.withTag(folder);
+                    item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+                    drawerItems.add(item);
+                    break;
+
+                case "junk email":
+                    item.withName("Junk E-Mail");
+                    JUNK_FOLDER_ID = folder.getId();
+                    item.withTag(folder);
+                    item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+                    drawerItems.add(item);
+                    break;
+
+                case "postvak in":
+                    break;
+
+                case "postvak uit":
+                    item.withName("Outbox");
+                    item.withTag(folder);
+                    item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+                    drawerItems.add(item);
+                    break;
+
+                case "verwijderde items":
+                    item.withName("Deleted Items");
+                    item.withTag(folder);
+                    item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+                    drawerItems.add(item);
+                    break;
+
+                case "verzonden items":
+                    item.withName("Sent Items");
+                    item.withTag(folder);
+                    item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+                    drawerItems.add(item);
+                    break;
+
+                default:
+                    item.withName(folder.getDisplayName());
+                    item.withTag(folder);
+                    item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
+                    drawerItems.add(item);
+                    break;
+            }
+
+
+        }
+
+        ColorGenerator generator = ColorGenerator.MATERIAL;
+
+        int color2 = generator.getColor(userName.substring(0,1));
+
+        TextDrawable drawable = TextDrawable.builder()
+                .buildRound(userName.substring(0,1), color2); // radius in px
+
+        AccountHeader headerResult = new AccountHeaderBuilder()
+                .withActivity(this)
+                .withHeaderBackground(R.color.colorWhite)
+                .withSelectionListEnabledForSingleProfile(false)
+                .withTextColor(Color.BLACK)
+                .addProfiles(
+                        new ProfileDrawerItem().withName(name).withEmail(email).withIcon(drawable)
+                )
+                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
+                    @Override
+                    public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
+                        return false;
+                    }
+                })
+                .build();
+
+        drawer = new DrawerBuilder()
+                .withActivity(this)
+                .withToolbar(toolbar)
+                .withTranslucentStatusBar(false)
+                .withAccountHeader(headerResult)
+                .withDrawerItems(drawerItems)
+                .withSelectedItemByPosition(0)
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        if (drawerItem instanceof PrimaryDrawerItem){
+
+                            MailFolder folder = (MailFolder) drawerItem.getTag();
+
+                            currentMailFolderId = folder.getId();
+
+
+                            getMailsFromFolder(currentMailFolderId);
+
+                            String folderName = ((PrimaryDrawerItem) drawerItem).getName().getText().toString();
+
+                            setActionBarTitle(folderName, myToolbar);
+
+                        }
+                        return false;
+                    }
+                })
+                .build();
+
+    }
+
+    public void getMailsFromFolder(String id){
+
+        Log.d(TAG, "Starting volley request to graph");
+        Log.d(TAG, accessToken);
+
+    /* Make sure we have a token to send to graph */
+        if (accessToken == null) {
+            return;
+        }
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        JSONObject parameters = new JSONObject();
+
+        try {
+            parameters.put("key", "value");
+        } catch (Exception e) {
+            Log.d(TAG, "Failed to put parameters: " + e.toString());
+        }
+
+        String getUrl = URL_MAILFOLDER + id + "/messages";
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, getUrl,
+                parameters, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+            /* Successfully called graph, process data and send to UI */
+                Log.d(TAG, "Response: " + response.toString());
+
+                try {
+                    updateWithMailFolder(response);
+
+                    System.out.println("hey bootjes! " + response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d(TAG, "Error: " + error.toString());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+                return headers;
+            }
+        };
+
+        Log.d(TAG, "Adding HTTP GET to Queue, Request: " + request.toString());
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                3000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(request);
+
+    }
+
+    private void updateWithMailFolder(JSONObject graphResponse) throws JSONException {
+
+        try {
+            //haal mails binnen
+
+            JSONObject messageList = graphResponse;
+
+            JSONArray messagesArray = messageList.getJSONArray("value");
+
+            System.out.println("test response: " + messagesArray);
+
+            // VUL POJO
+            Type listType = new TypeToken<List<Message>>() {
+            }.getType();
+
+            messages = new Gson().fromJson(String.valueOf(messagesArray), listType);
+
+            mailAdapter = new MailAdapter(this, messages);
+            recyclerView.setAdapter(mailAdapter);
+
+            mailAdapter.notifyDataSetChanged();
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void onBackPressed(){
+        minimizeApp();
+    }
+
+    public void minimizeApp() {
+        Intent startMain = new Intent(Intent.ACTION_MAIN);
+        startMain.addCategory(Intent.CATEGORY_HOME);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(startMain);
+    }
+
+    private void MultiMoveToJunk(ArrayList<Integer> selectedItems) throws JSONException {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        for (Integer integer: selectedItems){
+            Message message = messages.get(integer);
+
+            final JSONObject jsonObject = new JSONObject(buildJsonJunk(JUNK_FOLDER_ID));
+
+            String junkUrl = URL_MAIL + message.getId() + "/move";
+
+            JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, junkUrl , jsonObject,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            System.out.println(response.toString());
+                        }
+
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyLog.e("Error: ", error.getMessage());
+                    error.printStackTrace();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("Authorization", "Bearer " + accessToken);
+                    headers.put("Content-Type", "application/json; charset=utf-8");
+
+                    return headers;
+                }
+
+            };
+
+            queue.add(objectRequest);
+        }
+
+    }
+
+    private String buildJsonJunk(String junkFolderId) {
+        JsonObjectBuilder factory = Json.createObjectBuilder()
+                .add("DestinationId", junkFolderId);
+
+
+        return factory.build().toString();
     }
 
 

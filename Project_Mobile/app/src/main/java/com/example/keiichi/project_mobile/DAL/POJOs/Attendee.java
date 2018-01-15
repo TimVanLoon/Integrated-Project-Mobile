@@ -9,9 +9,8 @@ public class Attendee implements Serializable {
     private ResponseStatus status;
     private EmailAddress emailAddress;
 
-    public Attendee(ResponseStatus status, String type, EmailAddress emailAddress) {
+    public Attendee(String type, EmailAddress emailAddress) {
 
-        this.status = status;
         this.type = type;
         this.emailAddress = emailAddress;
     }

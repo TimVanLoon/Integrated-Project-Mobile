@@ -21,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -75,7 +76,17 @@ public class EventAdapter extends BaseAdapter implements ListAdapter, Filterable
 
         header.setText(event.getSubject());
 
-        preview.setText(event.getStart().getDateTime());
+        //preview.setText(event.getStart().getDateTime());
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        SimpleDateFormat output = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        Date d = null;
+        try {
+            d = sdf.parse(event.getStart().getDateTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        preview.setText(output.format(d));
 
 
         return rowView;
@@ -130,5 +141,11 @@ public class EventAdapter extends BaseAdapter implements ListAdapter, Filterable
     public void setList(List<Event> data) {
         filteredData = data; // set the adapter list to data
         EventAdapter.this.notifyDataSetChanged(); // notify data set change
+    }
+
+    public Event getItemAtPosition(int position){
+
+        return filteredData.get(position);
+
     }
 }

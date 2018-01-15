@@ -1,5 +1,7 @@
 package com.example.keiichi.project_mobile.DAL.POJOs;
 
+import android.graphics.drawable.Drawable;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -10,6 +12,7 @@ public class Contact implements Serializable {
     private String assistantName;
     private String birthday;
     private PhysicalAddress businessAddress;
+    private PhysicalAddress otherAddress;
     private String businessHomePage;
     private List<String> businessPhones;
     private String[] categories;
@@ -26,7 +29,7 @@ public class Contact implements Serializable {
     private PhysicalAddress homeAddress;
     private List<String> homePhones;
     private String id;
-    private String[] imAddresses;
+    private List<String> imAddresses;
     private String initials;
     private String jobTitle;
     private String lastModifiedDateTime;
@@ -44,7 +47,7 @@ public class Contact implements Serializable {
     private String yomiCompanyName;
     private String yomiGivenName;
     private String yomiSurname;
-    private ProfilePhoto profilePhoto;
+    private byte[] profilePhoto;
 
     public PhysicalAddress getHomeAddress() {
         return homeAddress;
@@ -68,14 +71,6 @@ public class Contact implements Serializable {
 
     public void setMobilePhone(String mobilePhone) {
         this.mobilePhone = mobilePhone;
-    }
-
-    public ProfilePhoto getProfilePhoto() {
-        return profilePhoto;
-    }
-
-    public void setProfilePhoto(ProfilePhoto profilePhoto) {
-        this.profilePhoto = profilePhoto;
     }
 
     public Contact[] getContacts() {
@@ -214,11 +209,11 @@ public class Contact implements Serializable {
         this.id = id;
     }
 
-    public String[] getImAddresses() {
+    public List<String> getImAddresses() {
         return imAddresses;
     }
 
-    public void setImAddresses(String[] imAddresses) {
+    public void setImAddresses(List<String> imAddresses) {
         this.imAddresses = imAddresses;
     }
 
@@ -366,4 +361,15 @@ public class Contact implements Serializable {
         this.emailAddresses = emailAddresses;
     }
 
+    public void setProfilePhoto(byte[] profilePhoto) {
+        this.profilePhoto = profilePhoto;
+    }
+
+    public PhysicalAddress getOtherAddress() {
+        return otherAddress;
+    }
+
+    public void setOtherAddress(PhysicalAddress otherAddress) {
+        this.otherAddress = otherAddress;
+    }
 }

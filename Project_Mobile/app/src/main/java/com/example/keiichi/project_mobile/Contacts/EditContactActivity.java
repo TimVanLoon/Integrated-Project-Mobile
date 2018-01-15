@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -35,9 +36,12 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
+
 public class EditContactActivity extends AppCompatActivity {
 
-    final private String URL_POSTADRESS = "https://graph.microsoft.com/beta/me/contacts/";
+    final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/contacts/";
     private Toolbar myToolbar;
     private String userName;
     private String userEmail;
@@ -48,11 +52,11 @@ public class EditContactActivity extends AppCompatActivity {
     private String notes;
     private String nickname;
     private String spouse;
-    private String street;
-    private String postalCode;
-    private String city;
-    private String state;
-    private String country;
+    private String homeStreet;
+    private String homePostalCode;
+    private String homeCity;
+    private String homeState;
+    private String homeCountry;
     private String job;
     private String department;
     private String company;
@@ -74,14 +78,16 @@ public class EditContactActivity extends AppCompatActivity {
     private EditText officeLocationInput;
     private EditText managerInput;
     private EditText assistantNameInput;
-    private EditText streetNameInput;
-    private EditText postalCodeInput;
-    private EditText cityNameInput;
-    private EditText stateNameInput;
-    private EditText countryNameInput;
+    private EditText homeStreetNameInput;
+    private EditText homePostalCodeInput;
+    private EditText homeCityNameInput;
+    private EditText homeStateNameInput;
+    private EditText homeCountryNameInput;
     private EditText personalNotesInput;
     private EditText nickNameInput;
     private EditText spouseNameInput;
+    private MenuItem saveItem;
+    private Contact contact;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,28 +97,31 @@ public class EditContactActivity extends AppCompatActivity {
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
-        givenName = getIntent().getStringExtra("givenName");
-        displayName = getIntent().getStringExtra("displayName");
-        phoneNumber = getIntent().getStringExtra("userPhone");
-        emailList = (List<EmailAddress>)getIntent().getSerializableExtra("emailList");
+        contact = (Contact) getIntent().getSerializableExtra("contact");
+        givenName = contact.getGivenName();
+        displayName = contact.getDisplayName();
+        givenName = contact.getGivenName();
+        phoneNumber = contact.getMobilePhone();
+        id = contact.getId();
+        job = contact.getJobTitle();
+        department = contact.getDepartment();
+        company = contact.getCompanyName();
+        office = contact.getOfficeLocation();
+        manager = contact.getManager();
+        assistant = contact.getAssistantName();
+        firstName = contact.getGivenName();
+        lastName = contact.getSurname();
+        notes = contact.getPersonalNotes();
+        spouse = contact.getSpouseName();
+        nickname = contact.getNickName();
+        homeStreet = contact.getHomeAddress().getStreet();
+        homePostalCode = contact.getHomeAddress().getPostalCode();
+        homeCity = contact.getHomeAddress().getCity();
+        homeState = contact.getHomeAddress().getState();
+        homeCountry = contact.getHomeAddress().getCountryOrRegion();
+        emailList = contact.getEmailAddresses();
+
         email = getIntent().getStringExtra("email");
-        notes = getIntent().getStringExtra("notes");
-        nickname = getIntent().getStringExtra("nickname");
-        spouse = getIntent().getStringExtra("spouse");
-        street = getIntent().getStringExtra("street");
-        postalCode = getIntent().getStringExtra("postalcode");
-        city = getIntent().getStringExtra("city");
-        state = getIntent().getStringExtra("state");
-        country = getIntent().getStringExtra("country");
-        job = getIntent().getStringExtra("job");
-        department = getIntent().getStringExtra("department");
-        company = getIntent().getStringExtra("company");
-        office = getIntent().getStringExtra("office");
-        manager = getIntent().getStringExtra("manager");
-        assistant = getIntent().getStringExtra("assistant");
-        firstName = getIntent().getStringExtra("firstname");
-        lastName = getIntent().getStringExtra("lastname");
-        id = getIntent().getStringExtra("id");
 
         firstNameInput = (EditText) findViewById(R.id.firstNameInput);
         lastNameInput = (EditText) findViewById(R.id.lastNameInput);
@@ -124,14 +133,32 @@ public class EditContactActivity extends AppCompatActivity {
         officeLocationInput = (EditText) findViewById(R.id.officeLocation);
         managerInput = (EditText) findViewById(R.id.manager);
         assistantNameInput = (EditText) findViewById(R.id.assistantName);
-        streetNameInput = (EditText) findViewById(R.id.streetName);
-        postalCodeInput = (EditText) findViewById(R.id.postalCode);
-        cityNameInput = (EditText) findViewById(R.id.cityName);
-        stateNameInput = (EditText) findViewById(R.id.stateName);
-        countryNameInput = (EditText) findViewById(R.id.countryName);
+        homeStreetNameInput = (EditText) findViewById(R.id.homeStreetNameInput);
+        homePostalCodeInput = (EditText) findViewById(R.id.homePostalCodeInput);
+        homeCityNameInput = (EditText) findViewById(R.id.homeCityNameInput);
+        homeStateNameInput = (EditText) findViewById(R.id.homeStateNameInput);
+        homeCountryNameInput = (EditText) findViewById(R.id.homeCountryNameInput);
         personalNotesInput = (EditText) findViewById(R.id.personalNotes);
-        nickNameInput = (EditText) findViewById(R.id.nickName);
-        spouseNameInput = (EditText) findViewById(R.id.spouseName);
+        nickNameInput = (EditText) findViewById(R.id.nickNameInput);
+        spouseNameInput = (EditText) findViewById(R.id.spouseNameInput);
+
+        setEditTextOnFocusListener(firstNameInput);
+        setEditTextOnFocusListener(lastNameInput);
+        setEditTextOnFocusListener(emailInput);
+        setEditTextOnFocusListener(phoneInput);
+        setEditTextOnFocusListener(jobTitleInput);
+        setEditTextOnFocusListener(departmentInput);
+        setEditTextOnFocusListener(companyNameInput);
+        setEditTextOnFocusListener(officeLocationInput);
+        setEditTextOnFocusListener(managerInput);
+        setEditTextOnFocusListener(homeStreetNameInput);
+        setEditTextOnFocusListener(homePostalCodeInput);
+        setEditTextOnFocusListener(homeCityNameInput);
+        setEditTextOnFocusListener(homeStateNameInput);
+        setEditTextOnFocusListener(homeCountryNameInput);
+        setEditTextOnFocusListener(personalNotesInput);
+        setEditTextOnFocusListener(nickNameInput);
+        setEditTextOnFocusListener(spouseNameInput);
 
         // VUL INPUTS MET DATA VAN CONTACT
         firstNameInput.setText(firstName);
@@ -144,11 +171,11 @@ public class EditContactActivity extends AppCompatActivity {
         officeLocationInput.setText(office);
         managerInput.setText(manager);
         assistantNameInput.setText(assistant);
-        streetNameInput.setText(street);
-        postalCodeInput.setText(postalCode);
-        cityNameInput.setText(city);
-        stateNameInput.setText(state);
-        countryNameInput.setText(country);
+        homeStreetNameInput.setText(homeStreet);
+        homePostalCodeInput.setText(homePostalCode);
+        homeCityNameInput.setText(homeCity);
+        homeStateNameInput.setText(homeCity);
+        homeCountryNameInput.setText(homeCountry);
         personalNotesInput.setText(notes);
         nickNameInput.setText(nickname);
         spouseNameInput.setText(spouse);
@@ -168,6 +195,7 @@ public class EditContactActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.add_navigation, menu);
 
+        saveItem = menu.findItem(R.id.action_save);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -184,30 +212,11 @@ public class EditContactActivity extends AppCompatActivity {
                 intentContactDetails.putExtra("AccessToken", accessToken);
                 intentContactDetails.putExtra("userName", userName);
                 intentContactDetails.putExtra("userEmail", userEmail);
-                intentContactDetails.putExtra("givenName", givenName);
-                intentContactDetails.putExtra("displayName", displayName);
-                intentContactDetails.putExtra("userPhone", phoneNumber);
-                intentContactDetails.putExtra("emailList",(Serializable) emailList);
-                intentContactDetails.putExtra("email", email);
-                intentContactDetails.putExtra("notes", notes);
-                intentContactDetails.putExtra("nickname", nickname);
-                intentContactDetails.putExtra("spouse", spouse);
-                intentContactDetails.putExtra("street", street);
-                intentContactDetails.putExtra("postalcode", postalCode);
-                intentContactDetails.putExtra("city", city);
-                intentContactDetails.putExtra("state", state);
-                intentContactDetails.putExtra("country", country);
-                intentContactDetails.putExtra("job", job);
-                intentContactDetails.putExtra("department", department);
-                intentContactDetails.putExtra("company", company);
-                intentContactDetails.putExtra("office", office);
-                intentContactDetails.putExtra("manager", manager);
-                intentContactDetails.putExtra("assistant", assistant);
-                intentContactDetails.putExtra("firstname", firstName);
-                intentContactDetails.putExtra("lastname", lastName);
-                intentContactDetails.putExtra("id", id);
+                intentContactDetails.putExtra("contact", contact);
 
                 startActivity(intentContactDetails);
+
+                EditContactActivity.this.finish();
 
                 return true;
 
@@ -246,6 +255,8 @@ public class EditContactActivity extends AppCompatActivity {
                             phoneInput.setError("Invalid phone number!");
                         }else {
                             try {
+                                saveItem.setEnabled(false);
+
                                 updateContact();
 
                                 int DELAY_TIME=2000;
@@ -258,29 +269,12 @@ public class EditContactActivity extends AppCompatActivity {
                                         intentContactDetailsSaved.putExtra("AccessToken", accessToken);
                                         intentContactDetailsSaved.putExtra("userName", userName);
                                         intentContactDetailsSaved.putExtra("userEmail", userEmail);
-                                        intentContactDetailsSaved.putExtra("givenName", givenName);
-                                        intentContactDetailsSaved.putExtra("displayName", displayName);
-                                        intentContactDetailsSaved.putExtra("userPhone", phoneNumber);
-                                        intentContactDetailsSaved.putExtra("emailList",(Serializable) emailList);
-                                        intentContactDetailsSaved.putExtra("notes", notes);
-                                        intentContactDetailsSaved.putExtra("nickname", nickname);
-                                        intentContactDetailsSaved.putExtra("spouse", spouse);
-                                        intentContactDetailsSaved.putExtra("street", street);
-                                        intentContactDetailsSaved.putExtra("postalcode", postalCode);
-                                        intentContactDetailsSaved.putExtra("city", city);
-                                        intentContactDetailsSaved.putExtra("state", state);
-                                        intentContactDetailsSaved.putExtra("country", country);
-                                        intentContactDetailsSaved.putExtra("job", job);
-                                        intentContactDetailsSaved.putExtra("department", department);
-                                        intentContactDetailsSaved.putExtra("company", company);
-                                        intentContactDetailsSaved.putExtra("office", office);
-                                        intentContactDetailsSaved.putExtra("manager", manager);
-                                        intentContactDetailsSaved.putExtra("assistant", assistant);
-                                        intentContactDetailsSaved.putExtra("firstname", firstName);
-                                        intentContactDetailsSaved.putExtra("lastname", lastName);
-                                        intentContactDetailsSaved.putExtra("id", id);
+                                        intentContactDetailsSaved.putExtra("contact", contact);
 
                                         startActivity(intentContactDetailsSaved);
+
+                                        EditContactActivity.this.finish();
+
                                     }
                                 }, DELAY_TIME);
 
@@ -293,8 +287,6 @@ public class EditContactActivity extends AppCompatActivity {
                     }
 
                 }
-
-
 
             default:
                 // If we got here, the user's action was not recognized.
@@ -321,7 +313,7 @@ public class EditContactActivity extends AppCompatActivity {
         contact.setDisplayName(displayname);
 
         if(!emailInput.getText().toString().isEmpty()){
-            EmailAddress contactEmail = new EmailAddress(emailInput.getText().toString());
+            EmailAddress contactEmail = new EmailAddress(emailInput.getText().toString(), displayname);
             List<EmailAddress> listEmails = new ArrayList<>();
             listEmails.add(contactEmail);
             contact.setEmailAddresses(listEmails);
@@ -365,14 +357,14 @@ public class EditContactActivity extends AppCompatActivity {
             assistant = assistantNameInput.getText().toString();
         }
 
-        if(!streetNameInput.getText().toString().isEmpty()){
-            PhysicalAddress contactPhysicalAddress = new PhysicalAddress(streetNameInput.getText().toString(), cityNameInput.getText().toString(), stateNameInput.getText().toString(), countryNameInput.getText().toString(), postalCodeInput.getText().toString());
-            contact.setHomeAddress(contactPhysicalAddress);
-            street = streetNameInput.getText().toString();
-            postalCode = postalCodeInput.getText().toString();
-            city = cityNameInput.getText().toString();
-            state = stateNameInput.getText().toString();
-            country = countryNameInput.getText().toString();
+        if(!homeStreetNameInput.getText().toString().isEmpty()){
+            PhysicalAddress contactHomePhysicalAddress = new PhysicalAddress(homeStreetNameInput.getText().toString(), homeCityNameInput.getText().toString(), homeStateNameInput.getText().toString(), homeCountryNameInput.getText().toString(), homePostalCodeInput.getText().toString());
+            contact.setHomeAddress(contactHomePhysicalAddress);
+            homeStreet = homeStreetNameInput.getText().toString();
+            homePostalCode = homePostalCodeInput.getText().toString();
+            homeCity = homeCityNameInput.getText().toString();
+            homeState = homeStateNameInput.getText().toString();
+            homeCountry = homeCountryNameInput.getText().toString();
         }
 
         if(!nickNameInput.getText().toString().isEmpty()){
@@ -390,11 +382,15 @@ public class EditContactActivity extends AppCompatActivity {
             notes = personalNotesInput.getText().toString();
         }
 
-        System.out.println("wanna cuddle?" +contact);
+        System.out.println("wanna cuddle?" + contact);
 
         String postAddress = URL_POSTADRESS + id;
 
-        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.PATCH, postAddress,new JSONObject(new Gson().toJson(contact)),
+        System.out.println("test contact: " + new Gson().toJson(contact));
+
+        //final JSONObject jsonObject = new JSONObject(buildJsonEditContact());
+
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.PATCH, postAddress, new JSONObject(new Gson().toJson(contact)),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -424,7 +420,50 @@ public class EditContactActivity extends AppCompatActivity {
 
     }
 
+    private String buildJsonEditContact() {
+        JsonObjectBuilder factory = Json.createObjectBuilder()
+
+                .add("isRead", true);
+
+        return factory.build().toString();
+    }
+
     private boolean isValidMobile(String phone) {
         return android.util.Patterns.PHONE.matcher(phone).matches();
     }
+
+    public void setEditTextOnFocusListener(EditText et){
+
+        et.setOnFocusChangeListener( new View.OnFocusChangeListener(){
+
+            public void onFocusChange( View view, boolean hasfocus){
+                if(hasfocus){
+
+                    view.setBackgroundResource( R.drawable.edit_text_style_focused);
+                }
+                else{
+                    view.setBackgroundResource( R.drawable.edit_text_style);
+                }
+            }
+        });
+
+    }
+
+    @Override
+    public void onBackPressed(){
+        minimizeApp();
+    }
+
+    public void minimizeApp() {
+        Intent intentContactDetails = new Intent(EditContactActivity.this, ContactsDetailsActivity.class);
+        intentContactDetails.putExtra("AccessToken", accessToken);
+        intentContactDetails.putExtra("userName", userName);
+        intentContactDetails.putExtra("userEmail", userEmail);
+        intentContactDetails.putExtra("contact", contact);
+
+        startActivity(intentContactDetails);
+
+        EditContactActivity.this.finish();
+    }
+
 }

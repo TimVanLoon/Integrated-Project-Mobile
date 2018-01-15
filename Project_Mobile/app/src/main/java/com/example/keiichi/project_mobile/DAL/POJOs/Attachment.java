@@ -11,14 +11,16 @@ public class Attachment implements Serializable {
     private String lastModifiedDateTime;
     private String name;
     private int size;
+    private String contentBytes;
 
-    public Attachment(String contentType, String id, boolean isInline, String lastModifiedDateTime, String name, int size) {
+    public Attachment(String contentType, String id, boolean isInline, String lastModifiedDateTime, String name, int size, String contentBytes) {
         this.contentType = contentType;
         this.id = id;
         this.isInline = isInline;
         this.lastModifiedDateTime = lastModifiedDateTime;
         this.name = name;
         this.size = size;
+        this.contentBytes = contentBytes;
     }
 
     public String getContentType() {
@@ -67,5 +69,13 @@ public class Attachment implements Serializable {
 
     public void setSize(int size) {
         this.size = size;
+    }
+
+    public String getContentBytes() {
+        return contentBytes;
+    }
+
+    public void setContentBytes(String contentBytes) {
+        this.contentBytes = contentBytes;
     }
 }

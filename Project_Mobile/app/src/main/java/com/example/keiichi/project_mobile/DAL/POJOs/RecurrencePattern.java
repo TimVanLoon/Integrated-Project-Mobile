@@ -1,7 +1,9 @@
 package com.example.keiichi.project_mobile.DAL.POJOs;
 
 
-public class RecurrencePattern {
+import java.io.Serializable;
+
+public class RecurrencePattern implements Serializable {
 
     private String type;
     private int interval;

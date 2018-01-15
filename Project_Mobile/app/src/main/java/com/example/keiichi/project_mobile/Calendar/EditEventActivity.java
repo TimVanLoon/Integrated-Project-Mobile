@@ -13,8 +13,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -28,20 +31,27 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.DAL.POJOs.Attendee;
 import com.example.keiichi.project_mobile.DAL.POJOs.DateTimeTimeZone;
+import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.DAL.POJOs.ItemBody;
 import com.example.keiichi.project_mobile.DAL.POJOs.Location;
+import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 import com.example.keiichi.project_mobile.R;
+import com.example.keiichi.project_mobile.Utility;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -53,11 +63,11 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
     final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/events/";
 
     private String [] DURATIONSPINNERLIST = {"0 Minutes", "15 Minutes", "30 Minutes", "45 Minutes", "1 Hour", "90 Minutes", " 2 Hours", "Entire day"};
-    private String [] REMINDERSPINNERLIST = {"0 Minutes", "15 Minutes", "30 Minutes", "45 Minutes", "1 Hour", "90 Minutes", " 2 Hours", "3 Hours", "4 Hours", "8 Hours", "12 Hours",
-            "1 Day", "2 Days", "3 Days", "1 Week", "2 Weeks"};
+    private String [] REMINDERSPINNERLIST = {"0 Minutes", "15 Minutes", "30 Minutes", "45 Minutes", "1 Hour", "90 Minutes", " 2 Hours", "3 Hours", "4 Hours", "8 Hours", "12 Hours", "1 Day", "2 Days", "3 Days", "1 Week", "2 Weeks"};
     private String [] DISPLAYASSPINNERLIST = {"Free", "Working elsewhere", "Tentative", "Busy", "Away"};
     private String [] REPEATSPINNERLIST = {"Never", "Each day", "Every sunday", "Every workday", "Day 31 of every month", "Ever last sunday", "Every 31st of december"};
-
+    private List<Attendee> attendees;
+    private List<EmailAddress> emailList = new ArrayList<>();
     private Toolbar myToolbar;
     private Calendar start;
     private DatePickerDialog datePickerDialog;
@@ -74,8 +84,15 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
     private Spinner reminderSpinner;
     private Spinner displayAsSpinner;
     private Spinner repeatSpinner;
+    private CheckBox privateCheckbox;
+    private CheckBox responseCheckbox;
+    private ListView attendeeList;
+    private AttendeeAdapter attendeeAdapter;
+    private ImageView plusAttendeeIcon;
     private boolean isCurrentDate;
     private boolean isCurrentTime;
+    private boolean isPrivate;
+    private boolean responseRequested;
     private String userName;
     private String userEmail;
     private String accessToken;
@@ -88,6 +105,16 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
     private String notes;
     private String finalHourOfDay;
     private String finalMinuteOfHour;
+    private String sensitivity;
+    private String firstTime;
+    private String fromAttendeesActivity;
+    private String eventSubject;
+    private String eventLocation;
+    private String finalMonth;
+    private String finalDayOfMonth;
+    private String eventNotes;
+    private String fromEventDetails;
+    private String contentType;
     private int dayOfMonth;
     private int month;
     private int year;
@@ -100,6 +127,12 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
     private int startingValueRepeat;
     private int reminderMinutesBeforeStart;
     private int reminderMinutesBeforeStartValue;
+    private int startingValue;
+    private ArrayAdapter<String> adapterDuration;
+    private ArrayAdapter<String> adapterReminder;
+    private ArrayAdapter<String> adapterDisplayAs;
+    private ArrayAdapter<String> adapterRepeat;
+    private MenuItem saveItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +148,13 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         startDate = getIntent().getStringExtra("startDate");
         displayAs = getIntent().getStringExtra("displayAs");
         notes = getIntent().getStringExtra("notes");
+        sensitivity = getIntent().getStringExtra("sensitivity");
+        fromEventDetails = getIntent().getStringExtra("fromEventDetails");
+        responseRequested = getIntent().getBooleanExtra("responseRequested", false);
         reminderMinutesBeforeStart = getIntent().getIntExtra("reminderMinutesBeforeStart", 0);
+        attendees = (List<Attendee>)getIntent().getSerializableExtra("attendeesList");
+        fromAttendeesActivity = getIntent().getStringExtra("fromAttendeesActivity");
+        contentType = getIntent().getStringExtra("contentType");
 
         // INITIALISEER DE INPUT FIELDS
         dateEvent = (EditText) findViewById(R.id.dateEvent);
@@ -127,10 +166,77 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         displayAsTitle = (TextView) findViewById(R.id.displayAsTitle);
         repeatTitle = (TextView) findViewById(R.id.repeatTitle);
         notesTitle = (TextView) findViewById(R.id.notesTitle);
+        attendeeList = (ListView) findViewById(R.id.attendeeList);
         durationSpinner = (Spinner) findViewById(R.id.durationSpinner);
         reminderSpinner = (Spinner) findViewById(R.id.reminderSpinner);
         repeatSpinner = (Spinner) findViewById(R.id.repeatSpinner);
         displayAsSpinner = (Spinner) findViewById(R.id.displayAsSpinner);
+        privateCheckbox = (CheckBox) findViewById(R.id.privateCheckbox);
+        responseCheckbox = (CheckBox) findViewById(R.id.responseCheckbox);
+        plusAttendeeIcon = (ImageView) findViewById(R.id.plusAttendeeIcon);
+
+        setEditTextOnFocusListener(eventInput);
+        setEditTextOnFocusListener(locationInput);
+        setEditTextOnFocusListener(personalNotes);
+        setSpinnerOnFocusListener(durationSpinner);
+        setSpinnerOnFocusListener(reminderSpinner);
+        setSpinnerOnFocusListener(repeatSpinner);
+        setSpinnerOnFocusListener(durationSpinner);
+
+        plusAttendeeIcon.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                Intent intentAttendees = new Intent(EditEventActivity.this, AttendeeActivity.class);
+                intentAttendees.putExtra("AccessToken", accessToken);
+                intentAttendees.putExtra("userName", userName);
+                intentAttendees.putExtra("userEmail", userEmail);
+                intentAttendees.putExtra("emailList",(Serializable) emailList);
+                intentAttendees.putExtra("firstTime", firstTime);
+                intentAttendees.putExtra("subject", eventInput.getText().toString());
+                intentAttendees.putExtra("location", locationInput.getText().toString());
+                intentAttendees.putExtra("eventDayOfMonth", dayOfMonth);
+                intentAttendees.putExtra("eventMonth", month);
+                intentAttendees.putExtra("eventYear", year);
+                intentAttendees.putExtra("eventHour", hourOfDay);
+                intentAttendees.putExtra("eventMinute", minuteOfHour);
+                intentAttendees.putExtra("eventDuration", duration);
+                intentAttendees.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
+                intentAttendees.putExtra("displayAs", displayAs);
+                intentAttendees.putExtra("notes", personalNotes.getText().toString());
+                intentAttendees.putExtra("eventIsPrivate", isPrivate);
+                intentAttendees.putExtra("responseRequested", responseRequested);
+                intentAttendees.putExtra("fromEdit", "yes");
+                intentAttendees.putExtra("sensitivity", sensitivity);
+                intentAttendees.putExtra("startDate", startDate);
+                intentAttendees.putExtra("id", id);
+                intentAttendees.putExtra("contentType", contentType);
+
+                startActivity(intentAttendees);
+
+                EditEventActivity.this.finish();
+
+            }
+        });
+
+        if(fromEventDetails != null){
+
+            if(!attendees.isEmpty()){
+
+                for(Attendee attendee : attendees){
+
+                    firstTime = "no";
+
+                    emailList.add(attendee.getEmailAddress());
+
+                }
+
+                attendeeAdapter = new AttendeeAdapter(this, attendees);
+                attendeeList.setAdapter(attendeeAdapter);
+                Utility.setListViewHeightBasedOnChildren(attendeeList);
+
+            }
+
+        }
 
         // VUL INPUTS MET DATA VAN CONTACT
         eventInput.setText(subject);
@@ -144,7 +250,34 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
 
         start = Calendar.getInstance();
 
-        System.out.println("test date : " + startDate);
+
+        switch(sensitivity){
+            case "normal":
+                privateCheckbox.setChecked(false);
+                break;
+
+            case "personal":
+                privateCheckbox.setChecked(false);
+                break;
+
+            case "private":
+                privateCheckbox.setChecked(true);
+                break;
+
+            case "confidential":
+                privateCheckbox.setChecked(false);
+                break;
+        }
+
+        if(responseRequested){
+
+            responseCheckbox.setChecked(true);
+
+        } else {
+
+            responseCheckbox.setChecked(false);
+
+        }
 
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
@@ -164,6 +297,18 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
             e.printStackTrace();
         }
 
+        if(month <10) {
+            finalMonth = "0" + month;
+        } else {
+            finalMonth = String.valueOf(month);
+        }
+
+        if(dayOfMonth <10) {
+            finalDayOfMonth = "0" + dayOfMonth;
+        } else {
+            finalDayOfMonth = String.valueOf(dayOfMonth);
+        }
+
         if(hourOfDay <10) {
             finalHourOfDay = "0" + hourOfDay;
         } else {
@@ -180,11 +325,11 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         dateEvent.setClickable(true);
         timeEvent.setFocusable(false);
         timeEvent.setClickable(true);
-        dateEvent.setText(dayOfMonth + "-" + month + "-" + year);
+        dateEvent.setText(finalDayOfMonth + "-" + finalMonth + "-" + year);
         timeEvent.setText(finalHourOfDay + ":" + finalMinuteOfHour);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<String> adapterDuration = new ArrayAdapter<String>(this, R.layout.spinner_layout, DURATIONSPINNERLIST);
+        adapterDuration = new ArrayAdapter<String>(this, R.layout.spinner_layout, DURATIONSPINNERLIST);
         // Specify the layout to use when the list of choices appears
         adapterDuration.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
@@ -193,7 +338,7 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         //durationSpinner.setSelection(startingValue);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<String> adapterReminder = new ArrayAdapter<String>(this, R.layout.spinner_layout, REMINDERSPINNERLIST);
+        adapterReminder = new ArrayAdapter<String>(this, R.layout.spinner_layout, REMINDERSPINNERLIST);
         // Specify the layout to use when the list of choices appears
         adapterReminder.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
@@ -202,7 +347,7 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         //reminderSpinner.setSelection(startingValue);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<String> adapterDisplayAs = new ArrayAdapter<String>(this,R.layout.spinner_layout, DISPLAYASSPINNERLIST);
+        adapterDisplayAs = new ArrayAdapter<String>(this,R.layout.spinner_layout, DISPLAYASSPINNERLIST);
         // Specify the layout to use when the list of choices appears
         adapterDisplayAs.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
@@ -211,9 +356,9 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         //displayAsSpinner.setSelection(startingValue);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<String> adapterRepeat = new ArrayAdapter<String>(this, R.layout.spinner_layout, REPEATSPINNERLIST);
+        adapterRepeat = new ArrayAdapter<String>(this,R.layout.spinner_layout, REPEATSPINNERLIST);
         // Specify the layout to use when the list of choices appears
-        adapterDisplayAs.setDropDownViewResource(android.R.layout.simple_expandable_list_item_1);
+        adapterRepeat.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         repeatSpinner.setAdapter(adapterRepeat);
         //startingValue = adapterRepeat.getPosition("Never");
@@ -348,13 +493,25 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
 
                                 isCurrentDate = false;
 
-                                setStartDate(year, monthOfYearPicked++, dayOfMonthPicked);
+                                setStartDate(year, monthOfYearPicked, dayOfMonthPicked);
 
                                 dayOfMonth = dayOfMonthPicked;
-                                month = monthOfYearPicked;
+                                month = monthOfYearPicked + 1;
                                 year = yearPicked;
 
-                                dateEvent.setText(dayOfMonth + "-" + month + "-" + year);
+                                if(month <10) {
+                                    finalMonth = "0" + month;
+                                } else {
+                                    finalMonth = String.valueOf(month);
+                                }
+
+                                if(dayOfMonth <10) {
+                                    finalDayOfMonth = "0" + dayOfMonth;
+                                } else {
+                                    finalDayOfMonth = String.valueOf(dayOfMonth);
+                                }
+
+                                dateEvent.setText(finalDayOfMonth + "-" + finalMonth + "-" + year);
 
                             }
                         }, mYear, mMonth, mDay);
@@ -396,6 +553,85 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         // VOEG BACK BUTTONN TOE AAN ACTION BAR
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+
+        if(fromAttendeesActivity != null ){
+
+            emailList = (List<EmailAddress>)getIntent().getSerializableExtra("emailList");
+            duration = getIntent().getIntExtra("eventDuration", 0);
+
+            switch(duration){
+                case 0:
+                    startingValue = adapterDuration.getPosition("0 Minutes");
+                    durationSpinner.setSelection(startingValue);
+                    break;
+
+                case 15:
+                    startingValue = adapterDuration.getPosition("15 Minutes");
+                    durationSpinner.setSelection(startingValue);
+                    break;
+
+                case 30:
+                    startingValue = adapterDuration.getPosition("30 Minutes");
+                    durationSpinner.setSelection(startingValue);
+                    break;
+
+                case 45:
+                    startingValue = adapterDuration.getPosition("45 Minutes");
+                    durationSpinner.setSelection(startingValue);
+                    break;
+
+                case 60:
+                    startingValue = adapterDuration.getPosition("1 Hour");
+                    durationSpinner.setSelection(startingValue);
+                    break;
+
+                case 90:
+                    startingValue = adapterDuration.getPosition("90 Minutes");
+                    durationSpinner.setSelection(startingValue);
+                    break;
+
+                case 120:
+                    startingValue = adapterDuration.getPosition("2 Hours");
+                    durationSpinner.setSelection(startingValue);
+                    break;
+
+                case 1440:
+                    startingValue = adapterDuration.getPosition("Entire day");
+                    durationSpinner.setSelection(startingValue);
+                    break;
+
+            }
+
+            refillFromAttendeeActivity();
+
+            attendees = new ArrayList<>();
+
+            if(!emailList.isEmpty()){
+
+                for (EmailAddress email : emailList) {
+
+                    firstTime = "no";
+
+                    String contactEmail = email.getAddress();
+                    String contactName = email.getName();
+                    String type = "optional";
+
+                    Attendee attendee = new Attendee(type, email);
+
+                    attendees.add(attendee);
+                }
+
+                attendeeAdapter = new AttendeeAdapter(this, attendees);
+                attendeeList.setAdapter(attendeeAdapter);
+                Utility.setListViewHeightBasedOnChildren(attendeeList);
+
+            }
+
+
+
+        }
+
     }
 
     // VOEG ICONS TOE AAN DE ACTION BAR
@@ -404,6 +640,7 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.add_navigation, menu);
 
+        saveItem = menu.findItem(R.id.action_save);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -416,18 +653,25 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
 
             // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
             case android.R.id.home:
-                Intent intentCalendar = new Intent(EditEventActivity.this, EventDetailsActivity.class);
-                intentCalendar.putExtra("AccessToken", accessToken);
-                intentCalendar.putExtra("userName", userName);
-                intentCalendar.putExtra("userEmail", userEmail);
-                intentCalendar.putExtra("subject", subject);
-                intentCalendar.putExtra("location", location);
-                intentCalendar.putExtra("startDate", startDate);
-                intentCalendar.putExtra("displayAs", displayAs);
-                intentCalendar.putExtra("notes", notes);
-                intentCalendar.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
+                Intent intentEventDetails = new Intent(EditEventActivity.this, EventDetailsActivity.class);
+                intentEventDetails.putExtra("AccessToken", accessToken);
+                intentEventDetails.putExtra("userName", userName);
+                intentEventDetails.putExtra("userEmail", userEmail);
+                intentEventDetails.putExtra("subject", subject);
+                intentEventDetails.putExtra("location", location);
+                intentEventDetails.putExtra("startDate", startDate);
+                intentEventDetails.putExtra("displayAs", displayAs);
+                intentEventDetails.putExtra("notes", notes);
+                intentEventDetails.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
+                intentEventDetails.putExtra("id", id);
+                intentEventDetails.putExtra("sensitivity", sensitivity);
+                intentEventDetails.putExtra("responseRequested", responseRequested);
+                intentEventDetails.putExtra("attendeesList", (Serializable) attendees);
+                intentEventDetails.putExtra("contentType", contentType);
 
-                startActivity(intentCalendar);
+                startActivity(intentEventDetails);
+
+                EditEventActivity.this.finish();
 
                 return true;
 
@@ -435,6 +679,8 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
             // WANNEER SAVE ICON WORDT AANGEKLIKT
             case R.id.action_save:
                 try {
+                    saveItem.setEnabled(false);
+
                     updateEvent();
 
                     int DELAY_TIME=2000;
@@ -454,8 +700,16 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
                             intentCalendar.putExtra("displayAs", displayAs);
                             intentCalendar.putExtra("notes", notes);
                             intentCalendar.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
+                            intentCalendar.putExtra("id", id);
+                            intentCalendar.putExtra("sensitivity", sensitivity);
+                            intentCalendar.putExtra("responseRequested", responseRequested);
+                            intentCalendar.putExtra("attendeesList", (Serializable) attendees);
+                            intentCalendar.putExtra("contentType", contentType);
 
                             startActivity(intentCalendar);
+
+                            EditEventActivity.this.finish();
+
                         }
                     }, DELAY_TIME);
 
@@ -472,6 +726,7 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
         }
+
     }
 
     private void setStartDate(int yearPicked, int monthPicked, int dayOfMonthPicked) {
@@ -699,7 +954,7 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         cal.set(Calendar.YEAR, year);
         cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         cal.set(Calendar.MONTH, month - 1);
-        cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        cal.set(Calendar.HOUR_OF_DAY, hourOfDay );
         cal.set(Calendar.MINUTE, minuteOfHour);
         cal.set(Calendar.SECOND, 0);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -720,9 +975,25 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         event.setReminderMinutesBeforeStart(reminderMinutesBeforeStartValue);
         event.setReminderOn(true);
 
+        event.setAttendees(attendees);
+
         reminderMinutesBeforeStart = reminderMinutesBeforeStartValue;
 
         event.setShowAs(displayAsValue);
+
+        if(isPrivate){
+
+            event.setSensitivity("private");
+            sensitivity="private";
+
+        } else {
+
+            event.setSensitivity("normal");
+            sensitivity="normal";
+
+        }
+
+        event.setResponseRequested(responseRequested);
 
         String postAddress = URL_POSTADRESS + id;
 
@@ -755,4 +1026,145 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         queue.add(objectRequest);
 
     }
+
+    public void onCheckboxClicked(View view) {
+        // Is the view now checked?
+        boolean checked = ((CheckBox) view).isChecked();
+
+        // Check which checkbox was clicked
+        switch(view.getId()) {
+            case R.id.privateCheckbox:
+                if (checked){
+
+                    isPrivate = true;
+                    sensitivity = "private";
+
+                }
+
+                else{
+
+                    isPrivate = false;
+                    sensitivity = "normal";
+
+                }
+                break;
+
+            case R.id.responseCheckbox:
+                if (checked){
+
+                    responseRequested = true;
+
+                }
+
+                else{
+                    responseRequested = false;
+                }
+                break;
+
+
+        }
+    }
+
+    public void refillFromAttendeeActivity(){
+
+        dayOfMonth = getIntent().getIntExtra("eventDayOfMonth", 0);
+        month = getIntent().getIntExtra("eventMonth", 0);
+        year = getIntent().getIntExtra("eventYear", 0);
+        hourOfDay = getIntent().getIntExtra("eventHour", 0);
+        minuteOfHour = getIntent().getIntExtra("eventMinute", 0);
+
+        if(month <10) {
+            finalMonth = "0" + month;
+        } else {
+            finalMonth = String.valueOf(month);
+        }
+
+        if(dayOfMonth <10) {
+            finalDayOfMonth = "0" + dayOfMonth;
+        } else {
+            finalDayOfMonth = String.valueOf(dayOfMonth);
+        }
+
+        if(hourOfDay <10) {
+            finalHourOfDay = "0" + hourOfDay;
+        } else {
+            finalHourOfDay = String.valueOf(hourOfDay);
+        }
+
+        if(minuteOfHour<10){
+            finalMinuteOfHour = "0"+ minuteOfHour;
+        }  else {
+            finalMinuteOfHour = String.valueOf(minuteOfHour);
+        }
+
+        dateEvent.setText(finalDayOfMonth + "-" + finalMonth + "-" + year);
+        timeEvent.setText(finalHourOfDay + ":" + finalMinuteOfHour);
+
+    }
+
+    public void setEditTextOnFocusListener(EditText et){
+
+        et.setOnFocusChangeListener( new View.OnFocusChangeListener(){
+
+            public void onFocusChange( View view, boolean hasfocus){
+                if(hasfocus){
+
+                    view.setBackgroundResource( R.drawable.edit_text_style_focused);
+                }
+                else{
+                    view.setBackgroundResource( R.drawable.edit_text_style);
+                }
+            }
+        });
+
+    }
+
+    public void setSpinnerOnFocusListener(Spinner spinnner){
+
+        spinnner.setOnFocusChangeListener( new View.OnFocusChangeListener(){
+
+            public void onFocusChange( View view, boolean hasfocus){
+                if(hasfocus){
+
+                    view.setBackgroundResource( R.drawable.edit_text_style_focused);
+                }
+                else{
+                    view.setBackgroundResource( R.drawable.edit_text_style);
+                }
+            }
+        });
+
+    }
+
+    @Override
+    public void onBackPressed(){
+
+        minimizeApp();
+
+    }
+
+    public void minimizeApp() {
+
+        Intent intentEventDetails = new Intent(EditEventActivity.this, EventDetailsActivity.class);
+        intentEventDetails.putExtra("AccessToken", accessToken);
+        intentEventDetails.putExtra("userName", userName);
+        intentEventDetails.putExtra("userEmail", userEmail);
+        intentEventDetails.putExtra("subject", subject);
+        intentEventDetails.putExtra("location", location);
+        intentEventDetails.putExtra("startDate", startDate);
+        intentEventDetails.putExtra("displayAs", displayAs);
+        intentEventDetails.putExtra("notes", notes);
+        intentEventDetails.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
+        intentEventDetails.putExtra("id", id);
+        intentEventDetails.putExtra("sensitivity", sensitivity);
+        intentEventDetails.putExtra("responseRequested", responseRequested);
+        intentEventDetails.putExtra("attendeesList", (Serializable) attendees);
+        intentEventDetails.putExtra("contentType", contentType);
+
+        startActivity(intentEventDetails);
+
+        EditEventActivity.this.finish();
+
+    }
+
 }

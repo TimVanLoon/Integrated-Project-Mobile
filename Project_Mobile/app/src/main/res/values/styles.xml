@@ -3,9 +3,9 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->
-       <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-       <item name="colorAccent">@color/colorWhite</item>
+        <item name="colorAccent">@color/colorWhite</item>
         <item name="android:statusBarColor">@color/action_bar</item>
         <item name="android:windowBackground">@color/colorWhite</item>
         <item name="spinnerStyle">@style/Widget.App.Spinner</item>
@@ -27,6 +27,16 @@
         <item name="colorAccent">@color/colorWhite</item>
         <item name="spinnerStyle">@style/Widget.App.Spinner</item>
         <item name="android:spinnerStyle">@style/Widget.App.Spinner</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="Base.Widget.AppCompat.ActionMode" parent="">
+        <item name="background">@color/action_bar</item>
+        <item name="backgroundSplit">?attr/actionModeSplitBackground</item>
+        <item name="height">?attr/actionBarSize</item>
+        <item name="titleTextStyle">@style/TextAppearance.AppCompat.Widget.ActionMode.Title</item>
+        <item name="subtitleTextStyle">@style/TextAppearance.AppCompat.Widget.ActionMode.Subtitle</item>
+        <item name="closeItemLayout">@layout/abc_action_mode_close_item_material</item>
     </style>
 
     <style name="Widget.App.Spinner" parent="@style/Widget.AppCompat.Spinner">

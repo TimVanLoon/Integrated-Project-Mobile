@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/action_middleName"
+        android:title="@string/middleNameTitle"
+        />
+
+    <item android:id="@+id/action_title"
+        android:title="@string/titleTitle"
+        />
+
+    <item android:id="@+id/action_suffix"
+        android:title="@string/suffixTitle"
+        />
+
+    <item android:id="@+id/action_yomiName"
+        android:title="@string/yomiName"
+        />
+
+</menu>

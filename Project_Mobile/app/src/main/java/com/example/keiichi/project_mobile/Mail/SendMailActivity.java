@@ -28,6 +28,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.Calendar.CalendarActivity;
 import com.example.keiichi.project_mobile.Calendar.ListEventsActivity;
+import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
+import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONException;
@@ -39,6 +41,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
@@ -51,13 +54,14 @@ public class SendMailActivity extends AppCompatActivity {
     private TextView MailAdress;
     private TextView Subject;
     private RichEditor MailBody;
-    private String Acces_Token;
     private String emailAddress;
     private String accessToken;
     private String userName;
     private String userEmail;
+    private String fromContactDetailsActivity;
     private RichEditor editor;
-
+    private MenuItem sendItem;
+    private Contact contact;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +71,7 @@ public class SendMailActivity extends AppCompatActivity {
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
+        fromContactDetailsActivity = getIntent().getStringExtra("fromContactDetailsActivity");
 
         MailAdress = findViewById(R.id.TextMailAdress);
         Subject = findViewById(R.id.TextMailSubject);
@@ -79,19 +84,13 @@ public class SendMailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        Intent intent = getIntent();
-        Acces_Token = intent.getStringExtra("accestoken");
 
 
-        emailAddress = intent.getStringExtra("emailAddress");
-
-        if (emailAddress != null){
-            MailAdress.setText(emailAddress);
-        }
+        contact = (Contact) getIntent().getSerializableExtra("contact");
 
 
 
-
+        
 
     }
 
@@ -121,7 +120,7 @@ public class SendMailActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("Authorization", "Bearer " + Acces_Token);
+                headers.put("Authorization", "Bearer " + accessToken);
 
                 return headers;
             }
@@ -133,16 +132,21 @@ public class SendMailActivity extends AppCompatActivity {
     }
 
     private String buildJsonMail() {
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+
+        for (String string :  MailAdress.getText().toString().split("\\s+")){
+            arrayBuilder.add(
+                    Json.createObjectBuilder().
+                            add("emailAddress", Json.createObjectBuilder().
+                                    add("address",string)));
+        }
         JsonObjectBuilder factory = Json.createObjectBuilder()
                 .add("message", Json.createObjectBuilder().
                         add("subject", Subject.getText().toString()).
                         add("body", Json.createObjectBuilder().
                                 add("contentType", "Text").
                                 add("content", Html.fromHtml(MailBody.getHtml()).toString())).
-                        add("toRecipients", Json.createArrayBuilder().
-                                add(Json.createObjectBuilder().
-                                        add("emailAddress", Json.createObjectBuilder().
-                                                add("address", MailAdress.getText().toString()))))
+                        add("toRecipients", arrayBuilder)
                 );
         return factory.build().toString();
     }
@@ -153,7 +157,7 @@ public class SendMailActivity extends AppCompatActivity {
         inflater.inflate(R.menu.send_navigation, menu);
         MenuItem addItem = menu.findItem(R.id.action_send);
 
-
+        sendItem = menu.findItem(R.id.action_send);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -165,24 +169,35 @@ public class SendMailActivity extends AppCompatActivity {
 
             // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
             case android.R.id.home:
-                Intent intentListMails = new Intent(SendMailActivity.this, ListMailsActvity.class);
-                intentListMails.putExtra("AccessToken", accessToken);
-                intentListMails.putExtra("userName", userName);
-                intentListMails.putExtra("userEmail", userEmail);
-                startActivity(intentListMails);
+
+                if(fromContactDetailsActivity == null){
+
+                    finish();
+
+                } else {
+
+                    Intent intentContactDetails = new Intent(SendMailActivity.this, ContactsDetailsActivity.class);
+                    intentContactDetails.putExtra("AccessToken", accessToken);
+                    intentContactDetails.putExtra("userName", userName);
+                    intentContactDetails.putExtra("userEmail", userEmail);
+                    intentContactDetails.putExtra("contact", contact);
+
+                    startActivity(intentContactDetails);
+
+                    SendMailActivity.this.finish();
+
+                }
 
                 return true;
 
             case R.id.action_send:
                 try {
+                    sendItem.setEnabled(false);
+
                     SendMail();
+                    finish();
 
-                    Intent intentSendMail = new Intent(SendMailActivity.this, ListMailsActvity.class);
-                    intentSendMail.putExtra("AccessToken", accessToken);
-                    intentSendMail.putExtra("userName", userName);
-                    intentSendMail.putExtra("userEmail", userEmail);
-
-                    startActivity(intentSendMail);
+                    SendMailActivity.this.finish();
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -197,5 +212,34 @@ public class SendMailActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed(){
+
+        if(fromContactDetailsActivity == null){
+            minimizeApp();
+        } else{
+            Intent intentContactDetails = new Intent(SendMailActivity.this, ContactsDetailsActivity.class);
+            intentContactDetails.putExtra("AccessToken", accessToken);
+            intentContactDetails.putExtra("userName", userName);
+            intentContactDetails.putExtra("userEmail", userEmail);
+            intentContactDetails.putExtra("contact", contact);
+
+            startActivity(intentContactDetails);
+
+            SendMailActivity.this.finish();
+        }
+
+    }
+
+    public void minimizeApp() {
+        Intent intentListMails = new Intent(SendMailActivity.this, ListMailsActvity.class);
+        intentListMails.putExtra("AccessToken", accessToken);
+        intentListMails.putExtra("userName", userName);
+        intentListMails.putExtra("userEmail", userEmail);
+
+        startActivity(intentListMails);
+
+        SendMailActivity.this.finish();
+    }
 
 }

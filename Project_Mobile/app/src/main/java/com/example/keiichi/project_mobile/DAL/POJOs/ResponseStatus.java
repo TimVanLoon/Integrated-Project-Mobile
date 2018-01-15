@@ -1,7 +1,9 @@
 package com.example.keiichi.project_mobile.DAL.POJOs;
 
 
-public class ResponseStatus {
+import java.io.Serializable;
+
+public class ResponseStatus implements Serializable{
 
     private ResponseType responseType;
     private String time;

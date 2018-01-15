@@ -3,8 +3,10 @@ package com.example.keiichi.project_mobile.Mail;
 
 import android.content.Context;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -14,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -26,7 +29,16 @@ import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
+import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.DAL.POJOs.Message;
+import com.example.keiichi.project_mobile.MainActivity;
+import com.example.keiichi.project_mobile.MySingleton;
 import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONArray;
@@ -50,7 +62,7 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
     private boolean reverseAllAnimations = false;
 
     private static int currentSelectedIndex = -1;
-
+    private Message message;
     // Ongefilterde list
     private List<Message> originalData = null;
     // Gefilterde list
@@ -80,7 +92,7 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
         try {
             //Mail objecten ophalen
 
-            Message message = getItem(position);
+             message = getItem(position);
 
             String from = message.getFrom().getEmailAddress().getName();
             String email = message.getFrom().getEmailAddress().getAddress();
@@ -88,6 +100,7 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
             String bodyPreview = message.getBodyPreview();
             String subject = message.getSubject();
             Boolean isRead = message.isRead();
+            Boolean hasAttachment = message.isHasAttachments();
 
             //Data weergeven
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -97,10 +110,10 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
             holder.from.setText(from);
             holder.message.setText(bodyPreview);
             holder.subject.setText(subject);
-
-
             //Row state tot active zetten
             holder.itemView.setActivated(selectedItems.get(position, false));
+
+            RequestQueue queue = Volley.newRequestQueue(mContext);
 
             ColorGenerator generator = ColorGenerator.MATERIAL;
 
@@ -111,10 +124,55 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
 
             holder.profilePicture.setImageDrawable(drawable1);
 
+/*
+
+            String url = "http://i.imgur.com/7spzG.png";
+            System.out.println("hit");
+            ImageRequest request = new ImageRequest(url,
+                    new Response.Listener<Bitmap>() {
+                        @Override
+                        public void onResponse(Bitmap bitmap) {
+                            System.out.println("hit1");
+                            holder.profilePicture.setImageBitmap(bitmap);
+                        }
+                    }, 0, 0, null,
+                    new Response.ErrorListener() {
+                        public void onErrorResponse(VolleyError error) {
+                            System.out.println("hit2");
+
+                        }
+                    });
+
+            queue.add(request);
+
+            */
+
+            if (message.isHasAttachments()){
+                holder.attachmentView.setVisibility(View.VISIBLE);
+            }
+
+            if (message.isRead()) {
+
+                holder.from.setTypeface(null, Typeface.NORMAL);
+                holder.subject.setTypeface(null, Typeface.NORMAL);
+                holder.from.setTextColor(ContextCompat.getColor(mContext, R.color.subject));
+                holder.subject.setTextColor(ContextCompat.getColor(mContext, R.color.message));
+
+            } else {
+
+                holder.from.setTypeface(null, Typeface.BOLD);
+                holder.subject.setTypeface(null, Typeface.BOLD);
+                holder.from.setTextColor(ContextCompat.getColor(mContext, R.color.from));
+                holder.subject.setTextColor(ContextCompat.getColor(mContext, R.color.subject));
+
+            }
+
 
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
+
     }
 
 
@@ -158,13 +216,16 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
 
     @Override
     public int getItemCount() {
+
         return filteredData.size();
+
     }
+
 
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         TextView from, subject, message, iconText, timestamp;
-        ImageView iconImp, imgProfile, profilePicture;
+        ImageView iconImp, imgProfile, profilePicture, attachmentView;
         LinearLayout messageContainer;
         RelativeLayout iconContainer, iconBack, iconFront;
 
@@ -180,22 +241,15 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
             messageContainer = view.findViewById(R.id.message_container);
             iconContainer = view.findViewById(R.id.icon_container);
             profilePicture = view.findViewById(R.id.profilePicture);
-
+            attachmentView = view.findViewById(R.id.AttachmentImage);
 
         }
 
-
     }
 
-
-
-    public Message getItem(int position) {
-
-      return filteredData.get(position);
-
+    public Message getItem(int i) {
+        return filteredData.get(i);
     }
-
-
 
     public interface ClickListener {
         void onClick(View view, int position);
@@ -250,6 +304,12 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
     public void setList(List<Message> data) {
         filteredData = data; // set the adapter list to data
         MailAdapter.this.notifyDataSetChanged(); // notify data set change
+    }
+
+    public Message getItemAtPosition(int position){
+
+        return filteredData.get(position);
+
     }
 
 }

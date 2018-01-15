@@ -2,6 +2,7 @@ package com.example.keiichi.project_mobile.DAL.POJOs;
 
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Message implements Serializable {
 
@@ -30,7 +31,7 @@ public class Message implements Serializable {
     private Recipient sender;
     private String sentDateTime;
     private String subject;
-    private Recipient[] toRecipients;
+    private List<Recipient> toRecipients;
     private ItemBody uniqueBody;
     private String webLink;
     private Attachment[] attachments;
@@ -64,13 +65,16 @@ public class Message implements Serializable {
         this.sender = sender;
         this.sentDateTime = sentDateTime;
         this.subject = subject;
-        this.toRecipients = toRecipients;
         this.uniqueBody = uniqueBody;
         this.webLink = webLink;
         this.attachments = attachments;
         this.extensions = extensions;
         this.multiValueExtendedProperties = multiValueExtendedProperties;
         this.singleValueLegacyExtendedProperty = singleValueLegacyExtendedProperty;
+    }
+
+    public Message(){
+
     }
 
     public Recipient[] getBccRecipients() {
@@ -273,11 +277,11 @@ public class Message implements Serializable {
         this.subject = subject;
     }
 
-    public Recipient[] getToRecipients() {
+    public List<Recipient> getToRecipients() {
         return toRecipients;
     }
 
-    public void setToRecipients(Recipient[] toRecipients) {
+    public void setToRecipients(List<Recipient> toRecipients) {
         this.toRecipients = toRecipients;
     }
 
