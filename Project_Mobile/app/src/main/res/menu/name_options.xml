@@ -14,7 +14,7 @@
         />
 
     <item android:id="@+id/action_yomiName"
-        android:title="@string/yomiName"
+        android:title="@string/contacts"
         />
 
 </menu>

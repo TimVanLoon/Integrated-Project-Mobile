@@ -48,19 +48,19 @@ import java.util.regex.Pattern;
 public class AddContactActivity extends AppCompatActivity {
 
     final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/contacts";
-    List<String> mobilePhones = new ArrayList<>();
-    List<String> homePhones = new ArrayList<>();
-    List<String> businessPhones = new ArrayList<>();
+    private List<String> mobilePhones = new ArrayList<>();
+    private List<String> homePhones = new ArrayList<>();
+    private List<String> businessPhones = new ArrayList<>();
     private Toolbar myToolbar;
     private EditText firstNameInput;
     private EditText lastNameInput;
     private EditText phoneInput;
-    private EditText jobTitle;
+    private EditText jobInput;
     private EditText department;
-    private EditText companyName;
-    private EditText officeLocation;
-    private EditText manager;
-    private EditText assistantName;
+    private EditText companyNameInput;
+    private EditText officeLocationInput;
+    private EditText managerInput;
+    private EditText assistantNameInput;
     private EditText streetName;
     private EditText postalCode;
     private EditText cityName;
@@ -84,6 +84,7 @@ public class AddContactActivity extends AppCompatActivity {
     private EditText homePhoneInput;
     private EditText homePhoneInput2;
     private EditText mobilePhoneInput;
+    private EditText yomiCompanyInput;
     private TextView businessPhoneTitle2;
     private TextView homePhoneTitle;
     private TextView homePhoneTitle2;
@@ -99,6 +100,13 @@ public class AddContactActivity extends AppCompatActivity {
     private TextView emailSubTitle3;
     private TextView displayAsTitle3;
     private TextView emailSubTitle;
+    private TextView jobTitle;
+    private TextView departmentTitle;
+    private TextView companyNameTitle;
+    private TextView officeLocationTitle;
+    private TextView managerTitle;
+    private TextView assistantTitle;
+    private TextView yomiCompanyTitle;
     private String userName;
     private String userEmail;
     private String attendeeName;
@@ -110,6 +118,7 @@ public class AddContactActivity extends AppCompatActivity {
     private ImageView plusNameIcon;
     private ImageView plusEmailIcon;
     private ImageView plusPhoneIcon;
+    private ImageView plusWorkIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,12 +141,12 @@ public class AddContactActivity extends AppCompatActivity {
         lastNameInput = (EditText) findViewById(R.id.lastNameInput);
         emailInput = (EditText) findViewById(R.id.emailInput);
         phoneInput = (EditText) findViewById(R.id.phoneInput);
-        jobTitle = (EditText) findViewById(R.id.jobInput);
+        jobInput = (EditText) findViewById(R.id.jobInput);
         department = (EditText) findViewById(R.id.department);
-        companyName = (EditText) findViewById(R.id.companyName);
-        officeLocation = (EditText) findViewById(R.id.officeLocation);
-        manager = (EditText) findViewById(R.id.manager);
-        assistantName = (EditText) findViewById(R.id.assistantName);
+        companyNameInput = (EditText) findViewById(R.id.companyName);
+        officeLocationInput = (EditText) findViewById(R.id.officeLocation);
+        managerInput = (EditText) findViewById(R.id.manager);
+        assistantNameInput = (EditText) findViewById(R.id.assistantName);
         streetName = (EditText) findViewById(R.id.streetName);
         postalCode = (EditText) findViewById(R.id.postalCode);
         cityName = (EditText) findViewById(R.id.cityName);
@@ -160,6 +169,7 @@ public class AddContactActivity extends AppCompatActivity {
         homePhoneInput = (EditText) findViewById(R.id.homePhoneInput);
         homePhoneInput2 = (EditText) findViewById(R.id.homePhoneInput2);
         mobilePhoneInput = (EditText) findViewById(R.id.mobilePhoneInput);
+        yomiCompanyInput = (EditText) findViewById(R.id.yomiCompanyInput);
         middleNameTitle = (TextView) findViewById(R.id.middleNameTitle);
         titleTitle = (TextView) findViewById(R.id.titleTitle);
         suffixTitle = (TextView) findViewById(R.id.suffixTitle);
@@ -175,9 +185,17 @@ public class AddContactActivity extends AppCompatActivity {
         homePhoneTitle = (TextView) findViewById(R.id.homePhoneTitle);
         homePhoneTitle2 = (TextView) findViewById(R.id.homePhoneTitle2);
         mobilePhoneTitle = (TextView) findViewById(R.id.mobilePhoneTitle);
+        departmentTitle = (TextView) findViewById(R.id.departmentTitle);
+        jobTitle = (TextView) findViewById(R.id.jobTitle);
+        companyNameTitle = (TextView) findViewById(R.id.companyNameTitle);
+        officeLocationTitle = (TextView) findViewById(R.id.officeLocationTitle);
+        managerTitle = (TextView) findViewById(R.id.managerTitle);
+        yomiCompanyTitle = (TextView) findViewById(R.id.yomiCompanyTitle);
+        assistantTitle = (TextView) findViewById(R.id.assistantTitle);
         plusNameIcon = (ImageView) findViewById(R.id.plusNameIcon);
         plusEmailIcon = (ImageView) findViewById(R.id.plusEmailIcon);
         plusPhoneIcon = (ImageView) findViewById(R.id.plusPhoneIcon);
+        plusWorkIcon = (ImageView) findViewById(R.id.plusWorkIcon);
 
         makeExtraInvisible();
 
@@ -185,12 +203,12 @@ public class AddContactActivity extends AppCompatActivity {
         setEditTextOnFocusListener(lastNameInput);
         setEditTextOnFocusListener(emailInput);
         setEditTextOnFocusListener(phoneInput);
-        setEditTextOnFocusListener(jobTitle);
+        setEditTextOnFocusListener(jobInput);
         setEditTextOnFocusListener(department);
-        setEditTextOnFocusListener(companyName);
-        setEditTextOnFocusListener(officeLocation);
-        setEditTextOnFocusListener(manager);
-        setEditTextOnFocusListener(assistantName);
+        setEditTextOnFocusListener(companyNameInput);
+        setEditTextOnFocusListener(officeLocationInput);
+        setEditTextOnFocusListener(managerInput);
+        setEditTextOnFocusListener(assistantNameInput);
         setEditTextOnFocusListener(streetName);
         setEditTextOnFocusListener(postalCode);
         setEditTextOnFocusListener(cityName);
@@ -213,6 +231,7 @@ public class AddContactActivity extends AppCompatActivity {
         setEditTextOnFocusListener(homePhoneInput);
         setEditTextOnFocusListener(homePhoneInput2);
         setEditTextOnFocusListener(mobilePhoneInput);
+        setEditTextOnFocusListener(yomiCompanyInput);
 
         plusNameIcon.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -342,6 +361,28 @@ public class AddContactActivity extends AppCompatActivity {
                         return false;
                     }
                 });
+            }
+        });
+
+        plusWorkIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                jobTitle.setVisibility(View.VISIBLE);
+                jobInput.setVisibility(View.VISIBLE);
+                departmentTitle.setVisibility(View.VISIBLE);
+                department.setVisibility(View.VISIBLE);
+                companyNameTitle.setVisibility(View.VISIBLE);
+                companyNameInput.setVisibility(View.VISIBLE);
+                officeLocationTitle.setVisibility(View.VISIBLE);
+                officeLocationInput.setVisibility(View.VISIBLE);
+                managerTitle.setVisibility(View.VISIBLE);
+                managerInput.setVisibility(View.VISIBLE);
+                assistantTitle.setVisibility(View.VISIBLE);
+                assistantNameInput.setVisibility(View.VISIBLE);
+                yomiCompanyTitle.setVisibility(View.VISIBLE);
+                yomiCompanyInput.setVisibility(View.VISIBLE);
+
             }
         });
 
@@ -573,28 +614,32 @@ public class AddContactActivity extends AppCompatActivity {
             contact.setHomePhones(homePhones);
         }
 
-        if(!jobTitle.getText().toString().isEmpty()){
-            contact.setJobTitle(jobTitle.getText().toString());
+        if(!jobInput.getText().toString().isEmpty()){
+            contact.setJobTitle(jobInput.getText().toString());
         }
 
         if(!department.getText().toString().isEmpty()){
             contact.setDepartment(department.getText().toString());
         }
 
-        if(!companyName.getText().toString().isEmpty()){
-            contact.setCompanyName(companyName.getText().toString());
+        if(!companyNameInput.getText().toString().isEmpty()){
+            contact.setCompanyName(companyNameInput.getText().toString());
         }
 
-        if(!officeLocation.getText().toString().isEmpty()){
-            contact.setOfficeLocation(officeLocation.getText().toString());
+        if(!officeLocationInput.getText().toString().isEmpty()){
+            contact.setOfficeLocation(officeLocationInput.getText().toString());
         }
 
-        if(!manager.getText().toString().isEmpty()){
-            contact.setManager(manager.getText().toString());
+        if(!managerInput.getText().toString().isEmpty()){
+            contact.setManager(managerInput.getText().toString());
         }
 
-        if(!assistantName.getText().toString().isEmpty()){
-            contact.setAssistantName(assistantName.getText().toString());
+        if(!assistantNameInput.getText().toString().isEmpty()){
+            contact.setAssistantName(assistantNameInput.getText().toString());
+        }
+
+        if(!yomiCompanyInput.getText().toString().isEmpty()){
+            contact.setYomiCompanyName(yomiCompanyInput.getText().toString());
         }
 
         if(!streetName.getText().toString().isEmpty()){
@@ -710,6 +755,21 @@ public class AddContactActivity extends AppCompatActivity {
         homePhoneTitle.setVisibility(View.GONE);
         homePhoneTitle2.setVisibility(View.GONE);
         mobilePhoneTitle.setVisibility(View.GONE);
+        jobTitle.setVisibility(View.GONE);
+        jobInput.setVisibility(View.GONE);
+        departmentTitle.setVisibility(View.GONE);
+        department.setVisibility(View.GONE);
+        companyNameTitle.setVisibility(View.GONE);
+        companyNameInput.setVisibility(View.GONE);
+        officeLocationTitle.setVisibility(View.GONE);
+        officeLocationInput.setVisibility(View.GONE);
+        managerTitle.setVisibility(View.GONE);
+        managerInput.setVisibility(View.GONE);
+        assistantTitle.setVisibility(View.GONE);
+        assistantNameInput.setVisibility(View.GONE);
+        yomiCompanyTitle.setVisibility(View.GONE);
+        yomiCompanyInput.setVisibility(View.GONE);
+
     }
 
 }

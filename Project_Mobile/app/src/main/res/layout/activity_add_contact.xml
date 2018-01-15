@@ -781,6 +781,33 @@
             android:layout_width="fill_parent">
         </EditText>
 
+        <TextView
+            android:id="@+id/yomiCompanyTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/yomiCompanyTitle"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"
+            android:textSize="7pt">
+        </TextView>
+
+        <EditText
+            android:id="@+id/yomiCompanyInput"
+            android:layout_height="37dp"
+            android:hint="@string/assistantName"
+            android:textSize="12dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:inputType="textCapSentences|textPersonName"
+            android:textColor="@color/black"
+            android:textCursorDrawable="@null"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="72dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/edit_text_style"
+            android:layout_width="fill_parent">
+        </EditText>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
