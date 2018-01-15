@@ -64,19 +64,21 @@ public class AddContactActivity extends AppCompatActivity {
     private EditText officeLocationInput;
     private EditText managerInput;
     private EditText assistantNameInput;
-
     private EditText businessStreetNameInput;
     private EditText businessPostalCodeInput;
     private EditText businessCityNameInput;
     private EditText businessStateNameInput;
     private EditText businessCountryNameInput;
-
     private EditText homeStreetNameInput;
     private EditText homePostalCodeInput;
     private EditText homeCityNameInput;
     private EditText homeStateNameInput;
     private EditText homeCountryNameInput;
-
+    private EditText otherStreetNameInput;
+    private EditText otherPostalCodeInput;
+    private EditText otherCityNameInput;
+    private EditText otherStateNameInput;
+    private EditText otherCountryNameInput;
     private EditText personalNotes;
     private EditText nickName;
     private EditText spouseName;
@@ -122,21 +124,24 @@ public class AddContactActivity extends AppCompatActivity {
     private TextView yomiCompanyTitle;
     private TextView imTitle;
     private TextView imSubTitle;
-
     private TextView businessAddressTitle;
     private TextView businessStreetNameTitle;
     private TextView businessPostalCodeTitle;
     private TextView businessCityNameTitle;
     private TextView businessStateTitle;
     private TextView businessCountryTitle;
-
     private TextView homeAddressTitle;
     private TextView homeStreetNameTitle;
     private TextView homePostalCodeTitle;
     private TextView homeCityNameTitle;
     private TextView homeStateTitle;
     private TextView homeCountryTitle;
-
+    private TextView otherAddressTitle;
+    private TextView otherStreetNameTitle;
+    private TextView otherPostalCodeTitle;
+    private TextView otherCityNameTitle;
+    private TextView otherStateTitle;
+    private TextView otherCountryTitle;
     private String userName;
     private String userEmail;
     private String attendeeName;
@@ -180,20 +185,22 @@ public class AddContactActivity extends AppCompatActivity {
         officeLocationInput = (EditText) findViewById(R.id.officeLocation);
         managerInput = (EditText) findViewById(R.id.manager);
         assistantNameInput = (EditText) findViewById(R.id.assistantName);
-
         businessStreetNameInput = (EditText) findViewById(R.id.businessStreetNameInput);
         businessPostalCodeInput = (EditText) findViewById(R.id.businessPostalCodeInput);
         businessPostalCodeInput = (EditText) findViewById(R.id.businessPostalCodeInput);
         businessCityNameInput = (EditText) findViewById(R.id.businessCityNameInput);
         businessStateNameInput = (EditText) findViewById(R.id.businessStateNameInput);
         businessCountryNameInput = (EditText) findViewById(R.id.businessCountryNameInput);
-
         homeStreetNameInput = (EditText) findViewById(R.id.homeStreetNameInput);
         homePostalCodeInput = (EditText) findViewById(R.id.homePostalCodeInput);
         homeCityNameInput = (EditText) findViewById(R.id.homeCityNameInput);
         homeStateNameInput = (EditText) findViewById(R.id.homeStateNameInput);
         homeCountryNameInput = (EditText) findViewById(R.id.homeCountryNameInput);
-
+        otherStreetNameInput = (EditText) findViewById(R.id.otherStreetNameInput);
+        otherPostalCodeInput = (EditText) findViewById(R.id.otherPostalCodeInput);
+        otherCityNameInput = (EditText) findViewById(R.id.otherCityNameInput);
+        otherStateNameInput = (EditText) findViewById(R.id.otherStateNameInput);
+        otherCountryNameInput = (EditText) findViewById(R.id.otherCountryNameInput);
         personalNotes = (EditText) findViewById(R.id.personalNotes);
         nickName = (EditText) findViewById(R.id.nickName);
         spouseName = (EditText) findViewById(R.id.spouseName);
@@ -237,21 +244,24 @@ public class AddContactActivity extends AppCompatActivity {
         assistantTitle = (TextView) findViewById(R.id.assistantTitle);
         imTitle = (TextView) findViewById(R.id.imTitle);
         imSubTitle = (TextView) findViewById(R.id.imSubTitle);
-
         businessAddressTitle = (TextView) findViewById(R.id.businessAddressTitle);
         businessStreetNameTitle = (TextView) findViewById(R.id.businessStreetNameTitle);
         businessPostalCodeTitle = (TextView) findViewById(R.id.businessPostalCodeTitle);
         businessCityNameTitle = (TextView) findViewById(R.id.businessCityNameTitle);
         businessStateTitle = (TextView) findViewById(R.id.businessStateTitle);
         businessCountryTitle = (TextView) findViewById(R.id.businessCountryTitle);
-
         homeAddressTitle = (TextView) findViewById(R.id.homeAddressTitle);
         homeStreetNameTitle = (TextView) findViewById(R.id.homeStreetNameTitle);
         homePostalCodeTitle = (TextView) findViewById(R.id.homePostalCodeTitle);
         homeCityNameTitle = (TextView) findViewById(R.id.homeCityNameTitle);
         homeStateTitle = (TextView) findViewById(R.id.homeStateTitle);
         homeCountryTitle = (TextView) findViewById(R.id.homeCountryTitle);
-
+        otherAddressTitle = (TextView) findViewById(R.id.otherAddressTitle);
+        otherStreetNameTitle = (TextView) findViewById(R.id.otherStreetNameTitle);
+        otherPostalCodeTitle = (TextView) findViewById(R.id.otherPostalCodeTitle);
+        otherCityNameTitle = (TextView) findViewById(R.id.otherCityNameTitle);
+        otherStateTitle = (TextView) findViewById(R.id.otherStateTitle);
+        otherCountryTitle = (TextView) findViewById(R.id.otherCountryTitle);
         plusNameIcon = (ImageView) findViewById(R.id.plusNameIcon);
         plusEmailIcon = (ImageView) findViewById(R.id.plusEmailIcon);
         plusPhoneIcon = (ImageView) findViewById(R.id.plusPhoneIcon);
@@ -301,6 +311,11 @@ public class AddContactActivity extends AppCompatActivity {
         setEditTextOnFocusListener(homeCityNameInput);
         setEditTextOnFocusListener(homeStateNameInput);
         setEditTextOnFocusListener(homeCountryNameInput);
+        setEditTextOnFocusListener(otherStreetNameInput);
+        setEditTextOnFocusListener(otherPostalCodeInput);
+        setEditTextOnFocusListener(otherCityNameInput);
+        setEditTextOnFocusListener(otherStateNameInput);
+        setEditTextOnFocusListener(otherCountryNameInput);
 
         plusNameIcon.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -686,19 +701,26 @@ public class AddContactActivity extends AppCompatActivity {
                                 break;
 
                             case R.id.action_otherAddress:
-                                emailInput3.setVisibility(View.VISIBLE);
-                                emailSubTitle3.setVisibility(View.VISIBLE);
-                                displayAsInput3.setVisibility(View.VISIBLE);
-                                displayAsTitle3.setVisibility(View.VISIBLE);
+                                otherStreetNameInput.setVisibility(View.VISIBLE);
+                                otherPostalCodeInput.setVisibility(View.VISIBLE);
+                                otherCityNameInput.setVisibility(View.VISIBLE);
+                                otherStateNameInput.setVisibility(View.VISIBLE);
+                                otherCountryNameInput.setVisibility(View.VISIBLE);
+                                otherAddressTitle.setVisibility(View.VISIBLE);
+                                otherStreetNameTitle.setVisibility(View.VISIBLE);
+                                otherPostalCodeTitle.setVisibility(View.VISIBLE);
+                                otherCityNameTitle.setVisibility(View.VISIBLE);
+                                otherStateTitle.setVisibility(View.VISIBLE);
+                                otherCountryTitle.setVisibility(View.VISIBLE);
 
-                                emailInput3.setFocusableInTouchMode(true);
-                                emailInput3.requestFocus();
+                                otherStreetNameInput.setFocusableInTouchMode(true);
+                                otherStreetNameInput.requestFocus();
 
                                 new Timer().schedule(new TimerTask() {
                                     @Override
                                     public void run() {
 
-                                        autoFocus(emailInput3);
+                                        autoFocus(otherStreetNameInput);
 
                                     }
                                 }, DELAY_TIME);
@@ -974,9 +996,14 @@ public class AddContactActivity extends AppCompatActivity {
             contact.setBusinessAddress(contactBusinessPhysicalAddress);
         }
 
-        if(!homeStateNameInput.getText().toString().isEmpty()){
+        if(!homeStreetNameInput.getText().toString().isEmpty()){
             PhysicalAddress contactHomePhysicalAddress = new PhysicalAddress(homeStreetNameInput.getText().toString(), homeCityNameInput.getText().toString(), homeStateNameInput.getText().toString(), homeCountryNameInput.getText().toString(), homePostalCodeInput.getText().toString());
             contact.setHomeAddress(contactHomePhysicalAddress);
+        }
+
+        if(!otherStreetNameInput.getText().toString().isEmpty()){
+            PhysicalAddress contactOtherPhysicalAddress = new PhysicalAddress(otherStreetNameInput.getText().toString(), otherCityNameInput.getText().toString(), otherStateNameInput.getText().toString(), otherCountryNameInput.getText().toString(), otherPostalCodeInput.getText().toString());
+            contact.setHomeAddress(contactOtherPhysicalAddress);
         }
 
         if(!nickName.getText().toString().isEmpty()){
@@ -1127,7 +1154,6 @@ public class AddContactActivity extends AppCompatActivity {
         businessStateNameInput.setVisibility(View.GONE);
         businessCountryTitle.setVisibility(View.GONE);
         businessCountryNameInput.setVisibility(View.GONE);
-
         homeStreetNameInput.setVisibility(View.GONE);
         homePostalCodeInput.setVisibility(View.GONE);
         homeCityNameInput.setVisibility(View.GONE);
@@ -1140,6 +1166,17 @@ public class AddContactActivity extends AppCompatActivity {
         homeStateTitle.setVisibility(View.GONE);
         homeCountryTitle.setVisibility(View.GONE);
 
+        otherStreetNameInput.setVisibility(View.GONE);
+        otherPostalCodeInput.setVisibility(View.GONE);
+        otherCityNameInput.setVisibility(View.GONE);
+        otherStateNameInput.setVisibility(View.GONE);
+        otherCountryNameInput.setVisibility(View.GONE);
+        otherAddressTitle.setVisibility(View.GONE);
+        otherStreetNameTitle.setVisibility(View.GONE);
+        otherPostalCodeTitle.setVisibility(View.GONE);
+        otherCityNameTitle.setVisibility(View.GONE);
+        otherStateTitle.setVisibility(View.GONE);
+        otherCountryTitle.setVisibility(View.GONE);
 
     }
 
