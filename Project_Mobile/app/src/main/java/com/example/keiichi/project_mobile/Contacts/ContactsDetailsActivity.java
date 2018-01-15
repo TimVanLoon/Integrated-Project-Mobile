@@ -571,7 +571,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
             otherCountryText.setVisibility(View.GONE);
         }
 
-        if((job.equals("")) && (department.equals("")) && (company.equals("")) && (office.equals("")) && (manager.equals("")) && (assistant.equals("") && (contactYomiCompanyName.equals("")))){
+        if((job.equals("")) && (department.equals("")) && (company.equals("")) && (office.equals("")) && (manager.equals("")) && (assistant.equals("") && (contactYomiCompanyName == null))){
             workTitle.setVisibility(View.GONE);
         }
 
@@ -612,7 +612,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
             assisantText.setVisibility(View.GONE);
         }
 
-        if(!contactYomiCompanyName.equals("")){
+        if(contactYomiCompanyName != null){
             yomiCompany.setText("Yomi company: " + assistant);
         } else {
             yomiCompany.setVisibility(View.GONE);

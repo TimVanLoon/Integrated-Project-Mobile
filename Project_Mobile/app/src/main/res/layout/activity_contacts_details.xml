@@ -165,6 +165,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
+                android:layout_marginBottom="20dp"
                 android:text="firstName"
                 android:textColor="@color/black" />
 
@@ -172,7 +173,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Last name"
-                android:layout_marginTop="10dp"
                 android:layout_marginLeft="15dp"
                 android:textStyle="bold"
                 android:textSize="8pt"
@@ -183,6 +183,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
+                android:layout_marginBottom="20dp"
                 android:text="lastName"
                 android:textColor="@color/black" />
 
@@ -191,7 +192,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Middle name"
-                android:layout_marginTop="10dp"
                 android:layout_marginLeft="15dp"
                 android:textStyle="bold"
                 android:textSize="8pt"
@@ -202,6 +202,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
+                android:layout_marginBottom="20dp"
                 android:text="middleName"
                 android:textColor="@color/black" />
 
@@ -210,7 +211,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Title"
-                android:layout_marginTop="10dp"
                 android:layout_marginLeft="15dp"
                 android:textStyle="bold"
                 android:textSize="8pt"
@@ -221,6 +221,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
+                android:layout_marginBottom="20dp"
                 android:text="title"
                 android:textColor="@color/black" />
 
@@ -229,7 +230,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Suffix"
-                android:layout_marginTop="10dp"
                 android:layout_marginLeft="15dp"
                 android:textStyle="bold"
                 android:textSize="8pt"
@@ -240,6 +240,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
+                android:layout_marginBottom="20dp"
                 android:text="suffix"
                 android:textColor="@color/black" />
 
@@ -248,7 +249,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Yomi name"
-                android:layout_marginTop="10dp"
                 android:layout_marginLeft="15dp"
                 android:textStyle="bold"
                 android:textSize="8pt"
@@ -259,6 +259,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
+                android:layout_marginBottom="20dp"
                 android:text="yomiName"
                 android:textColor="@color/black" />
 
@@ -267,7 +268,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/emailTitle"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp"
                 android:textStyle="bold"
                 android:textSize="8pt"
                 android:textColor="@color/black" />
@@ -279,8 +279,6 @@
                 android:layout_marginLeft="15dp"
                 android:text="userEmail"
                 android:textColor="@color/black" />
-
-
 
             <TextView
                 android:id="@+id/userEmail2"
@@ -297,12 +295,18 @@
                 android:text="userEmail"
                 android:textColor="@color/black" />
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp">
+
+            </LinearLayout>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Mobile Phone"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp"
                 android:textSize="8pt"
                 android:textStyle="bold"
                 android:textColor="@color/black" />
@@ -313,6 +317,7 @@
                 android:layout_height="wrap_content"
                 android:text="mobilePhone"
                 android:layout_marginLeft="15dp"
+                android:layout_marginBottom="20dp"
                 android:textColor="@color/black" />
 
 
@@ -322,7 +327,6 @@
                 android:layout_height="wrap_content"
                 android:text="Business Phone"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp"
                 android:textSize="8pt"
                 android:textStyle="bold"
                 android:textColor="@color/black" />
@@ -341,6 +345,7 @@
                 android:layout_height="wrap_content"
                 android:text="businessPhone2"
                 android:layout_marginLeft="15dp"
+                android:layout_marginBottom="20dp"
                 android:textColor="@color/black" />
 
             <TextView
@@ -349,7 +354,6 @@
                 android:layout_height="wrap_content"
                 android:text="Home Phone"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp"
                 android:textSize="8pt"
                 android:textStyle="bold"
                 android:textColor="@color/black" />
@@ -368,6 +372,7 @@
                 android:layout_height="wrap_content"
                 android:text="userPhone"
                 android:layout_marginLeft="15dp"
+                android:layout_marginBottom="20dp"
                 android:textColor="@color/black" />
 
             <TextView
@@ -376,7 +381,6 @@
                 android:layout_height="wrap_content"
                 android:text="Work"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp"
                 android:textSize="8pt"
                 android:textStyle="bold"
                 android:textColor="@color/black" />
@@ -435,6 +439,7 @@
                 android:layout_height="wrap_content"
                 android:text="Yomi company: "
                 android:layout_marginLeft="15dp"
+                android:layout_marginBottom="20dp"
                 android:textColor="@color/black" />
 
             <TextView
@@ -443,7 +448,6 @@
                 android:layout_height="wrap_content"
                 android:text="Home address"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp"
                 android:textSize="8pt"
                 android:textStyle="bold"
                 android:textColor="@color/black" />
@@ -469,6 +473,7 @@
                 android:layout_height="wrap_content"
                 android:text="country"
                 android:layout_marginLeft="15dp"
+                android:layout_marginBottom="20dp"
                 android:textColor="@color/black" />
 
             <TextView
@@ -477,7 +482,6 @@
                 android:layout_height="wrap_content"
                 android:text="Business address"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp"
                 android:textSize="8pt"
                 android:textStyle="bold"
                 android:textColor="@color/black" />
@@ -503,6 +507,7 @@
                 android:layout_height="wrap_content"
                 android:text="country"
                 android:layout_marginLeft="15dp"
+                android:layout_marginBottom="20dp"
                 android:textColor="@color/black" />
 
             <TextView
@@ -511,7 +516,6 @@
                 android:layout_height="wrap_content"
                 android:text="Other address"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp"
                 android:textSize="8pt"
                 android:textStyle="bold"
                 android:textColor="@color/black" />
@@ -546,7 +550,6 @@
                 android:layout_height="wrap_content"
                 android:text="IM"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp"
                 android:textSize="8pt"
                 android:textStyle="bold"
                 android:textColor="@color/black" />
@@ -557,6 +560,7 @@
                 android:layout_height="wrap_content"
                 android:text="IM"
                 android:layout_marginLeft="15dp"
+                android:layout_marginBottom="20dp"
                 android:textColor="@color/black" />
 
             <TextView
@@ -565,7 +569,6 @@
                 android:layout_height="wrap_content"
                 android:text="Nickname"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp"
                 android:textSize="8pt"
                 android:textStyle="bold"
                 android:textColor="@color/black" />
@@ -576,6 +579,7 @@
                 android:layout_height="wrap_content"
                 android:text="nickname"
                 android:layout_marginLeft="15dp"
+                android:layout_marginBottom="20dp"
                 android:textColor="@color/black" />
 
             <TextView
@@ -584,7 +588,6 @@
                 android:layout_height="wrap_content"
                 android:text="Spouse"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp"
                 android:textSize="8pt"
                 android:textStyle="bold"
                 android:textColor="@color/black" />
@@ -595,6 +598,7 @@
                 android:layout_height="wrap_content"
                 android:text="spouse"
                 android:layout_marginLeft="15dp"
+                android:layout_marginBottom="20dp"
                 android:textColor="@color/black" />
 
             <TextView
@@ -603,7 +607,6 @@
                 android:layout_height="wrap_content"
                 android:text="Birthday"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp"
                 android:textSize="8pt"
                 android:textStyle="bold"
                 android:textColor="@color/black" />
@@ -614,6 +617,7 @@
                 android:layout_height="wrap_content"
                 android:text="birthday"
                 android:layout_marginLeft="15dp"
+                android:layout_marginBottom="20dp"
                 android:textColor="@color/black" />
 
             <TextView
@@ -622,7 +626,6 @@
                 android:layout_height="wrap_content"
                 android:text="Notes"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp"
                 android:textSize="8pt"
                 android:textStyle="bold"
                 android:textColor="@color/black" />
