@@ -264,16 +264,28 @@ public class AddContactActivity extends AppCompatActivity {
                             case R.id.action_middleName:
                                 middleNameInput.setVisibility(View.VISIBLE);
                                 middleNameTitle.setVisibility(View.VISIBLE);
+
+                                middleNameInput.setFocusableInTouchMode(true);
+                                middleNameInput.requestFocus();
+
                                 break;
 
                             case R.id.action_title:
                                 titleInput.setVisibility(View.VISIBLE);
                                 titleTitle.setVisibility(View.VISIBLE);
+
+                                titleInput.setFocusableInTouchMode(true);
+                                titleInput.requestFocus();
+
                                 break;
 
                             case R.id.action_suffix:
                                 suffixInput.setVisibility(View.VISIBLE);
                                 suffixTitle.setVisibility(View.VISIBLE);
+
+                                titleInput.setFocusableInTouchMode(true);
+                                titleInput.requestFocus();
+
                                 break;
 
                             case R.id.action_yomiName:
@@ -281,6 +293,10 @@ public class AddContactActivity extends AppCompatActivity {
                                 yomiLastNameInput.setVisibility(View.VISIBLE);
                                 yomiFirstNameTitle.setVisibility(View.VISIBLE);
                                 yomiLastNameTitle.setVisibility(View.VISIBLE);
+
+                                yomiFirstNameInput.setFocusableInTouchMode(true);
+                                yomiFirstNameInput.requestFocus();
+
                                 break;
 
                         }
@@ -313,6 +329,10 @@ public class AddContactActivity extends AppCompatActivity {
                                 emailSubTitle2.setVisibility(View.VISIBLE);
                                 displayAsInput2.setVisibility(View.VISIBLE);
                                 displayAsTitle2.setVisibility(View.VISIBLE);
+
+                                emailInput2.setFocusableInTouchMode(true);
+                                emailInput2.requestFocus();
+
                                 break;
 
                             case R.id.action_email3:
@@ -320,6 +340,10 @@ public class AddContactActivity extends AppCompatActivity {
                                 emailSubTitle3.setVisibility(View.VISIBLE);
                                 displayAsInput3.setVisibility(View.VISIBLE);
                                 displayAsTitle3.setVisibility(View.VISIBLE);
+
+                                emailInput3.setFocusableInTouchMode(true);
+                                emailInput3.requestFocus();
+
                                 break;
 
                         }
@@ -350,21 +374,38 @@ public class AddContactActivity extends AppCompatActivity {
                             case R.id.action_businessPhone:
                                 businessPhoneInput2.setVisibility(View.VISIBLE);
                                 businessPhoneTitle2.setVisibility(View.VISIBLE);
+
+                                businessPhoneInput2.setFocusableInTouchMode(true);
+                                businessPhoneInput2.requestFocus();
+
                                 break;
 
                             case R.id.action_homePhone:
                                 homePhoneInput.setVisibility(View.VISIBLE);
                                 homePhoneTitle.setVisibility(View.VISIBLE);
+
+                                homePhoneInput.setFocusableInTouchMode(true);
+                                homePhoneInput.requestFocus();
+
                                 break;
 
                             case R.id.action_homePhone2:
                                 homePhoneInput2.setVisibility(View.VISIBLE);
                                 homePhoneTitle2.setVisibility(View.VISIBLE);
+
+                                homePhoneInput2.setFocusableInTouchMode(true);
+                                homePhoneInput2.requestFocus();
+
+
                                 break;
 
                             case R.id.action_mobilePhone:
                                 mobilePhoneInput.setVisibility(View.VISIBLE);
                                 mobilePhoneTitle.setVisibility(View.VISIBLE);
+
+                                mobilePhoneInput.setFocusableInTouchMode(true);
+                                mobilePhoneInput.requestFocus();
+
                                 break;
 
                         }
@@ -394,14 +435,8 @@ public class AddContactActivity extends AppCompatActivity {
                 yomiCompanyTitle.setVisibility(View.VISIBLE);
                 yomiCompanyInput.setVisibility(View.VISIBLE);
 
-            }
-        });
-
-        plusNotesIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                personalNotes.setVisibility(View.VISIBLE);
+                jobInput.setFocusableInTouchMode(true);
+                jobInput.requestFocus();
 
             }
         });
@@ -413,6 +448,19 @@ public class AddContactActivity extends AppCompatActivity {
                 imSubTitle.setVisibility(View.VISIBLE);
                 imInput.setVisibility(View.VISIBLE);
 
+                imInput.setFocusableInTouchMode(true);
+                imInput.requestFocus();
+            }
+        });
+
+        plusNotesIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                personalNotes.setVisibility(View.VISIBLE);
+
+                personalNotes.setFocusableInTouchMode(true);
+                personalNotes.requestFocus();
             }
         });
 
