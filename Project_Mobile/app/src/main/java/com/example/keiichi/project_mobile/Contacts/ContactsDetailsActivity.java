@@ -25,23 +25,17 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.Calendar.AddEventActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
-import com.example.keiichi.project_mobile.DAL.POJOs.PhysicalAddress;
 import com.example.keiichi.project_mobile.Mail.SendMailActivity;
 import com.example.keiichi.project_mobile.R;
-import com.google.gson.Gson;
 
 import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +45,7 @@ import java.util.TimerTask;
 public class ContactsDetailsActivity extends AppCompatActivity {
 
     final private String URL_POSTADRESS = "https://graph.microsoft.com/beta/me/contacts/";
+    private Contact contact;
     private String accessToken;
     private String userName;
     private String userEmail;
@@ -61,11 +56,21 @@ public class ContactsDetailsActivity extends AppCompatActivity {
     private String notes;
     private String nickname;
     private String spouse;
-    private String street;
-    private String postalCode;
-    private String city;
-    private String state;
-    private String country;
+    private String homeStreet;
+    private String homePostalCode;
+    private String homeCity;
+    private String homeState;
+    private String homeCountry;
+    private String businessStreet;
+    private String businessPostalCode;
+    private String businessCity;
+    private String businessState;
+    private String businessCountry;
+    private String otherStreet;
+    private String otherPostalCode;
+    private String otherCity;
+    private String otherState;
+    private String otherCountry;
     private String job;
     private String department;
     private String company;
@@ -75,19 +80,37 @@ public class ContactsDetailsActivity extends AppCompatActivity {
     private String firstName;
     private String lastName;
     private String id;
+    private String contactBirthday;
+    private String contactMiddleName;
+    private String contactTitle;
+    private String contactSuffix;
+    private String contactYomiName;
+    private String contactYomiCompanyName;
     private List<EmailAddress> emailList;
+    private List<String> imAddresses;
+    private List<String> businessPhones;
+    private List<String> homePhones;
     private ImageButton phoneButton;
     private ImageButton calendarButton;
     private ImageButton mailButton;
     private ImageButton smsButton;
     private TextView email;
-    private TextView userPhone;
+    private TextView mobilePhone;
     private TextView notesText;
     private TextView spouseText;
     private TextView nicknameText;
-    private TextView streetText;
-    private TextView locationText;
-    private TextView countryText;
+    private TextView homeAddressTitle;
+    private TextView homeStreetText;
+    private TextView homeLocationText;
+    private TextView homeCountryText;
+    private TextView businessAddressTitle;
+    private TextView businessStreetText;
+    private TextView businessLocationText;
+    private TextView businessCountryText;
+    private TextView otherAddressTitle;
+    private TextView otherStreetText;
+    private TextView otherLocationText;
+    private TextView otherCountryText;
     private TextView jobText;
     private TextView departmentText;
     private TextView companyText;
@@ -96,11 +119,31 @@ public class ContactsDetailsActivity extends AppCompatActivity {
     private TextView assisantText;
     private TextView firstNameText;
     private TextView lastNameText;
-    private TextView addressTitle;
     private TextView spouseTitle;
     private TextView notesTitle;
     private TextView nicknameTitle;
     private TextView workTitle;
+    private TextView userEmail2;
+    private TextView userEmail3;
+    private TextView businessPhone1;
+    private TextView businessPhone2;
+    private TextView homePhone1;
+    private TextView homePhone2;
+    private TextView homePhoneTitle;
+    private TextView businessPhoneTitle;
+    private TextView birthdayTitle;
+    private TextView birthdayText;
+    private TextView imTitle;
+    private TextView imText;
+    private TextView middleNameTitle;
+    private TextView middleNameText;
+    private TextView titleTitle;
+    private TextView titleText;
+    private TextView suffixTitle;
+    private TextView suffixText;
+    private TextView yomiNameTitle;
+    private TextView yomiNameText;
+    private TextView yomiCompany;
     private ImageView profilePic;
     private Toolbar myToolbar;
     private  AlertDialog.Builder builder;
@@ -115,13 +158,22 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         mailButton = (ImageButton) findViewById(R.id.mailButton);
         smsButton = (ImageButton) findViewById(R.id.smsButton);
         email = (TextView) findViewById(R.id.userEmail);
-        userPhone = (TextView) findViewById(R.id.userPhone);
+        mobilePhone = (TextView) findViewById(R.id.mobilePhone);
         notesText = (TextView) findViewById(R.id.notes);
         nicknameText = (TextView) findViewById(R.id.nickname);
         spouseText = (TextView) findViewById(R.id.spouse);
-        streetText = (TextView) findViewById(R.id.street);
-        locationText = (TextView) findViewById(R.id.location);
-        countryText = (TextView) findViewById(R.id.country);
+        homeAddressTitle = (TextView) findViewById(R.id.homeAddressTitle);
+        homeStreetText = (TextView) findViewById(R.id.homeStreet);
+        homeLocationText = (TextView) findViewById(R.id.homeLocation);
+        homeCountryText = (TextView) findViewById(R.id.homeCountry);
+        businessAddressTitle = (TextView) findViewById(R.id.businessAddressTitle);
+        businessStreetText = (TextView) findViewById(R.id.businessStreet);
+        businessLocationText = (TextView) findViewById(R.id.businessLocation);
+        businessCountryText = (TextView) findViewById(R.id.businessCountry);
+        otherAddressTitle = (TextView) findViewById(R.id.otherAddressTitle);
+        otherStreetText = (TextView) findViewById(R.id.otherStreet);
+        otherLocationText = (TextView) findViewById(R.id.otherLocation);
+        otherCountryText = (TextView) findViewById(R.id.otherCountry);
         jobText = (TextView) findViewById(R.id.jobDetails);
         departmentText = (TextView) findViewById(R.id.departmentDetails);
         companyText = (TextView) findViewById(R.id.companyDetails);
@@ -130,12 +182,36 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         assisantText = (TextView) findViewById(R.id.assistantDetails);
         firstNameText = (TextView) findViewById(R.id.firstName);
         lastNameText = (TextView) findViewById(R.id.lastName);
-        addressTitle = (TextView) findViewById(R.id.addressTitle);
         spouseTitle = (TextView) findViewById(R.id.spouseTitle);
         notesTitle = (TextView) findViewById(R.id.notesTitle);
         nicknameTitle = (TextView) findViewById(R.id.nicknameTitle);
         workTitle = (TextView) findViewById(R.id.workTitle);
+        userEmail2 = (TextView) findViewById(R.id.userEmail2);
+        userEmail3 = (TextView) findViewById(R.id.userEmail3);
+        businessPhone1 = (TextView) findViewById(R.id.businessPhone1);
+        businessPhone2 = (TextView) findViewById(R.id.businessPhone2);
+        homePhone1 = (TextView) findViewById(R.id.homePhone1);
+        homePhone2 = (TextView) findViewById(R.id.homePhone2);
+        homePhoneTitle = (TextView) findViewById(R.id.homePhoneTitle);
+        businessPhoneTitle = (TextView) findViewById(R.id.businessPhoneTitle);
+        birthdayTitle = (TextView) findViewById(R.id.birthdayTitle);
+        birthdayText = (TextView) findViewById(R.id.birthdayText);
+        imTitle = (TextView) findViewById(R.id.imTitle);
+        imText = (TextView) findViewById(R.id.imText);
+        middleNameTitle = (TextView) findViewById(R.id.middleNameTitle);
+        middleNameText = (TextView) findViewById(R.id.middleNameText);
+        titleTitle = (TextView) findViewById(R.id.titleTitle);
+        titleText = (TextView) findViewById(R.id.titleText);
+        suffixTitle = (TextView) findViewById(R.id.suffixTitle);
+        suffixText = (TextView) findViewById(R.id.suffixText);
+        yomiNameTitle = (TextView) findViewById(R.id.yomiNameTitle);
+        yomiNameText = (TextView) findViewById(R.id.yomiNameText);
+        yomiCompany = (TextView) findViewById(R.id.yomiCompany);
         profilePic = (ImageView) findViewById(R.id.profilePic);
+
+        contact = (Contact) getIntent().getSerializableExtra("contact");
+
+        System.out.println("contact: " + contact);
 
         // INITIALISEER ACTION BAR
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -145,30 +221,60 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        homeStreet = contact.getHomeAddress().getStreet();
+        homePostalCode = contact.getHomeAddress().getPostalCode();
+        homeCity = contact.getHomeAddress().getCity();
+        homeState = contact.getHomeAddress().getState();
+        homeCountry = contact.getHomeAddress().getCountryOrRegion();
+        businessStreet = contact.getBusinessAddress().getStreet();
+        businessPostalCode = contact.getBusinessAddress().getPostalCode();
+        businessCity = contact.getBusinessAddress().getCity();
+        businessState = contact.getBusinessAddress().getState();
+        businessCountry = contact.getBusinessAddress().getCountryOrRegion();
+        otherStreet = contact.getOtherAddress().getStreet();
+        otherPostalCode = contact.getOtherAddress().getPostalCode();
+        otherCity = contact.getOtherAddress().getCity();
+        otherState = contact.getOtherAddress().getState();
+        otherCountry = contact.getOtherAddress().getCountryOrRegion();
+        notes = contact.getPersonalNotes();
+        spouse = contact.getSpouseName();
+        nickname = contact.getNickName();
+        firstName = contact.getGivenName();
+        lastName = contact.getSurname();
+        displayName = contact.getDisplayName();
+        emailList = contact.getEmailAddresses();
+        phoneNumber = contact.getMobilePhone();
+        businessPhones = contact.getBusinessPhones();
+        homePhones = contact.getHomePhones();
+        job = contact.getJobTitle();
+        department = contact.getDepartment();
+        company = contact.getCompanyName();
+        office = contact.getOfficeLocation();
+        manager = contact.getManager();
+        assistant = contact.getManager();
+        contactBirthday = contact.getBirthday();
+        imAddresses = contact.getImAddresses();
+        contactMiddleName = contact.getMiddleName();
+        contactTitle = contact.getTitle();
+        contactSuffix = contact.getInitials();
+        contactYomiCompanyName = contact.getYomiCompanyName();
+
+        if(contact.getYomiGivenName() != null && contact.getYomiSurname() != null){
+            contactYomiName = contact.getYomiGivenName() +" " + contact.getYomiSurname();
+        }
+
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
         givenName = getIntent().getStringExtra("givenName");
-        displayName = getIntent().getStringExtra("displayName");
-        phoneNumber = getIntent().getStringExtra("userPhone");
-        emailList = (List<EmailAddress>)getIntent().getSerializableExtra("emailList");
-        emailAddress = getIntent().getStringExtra("email");
-        notes = getIntent().getStringExtra("notes");
-        nickname = getIntent().getStringExtra("nickname");
-        spouse = getIntent().getStringExtra("spouse");
-        street = getIntent().getStringExtra("street");
-        postalCode = getIntent().getStringExtra("postalcode");
-        city = getIntent().getStringExtra("city");
-        state = getIntent().getStringExtra("state");
-        country = getIntent().getStringExtra("country");
+
         job = getIntent().getStringExtra("job");
         department = getIntent().getStringExtra("department");
         company = getIntent().getStringExtra("company");
         office = getIntent().getStringExtra("office");
         manager = getIntent().getStringExtra("manager");
         assistant = getIntent().getStringExtra("assistant");
-        firstName = getIntent().getStringExtra("firstname");
-        lastName = getIntent().getStringExtra("lastname");
+
         id = getIntent().getStringExtra("id");
 
         ColorGenerator generator = ColorGenerator.MATERIAL;
@@ -185,9 +291,23 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         profilePic.setImageDrawable(drawable1);
 
         if(!emailList.isEmpty()){
-            emailAddress = emailList.get(0).getAddress();
 
-            email.setText(emailAddress);
+            if( emailList.size() == 1){
+                email.setText(emailList.get(0).getAddress());
+                userEmail2.setVisibility(View.GONE);
+                userEmail3.setVisibility(View.GONE);
+            }
+
+            if( emailList.size() > 1 && emailList.size() < 3){
+                email.setText(emailList.get(0).getAddress());
+                userEmail2.setText(emailList.get(1).getAddress());
+            }
+
+            if( emailList.size() > 2 && emailList.size() < 4){
+                email.setText(emailList.get(0).getAddress());
+                userEmail2.setText(emailList.get(1).getAddress());
+                userEmail3.setText(emailList.get(2).getAddress());
+            }
 
             mailButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -227,6 +347,8 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         else {
             email.setText("(Empty)");
             email.setTextColor(Color.parseColor("#F4E7D7"));
+            userEmail2.setVisibility(View.GONE);
+            userEmail3.setVisibility(View.GONE);
 
             mailButton.setColorFilter(Color.GRAY);
             calendarButton.setColorFilter(Color.GRAY);
@@ -247,7 +369,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         }
 
 
-        if (phoneNumber.equals("")){
+        if (phoneNumber != null){
             smsButton.setColorFilter(Color.GRAY);
             phoneButton.setColorFilter(Color.GRAY);
 
@@ -289,11 +411,45 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         TextView headerDisplayName = (TextView) findViewById(R.id.displayName);
         headerDisplayName.setText(displayName);
 
-        if (!phoneNumber.equals("")){
-            userPhone.setText(phoneNumber);
+        if (phoneNumber != null){
+            mobilePhone.setText(phoneNumber);
         } else {
-            userPhone.setText("(Empty)");
-            userPhone.setTextColor(Color.parseColor("#F4E7D7"));
+            mobilePhone.setText("(Empty)");
+            mobilePhone.setTextColor(Color.parseColor("#F4E7D7"));
+        }
+
+        if(!businessPhones.isEmpty()) {
+
+            if (businessPhones.size() == 1) {
+                businessPhone1.setText(businessPhones.get(0));
+                businessPhone2.setVisibility(View.GONE);
+            } else if (businessPhones.size() > 1) {
+                businessPhone1.setText(businessPhones.get(0));
+                businessPhone2.setText(businessPhones.get(1));
+            } else {
+
+            }
+        } else {
+            businessPhoneTitle.setVisibility(View.GONE);
+            businessPhone1.setVisibility(View.GONE);
+            businessPhone2.setVisibility(View.GONE);
+        }
+
+        if(!homePhones.isEmpty()) {
+
+            if (homePhones.size() == 1) {
+                homePhone1.setText(homePhones.get(0));
+                homePhone2.setVisibility(View.GONE);
+            } else if (homePhones.size() > 1) {
+                homePhone1.setText(homePhones.get(0));
+                homePhone2.setText(homePhones.get(1));
+            } else {
+
+            }
+        } else {
+            homePhoneTitle.setVisibility(View.GONE);
+            homePhone1.setVisibility(View.GONE);
+            homePhone2.setVisibility(View.GONE);
         }
 
         if(!notes.equals("")){
@@ -303,102 +459,210 @@ public class ContactsDetailsActivity extends AppCompatActivity {
             notesTitle.setVisibility(View.GONE);
         }
 
-        if(!spouse.equals("")){
+        if(spouse != null){
             spouseText.setText(spouse);
         } else {
             spouseText.setVisibility(View.GONE);
             spouseTitle.setVisibility(View.GONE);
         }
 
-        if(!nickname.equals("")){
+        if(nickname != null){
             nicknameText.setText(nickname);
         } else {
             nicknameText.setVisibility(View.GONE);
             nicknameTitle.setVisibility(View.GONE);
         }
 
-
-        if(street.equals("") && postalCode.equals("") && city.equals("") && state.equals("") && country.equals("")){
-            addressTitle.setVisibility(View.GONE);
-        }
-
-
-        if(!street.equals("")){
-            streetText.setText(street);
+        if(contactBirthday != null){
+            birthdayText.setText(contactBirthday);
         } else {
-            streetText.setVisibility(View.GONE);
+            birthdayText.setVisibility(View.GONE);
+            birthdayTitle.setVisibility(View.GONE);
         }
 
-        if(postalCode.equals("") && city.equals("") && state.equals("")){
-            locationText.setVisibility(View.GONE);
-        } else if (postalCode.equals("") && city.equals("") ){
-            locationText.setText(state);
-        } else if (postalCode.equals("")){
-            locationText.setText(city + " " + state);
-        } else if (city.equals("")){
-            locationText.setText(postalCode + " " + state);
-        } else if (state.equals("")){
-            locationText.setText(postalCode + " " + city);
+        if((homeStreet == null) && (homePostalCode == null)  && (homeCity  == null) && (homeState == null) && (homeCountry == null)){
+            homeAddressTitle.setVisibility(View.GONE);
         }
 
-        if(!country.equals("")){
-            countryText.setText(country);
+
+        if(homeStreet != null){
+            homeStreetText.setText(homeStreet);
         } else {
-            countryText.setVisibility(View.GONE);
+            homeStreetText.setVisibility(View.GONE);
         }
 
+        if(homePostalCode == null && homeCity == null && homeState == null){
+            homeLocationText.setVisibility(View.GONE);
+        } else if (homePostalCode == null && homeCity == null ){
+            homeLocationText.setText(homeState);
+        } else if (homePostalCode == null){
+            homeLocationText.setText(homeCity + " " + homeState);
+        } else if (homeCity == null){
+            homeLocationText.setText(homePostalCode + " " + homeState);
+        } else if (homeState == null){
+            homeLocationText.setText(homePostalCode + " " + homeCity);
+        } else{
+            homeLocationText.setText(homeCity + " " + homeState + " " + homePostalCode);
+        }
 
-        if(job.equals("") && department.equals("") && company.equals("") && office.equals("") && manager.equals("") && assistant.equals("")){
+        if(homeCountry !=null){
+            homeCountryText.setText(homeCountry);
+        } else {
+            homeCountryText.setVisibility(View.GONE);
+        }
+
+        if((businessStreet == null) && (businessPostalCode == null)  && (businessCity  == null) && (businessState == null) && (businessCountry == null)){
+            businessAddressTitle.setVisibility(View.GONE);
+        }
+
+        if(businessStreet != null){
+            businessStreetText.setText(businessStreet);
+        } else {
+            businessStreetText.setVisibility(View.GONE);
+        }
+
+        if(businessPostalCode == null && businessCity == null && businessState == null){
+            businessLocationText.setVisibility(View.GONE);
+        } else if (businessPostalCode == null && businessCity == null ){
+            businessLocationText.setText(businessState);
+        } else if (businessPostalCode == null){
+            businessLocationText.setText(businessCity + " " + businessState);
+        } else if (businessCity == null){
+            businessLocationText.setText(businessPostalCode + " " + businessState);
+        } else if (businessState == null){
+            businessLocationText.setText(businessPostalCode + " " + businessCity);
+        } else{
+            businessLocationText.setText(businessCity + " " + businessState + " " + businessPostalCode);
+        }
+
+        if(businessCountry !=null){
+            businessCountryText.setText(businessCountry);
+        } else {
+            businessCountryText.setVisibility(View.GONE);
+        }
+
+        if((otherStreet == null) && (otherPostalCode == null)  && (otherCity  == null) && (otherState == null) && (otherCountry == null)){
+            otherAddressTitle.setVisibility(View.GONE);
+        }
+
+        if(otherStreet != null){
+            otherStreetText.setText(otherStreet);
+        } else {
+            otherStreetText.setVisibility(View.GONE);
+        }
+
+        if(otherPostalCode == null && otherCity == null && otherState == null){
+            otherLocationText.setVisibility(View.GONE);
+        } else if (otherPostalCode == null && otherCity == null ){
+            otherLocationText.setText(otherState);
+        } else if (otherPostalCode == null){
+            otherLocationText.setText(otherCity + " " + otherState);
+        } else if (otherCity == null){
+            otherLocationText.setText(otherPostalCode + " " + otherState);
+        } else if (otherState == null){
+            otherLocationText.setText(otherPostalCode + " " + otherCity);
+        } else{
+            otherLocationText.setText(otherCity + " " + otherState + " " + otherPostalCode);
+        }
+
+        if(otherCountry !=null){
+            otherCountryText.setText(otherCountry);
+        } else {
+            otherCountryText.setVisibility(View.GONE);
+        }
+
+        if((job.equals("")) && (department.equals("")) && (company.equals("")) && (office.equals("")) && (manager.equals("")) && (assistant.equals("") && (contactYomiCompanyName.equals("")))){
             workTitle.setVisibility(View.GONE);
         }
 
         if(!job.equals("")){
-            jobText.setText(job);
+            jobText.setText("Job title: " + job);
         } else {
             jobText.setVisibility(View.GONE);
         }
 
         if(!department.equals("")){
-            departmentText.setText(department);
+            departmentText.setText("Department: " + department);
         } else {
             departmentText.setVisibility(View.GONE);
         }
 
         if(!company.equals("")){
-            companyText.setText(company);
+            companyText.setText("Company: " + company);
         } else {
             companyText.setVisibility(View.GONE);
         }
 
         if(!office.equals("")){
-            officeText.setText(office);
+            officeText.setText("Office: " + office);
         } else {
             officeText.setVisibility(View.GONE);
             officeText.setVisibility(View.GONE);
         }
 
         if(!manager.equals("")){
-            managerText.setText(manager);
+            managerText.setText("Manager: " + manager);
         } else {
             managerText.setVisibility(View.GONE);
         }
 
         if(!assistant.equals("")){
-            assisantText.setText(assistant);
+            assisantText.setText("Assistant: " + assistant);
         } else {
             assisantText.setVisibility(View.GONE);
         }
 
-        if(!firstName.equals("")){
+        if(!contactYomiCompanyName.equals("")){
+            yomiCompany.setText("Yomi company: " + assistant);
+        } else {
+            yomiCompany.setVisibility(View.GONE);
+        }
+
+        if(firstName != null){
             firstNameText.setText(firstName);
         } else {
             firstNameText.setVisibility(View.GONE);
         }
 
-        if(!lastName.equals("")){
+        if(lastName != null){
             lastNameText.setText(lastName);
         } else {
             lastNameText.setVisibility(View.GONE);
+        }
+
+        if(!imAddresses.isEmpty()){
+            imText.setText(imAddresses.get(0));
+        } else {
+            imText.setVisibility(View.GONE);
+            imTitle.setVisibility(View.GONE);
+        }
+
+        if(contactMiddleName != null){
+            middleNameText.setText(contactMiddleName);
+        } else {
+            middleNameTitle.setVisibility(View.GONE);
+            middleNameText.setVisibility(View.GONE);
+        }
+
+        if(contactTitle != null){
+            titleText.setText(contactTitle);
+        } else {
+            titleText.setVisibility(View.GONE);
+            titleTitle.setVisibility(View.GONE);
+        }
+
+        if(contactSuffix != null){
+            suffixText.setText(contactSuffix);
+        } else {
+            suffixText.setVisibility(View.GONE);
+            suffixTitle.setVisibility(View.GONE);
+        }
+
+        if(contactYomiName != null){
+            yomiNameText.setText(contactYomiName);
+        } else {
+            yomiNameText.setVisibility(View.GONE);
+            yomiNameTitle.setVisibility(View.GONE);
         }
 
         builder = new AlertDialog.Builder(ContactsDetailsActivity.this);
@@ -432,16 +696,10 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                             intentContacts.putExtra("userEmail", userEmail);
                             intentContacts.putExtra("givenName", givenName);
                             intentContacts.putExtra("displayName", displayName);
-                            intentContacts.putExtra("userPhone", phoneNumber);
                             intentContacts.putExtra("emailList",(Serializable) emailList);
                             intentContacts.putExtra("notes", notes);
                             intentContacts.putExtra("nickname", nickname);
                             intentContacts.putExtra("spouse", spouse);
-                            intentContacts.putExtra("street", street);
-                            intentContacts.putExtra("postalcode", postalCode);
-                            intentContacts.putExtra("city", city);
-                            intentContacts.putExtra("state", state);
-                            intentContacts.putExtra("country", country);
                             intentContacts.putExtra("job", job);
                             intentContacts.putExtra("department", department);
                             intentContacts.putExtra("company", company);
@@ -490,16 +748,10 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                 intentContacts.putExtra("userEmail", userEmail);
                 intentContacts.putExtra("givenName", givenName);
                 intentContacts.putExtra("displayName", displayName);
-                intentContacts.putExtra("userPhone", phoneNumber);
                 intentContacts.putExtra("emailList",(Serializable) emailList);
                 intentContacts.putExtra("notes", notes);
                 intentContacts.putExtra("nickname", nickname);
                 intentContacts.putExtra("spouse", spouse);
-                intentContacts.putExtra("street", street);
-                intentContacts.putExtra("postalcode", postalCode);
-                intentContacts.putExtra("city", city);
-                intentContacts.putExtra("state", state);
-                intentContacts.putExtra("country", country);
                 intentContacts.putExtra("job", job);
                 intentContacts.putExtra("department", department);
                 intentContacts.putExtra("company", company);
@@ -529,17 +781,11 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                 intentEditContact.putExtra("userEmail", userEmail);
                 intentEditContact.putExtra("givenName", givenName);
                 intentEditContact.putExtra("displayName", displayName);
-                intentEditContact.putExtra("userPhone", phoneNumber);
                 intentEditContact.putExtra("emailList",(Serializable) emailList);
                 intentEditContact.putExtra("email", emailAddress);
                 intentEditContact.putExtra("notes", notes);
                 intentEditContact.putExtra("nickname", nickname);
                 intentEditContact.putExtra("spouse", spouse);
-                intentEditContact.putExtra("street", street);
-                intentEditContact.putExtra("postalcode", postalCode);
-                intentEditContact.putExtra("city", city);
-                intentEditContact.putExtra("state", state);
-                intentEditContact.putExtra("country", country);
                 intentEditContact.putExtra("job", job);
                 intentEditContact.putExtra("department", department);
                 intentEditContact.putExtra("company", company);

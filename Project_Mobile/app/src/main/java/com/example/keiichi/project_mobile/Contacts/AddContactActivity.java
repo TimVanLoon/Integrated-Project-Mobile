@@ -1132,7 +1132,7 @@ public class AddContactActivity extends AppCompatActivity {
 
         if(!otherStreetNameInput.getText().toString().isEmpty()){
             PhysicalAddress contactOtherPhysicalAddress = new PhysicalAddress(otherStreetNameInput.getText().toString(), otherCityNameInput.getText().toString(), otherStateNameInput.getText().toString(), otherCountryNameInput.getText().toString(), otherPostalCodeInput.getText().toString());
-            contact.setHomeAddress(contactOtherPhysicalAddress);
+            contact.setOtherAddress(contactOtherPhysicalAddress);
         }
 
         if(!nickNameInput.getText().toString().isEmpty()){

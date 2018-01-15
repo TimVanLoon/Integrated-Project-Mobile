@@ -12,6 +12,7 @@ public class Contact implements Serializable {
     private String assistantName;
     private String birthday;
     private PhysicalAddress businessAddress;
+    private PhysicalAddress otherAddress;
     private String businessHomePage;
     private List<String> businessPhones;
     private String[] categories;
@@ -362,5 +363,13 @@ public class Contact implements Serializable {
 
     public void setProfilePhoto(byte[] profilePhoto) {
         this.profilePhoto = profilePhoto;
+    }
+
+    public PhysicalAddress getOtherAddress() {
+        return otherAddress;
+    }
+
+    public void setOtherAddress(PhysicalAddress otherAddress) {
+        this.otherAddress = otherAddress;
     }
 }
