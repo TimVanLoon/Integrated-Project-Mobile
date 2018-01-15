@@ -56,8 +56,9 @@
 
             <ImageView
                 android:id="@+id/plusNameIcon"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_marginTop="3dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:src="@drawable/ic_add_black"/>
         </LinearLayout>
 
@@ -267,9 +268,9 @@
 
             <ImageView
                 android:id="@+id/plusEmailIcon"
-                android:layout_marginTop="28dp"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_marginTop="30dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:src="@drawable/ic_add_black"/>
         </LinearLayout>
 
@@ -453,9 +454,9 @@
 
             <ImageView
                 android:id="@+id/plusPhoneIcon"
-                android:layout_marginTop="28dp"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_marginTop="30dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:src="@drawable/ic_add_black"/>
 
         </LinearLayout>
@@ -613,9 +614,9 @@
 
             <ImageView
                 android:id="@+id/plusWorkIcon"
-                android:layout_marginTop="28dp"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_marginTop="30dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:src="@drawable/ic_add_black"/>
 
         </LinearLayout>
@@ -825,9 +826,9 @@
 
             <ImageView
                 android:id="@+id/plusAddressIcon"
-                android:layout_marginTop="28dp"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_marginTop="30dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:src="@drawable/ic_add_black"/>
 
         </LinearLayout>
@@ -1279,14 +1280,14 @@
                 android:layout_marginTop="30dp"
                 android:layout_marginLeft="15dp"
                 android:textColor="@color/black"
-                android:textSize="7pt">
+                android:textSize="10pt">
             </TextView>
 
             <ImageView
                 android:id="@+id/plusImIcon"
-                android:layout_marginTop="28dp"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_marginTop="30dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:src="@drawable/ic_add_black"/>
 
         </LinearLayout>
@@ -1335,9 +1336,9 @@
 
             <ImageView
                 android:id="@+id/plusOtherIcon"
-                android:layout_marginTop="28dp"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_marginTop="30dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:src="@drawable/ic_add_black"/>
 
         </LinearLayout>
@@ -1347,7 +1348,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/nickNameTitle"
-            android:layout_marginTop="30dp"
             android:layout_marginLeft="15dp"
             android:textColor="@color/black"
             android:textSize="7pt">
@@ -1375,10 +1375,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/spouseNameTitle"
-            android:layout_marginTop="30dp"
             android:layout_marginLeft="15dp"
             android:textColor="@color/black"
-            android:textSize="10pt">
+            android:textSize="7pt">
         </TextView>
 
         <EditText
@@ -1403,10 +1402,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/birthdayTitle"
-            android:layout_marginTop="30dp"
             android:layout_marginLeft="15dp"
             android:textColor="@color/black"
-            android:textSize="10pt">
+            android:textSize="7pt">
         </TextView>
 
         <EditText
@@ -1443,9 +1441,9 @@
 
             <ImageView
                 android:id="@+id/plusNotesIcon"
-                android:layout_marginTop="28dp"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_marginTop="30dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:src="@drawable/ic_add_black"/>
 
         </LinearLayout>

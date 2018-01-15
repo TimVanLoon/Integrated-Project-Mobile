@@ -854,10 +854,6 @@ public class AddContactActivity extends AppCompatActivity {
                                     }
                                 });
 
-                                birthdayInput.setFocusableInTouchMode(true);
-                                birthdayInput.requestFocus();
-
-
                                 break;
 
                         }
