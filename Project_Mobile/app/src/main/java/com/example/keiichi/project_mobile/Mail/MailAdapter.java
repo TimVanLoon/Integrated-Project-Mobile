@@ -3,20 +3,14 @@ package com.example.keiichi.project_mobile.Mail;
 
 import android.content.Context;
 
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
-import android.view.ActionMode;
-import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -25,35 +19,26 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
-import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.DAL.POJOs.Message;
-import com.example.keiichi.project_mobile.MainActivity;
-import com.example.keiichi.project_mobile.MySingleton;
 import com.example.keiichi.project_mobile.R;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import helper.FlipAnimator;
 
-public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> implements Filterable {
+public class MailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
+    public static final int TYPE_DATE = 0;
+    public static final int TYPE_GENERAL = 1;
 
     private Context mContext;
     private SparseBooleanArray selectedItems;
@@ -70,102 +55,126 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
 
     private MailAdapter.CustomFilter mFilter = new MailAdapter.CustomFilter();
 
-    MailAdapter(Context context,  List<Message> values) {
+    private List<ListItem> consolidatedList = new ArrayList<>();
+
+    MailAdapter(Context context, HashMap<String, List<Message>> values) {
 
         this.mContext = context;
         this.selectedItems = new SparseBooleanArray();
         animeationItemsIndex = new SparseBooleanArray();
 
-        this.originalData = values;
-        this.filteredData = values;
+        for (String date : values.keySet()){
+            DateItem dateItem = new DateItem();
+            dateItem.setDate(date);
+            consolidatedList.add(dateItem);
+            for (Message message : values.get(date)) {
+                GeneralItem generalItem = new GeneralItem();
+                generalItem.setPojoOfJsonArray(message);
+                consolidatedList.add(generalItem);
+            }
+        }
+
+        /*this.originalData = values;
+        this.filteredData = values;*/
     }
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        RecyclerView.ViewHolder viewHolder = null;
+       /* View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.mail_items, parent, false);
-        return new MailAdapter.MyViewHolder(itemView);
+        return new MailAdapter.MessageViewHolder(itemView);*/
+       LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+
+       switch (viewType){
+           case ListItem.TYPE_GENERAL:
+               View v1 = inflater.inflate(R.layout.mail_items, parent,false);
+               viewHolder = new MessageViewHolder(v1);
+               break;
+           case ListItem.TYPE_DATE:
+               View v2 = inflater.inflate(R.layout.date_items, parent,false);
+               viewHolder = new DateViewHolder(v2);
+               break;
+       }
+
+       return  viewHolder;
     }
 
 
-    public void onBindViewHolder(final MyViewHolder holder, final int position) {
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         try {
             //Mail objecten ophalen
 
-             message = getItem(position);
+             //message = getItem(position);
 
-            String from = message.getFrom().getEmailAddress().getName();
-            String email = message.getFrom().getEmailAddress().getAddress();
-            String receivedDateTime = message.getReceivedDateTime();
-            String bodyPreview = message.getBodyPreview();
-            String subject = message.getSubject();
-            Boolean isRead = message.isRead();
-            Boolean hasAttachment = message.isHasAttachments();
+             switch (holder.getItemViewType()){
+                 case TYPE_DATE:
+                     DateItem dateItem = (DateItem) consolidatedList.get(position);
+                     DateViewHolder dateViewHolder = (DateViewHolder) holder;
 
-            //Data weergeven
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-            SimpleDateFormat output = new SimpleDateFormat("HH:mm");
-            Date d = sdf.parse(receivedDateTime);
-            holder.timestamp.setText(output.format(d));
-            holder.from.setText(from);
-            holder.message.setText(bodyPreview);
-            holder.subject.setText(subject);
-            //Row state tot active zetten
-            holder.itemView.setActivated(selectedItems.get(position, false));
+                     dateViewHolder.date.setText(dateItem.getDate());
 
-            RequestQueue queue = Volley.newRequestQueue(mContext);
+                     break;
+                 case TYPE_GENERAL:
+                     GeneralItem generalItem1 = (GeneralItem) consolidatedList.get(position);
+                     MessageViewHolder messageViewHolder = (MessageViewHolder) holder;
+                     Message message = generalItem1.message();
+                     String from = message.getFrom().getEmailAddress().getName();
+                     String email = message.getFrom().getEmailAddress().getAddress();
+                     String receivedDateTime = message.getReceivedDateTime();
+                     String bodyPreview = message.getBodyPreview();
+                     String subject = message.getSubject();
+                     Boolean isRead = message.isRead();
+                     Boolean hasAttachment = message.isHasAttachments();
 
-            ColorGenerator generator = ColorGenerator.MATERIAL;
+                     //Data weergeven
+                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                     SimpleDateFormat output = new SimpleDateFormat("HH:mm");
+                     Date d = sdf.parse(receivedDateTime);
+                     messageViewHolder.timestamp.setText(output.format(d));
+                     messageViewHolder.from.setText(from);
+                     messageViewHolder.message.setText(bodyPreview);
+                     messageViewHolder.subject.setText(subject);
+                     //Row state tot active zetten
+                     messageViewHolder.itemView.setActivated(selectedItems.get(position, false));
 
-            int color2 = generator.getColor(message.getSender().getEmailAddress().getName().substring(0,1));
+                     RequestQueue queue = Volley.newRequestQueue(mContext);
 
-            TextDrawable drawable1 = TextDrawable.builder()
-                    .buildRoundRect(message.getSender().getEmailAddress().getName().substring(0,1), color2, 3); // radius in px
+                     ColorGenerator generator = ColorGenerator.MATERIAL;
 
-            holder.profilePicture.setImageDrawable(drawable1);
+                     int color2 = generator.getColor(message.getSender().getEmailAddress().getName().substring(0,1));
 
-/*
+                     TextDrawable drawable1 = TextDrawable.builder()
+                             .buildRoundRect(message.getSender().getEmailAddress().getName().substring(0,1), color2, 3); // radius in px
 
-            String url = "http://i.imgur.com/7spzG.png";
-            System.out.println("hit");
-            ImageRequest request = new ImageRequest(url,
-                    new Response.Listener<Bitmap>() {
-                        @Override
-                        public void onResponse(Bitmap bitmap) {
-                            System.out.println("hit1");
-                            holder.profilePicture.setImageBitmap(bitmap);
-                        }
-                    }, 0, 0, null,
-                    new Response.ErrorListener() {
-                        public void onErrorResponse(VolleyError error) {
-                            System.out.println("hit2");
+                     messageViewHolder.profilePicture.setImageDrawable(drawable1);
 
-                        }
-                    });
 
-            queue.add(request);
 
-            */
+                     if (message.isHasAttachments()){
+                         messageViewHolder.attachmentView.setVisibility(View.VISIBLE);
+                     }
 
-            if (message.isHasAttachments()){
-                holder.attachmentView.setVisibility(View.VISIBLE);
-            }
+                     if (message.isRead()) {
 
-            if (message.isRead()) {
+                         messageViewHolder.from.setTypeface(null, Typeface.NORMAL);
+                         messageViewHolder.subject.setTypeface(null, Typeface.NORMAL);
+                         messageViewHolder.from.setTextColor(ContextCompat.getColor(mContext, R.color.subject));
+                         messageViewHolder.subject.setTextColor(ContextCompat.getColor(mContext, R.color.message));
 
-                holder.from.setTypeface(null, Typeface.NORMAL);
-                holder.subject.setTypeface(null, Typeface.NORMAL);
-                holder.from.setTextColor(ContextCompat.getColor(mContext, R.color.subject));
-                holder.subject.setTextColor(ContextCompat.getColor(mContext, R.color.message));
+                     } else {
 
-            } else {
+                         messageViewHolder.from.setTypeface(null, Typeface.BOLD);
+                         messageViewHolder.subject.setTypeface(null, Typeface.BOLD);
+                         messageViewHolder.from.setTextColor(ContextCompat.getColor(mContext, R.color.from));
+                         messageViewHolder.subject.setTextColor(ContextCompat.getColor(mContext, R.color.subject));
 
-                holder.from.setTypeface(null, Typeface.BOLD);
-                holder.subject.setTypeface(null, Typeface.BOLD);
-                holder.from.setTextColor(ContextCompat.getColor(mContext, R.color.from));
-                holder.subject.setTextColor(ContextCompat.getColor(mContext, R.color.subject));
+                     }
+                     break;
+             }
 
-            }
+
 
 
         } catch (ParseException e) {
@@ -176,13 +185,13 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
     }
 
 
-    void applyProfilePicture(MyViewHolder holder) {
+    void applyProfilePicture(MessageViewHolder holder) {
         holder.imgProfile.setImageResource(R.drawable.bg_circle);
         holder.imgProfile.setColorFilter(Color.CYAN);
         holder.iconText.setVisibility(View.VISIBLE);
     }
 
-    private void applyIconAnimation(MyViewHolder holder, int position) {
+    private void applyIconAnimation(MessageViewHolder holder, int position) {
         if (selectedItems.get(position, false)) {
             holder.iconFront.setVisibility(View.GONE);
             resetIconYAxis(holder.iconBack);
@@ -217,19 +226,39 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
     @Override
     public int getItemCount() {
 
-        return filteredData.size();
+        return consolidatedList != null ? consolidatedList.size() : 0;
 
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        // here your custom logic to choose the view type
+        return consolidatedList.get(position).getType();
     }
 
 
 
-    class MyViewHolder extends RecyclerView.ViewHolder {
+    class DateViewHolder extends RecyclerView.ViewHolder{
+        TextView date;
+
+        public DateViewHolder(View itemView) {
+            super(itemView);
+            date = itemView.findViewById(R.id.dateTxtView);
+        }
+
+
+        public int getViewType() {
+            return TYPE_DATE;
+        }
+    }
+
+    class MessageViewHolder extends RecyclerView.ViewHolder {
         TextView from, subject, message, iconText, timestamp;
         ImageView iconImp, imgProfile, profilePicture, attachmentView;
         LinearLayout messageContainer;
         RelativeLayout iconContainer, iconBack, iconFront;
 
-        MyViewHolder(View view) {
+        MessageViewHolder(View view) {
             super(view);
             from = view.findViewById(R.id.from);
             subject = view.findViewById(R.id.txt_primary);
@@ -243,6 +272,10 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
             profilePicture = view.findViewById(R.id.profilePicture);
             attachmentView = view.findViewById(R.id.AttachmentImage);
 
+        }
+
+        public int getViewType() {
+            return TYPE_GENERAL;
         }
 
     }
@@ -311,5 +344,57 @@ public class MailAdapter extends RecyclerView.Adapter<MailAdapter.MyViewHolder> 
         return filteredData.get(position);
 
     }
+
+    public abstract class ListItem {
+
+        public static final int TYPE_DATE = 0;
+        public static final int TYPE_GENERAL = 1;
+
+        abstract public int getType();
+    }
+
+    public class GeneralItem extends ListItem {
+
+        private Message message;
+
+        public Message message() {
+            return message;
+        }
+
+        public void setPojoOfJsonArray(Message message) {
+            this.message = message;
+        }
+
+        @Override
+        public int getType() {
+            return TYPE_GENERAL;
+        }
+    }
+
+    public class DateItem extends ListItem {
+
+        private String date;
+
+        public String getDate() {
+            return date;
+        }
+
+        public void setDate(String date) {
+            this.date = date;
+        }
+
+        @Override
+        public int getType() {
+            return TYPE_DATE;
+        }
+
+
+    }
+
+
+
+
+
+
 
 }

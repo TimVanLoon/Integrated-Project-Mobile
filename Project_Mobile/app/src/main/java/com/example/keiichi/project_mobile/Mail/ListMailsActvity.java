@@ -100,8 +100,14 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -712,7 +718,10 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
         messages = new Gson().fromJson(String.valueOf(messagesArray), listType);
 
-        mailAdapter = new MailAdapter(this, messages);
+        HashMap<String,List<Message>> heyboo = groupDataIntoHashMap(messages);
+
+
+        mailAdapter = new MailAdapter(this, heyboo);
         recyclerView.setAdapter(mailAdapter);
 
         RecyclerView.LayoutManager manager = new LinearLayoutManager(getApplicationContext());
@@ -1107,7 +1116,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
             messages = new Gson().fromJson(String.valueOf(messagesArray), listType);
 
-            mailAdapter = new MailAdapter(this, messages);
+            //mailAdapter = new MailAdapter(this, messages);
             recyclerView.setAdapter(mailAdapter);
 
             mailAdapter.notifyDataSetChanged();
@@ -1177,6 +1186,48 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
 
         return factory.build().toString();
+    }
+    private HashMap<String,List<Message>> groupDataIntoHashMap (List<Message> listOfPojosOfJsonArray) {
+
+        HashMap<String, List<Message>> groupedHashMap = new HashMap<>();
+        DateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+        Calendar c = Calendar.getInstance();
+        try {
+            c.setTime(format.parse(new Date().toString()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+
+        String hashMapKey;
+
+
+        for(int I=0;I < listOfPojosOfJsonArray.size();I++) {
+            String mailDate = listOfPojosOfJsonArray.get(I).getReceivedDateTime().substring(0,10);
+
+            if (mailDate.equalsIgnoreCase(c.toString())){
+                hashMapKey = "Today";
+            }else {
+                hashMapKey = listOfPojosOfJsonArray.get(I).getReceivedDateTime().substring(0,10);
+
+            }
+
+
+
+            if(groupedHashMap.containsKey(hashMapKey)) {
+                // The key is already in the HashMap; add the pojo object
+                // against the existing key.
+                groupedHashMap.get(hashMapKey).add(listOfPojosOfJsonArray.get(I));
+            } else {
+                // The key is not there in the HashMap; create a new key-value pair
+                List<Message> list = new ArrayList<>();
+                list.add(listOfPojosOfJsonArray.get(I));
+                groupedHashMap.put(hashMapKey, list);
+            }
+        }
+
+        return groupedHashMap;
     }
 
 
