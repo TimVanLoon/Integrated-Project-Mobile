@@ -7,6 +7,10 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
@@ -40,6 +44,7 @@ import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
+import com.example.keiichi.project_mobile.Mail.RecyclerTouchListener;
 import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
 import com.google.gson.Gson;
@@ -55,15 +60,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class ListEventsActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class ListEventsActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, Serializable {
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
 
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/events?$orderby=start/dateTime&$top=500&$count=true";
     final private String URL_DELETE = "https://graph.microsoft.com/beta/me/events/";
-
+    private boolean multiSelect = false;
+    private boolean actionModeEnabled = false;
     private String accessToken;
     private String userName;
     private String userEmail;
@@ -74,35 +82,22 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
     private EventAdapter eventAdapter;
     private  BottomNavigationView mBottomNav;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private boolean actionModeEnabled = false;
     private int eventsClickedCount = 0;
     private List<Event> selectedEvents = new ArrayList<>();
+    private ArrayList<Integer> selectedItems = new ArrayList<>();
+    private RecyclerView eventsRecyclerView;
+    private ActionMode eventActionMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_events);
 
-
+        eventsRecyclerView = findViewById(R.id.eventsRecyclerView);
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
-        eventsListView = (ListView) findViewById(R.id.eventsListView);
         mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(this);
-
-        eventsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-
-                // Start an alpha animation for clicked item
-                Animation animation1 = new AlphaAnimation(0.3f, 1.0f);
-                animation1.setDuration(1000);
-                view.startAnimation(animation1);
-
-                onEventClicked(position);
-
-            }
-        });
 
         Menu menu = mBottomNav.getMenu();
         MenuItem menuItem = menu.getItem(1);
@@ -146,64 +141,6 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
             }
         });
 
-        eventsListView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
-
-        eventsListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-            @Override
-            public void onItemCheckedStateChanged(ActionMode actionMode, int position, long l, boolean checked) {
-                if(checked) {
-                    eventsListView.getChildAt(position).setBackgroundColor(Color.LTGRAY);
-                    selectedEvents.add(eventAdapter.getItemAtPosition(position));
-                    eventsClickedCount++;
-                    actionMode.setTitle(eventsClickedCount+ " Selected");
-                } else {
-                    selectedEvents.remove(eventAdapter.getItemAtPosition(position));
-                    eventsClickedCount--;
-                    actionMode.setTitle(eventsClickedCount+ " Selected");
-                    eventsListView.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
-                }
-            }
-
-            @Override
-            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-                MenuInflater menuInflater = getMenuInflater();
-                menuInflater.inflate(R.menu.delete_navigation, menu);
-                actionModeEnabled = true;
-                return true;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-                if(menuItem.getItemId() == R.id.action_delete){
-                    for(Event event : selectedEvents){
-                        try {
-                            deleteEvent(event.getId());
-                            getEvents();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    getEvents();
-                    actionMode.finish();
-                    return true;
-                }
-
-                return false;
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode actionMode) {
-                eventsClickedCount = 0;
-                selectedEvents.clear();
-            }
-        });
-
         setSupportActionBar(myToolbar);
 
         // VOEG BACK BUTTON TOE AAN ACTION BAR
@@ -216,14 +153,6 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
 
 
         getEvents();
-    }
-
-    private void fillEventsListView(List<Event> eventsList){
-
-        EventAdapter eventAdapter = new EventAdapter(this, eventsList);
-        eventsListView.setAdapter(eventAdapter);
-
-
     }
 
     @Override
@@ -295,6 +224,80 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    public interface ClickListener {
+        void onClick(View view, int position);
+
+        void onLongClick(View view, int position);
+    }
+
+    private void selectedItem(Integer item) {
+        if (multiSelect) {
+            if (selectedItems.contains(item)) {
+                selectedItems.remove(item);
+                eventsRecyclerView.getChildAt(item).setBackgroundColor(Color.TRANSPARENT);
+                eventsClickedCount--;
+                eventActionMode.setTitle(eventsClickedCount+ " Selected");
+
+                if(eventsClickedCount == 0){
+                    eventActionMode.finish();
+                    actionModeEnabled = false;
+                }
+            } else {
+                selectedItems.add(item);
+                eventsRecyclerView.getChildAt(item).setBackgroundColor(Color.LTGRAY);
+                eventsClickedCount++;
+                eventActionMode.setTitle(eventsClickedCount+ " Selected");
+            }
+        }
+    }
+
+    private ActionMode.Callback actionModeCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            MenuInflater menuInflater = getMenuInflater();
+            menuInflater.inflate(R.menu.delete_navigation, menu);
+            multiSelect = true;
+            actionModeEnabled = true;
+            eventActionMode = actionMode;
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            if(menuItem.getItemId() == R.id.action_delete){
+                try {
+                    deleteEvents(selectedItems);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                actionModeEnabled = false;
+                actionMode.finish();
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode actionMode) {
+            multiSelect = false;
+            actionModeEnabled = false;
+            eventsClickedCount = 0;
+
+            for (Integer item : selectedItems) {
+                eventsRecyclerView.getChildAt(item).setBackgroundColor(Color.TRANSPARENT);
+            }
+
+            selectedEvents.clear();
+
+        }
+    };
 
     /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
     private void getEvents() {
@@ -370,13 +373,97 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
 
             events = new Gson().fromJson(String.valueOf(eventArray), listType);
 
+            RecyclerView.LayoutManager manager = new LinearLayoutManager(getApplicationContext());
+            eventsRecyclerView.setLayoutManager(manager);
+            eventsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+            eventsRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
 
             eventAdapter = new EventAdapter(this, events);
-            eventsListView.setAdapter(eventAdapter);
+            eventsRecyclerView.setAdapter(eventAdapter);
 
+            eventsRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), eventsRecyclerView, new ListMailsActvity.ClickListener() {
+                @Override
+                public void onClick(View view, int position) {
+                    if (actionModeEnabled) {
+                        selectedItem(position);
 
+                    } else {
 
+                        if (events.size() != 0) {
 
+                            Event event = eventAdapter.getItemAtPosition(position);
+
+                            Intent showEventDetails = new Intent(ListEventsActivity.this, EventDetailsActivity.class);
+                            showEventDetails.putExtra("userEmail", userEmail);
+                            showEventDetails.putExtra("AccessToken", accessToken);
+                            showEventDetails.putExtra("userName", userName);
+                            showEventDetails.putExtra("id", event.getId());
+                            showEventDetails.putExtra("subject", event.getSubject());
+                            showEventDetails.putExtra("reminderMinutesBeforeStart", event.getReminderMinutesBeforeStart());
+                            showEventDetails.putExtra("displayAs", event.getShowAs());
+
+                            if(event.getLocation() == null){
+                                showEventDetails.putExtra("location", "");
+                            }
+                            else {
+                                showEventDetails.putExtra("location", event.getLocation().getDisplayName());
+                            }
+
+                            if(event.getStart() == null){
+                                showEventDetails.putExtra("startDate", "");
+                            }
+                            else {
+                                showEventDetails.putExtra("startDate", event.getStart().getDateTime());
+                            }
+
+                            if(event.getBody().getContent() != null){
+                                showEventDetails.putExtra("notes", event.getBody().getContent());
+                            }
+                            else {
+                                showEventDetails.putExtra("notes", "");
+                            }
+
+                            if(event.getBody().getContentType() != null){
+
+                                showEventDetails.putExtra("contentType", event.getBody().getContentType());
+
+                            }
+
+                            String eventBody = event.getBody().getContent();
+
+                            if(eventBody != null){
+                                showEventDetails.putExtra("notes", eventBody);
+                            }
+                            else {
+                                showEventDetails.putExtra("notes", "");
+                            }
+
+                            showEventDetails.putExtra("sensitivity", event.getSensitivity());
+
+                            showEventDetails.putExtra("responseRequested", event.isResponseRequested());
+
+                            if (event.getAttendees() != null) {
+                                showEventDetails.putExtra("attendeesList", (Serializable) event.getAttendees());
+                            }
+
+                            startActivity(showEventDetails);
+
+                            ListEventsActivity.this.finish();
+
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Empty contact list!", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+
+                }
+
+                @Override
+                public void onLongClick(View view, int position) {
+                    view.startActionMode(actionModeCallback);
+                    selectedItem(position);
+                }
+            }));
 
 
         } catch (JSONException e) {
@@ -498,6 +585,64 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
         } else {
             Toast.makeText(getApplicationContext(), "Empty events list!", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    // PATCH REQUEST VOOR DELETEN CONTACTPERSOON
+    private void deleteEvents(ArrayList<Integer> selectedItems) throws JSONException {
+
+        this.selectedItems = selectedItems;
+
+        for (Integer integer : selectedItems) {
+            RequestQueue queue = Volley.newRequestQueue(this);
+
+            Event event = events.get(integer);
+
+            String postAddress = URL_DELETE + event.getId();
+
+            StringRequest stringRequest = new StringRequest(Request.Method.DELETE, postAddress,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Toast.makeText(getApplicationContext(), "Events deleted!", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyLog.e("Error: ", error.getMessage());
+                    error.printStackTrace();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> headers = new HashMap<>();
+                    headers.put("Authorization", "Bearer " + accessToken);
+                    headers.put("Content-Type", "application/json; charset=utf-8");
+
+                    return headers;
+                }
+
+            };
+
+            queue.add(stringRequest);
+
+        }
+
+
+        eventAdapter.notifyDataSetChanged();
+
+        int DELAY_TIME=2000;
+
+        //start your animation
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                //this code will run after the delay time which is 2 seconds.
+
+                getEvents();
+
+            }
+        }, DELAY_TIME);
     }
 
     @Override

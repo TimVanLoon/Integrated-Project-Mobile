@@ -56,10 +56,12 @@
         <activity
             android:name=".Calendar.CalendarActivity"
             android:label="My Calendar"
+            android:theme="@style/ContactsTheme"
             android:windowSoftInputMode="adjustResize|adjustPan" />
         <activity
             android:name=".Calendar.ListEventsActivity"
             android:label="My Events"
+            android:theme="@style/ContactsTheme"
             android:windowSoftInputMode="adjustResize|adjustPan" />
         <activity
             android:name=".Contacts.ContactsActivity"

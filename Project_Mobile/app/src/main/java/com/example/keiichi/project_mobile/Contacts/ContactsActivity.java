@@ -76,9 +76,6 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
     private MenuItem searchItem;
     private BottomNavigationView mBottomNav;
     private Toolbar myToolbar;
-    private TextDrawable drawable;
-    private ImageView profilePicture;
-    private ListView contactsListView;
     private SearchView searchView;
     private ContactAdapter contactAdapter;
     private RoomAdapter roomAdapter;
@@ -124,8 +121,6 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
 
-
-        profilePicture = (ImageView) findViewById(R.id.profilePicture);
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
@@ -367,7 +362,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
             contacts = new Gson().fromJson(String.valueOf(contactArray), listType);
 
-            contactAdapter = new ContactAdapter(this, contacts, accessToken);
+            contactAdapter = new ContactAdapter(this, contacts);
             contactsRecyclerView.setAdapter(contactAdapter);
 
             getContactFolders();
@@ -382,7 +377,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
         contactsRecyclerView.setItemAnimator(new DefaultItemAnimator());
         contactsRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
 
-        contactAdapter = new ContactAdapter(this, contacts, accessToken);
+        contactAdapter = new ContactAdapter(this, contacts);
         contactsRecyclerView.setAdapter(contactAdapter);
 
         contactsRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), contactsRecyclerView, new ListMailsActvity.ClickListener() {
@@ -1005,7 +1000,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
             System.out.println("papa je doet me pijn :(");
 
-            contactAdapter = new ContactAdapter(this, contacts, accessToken);
+            contactAdapter = new ContactAdapter(this, contacts);
             contactsRecyclerView.setAdapter(contactAdapter);
 
             contactAdapter.notifyDataSetChanged();

@@ -72,8 +72,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-    <ListView
-        android:id="@+id/eventsListView"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/eventsRecyclerView"
         android:layout_width="fill_parent"
         android:layout_height="501dp"
         android:divider="@drawable/list_divider"

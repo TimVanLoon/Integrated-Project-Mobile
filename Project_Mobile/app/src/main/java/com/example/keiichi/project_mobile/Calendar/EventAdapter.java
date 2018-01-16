@@ -3,15 +3,20 @@ package com.example.keiichi.project_mobile.Calendar;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.example.keiichi.project_mobile.Contacts.ContactAdapter;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.Event;
@@ -27,9 +32,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class EventAdapter extends BaseAdapter implements ListAdapter, Filterable {
+public class EventAdapter extends RecyclerView.Adapter<EventAdapter.MyViewHolder> implements Filterable {
 
     private final Context context;
+    private Event event;
+    private SparseBooleanArray animeationItemsIndex;
+    private SparseBooleanArray selectedItems;
+    private boolean reverseAllAnimations = false;
 
     // Ongefilterde list
     private List<Event> originalData = null;
@@ -40,41 +49,45 @@ public class EventAdapter extends BaseAdapter implements ListAdapter, Filterable
 
     public EventAdapter(Context context, List<Event> values) {
         this.context = context;
-
         this.originalData = values;
         this.filteredData = values;
+        this.selectedItems = new SparseBooleanArray();
+        this.animeationItemsIndex = new SparseBooleanArray();
     }
 
-
-    @Override
-    public int getCount() {
-        return filteredData.size();
-    }
-
-    @Override
     public Event getItem(int i) {
         return filteredData.get(i);
     }
-
 
     @Override
     public long getItemId(int i) {
         return i;
     }
 
-
-    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater layoutInflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = layoutInflater.inflate(R.layout.event_items, parent, false);
-        TextView preview = rowView.findViewById(R.id.previewBody);
-        TextView header = rowView.findViewById(R.id.header);
+    public int getItemCount() {
+        return filteredData.size();
+    }
 
-        Event event = getItem(position);
+    public Event getItemAtPosition(int position){
 
-        header.setText(event.getSubject());
+        return filteredData.get(position);
+
+    }
+
+    @Override
+    public EventAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.event_items, parent, false);
+        return new EventAdapter.MyViewHolder(itemView);
+    }
+
+    @Override
+    public void onBindViewHolder(EventAdapter.MyViewHolder holder, int position) {
+
+        event = getItem(position);
+
+        holder.header.setText(event.getSubject());
 
         //preview.setText(event.getStart().getDateTime());
 
@@ -86,10 +99,20 @@ public class EventAdapter extends BaseAdapter implements ListAdapter, Filterable
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        preview.setText(output.format(d));
+        holder.previewBody.setText(output.format(d));
 
+    }
 
-        return rowView;
+    class MyViewHolder extends RecyclerView.ViewHolder {
+        TextView header;
+        TextView previewBody;
+
+        MyViewHolder(View view) {
+            super(view);
+            header = view.findViewById(R.id.header);
+            previewBody = view.findViewById(R.id.previewBody);
+
+        }
 
     }
 
@@ -143,9 +166,4 @@ public class EventAdapter extends BaseAdapter implements ListAdapter, Filterable
         EventAdapter.this.notifyDataSetChanged(); // notify data set change
     }
 
-    public Event getItemAtPosition(int position){
-
-        return filteredData.get(position);
-
-    }
 }

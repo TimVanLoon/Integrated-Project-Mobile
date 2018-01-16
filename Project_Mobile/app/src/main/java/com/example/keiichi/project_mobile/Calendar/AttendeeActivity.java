@@ -351,7 +351,7 @@ public class AttendeeActivity extends AppCompatActivity {
 
 
 
-            contactAdapter = new ContactAdapter(this, contacts, accessToken);
+            contactAdapter = new ContactAdapter(this, contacts);
             contactsRecyclerView.setAdapter(contactAdapter);
 
 
@@ -360,7 +360,7 @@ public class AttendeeActivity extends AppCompatActivity {
         }
         assert contactsJsonArray != null;
 
-        contactAdapter = new ContactAdapter(this, contacts, accessToken);
+        contactAdapter = new ContactAdapter(this, contacts);
         contactsRecyclerView.setAdapter(contactAdapter);
 
     }

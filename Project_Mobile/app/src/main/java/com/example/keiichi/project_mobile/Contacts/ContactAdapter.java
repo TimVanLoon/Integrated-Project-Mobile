@@ -57,13 +57,11 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.MyViewHo
     private List<Contact> filteredData = null;
 
     private ContactAdapter.CustomFilter mFilter = new ContactAdapter.CustomFilter();
-    private String accessToken;
 
-    public ContactAdapter(Context context, List<Contact> values, String accessToken) {
+    public ContactAdapter(Context context, List<Contact> values) {
         this.context = context;
         this.originalData = values;
         this.filteredData = values;
-        this.accessToken = accessToken;
         this.selectedItems = new SparseBooleanArray();
         this.animeationItemsIndex = new SparseBooleanArray();
     }
