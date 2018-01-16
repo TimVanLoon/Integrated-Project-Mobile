@@ -55,7 +55,6 @@ public class AddContactActivity extends AppCompatActivity {
     final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/contacts";
     final private int DELAY_TIME = 100;
     private DatePickerDialog datePickerDialog;
-    private List<String> mobilePhones = new ArrayList<>();
     private List<String> homePhones = new ArrayList<>();
     private List<String> businessPhones = new ArrayList<>();
     private Toolbar myToolbar;
@@ -113,12 +112,10 @@ public class AddContactActivity extends AppCompatActivity {
     private TextView suffixTitle;
     private TextView yomiFirstNameTitle;
     private TextView yomiLastNameTitle;
-    private TextView displayAsTitle;
     private TextView emailSubTitle2;
     private TextView displayAsTitle2;
     private TextView emailSubTitle3;
     private TextView displayAsTitle3;
-    private TextView emailSubTitle;
     private TextView jobTitle;
     private TextView departmentTitle;
     private TextView companyNameTitle;
@@ -126,7 +123,6 @@ public class AddContactActivity extends AppCompatActivity {
     private TextView managerTitle;
     private TextView assistantTitle;
     private TextView yomiCompanyTitle;
-    private TextView imTitle;
     private TextView imSubTitle;
     private TextView businessAddressTitle;
     private TextView businessStreetNameTitle;
@@ -235,12 +231,10 @@ public class AddContactActivity extends AppCompatActivity {
         suffixTitle = (TextView) findViewById(R.id.suffixTitle);
         yomiFirstNameTitle = (TextView) findViewById(R.id.yomiFirstNameTitle);
         yomiLastNameTitle = (TextView) findViewById(R.id.yomiLastNameTitle);
-        displayAsTitle = (TextView) findViewById(R.id.displayAsTitle);
         emailSubTitle2 = (TextView) findViewById(R.id.emailSubTitle2);
         displayAsTitle2 = (TextView) findViewById(R.id.displayAsTitle2);
         emailSubTitle3 = (TextView) findViewById(R.id.emailSubTitle3);
         displayAsTitle3 = (TextView) findViewById(R.id.displayAsTitle3);
-        emailSubTitle = (TextView) findViewById(R.id.emailSubTitle);
         businessPhoneTitle2 = (TextView) findViewById(R.id.businessPhoneTitle2);
         homePhoneTitle = (TextView) findViewById(R.id.homePhoneTitle);
         homePhoneTitle2 = (TextView) findViewById(R.id.homePhoneTitle2);
@@ -252,7 +246,6 @@ public class AddContactActivity extends AppCompatActivity {
         managerTitle = (TextView) findViewById(R.id.managerTitle);
         yomiCompanyTitle = (TextView) findViewById(R.id.yomiCompanyTitle);
         assistantTitle = (TextView) findViewById(R.id.assistantTitle);
-        imTitle = (TextView) findViewById(R.id.imTitle);
         imSubTitle = (TextView) findViewById(R.id.imSubTitle);
         businessAddressTitle = (TextView) findViewById(R.id.businessAddressTitle);
         businessStreetNameTitle = (TextView) findViewById(R.id.businessStreetNameTitle);

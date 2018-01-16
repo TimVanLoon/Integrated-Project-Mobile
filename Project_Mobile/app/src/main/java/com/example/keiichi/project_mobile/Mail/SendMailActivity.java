@@ -41,7 +41,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.json.Json;
-import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
@@ -84,13 +83,15 @@ public class SendMailActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-
+        Intent intent = getIntent();
 
         contact = (Contact) getIntent().getSerializableExtra("contact");
 
+        emailAddress = intent.getStringExtra("emailAddress");
 
-
-        
+        if (emailAddress != null){
+            MailAdress.setText(emailAddress);
+        }
 
     }
 
@@ -132,21 +133,16 @@ public class SendMailActivity extends AppCompatActivity {
     }
 
     private String buildJsonMail() {
-        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-
-        for (String string :  MailAdress.getText().toString().split("\\s+")){
-            arrayBuilder.add(
-                    Json.createObjectBuilder().
-                            add("emailAddress", Json.createObjectBuilder().
-                                    add("address",string)));
-        }
         JsonObjectBuilder factory = Json.createObjectBuilder()
                 .add("message", Json.createObjectBuilder().
                         add("subject", Subject.getText().toString()).
                         add("body", Json.createObjectBuilder().
                                 add("contentType", "Text").
                                 add("content", Html.fromHtml(MailBody.getHtml()).toString())).
-                        add("toRecipients", arrayBuilder)
+                        add("toRecipients", Json.createArrayBuilder().
+                                add(Json.createObjectBuilder().
+                                        add("emailAddress", Json.createObjectBuilder().
+                                                add("address", MailAdress.getText().toString()))))
                 );
         return factory.build().toString();
     }
