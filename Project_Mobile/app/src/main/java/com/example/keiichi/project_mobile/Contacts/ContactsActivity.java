@@ -555,6 +555,43 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             e.printStackTrace();
         }
 
+        contactsRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), contactsRecyclerView, new ListMailsActvity.ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                if (actionModeEnabled) {
+                    selectedItem(position);
+
+                } else {
+
+                    if (rooms.size() != 0) {
+
+                        EmailAddress room = roomAdapter.getItemAtPosition(position);
+
+                        Intent showRoomDetails = new Intent(ContactsActivity.this, RoomDetailsActivity.class);
+
+                        showRoomDetails.putExtra("userEmail", userEmail);
+                        showRoomDetails.putExtra("AccessToken", accessToken);
+                        showRoomDetails.putExtra("userName", userName);
+                        showRoomDetails.putExtra("room", room);
+
+                        startActivity(showRoomDetails);
+
+                        ContactsActivity.this.finish();
+
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Empty room list!", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+                view.startActionMode(actionModeCallback);
+                selectedItem(position);
+            }
+        }));
 
     }
 
