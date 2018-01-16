@@ -18,8 +18,10 @@ import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
+import com.example.keiichi.project_mobile.Calendar.AddEventActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.User;
+import com.example.keiichi.project_mobile.Mail.SendMailActivity;
 import com.example.keiichi.project_mobile.R;
 
 public class UserDetailsActivity extends AppCompatActivity {
@@ -173,6 +175,8 @@ public class UserDetailsActivity extends AppCompatActivity {
 
         }
 
+        setIntentButton();
+
     }
 
     // VOEG ICONS TOE AAN DE ACTION BAR
@@ -209,6 +213,84 @@ public class UserDetailsActivity extends AppCompatActivity {
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void setIntentButton() {
+
+        if (mail == null) {
+
+            mailButton.setColorFilter(Color.GRAY);
+            calendarButton.setColorFilter(Color.GRAY);
+
+            mailButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+
+                    Toast.makeText(getApplicationContext(), "No E-mail Address found!", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            calendarButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+
+                    Toast.makeText(getApplicationContext(), "No E-mail Address found!", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        } else {
+            mailButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+
+                    Intent sendMail = new Intent(UserDetailsActivity.this, SendMailActivity.class);
+                    sendMail.putExtra("AccessToken", accessToken);
+                    sendMail.putExtra("userName", userName);
+                    sendMail.putExtra("userEmail", userEmail);
+                    sendMail.putExtra("emailAddress", mail);
+                    sendMail.putExtra("user", user);
+                    sendMail.putExtra("fromUserActivity", "yes");
+
+                    startActivity(sendMail);
+
+                    UserDetailsActivity.this.finish();
+                }
+            });
+
+
+            calendarButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+
+                    Intent addEventActivity = new Intent(UserDetailsActivity.this, AddEventActivity.class);
+                    addEventActivity.putExtra("AccessToken", accessToken);
+                    addEventActivity.putExtra("userName", userName);
+                    addEventActivity.putExtra("userEmail", userEmail);
+                    addEventActivity.putExtra("emailAddress", mail);
+                    addEventActivity.putExtra("attendeeMail", mail);
+                    addEventActivity.putExtra("attendeeName", displayName);
+                    addEventActivity.putExtra("user", user);
+                    addEventActivity.putExtra("fromUserActivity", "yes");
+
+                    startActivity(addEventActivity);
+
+                    UserDetailsActivity.this.finish();
+                }
+            });
+        }
+
+    }
+
+    @Override
+    public void onBackPressed(){
+        minimizeApp();
+    }
+
+    public void minimizeApp() {
+        Intent intentListMails = new Intent(UserDetailsActivity.this, ContactsActivity.class);
+        intentListMails.putExtra("AccessToken", accessToken);
+        intentListMails.putExtra("userName", userName);
+        intentListMails.putExtra("userEmail", userEmail);
+
+        startActivity(intentListMails);
+
+        UserDetailsActivity.this.finish();
     }
 
 }
