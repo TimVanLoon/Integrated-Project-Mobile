@@ -1267,7 +1267,7 @@ public class EditContactActivity extends AppCompatActivity {
         String birthdayDate = sdf.format(cal.getTime());
 
         if(!birthdayInput.getText().toString().isEmpty()){
-            contact.setBirthday(birthdayDate);
+            updatedContact.setBirthday(birthdayDate);
         }
 
         String postAddress = URL_POSTADRESS + contactId;
@@ -1732,6 +1732,49 @@ public class EditContactActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             birthdayInput.setText(output.format(d));
+
+            // ZET CLICK EVENT OP DE DATE INPUT
+            birthdayInput.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // calender class's instance and get current date , month and year from calender
+                    final Calendar c = Calendar.getInstance();
+                    int mYear = c.get(Calendar.YEAR); // current year
+                    int mMonth = c.get(Calendar.MONTH); // current month
+                    int mDay = c.get(Calendar.DAY_OF_MONTH); // current day
+                    // date picker dialog
+                    datePickerDialog = new DatePickerDialog(EditContactActivity.this,
+                            new DatePickerDialog.OnDateSetListener() {
+
+                                @Override
+                                public void onDateSet(DatePicker view, int yearPicked,
+                                                      int monthOfYearPicked, int dayOfMonthPicked) {
+
+                                    dayOfMonth = dayOfMonthPicked;
+                                    month = monthOfYearPicked + 1;
+                                    year = yearPicked;
+
+                                    if(month <10) {
+                                        finalMonth = "0" + month;
+                                    } else {
+                                        finalMonth = String.valueOf(month);
+                                    }
+
+                                    if(dayOfMonth <10) {
+                                        finalDayOfMonth = "0" + dayOfMonth;
+                                    } else {
+                                        finalDayOfMonth = String.valueOf(dayOfMonth);
+                                    }
+
+
+                                    birthdayInput.setText(finalDayOfMonth + "-" + finalMonth + "-" + year);
+
+                                }
+                            }, mYear, mMonth, mDay);
+                    datePickerDialog.show();
+
+                }
+            });
 
         }
 
