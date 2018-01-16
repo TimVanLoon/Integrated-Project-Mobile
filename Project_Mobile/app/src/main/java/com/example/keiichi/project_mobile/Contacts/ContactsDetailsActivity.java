@@ -90,6 +90,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
     private String contactSuffix;
     private String contactYomiName;
     private String contactYomiCompanyName;
+    private String contactId;
     private List<EmailAddress> emailList;
     private List<String> imAddresses;
     private List<String> businessPhones;
@@ -216,6 +217,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
+        contactId = getIntent().getStringExtra("contactId");
         contact = (Contact) getIntent().getSerializableExtra("contact");
 
         // INITIALISEER ACTION BAR
@@ -291,34 +293,59 @@ public class ContactsDetailsActivity extends AppCompatActivity {
 
         profilePic.setImageDrawable(drawable1);
 
-        if(!emailList.isEmpty()){
+        if(emailList != null){
+            if(!emailList.isEmpty()){
 
-            if( emailList.size() == 1){
-                email.setText(emailList.get(0).getAddress());
+                if( emailList.size() == 1){
+                    email.setText(emailList.get(0).getAddress());
+                    userEmail2.setVisibility(View.GONE);
+                    userEmail3.setVisibility(View.GONE);
+
+                    setMailClickListener(email, emailList.get(0).getAddress());
+                }
+
+                if( emailList.size() > 1 && emailList.size() < 3){
+                    email.setText(emailList.get(0).getAddress());
+                    userEmail2.setText(emailList.get(1).getAddress());
+                    userEmail3.setVisibility(View.GONE);
+
+                    setMailClickListener(email, emailList.get(0).getAddress());
+                    setMailClickListener(userEmail2, emailList.get(1).getAddress());
+                }
+
+                if( emailList.size() > 2 && emailList.size() < 4){
+                    email.setText(emailList.get(0).getAddress());
+                    userEmail2.setText(emailList.get(1).getAddress());
+                    userEmail3.setText(emailList.get(2).getAddress());
+
+                    setMailClickListener(email, emailList.get(0).getAddress());
+                    setMailClickListener(userEmail2, emailList.get(1).getAddress());
+                    setMailClickListener(userEmail3, emailList.get(2).getAddress());
+                }
+        } else {
+                email.setText("(Empty)");
+                email.setTextColor(Color.parseColor("#F4E7D7"));
                 userEmail2.setVisibility(View.GONE);
                 userEmail3.setVisibility(View.GONE);
 
-                setMailClickListener(email, emailList.get(0).getAddress());
+                mailButton.setColorFilter(Color.GRAY);
+                calendarButton.setColorFilter(Color.GRAY);
+
+                mailButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+
+                        Toast.makeText(getApplicationContext(), "No E-mail Address found!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                calendarButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+
+                        Toast.makeText(getApplicationContext(), "No E-mail Address found!", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
-            if( emailList.size() > 1 && emailList.size() < 3){
-                email.setText(emailList.get(0).getAddress());
-                userEmail2.setText(emailList.get(1).getAddress());
-                userEmail3.setVisibility(View.GONE);
-
-                setMailClickListener(email, emailList.get(0).getAddress());
-                setMailClickListener(userEmail2, emailList.get(1).getAddress());
-            }
-
-            if( emailList.size() > 2 && emailList.size() < 4){
-                email.setText(emailList.get(0).getAddress());
-                userEmail2.setText(emailList.get(1).getAddress());
-                userEmail3.setText(emailList.get(2).getAddress());
-
-                setMailClickListener(email, emailList.get(0).getAddress());
-                setMailClickListener(userEmail2, emailList.get(1).getAddress());
-                setMailClickListener(userEmail3, emailList.get(2).getAddress());
-            }
 
             mailButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -906,6 +933,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                 intentEditContact.putExtra("AccessToken", accessToken);
                 intentEditContact.putExtra("userName", userName);
                 intentEditContact.putExtra("userEmail", userEmail);
+                intentEditContact.putExtra("contactId", contactId);
                 intentEditContact.putExtra("contact", contact);
 
                 startActivity(intentEditContact);

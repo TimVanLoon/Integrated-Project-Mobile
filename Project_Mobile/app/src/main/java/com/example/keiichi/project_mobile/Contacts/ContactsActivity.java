@@ -449,6 +449,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
                         showContactDetails.putExtra("AccessToken", accessToken);
                         showContactDetails.putExtra("userName", userName);
                         showContactDetails.putExtra("contact", contact);
+                        showContactDetails.putExtra("contactId", contact.getId());
 
                         startActivity(showContactDetails);
 

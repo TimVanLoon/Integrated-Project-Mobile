@@ -103,6 +103,7 @@ public class EditContactActivity extends AppCompatActivity {
     private String finalDayOfMonth;
     private String contactYomiFirstName;
     private String contactYomiLastName;
+    private String contactId;
     private EditText firstNameInput;
     private EditText lastNameInput;
     private EditText emailInput;
@@ -213,6 +214,10 @@ public class EditContactActivity extends AppCompatActivity {
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
+        contactId = getIntent().getStringExtra("contactId");
+
+        System.out.println("contact id: " + contactId);
+
         contact = (Contact) getIntent().getSerializableExtra("contact");
         givenName = contact.getGivenName();
         displayName = contact.getDisplayName();
@@ -982,6 +987,7 @@ public class EditContactActivity extends AppCompatActivity {
                 intentContactDetails.putExtra("AccessToken", accessToken);
                 intentContactDetails.putExtra("userName", userName);
                 intentContactDetails.putExtra("userEmail", userEmail);
+                intentContactDetails.putExtra("contactId", contactId);
                 intentContactDetails.putExtra("contact", contact);
 
                 startActivity(intentContactDetails);
@@ -1039,6 +1045,7 @@ public class EditContactActivity extends AppCompatActivity {
                                         intentContactDetailsSaved.putExtra("AccessToken", accessToken);
                                         intentContactDetailsSaved.putExtra("userName", userName);
                                         intentContactDetailsSaved.putExtra("userEmail", userEmail);
+                                        intentContactDetailsSaved.putExtra("contactId", contactId);
                                         intentContactDetailsSaved.putExtra("contact", updatedContact);
 
                                         startActivity(intentContactDetailsSaved);
@@ -1263,7 +1270,7 @@ public class EditContactActivity extends AppCompatActivity {
             contact.setBirthday(birthdayDate);
         }
 
-        String postAddress = URL_POSTADRESS + id;
+        String postAddress = URL_POSTADRESS + contactId;
 
         System.out.println("test contact: " + new Gson().toJson(updatedContact));
 
@@ -1342,6 +1349,7 @@ public class EditContactActivity extends AppCompatActivity {
         intentContactDetails.putExtra("AccessToken", accessToken);
         intentContactDetails.putExtra("userName", userName);
         intentContactDetails.putExtra("userEmail", userEmail);
+        intentContactDetails.putExtra("contactId", contactId);
         intentContactDetails.putExtra("contact", contact);
 
         startActivity(intentContactDetails);
