@@ -12,9 +12,11 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.Contacts.AddContactActivity;
 import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.push.Push;
 import com.microsoft.appcenter.analytics.Analytics;
@@ -122,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
 
         onCallGraphClicked();
 
+
     }
 
     public Activity getActivity() {
@@ -154,7 +157,8 @@ public class MainActivity extends AppCompatActivity {
                 userName = authResult.getUser().getName();
                 userEmail = authResult.getUser().getDisplayableId();
 
-
+                String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+                Log.d(TAG, "Refreshed token: " + refreshedToken);
 
             /* update the UI to post call Graph state */
                 updateSuccessUI();
@@ -244,6 +248,34 @@ public class MainActivity extends AppCompatActivity {
             loginIntent.putExtra("userName", userName);
             loginIntent.putExtra("userEmail", userEmail);
 
+
+            AccessTokenSingleton ats = AccessTokenSingleton.getInstance();
+            ats.setAccessToken(accessToken);
+
+            String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+            ats.setFirebaseToken(refreshedToken);
+
+        // Instantiate the RequestQueue.
+                    RequestQueue queue = Volley.newRequestQueue(this);
+                    String url ="http://sparkridge.be/kimochi/hai/registerTokens?accessToken=" + ats.getAccessToken() + "&firebaseToken=" + ats.getFirebaseToken();
+
+        // Request a string response from the provided URL.
+                    StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                            new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    // Display the first 500 characters of the response string.
+                                    //System.out.println("Response is: "+ response.substring(0,500));
+                                }
+                            }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            //System.out.println("That didn't work!");
+                        }
+                    });
+        // Add the request to the RequestQueue.
+                    queue.add(stringRequest);
+
             startActivity(loginIntent);
 
             this.finish();
@@ -256,6 +288,8 @@ public class MainActivity extends AppCompatActivity {
     private void updateSuccessUI() {
 
     }
+
+
 
 
 }

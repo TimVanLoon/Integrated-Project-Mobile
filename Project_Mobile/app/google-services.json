@@ -1,43 +1,35 @@
 {
   "project_info": {
-    "project_number": "395075392110",
-    "firebase_url": "https://projectmobile-5a38a.firebaseio.com",
-    "project_id": "projectmobile-5a38a",
-    "storage_bucket": "projectmobile-5a38a.appspot.com"
+    "project_number": "522172406835",
+    "firebase_url": "https://projectmobile-98923.firebaseio.com",
+    "project_id": "projectmobile-98923",
+    "storage_bucket": "projectmobile-98923.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:395075392110:android:32067f6150a030f8",
+        "mobilesdk_app_id": "1:522172406835:android:32067f6150a030f8",
         "android_client_info": {
           "package_name": "com.example.keiichi.project_mobile"
         }
       },
       "oauth_client": [
         {
-          "client_id": "395075392110-p1s8crallu9j6rjnun187oafcrjbqh5m.apps.googleusercontent.com",
+          "client_id": "522172406835-8dt1j56qkiu85b603pfg1dv54evbfl7j.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.keiichi.project_mobile",
-            "certificate_hash": "09a5647487584ae896d5786cd0fbd1f3aa9d98c9"
+            "certificate_hash": "675369a0ee46e6ee417d52b9979999fa5f8a1f25"
           }
         },
         {
-          "client_id": "395075392110-rejv7s339sodi0s06pptovgug8bpbq6q.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.keiichi.project_mobile",
-            "certificate_hash": "66bc48051833ac49af793eb57c4ee4650ce3de1d"
-          }
-        },
-        {
-          "client_id": "395075392110-dkn1r8jaotfuvjh0c2iv7prh4iqncv4t.apps.googleusercontent.com",
+          "client_id": "522172406835-v42qsn6j0jpt8tjhc2eaeb13hknbt693.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDA7b2D2S9oGGxs2vNkqS-yMVSrAGMsTmA"
+          "current_key": "AIzaSyDq79y3THuu1yh_ImHDNVcxysPUsGHIHFU"
         }
       ],
       "services": {
@@ -48,7 +40,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "395075392110-dkn1r8jaotfuvjh0c2iv7prh4iqncv4t.apps.googleusercontent.com",
+              "client_id": "522172406835-v42qsn6j0jpt8tjhc2eaeb13hknbt693.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
