@@ -115,7 +115,6 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -729,31 +728,24 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
     @Override
     public void onRefresh() {
+
         swipeRefreshLayout.setRefreshing(true);
 
-        if(currentContactFolderId == null){
+        if(navIdentifier == 4){
+
+            getContactsFromFolder(currentContactFolderId);
+
+        }else if(navIdentifier == 1){
 
             getContacts();
 
-        } else{
+        } else if(navIdentifier == 2){
 
-            if(navIdentifier == 4){
+            getUsers();
 
-                getContactsFromFolder(currentContactFolderId);
+        } else if(navIdentifier == 3){
 
-            }else if(navIdentifier == 1){
-
-                getContacts();
-
-            } else if(navIdentifier == 2){
-
-                getUsers();
-
-            } else if(navIdentifier == 3){
-
-                getRooms();
-
-            }
+            getRooms();
 
         }
 
