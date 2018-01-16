@@ -22,6 +22,7 @@ import android.widget.CalendarView;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
@@ -58,6 +59,7 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.holder.BadgeStyle;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
@@ -174,7 +176,7 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
         });
 
         List<MailFolder> mailFolders = new ArrayList<>();
-        mailFolders.add(new MailFolder("1", "Not found", 0, 0));
+        mailFolders.add(new MailFolder("", "", 0, 0));
 
         buildDrawer(userName, userEmail, myToolbar, mailFolders);
 
@@ -432,12 +434,18 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
                 .withAccountHeader(headerResult)
                 .withDrawerItems(drawerItems)
                 .withSelectedItemByPosition(7)
+                .addStickyDrawerItems(
+                        new SecondaryDrawerItem().withName("Log out").withIdentifier(999)
+                )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         if (drawerItem instanceof PrimaryDrawerItem){
 
 
+                        } else if(drawerItem.getIdentifier() == 999){
+                            //onSignOutClicked();
+                            Toast.makeText(getBaseContext(), "Signed Out!", Toast.LENGTH_SHORT).show();
                         }
                         return false;
                     }

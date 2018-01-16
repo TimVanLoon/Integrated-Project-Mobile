@@ -74,6 +74,7 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.holder.BadgeStyle;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
@@ -1067,6 +1068,9 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
                 )
                 .withSelectedItem(1)
+                .addStickyDrawerItems(
+                        new SecondaryDrawerItem().withName("Log out").withIdentifier(999)
+                )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
@@ -1105,6 +1109,9 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
                             }
 
+                        } else if(drawerItem.getIdentifier() == 999){
+                            //onSignOutClicked();
+                            Toast.makeText(getBaseContext(), "Signed Out!", Toast.LENGTH_SHORT).show();
                         }
                         return false;
                     }

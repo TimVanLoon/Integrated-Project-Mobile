@@ -91,6 +91,8 @@ import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.holder.BadgeStyle;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
@@ -423,8 +425,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                 }
             }
 
-            Toast.makeText(getBaseContext(), "Signed Out!", Toast.LENGTH_SHORT)
-                    .show();
+            Toast.makeText(getBaseContext(), "Signed Out!", Toast.LENGTH_SHORT).show();
 
         } catch (MsalClientException e) {
             Log.d(TAG, "MSAL Exception Generated while getting users: " + e.toString());
@@ -872,11 +873,16 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
         ArrayList<IDrawerItem> drawerItems = new ArrayList<>();
 
+        SectionDrawerItem sectionDrawerItem = new SectionDrawerItem().withName("Mail Folders").withDivider(false);
+
+        drawerItems.add(sectionDrawerItem);
+
         for(MailFolder folder : folders){
             if(folder.getDisplayName().toLowerCase().equals("postvak in")){
                 PrimaryDrawerItem item = new PrimaryDrawerItem();
                 item.withName("Inbox");
                 item.withTag(folder);
+                item.withIdentifier(1);
                 item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
                 drawerItems.add(item);
             }
@@ -1005,7 +1011,10 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                 .withTranslucentStatusBar(false)
                 .withAccountHeader(headerResult)
                 .withDrawerItems(drawerItems)
-                .withSelectedItemByPosition(0)
+                .withSelectedItem(1)
+                .addStickyDrawerItems(
+                        new SecondaryDrawerItem().withName("Log out").withIdentifier(999)
+                )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
@@ -1022,7 +1031,11 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
                             setActionBarTitle(folderName, myToolbar);
 
+                        } else if(drawerItem.getIdentifier() == 999){
+                            //onSignOutClicked();
+                            Toast.makeText(getBaseContext(), "Signed Out!", Toast.LENGTH_SHORT).show();
                         }
+
                         return false;
                     }
                 })

@@ -106,6 +106,8 @@ public class UserDetailsActivity extends AppCompatActivity {
 
         if(mail != null){
             userMail.setText(mail);
+
+            setMailClickListener(userMail, mail);
         } else {
             userMail.setText("(Empty)");
             userMail.setTextColor(Color.parseColor("#F4E7D7"));
@@ -274,6 +276,27 @@ public class UserDetailsActivity extends AppCompatActivity {
                 }
             });
         }
+
+    }
+
+    public void setMailClickListener(TextView textView, final String mail){
+
+
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent sendMail = new Intent(UserDetailsActivity.this, SendMailActivity.class);
+                sendMail.putExtra("AccessToken", accessToken);
+                sendMail.putExtra("userName", userName);
+                sendMail.putExtra("emailAddress", mail);
+                sendMail.putExtra("user", user);
+                sendMail.putExtra("fromUserActivity", "yes");
+
+                startActivity(sendMail);
+
+                UserDetailsActivity.this.finish();
+            }
+        });
 
     }
 
