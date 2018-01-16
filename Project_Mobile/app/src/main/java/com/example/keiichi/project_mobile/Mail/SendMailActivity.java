@@ -29,7 +29,9 @@ import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.Calendar.CalendarActivity;
 import com.example.keiichi.project_mobile.Calendar.ListEventsActivity;
 import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
+import com.example.keiichi.project_mobile.Contacts.RoomDetailsActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
+import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONException;
@@ -47,8 +49,8 @@ import javax.json.JsonObjectBuilder;
 import jp.wasabeef.richeditor.RichEditor;
 
 public class SendMailActivity extends AppCompatActivity {
-    final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/sendMail";
 
+    final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/sendMail";
     private Toolbar myToolbar;
     private TextView MailAdress;
     private TextView Subject;
@@ -58,9 +60,11 @@ public class SendMailActivity extends AppCompatActivity {
     private String userName;
     private String userEmail;
     private String fromContactDetailsActivity;
+    private String fromRoomActivity;
     private RichEditor editor;
     private MenuItem sendItem;
     private Contact contact;
+    private EmailAddress room;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +75,7 @@ public class SendMailActivity extends AppCompatActivity {
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
         fromContactDetailsActivity = getIntent().getStringExtra("fromContactDetailsActivity");
+        fromRoomActivity = getIntent().getStringExtra("fromRoomActivity");
 
         MailAdress = findViewById(R.id.TextMailAdress);
         Subject = findViewById(R.id.TextMailSubject);
@@ -86,6 +91,7 @@ public class SendMailActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         contact = (Contact) getIntent().getSerializableExtra("contact");
+        room = (EmailAddress) getIntent().getSerializableExtra("room");
 
         emailAddress = intent.getStringExtra("emailAddress");
 
@@ -166,17 +172,29 @@ public class SendMailActivity extends AppCompatActivity {
             // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
             case android.R.id.home:
 
-                if(fromContactDetailsActivity == null){
+                if(fromContactDetailsActivity == null && fromRoomActivity == null){
 
                     finish();
 
-                } else {
+                } else if(fromRoomActivity == null) {
 
                     Intent intentContactDetails = new Intent(SendMailActivity.this, ContactsDetailsActivity.class);
                     intentContactDetails.putExtra("AccessToken", accessToken);
                     intentContactDetails.putExtra("userName", userName);
                     intentContactDetails.putExtra("userEmail", userEmail);
                     intentContactDetails.putExtra("contact", contact);
+
+                    startActivity(intentContactDetails);
+
+                    SendMailActivity.this.finish();
+
+                } else{
+
+                    Intent intentContactDetails = new Intent(SendMailActivity.this, RoomDetailsActivity.class);
+                    intentContactDetails.putExtra("AccessToken", accessToken);
+                    intentContactDetails.putExtra("userName", userName);
+                    intentContactDetails.putExtra("userEmail", userEmail);
+                    intentContactDetails.putExtra("room", room);
 
                     startActivity(intentContactDetails);
 
@@ -211,9 +229,12 @@ public class SendMailActivity extends AppCompatActivity {
     @Override
     public void onBackPressed(){
 
-        if(fromContactDetailsActivity == null){
-            minimizeApp();
-        } else{
+        if(fromContactDetailsActivity == null && fromRoomActivity == null){
+
+            finish();
+
+        } else if(fromRoomActivity == null) {
+
             Intent intentContactDetails = new Intent(SendMailActivity.this, ContactsDetailsActivity.class);
             intentContactDetails.putExtra("AccessToken", accessToken);
             intentContactDetails.putExtra("userName", userName);
@@ -223,6 +244,19 @@ public class SendMailActivity extends AppCompatActivity {
             startActivity(intentContactDetails);
 
             SendMailActivity.this.finish();
+
+        } else{
+
+            Intent intentContactDetails = new Intent(SendMailActivity.this, RoomDetailsActivity.class);
+            intentContactDetails.putExtra("AccessToken", accessToken);
+            intentContactDetails.putExtra("userName", userName);
+            intentContactDetails.putExtra("userEmail", userEmail);
+            intentContactDetails.putExtra("room", room);
+
+            startActivity(intentContactDetails);
+
+            SendMailActivity.this.finish();
+
         }
 
     }
