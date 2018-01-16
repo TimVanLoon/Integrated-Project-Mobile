@@ -355,43 +355,6 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                     }
                 });
             }
-
-
-            mailButton.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-
-                    Intent sendMail = new Intent(ContactsDetailsActivity.this, SendMailActivity.class);
-                    sendMail.putExtra("AccessToken", accessToken);
-                    sendMail.putExtra("userName", userName);
-                    sendMail.putExtra("userEmail", userEmail);
-                    sendMail.putExtra("emailAddress", emailList.get(0).getAddress());
-                    sendMail.putExtra("contact", contact);
-                    sendMail.putExtra("fromContactDetailsActivity", "yes");
-
-                    startActivity(sendMail);
-
-
-                }
-            });
-
-            calendarButton.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-
-                    Intent addEventActivity = new Intent(ContactsDetailsActivity.this, AddEventActivity.class);
-                    addEventActivity.putExtra("AccessToken", accessToken);
-                    addEventActivity.putExtra("userName", userName);
-                    addEventActivity.putExtra("userEmail", userEmail);
-                    addEventActivity.putExtra("emailAddress", emailList.get(0).getAddress());
-                    addEventActivity.putExtra("attendeeMail", emailList.get(0).getAddress());
-                    addEventActivity.putExtra("attendeeName", emailList.get(0).getName());
-                    addEventActivity.putExtra("contact", contact);
-                    addEventActivity.putExtra("fromContactDetailsActivity", "yes");
-
-                    startActivity(addEventActivity);
-
-
-                }
-            });
         }
         else {
             email.setText("(Empty)");

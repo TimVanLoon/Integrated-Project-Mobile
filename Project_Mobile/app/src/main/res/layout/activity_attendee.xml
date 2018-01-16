@@ -34,7 +34,6 @@
         android:layout_height="match_parent"
         tools:context="com.example.keiichi.project_mobile.Contacts.ContactsActivity">
 
-
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -44,11 +43,8 @@
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-
-
-
-        <ListView
-            android:id="@+id/contactsListView"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/contactsRecyclerView"
             android:layout_width="456dp"
             android:layout_height="match_parent"
             android:divider="@drawable/list_divider"
@@ -63,10 +59,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/toolbar"
             app:layout_constraintVertical_bias="1.0" />
-
-
-
-
 
     </android.support.constraint.ConstraintLayout>
 

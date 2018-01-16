@@ -3,6 +3,9 @@ package com.example.keiichi.project_mobile.Calendar;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -33,6 +36,7 @@ import com.example.keiichi.project_mobile.DAL.POJOs.Attendee;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
+import com.example.keiichi.project_mobile.Mail.RecyclerTouchListener;
 import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
 import com.google.gson.Gson;
@@ -100,22 +104,7 @@ public class AttendeeActivity extends AppCompatActivity {
 
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
-        contactsListView = (ListView) findViewById(R.id.contactsListView);
-
-        contactsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-
-                // Start an alpha animation for clicked item
-                Animation animation1 = new AlphaAnimation(0.3f, 1.0f);
-                animation1.setDuration(300);
-                view.startAnimation(animation1);
-
-
-                onContactClicked(position);
-
-            }
-        });
+        contactsRecyclerView = findViewById(R.id.contactsRecyclerView);
 
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
@@ -150,8 +139,6 @@ public class AttendeeActivity extends AppCompatActivity {
         if(firstTime != null){
             emailList = (List<EmailAddress>)getIntent().getSerializableExtra("emailList");
         }
-
-
 
         // VOEG BACK BUTTON TOE AAN ACTION BAR
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -348,9 +335,6 @@ public class AttendeeActivity extends AppCompatActivity {
 
             contacts = new Gson().fromJson(String.valueOf(contactArray), listType);
 
-
-
-
             contactAdapter = new ContactAdapter(this, contacts);
             contactsRecyclerView.setAdapter(contactAdapter);
 
@@ -360,109 +344,122 @@ public class AttendeeActivity extends AppCompatActivity {
         }
         assert contactsJsonArray != null;
 
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(getApplicationContext());
+        contactsRecyclerView.setLayoutManager(manager);
+        contactsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        contactsRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+
         contactAdapter = new ContactAdapter(this, contacts);
         contactsRecyclerView.setAdapter(contactAdapter);
 
-    }
+        contactsRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), contactsRecyclerView, new ListMailsActvity.ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
 
-    private void onContactClicked(int position){
+                if(contacts.size() != 0){
+
+                    Contact contact = contacts.get(position);
+
+                    List<EmailAddress> email = contact.getEmailAddresses();
+
+                    if(email.isEmpty()){
+                        Toast.makeText(getApplicationContext(), "No email found for this contact!", Toast.LENGTH_SHORT).show();
+                    } else{
+
+                        if(fromEdit != null){
+
+                            Intent intentEditEvent = new Intent(AttendeeActivity.this, EditEventActivity.class);
+
+                            intentEditEvent.putExtra("userEmail", userEmail);
+                            intentEditEvent.putExtra("AccessToken", accessToken);
+                            intentEditEvent.putExtra("userName", userName);
+                            intentEditEvent.putExtra("fromAttendeesActivity", "yes");
+                            intentEditEvent.putExtra("firstTime", firstTime);
+                            intentEditEvent.putExtra("subject", subject);
+                            intentEditEvent.putExtra("location", location);
+                            intentEditEvent.putExtra("eventDayOfMonth", eventDayOfMonth);
+                            intentEditEvent.putExtra("eventMonth", eventMonth);
+                            intentEditEvent.putExtra("eventYear", eventYear);
+                            intentEditEvent.putExtra("eventHour", eventHour);
+                            intentEditEvent.putExtra("eventMinute", eventMinute);
+                            intentEditEvent.putExtra("eventDuration", eventDuration);
+                            intentEditEvent.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
+                            intentEditEvent.putExtra("displayAs", displayAs);
+                            intentEditEvent.putExtra("notes", notes);
+                            intentEditEvent.putExtra("eventIsPrivate", isPrivate);
+                            intentEditEvent.putExtra("responseRequested", responseRequested);
+                            intentEditEvent.putExtra("sensitivity", sensitivity);
+                            intentEditEvent.putExtra("startDate", startDate);
+                            intentEditEvent.putExtra("id", id);
+                            intentEditEvent.putExtra("contentType", contentType);
+
+                            if(contact.getEmailAddresses() != null){
+
+                                EmailAddress emailContact = contact.getEmailAddresses().get(0);
+
+                                emailList.add(emailContact);
+
+                                intentEditEvent.putExtra("emailList",(Serializable) emailList);
+                            }
 
 
-        if(contacts.size() != 0){
+                            startActivity(intentEditEvent);
 
-            Contact contact = contacts.get(position);
+                        } else {
 
-            List<EmailAddress> email = contact.getEmailAddresses();
+                            Intent intentAddEvent = new Intent(AttendeeActivity.this, AddEventActivity.class);
 
-            if(email.isEmpty()){
-                Toast.makeText(getApplicationContext(), "No email found for this contact!", Toast.LENGTH_SHORT).show();
-            } else{
+                            intentAddEvent.putExtra("userEmail", userEmail);
+                            intentAddEvent.putExtra("AccessToken", accessToken);
+                            intentAddEvent.putExtra("userName", userName);
+                            intentAddEvent.putExtra("fromAttendeesActivity", "yes");
+                            intentAddEvent.putExtra("eventSubject", eventSubject);
+                            intentAddEvent.putExtra("eventLocation", eventLocation);
+                            intentAddEvent.putExtra("eventDayOfMonth", eventDayOfMonth);
+                            intentAddEvent.putExtra("eventMonth", eventMonth);
+                            intentAddEvent.putExtra("eventYear", eventYear);
+                            intentAddEvent.putExtra("eventHour", eventHour);
+                            intentAddEvent.putExtra("eventMinute", eventMinute);
+                            intentAddEvent.putExtra("eventDuration", eventDuration);
+                            intentAddEvent.putExtra("eventShowAs", eventShowAs);
+                            intentAddEvent.putExtra("eventNotes", eventNotes);
+                            intentAddEvent.putExtra("eventIsPrivate", eventIsPrivate);
+                            intentAddEvent.putExtra("eventRequestResponses", eventRequestResponses);
+                            intentAddEvent.putExtra("eventReminderMinutesBeforeStart", eventReminderMinutesBeforeStart);
+                            intentAddEvent.putExtra("id", id);
+                            intentAddEvent.putExtra("contentType", contentType);
 
-                if(fromEdit != null){
+                            if(contact.getEmailAddresses() != null){
 
-                    Intent intentEditEvent = new Intent(AttendeeActivity.this, EditEventActivity.class);
+                                EmailAddress emailContact = contact.getEmailAddresses().get(0);
 
-                    intentEditEvent.putExtra("userEmail", userEmail);
-                    intentEditEvent.putExtra("AccessToken", accessToken);
-                    intentEditEvent.putExtra("userName", userName);
-                    intentEditEvent.putExtra("fromAttendeesActivity", "yes");
-                    intentEditEvent.putExtra("firstTime", firstTime);
-                    intentEditEvent.putExtra("subject", subject);
-                    intentEditEvent.putExtra("location", location);
-                    intentEditEvent.putExtra("eventDayOfMonth", eventDayOfMonth);
-                    intentEditEvent.putExtra("eventMonth", eventMonth);
-                    intentEditEvent.putExtra("eventYear", eventYear);
-                    intentEditEvent.putExtra("eventHour", eventHour);
-                    intentEditEvent.putExtra("eventMinute", eventMinute);
-                    intentEditEvent.putExtra("eventDuration", eventDuration);
-                    intentEditEvent.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
-                    intentEditEvent.putExtra("displayAs", displayAs);
-                    intentEditEvent.putExtra("notes", notes);
-                    intentEditEvent.putExtra("eventIsPrivate", isPrivate);
-                    intentEditEvent.putExtra("responseRequested", responseRequested);
-                    intentEditEvent.putExtra("sensitivity", sensitivity);
-                    intentEditEvent.putExtra("startDate", startDate);
-                    intentEditEvent.putExtra("id", id);
-                    intentEditEvent.putExtra("contentType", contentType);
+                                emailList.add(emailContact);
 
-                    if(contact.getEmailAddresses() != null){
+                                intentAddEvent.putExtra("emailList",(Serializable) emailList);
+                            }
 
-                        EmailAddress emailContact = contact.getEmailAddresses().get(0);
 
-                        emailList.add(emailContact);
+                            startActivity(intentAddEvent);
 
-                        intentEditEvent.putExtra("emailList",(Serializable) emailList);
+                            AttendeeActivity.this.finish();
+
+                        }
+
                     }
 
-
-                    startActivity(intentEditEvent);
 
                 } else {
-
-                    Intent intentAddEvent = new Intent(AttendeeActivity.this, AddEventActivity.class);
-
-                    intentAddEvent.putExtra("userEmail", userEmail);
-                    intentAddEvent.putExtra("AccessToken", accessToken);
-                    intentAddEvent.putExtra("userName", userName);
-                    intentAddEvent.putExtra("fromAttendeesActivity", "yes");
-                    intentAddEvent.putExtra("eventSubject", eventSubject);
-                    intentAddEvent.putExtra("eventLocation", eventLocation);
-                    intentAddEvent.putExtra("eventDayOfMonth", eventDayOfMonth);
-                    intentAddEvent.putExtra("eventMonth", eventMonth);
-                    intentAddEvent.putExtra("eventYear", eventYear);
-                    intentAddEvent.putExtra("eventHour", eventHour);
-                    intentAddEvent.putExtra("eventMinute", eventMinute);
-                    intentAddEvent.putExtra("eventDuration", eventDuration);
-                    intentAddEvent.putExtra("eventShowAs", eventShowAs);
-                    intentAddEvent.putExtra("eventNotes", eventNotes);
-                    intentAddEvent.putExtra("eventIsPrivate", eventIsPrivate);
-                    intentAddEvent.putExtra("eventRequestResponses", eventRequestResponses);
-                    intentAddEvent.putExtra("eventReminderMinutesBeforeStart", eventReminderMinutesBeforeStart);
-                    intentAddEvent.putExtra("id", id);
-                    intentAddEvent.putExtra("contentType", contentType);
-
-                    if(contact.getEmailAddresses() != null){
-
-                        EmailAddress emailContact = contact.getEmailAddresses().get(0);
-
-                        emailList.add(emailContact);
-
-                        intentAddEvent.putExtra("emailList",(Serializable) emailList);
-                    }
-
-
-                    startActivity(intentAddEvent);
-
-                    AttendeeActivity.this.finish();
+                    Toast.makeText(getApplicationContext(), "Empty contact list!", Toast.LENGTH_SHORT).show();
+                }
 
                 }
 
+            @Override
+            public void onLongClick(View view, int position) {
+
             }
+        }));
 
-
-        } else {
-            Toast.makeText(getApplicationContext(), "Empty contact list!", Toast.LENGTH_SHORT).show();
-        }
     }
 
     @Override
