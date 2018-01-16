@@ -27,10 +27,12 @@ import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.DAL.POJOs.Message;
 import com.example.keiichi.project_mobile.R;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -113,7 +115,25 @@ public class MailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                      DateItem dateItem = (DateItem) consolidatedList.get(position);
                      DateViewHolder dateViewHolder = (DateViewHolder) holder;
 
-                     dateViewHolder.date.setText(dateItem.getDate());
+                     DateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+
+                     Date date = new GregorianCalendar().getTime();
+                     Date yesterday = new Date(date.getTime() - 24 * 3600 * 1000);
+
+
+
+                     String formatted = format.format(date);
+                     String formattedyesterday = format.format(yesterday);
+
+                     if (dateItem.getDate().equals(formatted.replace("/","-"))){
+                         dateViewHolder.date.setText("Today");
+                     } else if (dateItem.getDate().equals(formattedyesterday.replace("/","-"))){
+                         dateViewHolder.date.setText("Yesterday");
+                     }else{
+                         dateViewHolder.date.setText(dateItem.getDate());
+
+                     }
+
 
                      break;
                  case TYPE_GENERAL:
@@ -339,9 +359,17 @@ public class MailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         MailAdapter.this.notifyDataSetChanged(); // notify data set change
     }
 
-    public Message getItemAtPosition(int position){
+    /*public Message getItemAtPosition(int position){
 
         return filteredData.get(position);
+
+    }*/
+
+    public Message getItemAtPosition(int position){
+
+        GeneralItem generalItem = (GeneralItem) consolidatedList.get(position);
+        return  generalItem.message();
+
 
     }
 

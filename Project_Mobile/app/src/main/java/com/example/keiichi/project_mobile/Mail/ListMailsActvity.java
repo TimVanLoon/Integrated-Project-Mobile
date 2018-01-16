@@ -108,11 +108,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.TreeSet;
 
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
@@ -721,6 +725,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         HashMap<String,List<Message>> heyboo = groupDataIntoHashMap(messages);
 
 
+
         mailAdapter = new MailAdapter(this, heyboo);
         recyclerView.setAdapter(mailAdapter);
 
@@ -738,12 +743,15 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                     selectedItem(position);
 
                 } else {
+                    if (mailAdapter.getItemViewType(position) == 1) {
+
+
                     Message message = mailAdapter.getItemAtPosition(position);
 
 
                     Intent showMail = new Intent(ListMailsActvity.this, DisplayMailActivity.class);
 
-                    if (!message.isRead()){
+                    if (!message.isRead()) {
 
                         System.out.println("KEVIN BECKWEE");
 
@@ -769,14 +777,14 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
                     showMail.putExtra("receiverName", message.getToRecipients().get(0).getEmailAddress().getName());
                     showMail.putExtra("receiverMail", message.getToRecipients().get(0).getEmailAddress().getAddress());
-                    showMail.putExtra("mail",message);
+                    showMail.putExtra("mail", message);
 
 
-                    if(!message.getToRecipients().isEmpty()){
+                    if (!message.getToRecipients().isEmpty()) {
                         showMail.putExtra("receiverName", message.getToRecipients().get(0).getEmailAddress().getName());
                     }
 
-                    if(!message.getToRecipients().isEmpty()){
+                    if (!message.getToRecipients().isEmpty()) {
                         showMail.putExtra("receiverMail", message.getToRecipients().get(0).getEmailAddress().getAddress());
                     }
 
@@ -786,6 +794,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                     startActivity(showMail);
 
                     ListMailsActvity.this.finish();
+                    }
                 }
 
             }
@@ -1191,41 +1200,41 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
         HashMap<String, List<Message>> groupedHashMap = new HashMap<>();
         DateFormat format = new SimpleDateFormat("yyyy/MM/dd");
-        Calendar c = Calendar.getInstance();
-        try {
-            c.setTime(format.parse(new Date().toString()));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+
+
+        Date date = new GregorianCalendar().getTime();
+
+
+        String formatted = format.format(date);
+
+        System.out.println("todays date is: " + formatted);
 
 
 
         String hashMapKey;
 
 
-        for(int I=0;I < listOfPojosOfJsonArray.size();I++) {
-            String mailDate = listOfPojosOfJsonArray.get(I).getReceivedDateTime().substring(0,10);
-
-            if (mailDate.equalsIgnoreCase(c.toString())){
-                hashMapKey = "Today";
-            }else {
-                hashMapKey = listOfPojosOfJsonArray.get(I).getReceivedDateTime().substring(0,10);
-
-            }
+        for (Message message : listOfPojosOfJsonArray){
+            hashMapKey = message.getReceivedDateTime().substring(0,10);
 
 
 
             if(groupedHashMap.containsKey(hashMapKey)) {
                 // The key is already in the HashMap; add the pojo object
                 // against the existing key.
-                groupedHashMap.get(hashMapKey).add(listOfPojosOfJsonArray.get(I));
+                groupedHashMap.get(hashMapKey).add(message);
             } else {
                 // The key is not there in the HashMap; create a new key-value pair
                 List<Message> list = new ArrayList<>();
-                list.add(listOfPojosOfJsonArray.get(I));
+                list.add(message);
                 groupedHashMap.put(hashMapKey, list);
             }
         }
+
+        SortedSet<String> keys = new TreeSet<String>(groupedHashMap.keySet());
+        for (String key: keys)
+
+
 
         return groupedHashMap;
     }
