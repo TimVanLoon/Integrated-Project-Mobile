@@ -117,11 +117,10 @@
         <activity
             android:name=".Mail.ReplyAllActivity"
             android:windowSoftInputMode="adjustResize|adjustPan" />
-
         <activity
             android:name=".Contacts.UserDetailsActivity"
             android:label="User Details"
-            android:windowSoftInputMode="adjustResize|adjustPan"/>
+            android:windowSoftInputMode="adjustResize|adjustPan" />
 
         <service android:name=".MyFirebaseInstanceIDService">
             <intent-filter>
@@ -129,6 +128,7 @@
             </intent-filter>
         </service>
 
+        <activity android:name=".Contacts.RoomDetailsActivity"></activity>
     </application>
 
 </manifest>

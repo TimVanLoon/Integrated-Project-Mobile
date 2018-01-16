@@ -99,8 +99,8 @@ public class UserDetailsActivity extends AppCompatActivity {
 
         profilePic.setImageDrawable(drawable1);
         headerDisplayName.setText(displayName);
-        firstName.setText(givenName);
-        lastName.setText(surName);
+        //firstName.setText(givenName);
+        //lastName.setText(surName);
 
         if(mail != null){
             userMail.setText(mail);
