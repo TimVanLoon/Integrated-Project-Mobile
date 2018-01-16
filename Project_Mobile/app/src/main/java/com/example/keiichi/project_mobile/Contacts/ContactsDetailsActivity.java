@@ -36,6 +36,7 @@ import com.example.keiichi.project_mobile.R;
 import org.json.JSONException;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

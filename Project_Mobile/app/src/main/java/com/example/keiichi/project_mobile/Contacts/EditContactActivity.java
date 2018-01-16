@@ -1027,7 +1027,7 @@ public class EditContactActivity extends AppCompatActivity {
                                         intentContactDetailsSaved.putExtra("AccessToken", accessToken);
                                         intentContactDetailsSaved.putExtra("userName", userName);
                                         intentContactDetailsSaved.putExtra("userEmail", userEmail);
-                                        intentContactDetailsSaved.putExtra("contact", contact);
+                                        intentContactDetailsSaved.putExtra("contact", updatedContact);
 
                                         startActivity(intentContactDetailsSaved);
 
@@ -1057,98 +1057,176 @@ public class EditContactActivity extends AppCompatActivity {
     private void updateContact() throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        Contact contact = new Contact();
+        updatedContact = new Contact();
+        businessPhones.clear();
+        homePhones.clear();
+        imAddresses.clear();
+        emailList.clear();
 
-        contact.setGivenName(firstNameInput.getText().toString());
-        givenName = firstNameInput.getText().toString();
-        firstName = firstNameInput.getText().toString();
+        updatedContact.setGivenName(firstNameInput.getText().toString());
 
-        contact.setSurname(lastNameInput.getText().toString());
-        lastName = lastNameInput.getText().toString();
+        updatedContact.setSurname(lastNameInput.getText().toString());
 
         String displayname = firstNameInput.getText().toString() + " " + lastNameInput.getText().toString();
-        displayName = firstNameInput.getText().toString() + " " + lastNameInput.getText().toString();
-        contact.setDisplayName(displayname);
+        updatedContact.setDisplayName(displayname);
 
-        if(!emailInput.getText().toString().isEmpty()){
-            EmailAddress contactEmail = new EmailAddress(emailInput.getText().toString(), displayname);
+        if (emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+" ) || emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+.[a-z]+")) {
+
             List<EmailAddress> listEmails = new ArrayList<>();
-            listEmails.add(contactEmail);
-            contact.setEmailAddresses(listEmails);
-            emailList = listEmails;
+
+            if(!displayAsInput.getText().toString().isEmpty()){
+                EmailAddress contactEmail = new EmailAddress(emailInput.getText().toString(), displayAsInput.getText().toString());
+                listEmails.add(contactEmail);
+            } else {
+                EmailAddress contactEmail = new EmailAddress(emailInput.getText().toString(), displayName);
+                listEmails.add(contactEmail);
+            }
+
+            if(emailInput2.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+" ) || emailInput2.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+.[a-z]+")){
+
+                if(!displayAsInput2.getText().toString().isEmpty()){
+                    EmailAddress contactEmail = new EmailAddress(emailInput2.getText().toString(), displayAsInput2.getText().toString());
+                    listEmails.add(contactEmail);
+                } else {
+                    EmailAddress contactEmail = new EmailAddress(emailInput2.getText().toString(), displayName);
+                    listEmails.add(contactEmail);
+                }
+
+            }
+
+            if(emailInput3.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+" ) || emailInput3.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+.[a-z]+")){
+
+                if(!displayAsInput3.getText().toString().isEmpty()){
+                    EmailAddress contactEmail = new EmailAddress(emailInput3.getText().toString(), displayAsInput3.getText().toString());
+                    listEmails.add(contactEmail);
+                } else {
+                    EmailAddress contactEmail = new EmailAddress(emailInput3.getText().toString(), displayName);
+                    listEmails.add(contactEmail);
+                }
+
+            }
+
+            updatedContact.setEmailAddresses(listEmails);
+
         }
 
+        if(!middleNameInput.getText().toString().isEmpty()){
+            updatedContact.setMiddleName(middleNameInput.getText().toString());
+        }
+
+        if(!titleInput.getText().toString().isEmpty()){
+            updatedContact.setTitle(titleInput.getText().toString());
+        }
+
+        if(!suffixInput.getText().toString().isEmpty()){
+            updatedContact.setInitials(suffixInput.getText().toString());
+        }
+
+        if(!yomiFirstNameInput.getText().toString().isEmpty()){
+            updatedContact.setYomiGivenName(yomiFirstNameInput.getText().toString());
+        }
+
+        if(!yomiLastNameInput.getText().toString().isEmpty()){
+            updatedContact.setYomiSurname(yomiLastNameInput.getText().toString());
+        }
 
         if(!mobilePhoneInput.getText().toString().isEmpty()){
-            contact.setMobilePhone(mobilePhoneInput.getText().toString());
-            phoneNumber = mobilePhoneInput.getText().toString();
+            updatedContact.setMobilePhone(mobilePhoneInput.getText().toString());
         }
 
+        if(!homePhoneInput.getText().toString().isEmpty()){
+
+            homePhones.add(homePhoneInput.getText().toString());
+
+            updatedContact.setHomePhones(homePhones);
+        }
+
+        if(!homePhoneInput2.getText().toString().isEmpty()){
+
+            homePhones.add(homePhoneInput2.getText().toString());
+
+            updatedContact.setHomePhones(homePhones);
+        }
+
+        if(!phoneInput.getText().toString().isEmpty()){
+
+            businessPhones.add(phoneInput.getText().toString());
+
+            updatedContact.setBusinessPhones(businessPhones);
+        }
+
+        if(!businessPhoneInput2.getText().toString().isEmpty()){
+
+            businessPhones.add(businessPhoneInput2.getText().toString());
+
+            updatedContact.setBusinessPhones(businessPhones);
+        }
 
         if(!jobTitleInput.getText().toString().isEmpty()){
-            contact.setJobTitle(jobTitleInput.getText().toString());
-            job = jobTitleInput.getText().toString();
+            updatedContact.setJobTitle(jobTitleInput.getText().toString());
         }
 
         if(!departmentInput.getText().toString().isEmpty()){
-            contact.setDepartment(departmentInput.getText().toString());
-            department = departmentInput.getText().toString();
+            updatedContact.setDepartment(departmentInput.getText().toString());
         }
 
         if(!companyNameInput.getText().toString().isEmpty()){
-            contact.setCompanyName(companyNameInput.getText().toString());
-            company = companyNameInput.getText().toString();
+            updatedContact.setCompanyName(companyNameInput.getText().toString());
         }
 
         if(!officeLocationInput.getText().toString().isEmpty()){
-            contact.setOfficeLocation(officeLocationInput.getText().toString());
-            office = officeLocationInput.getText().toString();
+            updatedContact.setOfficeLocation(officeLocationInput.getText().toString());
         }
 
         if(!managerInput.getText().toString().isEmpty()){
-            contact.setManager(managerInput.getText().toString());
-            manager = managerInput.getText().toString();
+            updatedContact.setManager(managerInput.getText().toString());
         }
 
         if(!assistantNameInput.getText().toString().isEmpty()){
-            contact.setAssistantName(assistantNameInput.getText().toString());
-            assistant = assistantNameInput.getText().toString();
+            updatedContact.setAssistantName(assistantNameInput.getText().toString());
+        }
+
+        if(!businessStreetNameInput.getText().toString().isEmpty()){
+            PhysicalAddress contactBusinessPhysicalAddress = new PhysicalAddress(businessStreetNameInput.getText().toString(), businessCityNameInput.getText().toString(), businessStateNameInput.getText().toString(), businessCountryNameInput.getText().toString(), businessPostalCodeInput.getText().toString());
+            updatedContact.setBusinessAddress(contactBusinessPhysicalAddress);
         }
 
         if(!homeStreetNameInput.getText().toString().isEmpty()){
             PhysicalAddress contactHomePhysicalAddress = new PhysicalAddress(homeStreetNameInput.getText().toString(), homeCityNameInput.getText().toString(), homeStateNameInput.getText().toString(), homeCountryNameInput.getText().toString(), homePostalCodeInput.getText().toString());
-            contact.setHomeAddress(contactHomePhysicalAddress);
-            homeStreet = homeStreetNameInput.getText().toString();
-            homePostalCode = homePostalCodeInput.getText().toString();
-            homeCity = homeCityNameInput.getText().toString();
-            homeState = homeStateNameInput.getText().toString();
-            homeCountry = homeCountryNameInput.getText().toString();
+            updatedContact.setHomeAddress(contactHomePhysicalAddress);
+        }
+
+        if(!otherStreetNameInput.getText().toString().isEmpty()){
+            PhysicalAddress contactOtherPhysicalAddress = new PhysicalAddress(otherStreetNameInput.getText().toString(), otherCityNameInput.getText().toString(), otherStateNameInput.getText().toString(), otherCountryNameInput.getText().toString(), otherPostalCodeInput.getText().toString());
+            updatedContact.setOtherAddress(contactOtherPhysicalAddress);
         }
 
         if(!nickNameInput.getText().toString().isEmpty()){
-            contact.setNickName(nickNameInput.getText().toString());
-            nickname = nickNameInput.getText().toString();
+            updatedContact.setNickName(nickNameInput.getText().toString());
         }
 
         if(!spouseNameInput.getText().toString().isEmpty()){
-            contact.setSpouseName(spouseNameInput.getText().toString());
-            spouse = spouseNameInput.getText().toString();
+            updatedContact.setSpouseName(spouseNameInput.getText().toString());
         }
 
         if(!personalNotesInput.getText().toString().isEmpty()){
-            contact.setPersonalNotes(personalNotesInput.getText().toString());
-            notes = personalNotesInput.getText().toString();
+            updatedContact.setPersonalNotes(personalNotesInput.getText().toString());
         }
 
-        System.out.println("wanna cuddle?" + contact);
+        if(!imInput.getText().toString().isEmpty()){
+            List<String> imAddresses = new ArrayList<>();
+
+            imAddresses.add(imInput.getText().toString());
+
+            updatedContact.setImAddresses(imAddresses);
+        }
+
 
         String postAddress = URL_POSTADRESS + id;
 
-        System.out.println("test contact: " + new Gson().toJson(contact));
+        System.out.println("test contact: " + new Gson().toJson(updatedContact));
 
-        //final JSONObject jsonObject = new JSONObject(buildJsonEditContact());
-
-        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.PATCH, postAddress, new JSONObject(new Gson().toJson(contact)),
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.PATCH, postAddress, new JSONObject(new Gson().toJson(updatedContact)),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
