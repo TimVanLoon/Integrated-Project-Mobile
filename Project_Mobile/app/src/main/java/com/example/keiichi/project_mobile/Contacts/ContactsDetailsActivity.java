@@ -252,6 +252,18 @@ public class ContactsDetailsActivity extends AppCompatActivity {
             otherCountry = contact.getOtherAddress().getCountryOrRegion();
         }
 
+        if(contact.getBusinessPhones() != null){
+            businessPhones = contact.getBusinessPhones();
+        } else {
+            businessPhones = new ArrayList<>();
+        }
+
+        if(contact.getHomePhones() != null){
+            homePhones = contact.getHomePhones();
+        } else {
+            homePhones = new ArrayList<>();
+        }
+
         notes = contact.getPersonalNotes();
         spouse = contact.getSpouseName();
         nickname = contact.getNickName();
@@ -260,8 +272,6 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         displayName = contact.getDisplayName();
         emailList = contact.getEmailAddresses();
         phoneNumber = contact.getMobilePhone();
-        businessPhones = contact.getBusinessPhones();
-        homePhones = contact.getHomePhones();
         job = contact.getJobTitle();
         department = contact.getDepartment();
         company = contact.getCompanyName();
@@ -407,7 +417,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
             });
         }
 
-        if ((phoneNumber == null )&& (businessPhones == null) && (homePhones == null)){
+        if (phoneNumber == null && businessPhones.isEmpty() && homePhones.isEmpty()){
             smsButton.setColorFilter(Color.GRAY);
             phoneButton.setColorFilter(Color.GRAY);
 
@@ -608,7 +618,6 @@ public class ContactsDetailsActivity extends AppCompatActivity {
             homePhoneTitle.setVisibility(View.GONE);
             homePhone1.setVisibility(View.GONE);
             homePhone2.setVisibility(View.GONE);
-
         }
 
         if(notes != null){
