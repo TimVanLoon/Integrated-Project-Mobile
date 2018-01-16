@@ -45,7 +45,6 @@ import java.util.Map;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.MyViewHolder> implements Filterable {
 
-    private ImageView profilePicture;
     private final Context context;
     private Contact contact;
     private SparseBooleanArray animeationItemsIndex;

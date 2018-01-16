@@ -798,8 +798,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         inflater.inflate(R.menu.my_action_bar_items_contacts, menu);
         MenuItem addItem = menu.findItem(R.id.action_add);
 
-
-
         MenuItem searchItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) searchItem.getActionView();
 

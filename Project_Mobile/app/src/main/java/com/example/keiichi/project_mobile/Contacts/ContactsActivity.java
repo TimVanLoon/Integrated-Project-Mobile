@@ -1,20 +1,11 @@
 package com.example.keiichi.project_mobile.Contacts;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -28,14 +19,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
@@ -47,7 +33,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -55,23 +40,17 @@ import com.example.keiichi.project_mobile.Calendar.CalendarActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.ContactFolder;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
-import com.example.keiichi.project_mobile.DAL.POJOs.MailFolder;
-import com.example.keiichi.project_mobile.DAL.POJOs.Message;
-import com.example.keiichi.project_mobile.DAL.POJOs.PhysicalAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.User;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
-import com.example.keiichi.project_mobile.Mail.MailAdapter;
 import com.example.keiichi.project_mobile.Mail.RecyclerTouchListener;
 import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.microsoft.appcenter.ingestion.models.Model;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
-import com.mikepenz.materialdrawer.holder.BadgeStyle;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
@@ -83,14 +62,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.Type;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,6 +73,7 @@ import java.util.TimerTask;
 
 public class ContactsActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, Serializable {
 
+    private MenuItem searchItem;
     private BottomNavigationView mBottomNav;
     private Toolbar myToolbar;
     private TextDrawable drawable;
@@ -111,7 +86,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
     private List<Contact> contacts = new ArrayList<>();
     private List<EmailAddress> rooms = new ArrayList<>();
     private List<User> users = new ArrayList<>();
-    private List<Contact> countactsFiltered;
+    private List<Contact> contactsFiltered;
     private List<EmailAddress> emailList;
     private String accessToken;
     private String userName;
@@ -233,27 +208,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
         MenuItem addItem = menu.findItem(R.id.action_add);
 
 
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        searchView = (SearchView) searchItem.getActionView();
-
-        searchView.setQueryHint("Search by name...");
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                contactAdapter.getFilter().filter(s);
-
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                contactAdapter.getFilter().filter(s);
-
-                return true;
-            }
-
-        });
+        searchItem = menu.findItem(R.id.action_search);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -406,13 +361,11 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
             System.out.println("test response: " + contactArray);
 
-
             // VUL POJO
             Type listType = new TypeToken<List<Contact>>() {
             }.getType();
 
             contacts = new Gson().fromJson(String.valueOf(contactArray), listType);
-
 
             contactAdapter = new ContactAdapter(this, contacts, accessToken);
             contactsRecyclerView.setAdapter(contactAdapter);
@@ -471,11 +424,33 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             }
         }));
 
+        searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setQueryHint("Search by name...");
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                contactAdapter.getFilter().filter(s);
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                contactAdapter.getFilter().filter(s);
+
+                return true;
+            }
+
+        });
+
     }
 
-            public void setFilter(List<Contact> contactFilterted) {
-        countactsFiltered = new ArrayList<>();
-        countactsFiltered.addAll(contactFilterted);
+    public void setFilter(List<Contact> contactFiltered) {
+
+        contactsFiltered = new ArrayList<>();
+        contactsFiltered.addAll(contactFiltered);
         contactAdapter.notifyDataSetChanged();
     }
 
@@ -595,6 +570,27 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             }
         }));
 
+        searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setQueryHint("Search by name...");
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                roomAdapter.getFilter().filter(s);
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                roomAdapter.getFilter().filter(s);
+
+                return true;
+            }
+
+        });
+
     }
 
     /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
@@ -649,6 +645,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(request);
+
     }
 
     /* Sets the Graph response */
@@ -660,7 +657,6 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
             JSONArray userArray = userList.getJSONArray("value");
 
-
             // VUL POJO
             Type listType = new TypeToken<List<User>>() {
             }.getType();
@@ -669,7 +665,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
             userAdapter = new UserAdapter(this, users);
             contactsRecyclerView.setAdapter(userAdapter);
-
+            userAdapter.notifyDataSetChanged();
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -712,6 +708,27 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
                 selectedItem(position);
             }
         }));
+
+        searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setQueryHint("Search by name...");
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                userAdapter.getFilter().filter(s);
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                userAdapter.getFilter().filter(s);
+
+                return true;
+            }
+
+        });
 
     }
 

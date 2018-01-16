@@ -124,7 +124,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.MyViewHolder> 
                 List<EmailAddress> filt = new ArrayList<EmailAddress>(); //filtered list
                 for (int i = 0; i < originalData.size(); i++) {
                     EmailAddress c = originalData.get(i);
-                    if (c.getName().toLowerCase().contains(constraint) || c.getAddress().toLowerCase().contains(constraint)) {
+                    if (c.getName().toLowerCase().contains(constraint)) {
                         filt.add(c); //add only items which matches
                     }
                 }

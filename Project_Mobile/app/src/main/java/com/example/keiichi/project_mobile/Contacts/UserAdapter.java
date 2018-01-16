@@ -35,7 +35,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
     private List<User> filteredData = null;
 
     private UserAdapter.CustomFilter mFilter = new UserAdapter.CustomFilter();
-    private String accessToken;
 
     public UserAdapter(Context context, List<User> values) {
         this.context = context;
@@ -44,8 +43,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
         this.selectedItems = new SparseBooleanArray();
         this.animeationItemsIndex = new SparseBooleanArray();
     }
-
-
 
     public User getItem(int i) {
         return filteredData.get(i);
@@ -125,7 +122,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
                 List<User> filt = new ArrayList<User>(); //filtered list
                 for (int i = 0; i < originalData.size(); i++) {
                     User u = originalData.get(i);
-                    if (u.getDisplayName().toLowerCase().contains(constraint) || u.getMail().toLowerCase().contains(constraint)) {
+                    if (u.getDisplayName().toLowerCase().contains(constraint)) {
                         filt.add(u); //add only items which matches
                     }
                 }
