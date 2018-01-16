@@ -16,8 +16,10 @@ import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
+import com.example.keiichi.project_mobile.Calendar.AddEventActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.User;
+import com.example.keiichi.project_mobile.Mail.SendMailActivity;
 import com.example.keiichi.project_mobile.R;
 
 public class RoomDetailsActivity extends AppCompatActivity {
@@ -27,7 +29,8 @@ public class RoomDetailsActivity extends AppCompatActivity {
     private String accessToken;
     private String userName;
     private String userEmail;
-    private String displayName;
+    private String roomName;
+    private String roomMail;
     private ImageButton phoneButton;
     private ImageButton calendarButton;
     private ImageButton mailButton;
@@ -52,20 +55,21 @@ public class RoomDetailsActivity extends AppCompatActivity {
         userEmail = getIntent().getStringExtra("userEmail");
         room = (EmailAddress) getIntent().getSerializableExtra("room");
 
-        displayName = room.getName();
+        roomName = room.getName();
+        roomMail = room.getAddress();
 
-        headerDisplayName.setText(displayName);
+        headerDisplayName.setText(roomName);
 
         ColorGenerator generator = ColorGenerator.MATERIAL;
 
-        int color2 = generator.getColor(displayName.substring(0,1));
+        int color2 = generator.getColor(roomName.substring(0,1));
 
         TextDrawable drawable1 = TextDrawable.builder()
                 .beginConfig()
                 .width(50)  // width in px
                 .height(50) // height in px
                 .endConfig()
-                .buildRect(displayName.substring(0,1), color2);
+                .buildRect(roomName.substring(0,1), color2);
 
         profilePic.setImageDrawable(drawable1);
 
@@ -94,6 +98,7 @@ public class RoomDetailsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        setIntentButton();
     }
 
     // VOEG ICONS TOE AAN DE ACTION BAR
@@ -129,6 +134,84 @@ public class RoomDetailsActivity extends AppCompatActivity {
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void setIntentButton() {
+
+        if (roomMail == null) {
+
+            mailButton.setColorFilter(Color.GRAY);
+            calendarButton.setColorFilter(Color.GRAY);
+
+            mailButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+
+                    Toast.makeText(getApplicationContext(), "No E-mail Address found!", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            calendarButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+
+                    Toast.makeText(getApplicationContext(), "No E-mail Address found!", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        } else {
+            mailButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+
+                    Intent sendMail = new Intent(RoomDetailsActivity.this, SendMailActivity.class);
+                    sendMail.putExtra("AccessToken", accessToken);
+                    sendMail.putExtra("userName", userName);
+                    sendMail.putExtra("userEmail", userEmail);
+                    sendMail.putExtra("emailAddress", roomMail);
+                    sendMail.putExtra("room", room);
+                    sendMail.putExtra("fromRoomActivity", "yes");
+
+                    startActivity(sendMail);
+
+                    RoomDetailsActivity.this.finish();
+                }
+            });
+
+
+            calendarButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+
+                    Intent addEventActivity = new Intent(RoomDetailsActivity.this, AddEventActivity.class);
+                    addEventActivity.putExtra("AccessToken", accessToken);
+                    addEventActivity.putExtra("userName", userName);
+                    addEventActivity.putExtra("userEmail", userEmail);
+                    addEventActivity.putExtra("emailAddress", roomMail);
+                    addEventActivity.putExtra("attendeeMail", roomMail);
+                    addEventActivity.putExtra("attendeeName", roomName);
+                    addEventActivity.putExtra("room", room);
+                    addEventActivity.putExtra("fromRoomActivity", "yes");
+
+                    startActivity(addEventActivity);
+
+                    RoomDetailsActivity.this.finish();
+                }
+            });
+        }
+
+    }
+
+    @Override
+    public void onBackPressed(){
+        minimizeApp();
+    }
+
+    public void minimizeApp() {
+        Intent intentListMails = new Intent(RoomDetailsActivity.this, ContactsActivity.class);
+        intentListMails.putExtra("AccessToken", accessToken);
+        intentListMails.putExtra("userName", userName);
+        intentListMails.putExtra("userEmail", userEmail);
+
+        startActivity(intentListMails);
+
+        RoomDetailsActivity.this.finish();
     }
 
 }

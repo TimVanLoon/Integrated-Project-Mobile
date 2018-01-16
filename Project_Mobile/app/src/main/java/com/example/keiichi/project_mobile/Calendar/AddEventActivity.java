@@ -32,10 +32,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.Contacts.ContactAdapter;
 import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
 import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
+import com.example.keiichi.project_mobile.Contacts.RoomDetailsActivity;
+import com.example.keiichi.project_mobile.Contacts.UserDetailsActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Attendee;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.DateTimeTimeZone;
@@ -43,6 +46,7 @@ import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.DAL.POJOs.ItemBody;
 import com.example.keiichi.project_mobile.DAL.POJOs.Location;
+import com.example.keiichi.project_mobile.DAL.POJOs.User;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 import com.example.keiichi.project_mobile.Mail.SendMailActivity;
 import com.example.keiichi.project_mobile.R;
@@ -108,6 +112,8 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private String emailAddress;
     private String attendeeMail;
     private String attendeeName;
+    private String fromRoomActivity;
+    private String fromUserActivity;
     private boolean isCurrentDate;
     private boolean isCurrentTime;
     private boolean isPrivate;
@@ -142,6 +148,8 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private ArrayAdapter<String> adapterRepeat;
     private MenuItem saveItem;
     private Contact contact;
+    private EmailAddress room;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,6 +165,10 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         attendeeName = getIntent().getStringExtra("attendeeName");
         attendeeMail = getIntent().getStringExtra("attendeeMail");
         contact = (Contact) getIntent().getSerializableExtra("contact");
+        fromRoomActivity = getIntent().getStringExtra("fromRoomActivity");
+        fromUserActivity = getIntent().getStringExtra("fromUserActivity");
+        room = (EmailAddress) getIntent().getSerializableExtra("room");
+        user = (User) getIntent().getSerializableExtra("user");
 
         // INITIALISEER ACTION BAR
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -357,6 +369,56 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
 
         }
 
+        if(fromRoomActivity != null){
+
+            makeExtraVisible();
+
+            firstTime = "no";
+
+            attendees = new ArrayList<>();
+            emailList = new ArrayList<>();
+
+            EmailAddress email = new EmailAddress(attendeeMail, attendeeName);
+
+            emailList.add(email);
+
+            String type = "optional";
+
+            Attendee attendee = new Attendee(type, email);
+
+            attendees.add(attendee);
+
+            attendeeAdapter = new AttendeeAdapter(this, attendees);
+            attendeeList.setAdapter(attendeeAdapter);
+            Utility.setListViewHeightBasedOnChildren(attendeeList);
+
+        }
+
+        if(fromUserActivity != null){
+
+            makeExtraVisible();
+
+            firstTime = "no";
+
+            attendees = new ArrayList<>();
+            emailList = new ArrayList<>();
+
+            EmailAddress email = new EmailAddress(attendeeMail, attendeeName);
+
+            emailList.add(email);
+
+            String type = "optional";
+
+            Attendee attendee = new Attendee(type, email);
+
+            attendees.add(attendee);
+
+            attendeeAdapter = new AttendeeAdapter(this, attendees);
+            attendeeList.setAdapter(attendeeAdapter);
+            Utility.setListViewHeightBasedOnChildren(attendeeList);
+
+        }
+
         if(fromAttendeesActivity != null ){
 
             makeExtraVisible();
@@ -481,7 +543,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
             // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
             case android.R.id.home:
 
-                if(fromContactDetailsActivity == null){
+                if(fromContactDetailsActivity == null && fromRoomActivity == null && fromUserActivity == null){
 
                     Intent intentCalendar = new Intent(AddEventActivity.this, CalendarActivity.class);
                     intentCalendar.putExtra("AccessToken", accessToken);
@@ -492,13 +554,37 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
 
                     AddEventActivity.this.finish();
 
-                } else {
+                } else if(fromUserActivity == null && fromRoomActivity == null) {
 
                     Intent intentContactDetails = new Intent(AddEventActivity.this, ContactsDetailsActivity.class);
                     intentContactDetails.putExtra("AccessToken", accessToken);
                     intentContactDetails.putExtra("userName", userName);
                     intentContactDetails.putExtra("userEmail", userEmail);
                     intentContactDetails.putExtra("contact", contact);
+
+                    startActivity(intentContactDetails);
+
+                    AddEventActivity.this.finish();
+
+                } else if(fromUserActivity == null && fromContactDetailsActivity == null){
+
+                    Intent intentContactDetails = new Intent(AddEventActivity.this, RoomDetailsActivity.class);
+                    intentContactDetails.putExtra("AccessToken", accessToken);
+                    intentContactDetails.putExtra("userName", userName);
+                    intentContactDetails.putExtra("userEmail", userEmail);
+                    intentContactDetails.putExtra("room", room);
+
+                    startActivity(intentContactDetails);
+
+                    AddEventActivity.this.finish();
+
+                } else if(fromRoomActivity == null && fromContactDetailsActivity == null){
+
+                    Intent intentContactDetails = new Intent(AddEventActivity.this, UserDetailsActivity.class);
+                    intentContactDetails.putExtra("AccessToken", accessToken);
+                    intentContactDetails.putExtra("userName", userName);
+                    intentContactDetails.putExtra("userEmail", userEmail);
+                    intentContactDetails.putExtra("user", user);
 
                     startActivity(intentContactDetails);
 
@@ -1137,9 +1223,18 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     @Override
     public void onBackPressed(){
 
-        if(fromContactDetailsActivity == null){
-            minimizeApp();
-        } else {
+        if(fromContactDetailsActivity == null && fromRoomActivity == null && fromUserActivity == null){
+
+            Intent intentCalendar = new Intent(AddEventActivity.this, CalendarActivity.class);
+            intentCalendar.putExtra("AccessToken", accessToken);
+            intentCalendar.putExtra("userName", userName);
+            intentCalendar.putExtra("userEmail", userEmail);
+
+            startActivity(intentCalendar);
+
+            AddEventActivity.this.finish();
+
+        } else if(fromUserActivity == null && fromRoomActivity == null) {
 
             Intent intentContactDetails = new Intent(AddEventActivity.this, ContactsDetailsActivity.class);
             intentContactDetails.putExtra("AccessToken", accessToken);
@@ -1150,7 +1245,34 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
             startActivity(intentContactDetails);
 
             AddEventActivity.this.finish();
+
+        } else if(fromUserActivity == null && fromContactDetailsActivity == null){
+
+            Intent intentContactDetails = new Intent(AddEventActivity.this, RoomDetailsActivity.class);
+            intentContactDetails.putExtra("AccessToken", accessToken);
+            intentContactDetails.putExtra("userName", userName);
+            intentContactDetails.putExtra("userEmail", userEmail);
+            intentContactDetails.putExtra("room", room);
+
+            startActivity(intentContactDetails);
+
+            AddEventActivity.this.finish();
+
+        } else if(fromRoomActivity == null && fromContactDetailsActivity == null){
+
+            Intent intentContactDetails = new Intent(AddEventActivity.this, UserDetailsActivity.class);
+            intentContactDetails.putExtra("AccessToken", accessToken);
+            intentContactDetails.putExtra("userName", userName);
+            intentContactDetails.putExtra("userEmail", userEmail);
+            intentContactDetails.putExtra("user", user);
+
+            startActivity(intentContactDetails);
+
+            AddEventActivity.this.finish();
+
         }
+
+
     }
 
     public void minimizeApp() {
