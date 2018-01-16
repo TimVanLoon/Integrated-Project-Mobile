@@ -56,7 +56,6 @@ import java.util.Map;
 public class AttendeeActivity extends AppCompatActivity {
 
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts?$orderBy=displayName&$top=500&$count=true";
-
     private List<Contact> contacts = new ArrayList<>();
     private List<EmailAddress> emailList = new ArrayList<>();
     private ContactAdapter contactAdapter;
@@ -78,6 +77,9 @@ public class AttendeeActivity extends AppCompatActivity {
     private String reminderMinutesBeforeStart;
     private String displayAs;
     private String notes;
+    private String fromContactDetailsActivity;
+    private String fromRoomActivity;
+    private String fromUserActivity;
     private String sensitivity;
     private String startDate;
     private String id;
@@ -106,6 +108,9 @@ public class AttendeeActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         contactsRecyclerView = findViewById(R.id.contactsRecyclerView);
 
+        fromContactDetailsActivity = getIntent().getStringExtra("fromContactDetailsActivity");
+        fromRoomActivity = getIntent().getStringExtra("fromRoomActivity");
+        fromUserActivity = getIntent().getStringExtra("fromUserActivity");
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
@@ -136,8 +141,14 @@ public class AttendeeActivity extends AppCompatActivity {
         id = getIntent().getStringExtra("id");
         contentType = getIntent().getStringExtra("contentType");
 
+        System.out.println("from contact details: " + fromContactDetailsActivity);
+        System.out.println("from room: " + fromRoomActivity);
+        System.out.println("from user: " + fromUserActivity);
+
         if(firstTime != null){
             emailList = (List<EmailAddress>)getIntent().getSerializableExtra("emailList");
+
+            System.out.println("auw papa ;(");
         }
 
         // VOEG BACK BUTTON TOE AAN ACTION BAR
@@ -153,7 +164,6 @@ public class AttendeeActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.my_action_bar_items_attendees, menu);
         MenuItem addItem = menu.findItem(R.id.action_add);
-
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) searchItem.getActionView();
@@ -241,6 +251,10 @@ public class AttendeeActivity extends AppCompatActivity {
                     intentAddEvent.putExtra("emailList",(Serializable) emailList);
                     intentAddEvent.putExtra("id", id);
                     intentAddEvent.putExtra("contentType", contentType);
+
+                    intentAddEvent.putExtra("fromContactDetailsActivity", fromContactDetailsActivity);
+                    intentAddEvent.putExtra("fromRoomActivity", fromRoomActivity);
+                    intentAddEvent.putExtra("fromUserActivity", fromUserActivity);
 
                     startActivity(intentAddEvent);
 
@@ -429,6 +443,10 @@ public class AttendeeActivity extends AppCompatActivity {
                             intentAddEvent.putExtra("id", id);
                             intentAddEvent.putExtra("contentType", contentType);
 
+                            intentAddEvent.putExtra("fromContactDetailsActivity", fromContactDetailsActivity);
+                            intentAddEvent.putExtra("fromRoomActivity", fromRoomActivity);
+                            intentAddEvent.putExtra("fromUserActivity", fromUserActivity);
+
                             if(contact.getEmailAddresses() != null){
 
                                 EmailAddress emailContact = contact.getEmailAddresses().get(0);
@@ -446,7 +464,6 @@ public class AttendeeActivity extends AppCompatActivity {
                         }
 
                     }
-
 
                 } else {
                     Toast.makeText(getApplicationContext(), "Empty contact list!", Toast.LENGTH_SHORT).show();
@@ -525,6 +542,10 @@ public class AttendeeActivity extends AppCompatActivity {
             intentAddEvent.putExtra("emailList",(Serializable) emailList);
             intentAddEvent.putExtra("id", id);
             intentAddEvent.putExtra("contentType", contentType);
+
+            intentAddEvent.putExtra("fromContactDetailsActivity", fromContactDetailsActivity);
+            intentAddEvent.putExtra("fromRoomActivity", fromRoomActivity);
+            intentAddEvent.putExtra("fromUserActivity", fromUserActivity);
 
             startActivity(intentAddEvent);
 

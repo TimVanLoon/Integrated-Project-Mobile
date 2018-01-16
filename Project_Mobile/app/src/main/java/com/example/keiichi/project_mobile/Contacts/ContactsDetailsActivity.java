@@ -331,7 +331,44 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                     setMailClickListener(email, emailList.get(0).getAddress());
                     setMailClickListener(userEmail2, emailList.get(1).getAddress());
                     setMailClickListener(userEmail3, emailList.get(2).getAddress());
+
                 }
+
+                mailButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+
+                        Intent sendMail = new Intent(ContactsDetailsActivity.this, SendMailActivity.class);
+                        sendMail.putExtra("AccessToken", accessToken);
+                        sendMail.putExtra("userName", userName);
+                        sendMail.putExtra("userEmail", userEmail);
+                        sendMail.putExtra("emailAddress", emailList.get(0).getAddress());
+                        sendMail.putExtra("contact", contact);
+                        sendMail.putExtra("fromContactDetailsActivity", "yes");
+
+                        startActivity(sendMail);
+
+
+                    }
+                });
+
+                calendarButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+
+                        Intent addEventActivity = new Intent(ContactsDetailsActivity.this, AddEventActivity.class);
+                        addEventActivity.putExtra("AccessToken", accessToken);
+                        addEventActivity.putExtra("userName", userName);
+                        addEventActivity.putExtra("userEmail", userEmail);
+                        addEventActivity.putExtra("emailAddress", emailList.get(0).getAddress());
+                        addEventActivity.putExtra("attendeeMail", emailList.get(0).getAddress());
+                        addEventActivity.putExtra("attendeeName", emailList.get(0).getName());
+                        addEventActivity.putExtra("contact", contact);
+                        addEventActivity.putExtra("fromContactDetailsActivity", "yes");
+
+                        startActivity(addEventActivity);
+
+
+                    }
+                });
         } else {
                 email.setText("(Empty)");
                 email.setTextColor(Color.parseColor("#F4E7D7"));
@@ -355,6 +392,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                     }
                 });
             }
+
         }
         else {
             email.setText("(Empty)");

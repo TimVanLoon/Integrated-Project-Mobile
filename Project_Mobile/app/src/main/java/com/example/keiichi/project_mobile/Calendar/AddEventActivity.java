@@ -109,11 +109,11 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private String eventNotes;
     private String userMailName;
     private String fromContactDetailsActivity;
+    private String fromRoomActivity;
+    private String fromUserActivity;
     private String emailAddress;
     private String attendeeMail;
     private String attendeeName;
-    private String fromRoomActivity;
-    private String fromUserActivity;
     private boolean isCurrentDate;
     private boolean isCurrentTime;
     private boolean isPrivate;
@@ -161,14 +161,18 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         userEmail = getIntent().getStringExtra("userEmail");
         emailList = (List<EmailAddress>)getIntent().getSerializableExtra("emailList");
         fromAttendeesActivity = getIntent().getStringExtra("fromAttendeesActivity");
-        fromContactDetailsActivity = getIntent().getStringExtra("fromContactDetailsActivity");
         attendeeName = getIntent().getStringExtra("attendeeName");
         attendeeMail = getIntent().getStringExtra("attendeeMail");
         contact = (Contact) getIntent().getSerializableExtra("contact");
+        fromContactDetailsActivity = getIntent().getStringExtra("fromContactDetailsActivity");
         fromRoomActivity = getIntent().getStringExtra("fromRoomActivity");
         fromUserActivity = getIntent().getStringExtra("fromUserActivity");
         room = (EmailAddress) getIntent().getSerializableExtra("room");
         user = (User) getIntent().getSerializableExtra("user");
+
+        System.out.println("from contact details: " + fromContactDetailsActivity);
+        System.out.println("from room: " + fromRoomActivity);
+        System.out.println("from user: " + fromUserActivity);
 
         // INITIALISEER ACTION BAR
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
