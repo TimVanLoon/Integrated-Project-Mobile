@@ -26,9 +26,7 @@
             android:name=".Mail.ListMailsActvity"
             android:label="Inbox"
             android:parentActivityName=".MainActivity"
-
             android:theme="@style/ContactsTheme"
-
             android:windowSoftInputMode="adjustResize|adjustPan" />
 
         <!-- Intent filter to capture System Browser calling back to our app after Sign In -->
@@ -90,7 +88,7 @@
         <activity
             android:name=".SettingsActivity"
             android:label="Settings"
-            android:windowSoftInputMode="adjustResize|adjustPan"/>
+            android:windowSoftInputMode="adjustResize|adjustPan" />
         <activity
             android:name=".Calendar.EventDetailsActivity"
             android:label="Event Details"
@@ -100,12 +98,12 @@
             android:name=".Calendar.EditEventActivity"
             android:label="Edit Event"
             android:theme="@style/ContactsTheme"
-            android:windowSoftInputMode="adjustResize|adjustPan"/>
+            android:windowSoftInputMode="adjustResize|adjustPan" />
         <activity
             android:name=".Mail.ReplyToMailActivity"
             android:label="Compose"
             android:theme="@style/ContactsTheme"
-            android:windowSoftInputMode="adjustResize|adjustPan"/>
+            android:windowSoftInputMode="adjustResize|adjustPan" />
         <activity
             android:name=".Calendar.AttendeeActivity"
             android:label="Contacts"
@@ -116,14 +114,18 @@
             android:label="Compose"
             android:theme="@style/ContactsTheme"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".Mail.ReplyAllActivity"
+        <activity
+            android:name=".Mail.ReplyAllActivity"
+            android:windowSoftInputMode="adjustResize|adjustPan" />
 
+        <activity
+            android:name=".Contacts.UserDetailsActivity"
+            android:label="User Details"
             android:windowSoftInputMode="adjustResize|adjustPan"/>
 
-        <service
-            android:name=".MyFirebaseInstanceIDService">
+        <service android:name=".MyFirebaseInstanceIDService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 
