@@ -36,7 +36,10 @@ import com.example.keiichi.project_mobile.R;
 import org.json.JSONException;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -210,6 +213,9 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         yomiCompany = (TextView) findViewById(R.id.yomiCompany);
         profilePic = (ImageView) findViewById(R.id.profilePic);
 
+        accessToken = getIntent().getStringExtra("AccessToken");
+        userName = getIntent().getStringExtra("userName");
+        userEmail = getIntent().getStringExtra("userEmail");
         contact = (Contact) getIntent().getSerializableExtra("contact");
 
         // INITIALISEER ACTION BAR
@@ -220,21 +226,30 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        homeStreet = contact.getHomeAddress().getStreet();
-        homePostalCode = contact.getHomeAddress().getPostalCode();
-        homeCity = contact.getHomeAddress().getCity();
-        homeState = contact.getHomeAddress().getState();
-        homeCountry = contact.getHomeAddress().getCountryOrRegion();
-        businessStreet = contact.getBusinessAddress().getStreet();
-        businessPostalCode = contact.getBusinessAddress().getPostalCode();
-        businessCity = contact.getBusinessAddress().getCity();
-        businessState = contact.getBusinessAddress().getState();
-        businessCountry = contact.getBusinessAddress().getCountryOrRegion();
-        otherStreet = contact.getOtherAddress().getStreet();
-        otherPostalCode = contact.getOtherAddress().getPostalCode();
-        otherCity = contact.getOtherAddress().getCity();
-        otherState = contact.getOtherAddress().getState();
-        otherCountry = contact.getOtherAddress().getCountryOrRegion();
+        if(contact.getHomeAddress() != null){
+            homeStreet = contact.getHomeAddress().getStreet();
+            homePostalCode = contact.getHomeAddress().getPostalCode();
+            homeCity = contact.getHomeAddress().getCity();
+            homeState = contact.getHomeAddress().getState();
+            homeCountry = contact.getHomeAddress().getCountryOrRegion();
+        }
+
+        if(contact.getBusinessAddress() != null){
+            businessStreet = contact.getBusinessAddress().getStreet();
+            businessPostalCode = contact.getBusinessAddress().getPostalCode();
+            businessCity = contact.getBusinessAddress().getCity();
+            businessState = contact.getBusinessAddress().getState();
+            businessCountry = contact.getBusinessAddress().getCountryOrRegion();
+        }
+
+        if(contact.getOtherAddress() != null){
+            otherStreet = contact.getOtherAddress().getStreet();
+            otherPostalCode = contact.getOtherAddress().getPostalCode();
+            otherCity = contact.getOtherAddress().getCity();
+            otherState = contact.getOtherAddress().getState();
+            otherCountry = contact.getOtherAddress().getCountryOrRegion();
+        }
+
         notes = contact.getPersonalNotes();
         spouse = contact.getSpouseName();
         nickname = contact.getNickName();
@@ -262,10 +277,6 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         if(contact.getYomiGivenName() != null && contact.getYomiSurname() != null){
             contactYomiName = contact.getYomiGivenName() +" " + contact.getYomiSurname();
         }
-
-        accessToken = getIntent().getStringExtra("AccessToken");
-        userName = getIntent().getStringExtra("userName");
-        userEmail = getIntent().getStringExtra("userEmail");
 
         ColorGenerator generator = ColorGenerator.MATERIAL;
 
@@ -369,9 +380,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
             });
         }
 
-        System.out.println("phonenumber:: " +phoneNumber);
-
-        if (phoneNumber == null && businessPhones.isEmpty() && homePhones.isEmpty()){
+        if ((phoneNumber == null )&& (businessPhones == null) && (homePhones == null)){
             smsButton.setColorFilter(Color.GRAY);
             phoneButton.setColorFilter(Color.GRAY);
 
@@ -511,58 +520,77 @@ public class ContactsDetailsActivity extends AppCompatActivity {
             mobilePhone.setTextColor(Color.parseColor("#F4E7D7"));
         }
 
-        if(!businessPhones.isEmpty()) {
+        if(businessPhones != null) {
 
-            if (businessPhones.size() == 1) {
-                businessPhone1.setText(businessPhones.get(0));
-                businessPhone2.setVisibility(View.GONE);
+            if(!businessPhones.isEmpty()){
 
-                businessPhone1.setTextColor(Color.BLUE);
+                if (businessPhones.size() == 1) {
+                    businessPhone1.setText(businessPhones.get(0));
+                    businessPhone2.setVisibility(View.GONE);
 
-                setPhoneNumberClickListener(businessPhone1, businessPhones.get(0));
+                    businessPhone1.setTextColor(Color.BLUE);
 
-            } else if (businessPhones.size() > 1) {
-                businessPhone1.setText(businessPhones.get(0));
-                businessPhone2.setText(businessPhones.get(1));
+                    setPhoneNumberClickListener(businessPhone1, businessPhones.get(0));
 
-                setPhoneNumberClickListener(businessPhone1, businessPhones.get(0));
-                setPhoneNumberClickListener(businessPhone2, businessPhones.get(1));
+                } else if (businessPhones.size() > 1) {
+                    businessPhone1.setText(businessPhones.get(0));
+                    businessPhone2.setText(businessPhones.get(1));
+
+                    setPhoneNumberClickListener(businessPhone1, businessPhones.get(0));
+                    setPhoneNumberClickListener(businessPhone2, businessPhones.get(1));
+
+                }
 
             } else {
-
+                businessPhoneTitle.setVisibility(View.GONE);
+                businessPhone1.setVisibility(View.GONE);
+                businessPhone2.setVisibility(View.GONE);
             }
+
         } else {
             businessPhoneTitle.setVisibility(View.GONE);
             businessPhone1.setVisibility(View.GONE);
             businessPhone2.setVisibility(View.GONE);
         }
 
-        if(!homePhones.isEmpty()) {
 
-            if (homePhones.size() == 1) {
-                homePhone1.setText(homePhones.get(0));
-                homePhone2.setVisibility(View.GONE);
+        if(homePhones != null) {
+            if(!homePhones.isEmpty()){
 
-                setPhoneNumberClickListener(homePhone1, homePhones.get(0));
+                if (homePhones.size() == 1) {
+                    homePhone1.setText(homePhones.get(0));
+                    homePhone2.setVisibility(View.GONE);
 
-            } else if (homePhones.size() > 1) {
-                homePhone1.setText(homePhones.get(0));
-                homePhone2.setText(homePhones.get(1));
+                    setPhoneNumberClickListener(homePhone1, homePhones.get(0));
 
-                setPhoneNumberClickListener(homePhone1, homePhones.get(0));
-                setPhoneNumberClickListener(homePhone2, homePhones.get(1));
+                } else if (homePhones.size() > 1) {
+                    homePhone1.setText(homePhones.get(0));
+                    homePhone2.setText(homePhones.get(1));
 
+                    setPhoneNumberClickListener(homePhone1, homePhones.get(0));
+                    setPhoneNumberClickListener(homePhone2, homePhones.get(1));
+
+                }
             } else {
-
+                homePhoneTitle.setVisibility(View.GONE);
+                homePhone1.setVisibility(View.GONE);
+                homePhone2.setVisibility(View.GONE);
             }
+
         } else {
             homePhoneTitle.setVisibility(View.GONE);
             homePhone1.setVisibility(View.GONE);
             homePhone2.setVisibility(View.GONE);
+
         }
 
-        if(!notes.equals("")){
-            notesText.setText(notes);
+        if(notes != null){
+            if(!notes.equals("")){
+                notesText.setText(notes);
+            }else {
+                notesText.setVisibility(View.GONE);
+                notesTitle.setVisibility(View.GONE);
+            }
         } else {
             notesText.setVisibility(View.GONE);
             notesTitle.setVisibility(View.GONE);
@@ -583,7 +611,17 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         }
 
         if(contactBirthday != null){
-            birthdayText.setText(contactBirthday);
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            SimpleDateFormat output = new SimpleDateFormat("dd-MM-yyyy");
+            Date d = null;
+            try {
+                d = sdf.parse(contactBirthday);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            birthdayText.setText(output.format(d));
+
         } else {
             birthdayText.setVisibility(View.GONE);
             birthdayTitle.setVisibility(View.GONE);
@@ -739,12 +777,19 @@ public class ContactsDetailsActivity extends AppCompatActivity {
             lastNameText.setVisibility(View.GONE);
         }
 
-        if(!imAddresses.isEmpty()){
-            imText.setText(imAddresses.get(0));
+        if(imAddresses != null){
+            if(!imAddresses.isEmpty()){
+                imText.setText(imAddresses.get(0));
+            } else {
+                imText.setVisibility(View.GONE);
+                imTitle.setVisibility(View.GONE);
+            }
         } else {
             imText.setVisibility(View.GONE);
             imTitle.setVisibility(View.GONE);
         }
+
+
 
         if(contactMiddleName != null){
             middleNameText.setText(contactMiddleName);

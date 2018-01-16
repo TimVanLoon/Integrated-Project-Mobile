@@ -40,6 +40,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -1136,8 +1137,18 @@ public class AddContactActivity extends AppCompatActivity {
             contact.setSpouseName(spouseNameInput.getText().toString());
         }
 
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        cal.set(Calendar.MONTH, month - 1);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        String birthdayDate = sdf.format(cal.getTime());
+
         if(!birthdayInput.getText().toString().isEmpty()){
-            contact.setBirthday(birthdayInput.getText().toString());
+            contact.setBirthday(birthdayDate);
         }
 
         if(!imInput.getText().toString().isEmpty()){

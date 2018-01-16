@@ -36,8 +36,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -226,22 +229,7 @@ public class EditContactActivity extends AppCompatActivity {
         notes = contact.getPersonalNotes();
         spouse = contact.getSpouseName();
         nickname = contact.getNickName();
-        homeStreet = contact.getHomeAddress().getStreet();
-        homePostalCode = contact.getHomeAddress().getPostalCode();
-        homeCity = contact.getHomeAddress().getCity();
-        homeState = contact.getHomeAddress().getState();
-        homeCountry = contact.getHomeAddress().getCountryOrRegion();
         emailList = contact.getEmailAddresses();
-        businessStreet = contact.getBusinessAddress().getStreet();
-        businessPostalCode = contact.getBusinessAddress().getPostalCode();
-        businessCity = contact.getBusinessAddress().getCity();
-        businessState = contact.getBusinessAddress().getState();
-        businessCountry = contact.getBusinessAddress().getCountryOrRegion();
-        otherStreet = contact.getOtherAddress().getStreet();
-        otherPostalCode = contact.getOtherAddress().getPostalCode();
-        otherCity = contact.getOtherAddress().getCity();
-        otherState = contact.getOtherAddress().getState();
-        otherCountry = contact.getOtherAddress().getCountryOrRegion();
         businessPhones = contact.getBusinessPhones();
         homePhones = contact.getHomePhones();
         contactBirthday = contact.getBirthday();
@@ -253,6 +241,30 @@ public class EditContactActivity extends AppCompatActivity {
         id = contact.getId();
         contactYomiFirstName = contact.getYomiGivenName();
         contactYomiLastName = contact.getYomiSurname();
+
+        if(contact.getHomeAddress() != null){
+            homeStreet = contact.getHomeAddress().getStreet();
+            homePostalCode = contact.getHomeAddress().getPostalCode();
+            homeCity = contact.getHomeAddress().getCity();
+            homeState = contact.getHomeAddress().getState();
+            homeCountry = contact.getHomeAddress().getCountryOrRegion();
+        }
+
+        if(contact.getBusinessAddress() != null){
+            businessStreet = contact.getBusinessAddress().getStreet();
+            businessPostalCode = contact.getBusinessAddress().getPostalCode();
+            businessCity = contact.getBusinessAddress().getCity();
+            businessState = contact.getBusinessAddress().getState();
+            businessCountry = contact.getBusinessAddress().getCountryOrRegion();
+        }
+
+        if(contact.getOtherAddress() != null){
+            otherStreet = contact.getOtherAddress().getStreet();
+            otherPostalCode = contact.getOtherAddress().getPostalCode();
+            otherCity = contact.getOtherAddress().getCity();
+            otherState = contact.getOtherAddress().getState();
+            otherCountry = contact.getOtherAddress().getCountryOrRegion();
+        }
 
         firstNameInput = (EditText) findViewById(R.id.firstNameInput);
         lastNameInput = (EditText) findViewById(R.id.lastNameInput);
@@ -1058,10 +1070,22 @@ public class EditContactActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(this);
 
         updatedContact = new Contact();
-        businessPhones.clear();
-        homePhones.clear();
-        imAddresses.clear();
-        emailList.clear();
+
+        if(businessPhones != null){
+            businessPhones.clear();
+        }
+
+        if(homePhones != null){
+            homePhones.clear();
+        }
+
+        if(imAddresses != null){
+            imAddresses.clear();
+        }
+
+        if(emailList != null){
+            emailList.clear();
+        }
 
         updatedContact.setGivenName(firstNameInput.getText().toString());
 
@@ -1174,6 +1198,10 @@ public class EditContactActivity extends AppCompatActivity {
             updatedContact.setCompanyName(companyNameInput.getText().toString());
         }
 
+        if(!yomiCompanyInput.getText().toString().isEmpty()){
+            updatedContact.setYomiCompanyName(yomiCompanyInput.getText().toString());
+        }
+
         if(!officeLocationInput.getText().toString().isEmpty()){
             updatedContact.setOfficeLocation(officeLocationInput.getText().toString());
         }
@@ -1221,6 +1249,19 @@ public class EditContactActivity extends AppCompatActivity {
             updatedContact.setImAddresses(imAddresses);
         }
 
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        cal.set(Calendar.MONTH, month - 1);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        String birthdayDate = sdf.format(cal.getTime());
+
+        if(!birthdayInput.getText().toString().isEmpty()){
+            contact.setBirthday(birthdayDate);
+        }
 
         String postAddress = URL_POSTADRESS + id;
 
@@ -1447,10 +1488,13 @@ public class EditContactActivity extends AppCompatActivity {
             personalNotesInput.setText(notes);
         }
 
-        if(!imAddresses.isEmpty()){
-            imInput.setVisibility(View.VISIBLE);
-            imSubTitle.setVisibility(View.VISIBLE);
-            imInput.setText(imAddresses.get(0));
+
+        if(imAddresses != null){
+            if(!imAddresses.isEmpty()){
+                imInput.setVisibility(View.VISIBLE);
+                imSubTitle.setVisibility(View.VISIBLE);
+                imInput.setText(imAddresses.get(0));
+            }
         }
 
         if(phoneNumber != null){
@@ -1535,29 +1579,33 @@ public class EditContactActivity extends AppCompatActivity {
             yomiCompanyInput.setText(contactYomiCompanyName);
         }
 
-        if(!businessPhones.isEmpty()){
-            if(businessPhones.size() == 1){
-                phoneInput.setText(businessPhones.get(0));
-            } else {
-                businessPhoneInput2.setVisibility(View.VISIBLE);
-                businessPhoneTitle2.setVisibility(View.VISIBLE);
-                phoneInput.setText(businessPhones.get(0));
-                businessPhoneInput2.setText(businessPhones.get(1));
+        if(businessPhones != null){
+            if(!businessPhones.isEmpty()){
+                if(businessPhones.size() == 1){
+                    phoneInput.setText(businessPhones.get(0));
+                } else {
+                    businessPhoneInput2.setVisibility(View.VISIBLE);
+                    businessPhoneTitle2.setVisibility(View.VISIBLE);
+                    phoneInput.setText(businessPhones.get(0));
+                    businessPhoneInput2.setText(businessPhones.get(1));
+                }
             }
         }
 
-        if(!homePhones.isEmpty()){
-            if(homePhones.size() == 1){
-                homePhoneInput.setVisibility(View.VISIBLE);
-                homePhoneTitle.setVisibility(View.VISIBLE);
-                homePhoneInput.setText(homePhones.get(0));
-            } else {
-                homePhoneInput.setVisibility(View.VISIBLE);
-                homePhoneTitle.setVisibility(View.VISIBLE);
-                homePhoneInput2.setVisibility(View.VISIBLE);
-                homePhoneTitle2.setVisibility(View.VISIBLE);
-                homePhoneInput.setText(homePhones.get(0));
-                homePhoneInput2.setText(homePhones.get(1));
+        if(homePhones != null){
+            if(!homePhones.isEmpty()){
+                if(homePhones.size() == 1){
+                    homePhoneInput.setVisibility(View.VISIBLE);
+                    homePhoneTitle.setVisibility(View.VISIBLE);
+                    homePhoneInput.setText(homePhones.get(0));
+                } else {
+                    homePhoneInput.setVisibility(View.VISIBLE);
+                    homePhoneTitle.setVisibility(View.VISIBLE);
+                    homePhoneInput2.setVisibility(View.VISIBLE);
+                    homePhoneTitle2.setVisibility(View.VISIBLE);
+                    homePhoneInput.setText(homePhones.get(0));
+                    homePhoneInput2.setText(homePhones.get(1));
+                }
             }
         }
 
@@ -1661,6 +1709,22 @@ public class EditContactActivity extends AppCompatActivity {
 
         if(otherCountry != null){
             otherCountryNameInput.setText(otherCountry);
+        }
+
+        if(contactBirthday != null){
+            birthdayInput.setVisibility(View.VISIBLE);
+            birthdayTitle.setVisibility(View.VISIBLE);
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            SimpleDateFormat output = new SimpleDateFormat("dd-MM-yyyy");
+            Date d = null;
+            try {
+                d = sdf.parse(contactBirthday);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            birthdayInput.setText(output.format(d));
+
         }
 
     }
