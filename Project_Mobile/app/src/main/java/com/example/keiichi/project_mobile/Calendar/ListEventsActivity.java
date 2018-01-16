@@ -506,7 +506,7 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
     }
 
     public void minimizeApp() {
-        Intent intentListMails = new Intent(ListEventsActivity.this, ContactsActivity.class);
+        Intent intentListMails = new Intent(ListEventsActivity.this, CalendarActivity.class);
         intentListMails.putExtra("AccessToken", accessToken);
         intentListMails.putExtra("userName", userName);
         intentListMails.putExtra("userEmail", userEmail);
