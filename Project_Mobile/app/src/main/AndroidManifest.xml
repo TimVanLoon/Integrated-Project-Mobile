@@ -77,7 +77,7 @@
             android:name=".Calendar.AddEventActivity"
             android:label="New event"
             android:theme="@style/ContactsTheme"
-            android:windowSoftInputMode="adjustResize|adjustPan" />
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Contacts.ContactsDetailsActivity"
             android:label="Contact Details"

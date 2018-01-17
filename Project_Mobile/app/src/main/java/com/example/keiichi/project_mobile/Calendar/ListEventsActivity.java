@@ -67,7 +67,6 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
-
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/events?$orderby=start/dateTime&$top=500&$count=true";
     final private String URL_DELETE = "https://graph.microsoft.com/beta/me/events/";
     private boolean multiSelect = false;
@@ -397,61 +396,15 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
                             showEventDetails.putExtra("userEmail", userEmail);
                             showEventDetails.putExtra("AccessToken", accessToken);
                             showEventDetails.putExtra("userName", userName);
-                            showEventDetails.putExtra("id", event.getId());
-                            showEventDetails.putExtra("subject", event.getSubject());
-                            showEventDetails.putExtra("reminderMinutesBeforeStart", event.getReminderMinutesBeforeStart());
-                            showEventDetails.putExtra("displayAs", event.getShowAs());
-
-                            if(event.getLocation() == null){
-                                showEventDetails.putExtra("location", "");
-                            }
-                            else {
-                                showEventDetails.putExtra("location", event.getLocation().getDisplayName());
-                            }
-
-                            if(event.getStart() == null){
-                                showEventDetails.putExtra("startDate", "");
-                            }
-                            else {
-                                showEventDetails.putExtra("startDate", event.getStart().getDateTime());
-                            }
-
-                            if(event.getBody().getContent() != null){
-                                showEventDetails.putExtra("notes", event.getBody().getContent());
-                            }
-                            else {
-                                showEventDetails.putExtra("notes", "");
-                            }
-
-                            if(event.getBody().getContentType() != null){
-
-                                showEventDetails.putExtra("contentType", event.getBody().getContentType());
-
-                            }
-
-                            String eventBody = event.getBody().getContent();
-
-                            if(eventBody != null){
-                                showEventDetails.putExtra("notes", eventBody);
-                            }
-                            else {
-                                showEventDetails.putExtra("notes", "");
-                            }
-
-                            showEventDetails.putExtra("sensitivity", event.getSensitivity());
-
-                            showEventDetails.putExtra("responseRequested", event.isResponseRequested());
-
-                            if (event.getAttendees() != null) {
-                                showEventDetails.putExtra("attendeesList", (Serializable) event.getAttendees());
-                            }
+                            showEventDetails.putExtra("eventId", event.getId());
+                            showEventDetails.putExtra("event", event);
 
                             startActivity(showEventDetails);
 
                             ListEventsActivity.this.finish();
 
                         } else {
-                            Toast.makeText(getApplicationContext(), "Empty contact list!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Empty event list!", Toast.LENGTH_SHORT).show();
                         }
 
                     }

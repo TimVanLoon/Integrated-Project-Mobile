@@ -82,8 +82,8 @@ import javax.json.JsonObjectBuilder;
 public class AddEventActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/events";
-    private String [] DURATIONSPINNERLIST = {"0 Minutes", "15 Minutes", "30 Minutes", "45 Minutes", "1 Hour", "90 Minutes", " 2 Hours", "Entire day"};
-    private String [] REMINDERSPINNERLIST = {"0 Minutes", "15 Minutes", "30 Minutes", "45 Minutes", "1 Hour", "90 Minutes", " 2 Hours", "3 Hours", "4 Hours", "8 Hours", "12 Hours", "1 Day", "2 Days", "3 Days", "1 Week", "2 Weeks"};
+    private String [] DURATIONSPINNERLIST = {"0 Minutes", "15 Minutes", "30 Minutes", "45 Minutes", "1 Hour", "90 Minutes", "2 Hours", "Entire day"};
+    private String [] REMINDERSPINNERLIST = {"0 Minutes", "15 Minutes", "30 Minutes", "45 Minutes", "1 Hour", "90 Minutes", "2 Hours", "3 Hours", "4 Hours", "8 Hours", "12 Hours", "1 Day", "2 Days", "3 Days", "1 Week", "2 Weeks"};
     private String [] DISPLAYASSPINNERLIST = {"Free", "Working elsewhere", "Tentative", "Busy", "Away"};
     private final Calendar c = Calendar.getInstance();
     private List<Attendee> attendees;
@@ -641,7 +641,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         cal.set(Calendar.YEAR, year);
         cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         cal.set(Calendar.MONTH, month - 1);
-        cal.set(Calendar.HOUR_OF_DAY, hourOfDay - 1);
+        cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
         cal.set(Calendar.MINUTE, minuteOfHour);
         cal.set(Calendar.SECOND, 0);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -660,6 +660,8 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
 
         event.setReminderMinutesBeforeStart(reminderMinutesBeforeStart);
         event.setReminderOn(true);
+
+        System.out.println("reminder: " + reminderMinutesBeforeStart);
 
         event.setShowAs(showAs);
 

@@ -32,7 +32,9 @@ import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
 import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
 import com.example.keiichi.project_mobile.Contacts.EditContactActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Attendee;
+import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
+import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 import com.example.keiichi.project_mobile.R;
 import com.example.keiichi.project_mobile.Utility;
@@ -52,10 +54,9 @@ import java.util.TimerTask;
 
 public class EventDetailsActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    private String [] REMINDERSPINNERLIST = {"0 Minutes", "15 Minutes", "30 Minutes", "45 Minutes", "1 Hour", "90 Minutes", " 2 Hours", "3 Hours", "4 Hours", "8 Hours", "12 Hours",
+    private String [] REMINDERSPINNERLIST = {"0 Minutes", "15 Minutes", "30 Minutes", "45 Minutes", "1 Hour", "90 Minutes", "2 Hours", "3 Hours", "4 Hours", "8 Hours", "12 Hours",
             "1 Day", "2 Days", "3 Days", "1 Week", "2 Weeks"};
     private String [] DISPLAYASSPINNERLIST = {"Free", "Working elsewhere", "Tentative", "Busy", "Away"};
-
     final private String URL_POSTADRESS = "https://graph.microsoft.com/beta/me/events/";
     private List<Attendee> attendees;
     private Toolbar myToolbar;
@@ -82,9 +83,11 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
     private String notes;
     private String sensitivity;
     private String contentType;
+    private String contactId;
     private int startingValueReminder;
     private int startingValueDisplayAs;
     private int reminderMinutesBeforeStart;
+    private Event event;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,16 +108,19 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
         id= getIntent().getStringExtra("id");
-        subject = getIntent().getStringExtra("subject");
-        location = getIntent().getStringExtra("location");
-        startDate = getIntent().getStringExtra("startDate");
-        displayAs = getIntent().getStringExtra("displayAs");
-        contentType = getIntent().getStringExtra("contentType");
-        notes = getIntent().getStringExtra("notes");
-        sensitivity = getIntent().getStringExtra("sensitivity");
-        responseRequested = getIntent().getBooleanExtra("responseRequested", false);
-        reminderMinutesBeforeStart = getIntent().getIntExtra("reminderMinutesBeforeStart", 0);
-        attendees = (List<Attendee>)getIntent().getSerializableExtra("attendeesList");
+        contactId = getIntent().getStringExtra("contactId");
+        event = (Event) getIntent().getSerializableExtra("event");
+
+        subject = event.getSubject();
+        location = event.getLocation().getDisplayName();
+        startDate = event.getStart().getDateTime();
+        displayAs = event.getShowAs();
+        contentType = event.getBody().getContentType();
+        notes = event.getBody().getContent();
+        sensitivity = event.getSensitivity();
+        responseRequested = event.isResponseRequested();
+        reminderMinutesBeforeStart = event.getReminderMinutesBeforeStart();
+        attendees = event.getAttendees();
 
         if(notes != null){
 
