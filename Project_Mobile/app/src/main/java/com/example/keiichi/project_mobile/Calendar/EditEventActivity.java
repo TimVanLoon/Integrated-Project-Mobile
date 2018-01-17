@@ -112,6 +112,7 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
     private String eventNotes;
     private String fromEventDetails;
     private String contentType;
+    private String eventId;
     private int dayOfMonth;
     private int month;
     private int year;
@@ -129,6 +130,8 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
     private ArrayAdapter<String> adapterReminder;
     private ArrayAdapter<String> adapterDisplayAs;
     private MenuItem saveItem;
+    private Event event;
+    private Event updatedEvent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,19 +141,20 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
-        id= getIntent().getStringExtra("id");
-        subject = getIntent().getStringExtra("subject");
-        location = getIntent().getStringExtra("location");
-        startDate = getIntent().getStringExtra("startDate");
-        displayAs = getIntent().getStringExtra("displayAs");
-        notes = getIntent().getStringExtra("notes");
-        sensitivity = getIntent().getStringExtra("sensitivity");
-        fromEventDetails = getIntent().getStringExtra("fromEventDetails");
-        responseRequested = getIntent().getBooleanExtra("responseRequested", false);
-        reminderMinutesBeforeStart = getIntent().getIntExtra("reminderMinutesBeforeStart", 0);
-        attendees = (List<Attendee>)getIntent().getSerializableExtra("attendeesList");
+        eventId = getIntent().getStringExtra("eventId");
+        event = (Event) getIntent().getSerializableExtra("event");
         fromAttendeesActivity = getIntent().getStringExtra("fromAttendeesActivity");
-        contentType = getIntent().getStringExtra("contentType");
+        fromEventDetails = getIntent().getStringExtra("fromEventDetails");
+        subject = event.getSubject();
+        location = event.getLocation().getDisplayName();
+        startDate = event.getStart().getDateTime();
+        displayAs = event.getShowAs();
+        contentType = event.getBody().getContentType();
+        notes = event.getBody().getContent();
+        sensitivity = event.getSensitivity();
+        responseRequested = event.isResponseRequested();
+        reminderMinutesBeforeStart = event.getReminderMinutesBeforeStart();
+        attendees = event.getAttendees();
 
         // INITIALISEER DE INPUT FIELDS
         dateEvent = (EditText) findViewById(R.id.dateEvent);
@@ -184,25 +188,9 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
                 intentAttendees.putExtra("userName", userName);
                 intentAttendees.putExtra("userEmail", userEmail);
                 intentAttendees.putExtra("emailList",(Serializable) emailList);
-                intentAttendees.putExtra("firstTime", firstTime);
-                intentAttendees.putExtra("subject", eventInput.getText().toString());
-                intentAttendees.putExtra("location", locationInput.getText().toString());
-                intentAttendees.putExtra("eventDayOfMonth", dayOfMonth);
-                intentAttendees.putExtra("eventMonth", month);
-                intentAttendees.putExtra("eventYear", year);
-                intentAttendees.putExtra("eventHour", hourOfDay);
-                intentAttendees.putExtra("eventMinute", minuteOfHour);
-                intentAttendees.putExtra("eventDuration", duration);
-                intentAttendees.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
-                intentAttendees.putExtra("displayAs", displayAs);
-                intentAttendees.putExtra("notes", personalNotes.getText().toString());
-                intentAttendees.putExtra("eventIsPrivate", isPrivate);
-                intentAttendees.putExtra("responseRequested", responseRequested);
+                intentAttendees.putExtra("event", event);
+                intentAttendees.putExtra("eventId", eventId);
                 intentAttendees.putExtra("fromEdit", "yes");
-                intentAttendees.putExtra("sensitivity", sensitivity);
-                intentAttendees.putExtra("startDate", startDate);
-                intentAttendees.putExtra("id", id);
-                intentAttendees.putExtra("contentType", contentType);
 
                 startActivity(intentAttendees);
 
@@ -234,7 +222,6 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         // VUL INPUTS MET DATA VAN CONTACT
         eventInput.setText(subject);
         locationInput.setText(location);
-        personalNotes.setText(Html.fromHtml(notes));
 
         durationSpinner.setOnItemSelectedListener(this);
         reminderSpinner.setOnItemSelectedListener(this);
@@ -640,17 +627,8 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
                 intentEventDetails.putExtra("AccessToken", accessToken);
                 intentEventDetails.putExtra("userName", userName);
                 intentEventDetails.putExtra("userEmail", userEmail);
-                intentEventDetails.putExtra("subject", subject);
-                intentEventDetails.putExtra("location", location);
-                intentEventDetails.putExtra("startDate", startDate);
-                intentEventDetails.putExtra("displayAs", displayAs);
-                intentEventDetails.putExtra("notes", notes);
-                intentEventDetails.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
-                intentEventDetails.putExtra("id", id);
-                intentEventDetails.putExtra("sensitivity", sensitivity);
-                intentEventDetails.putExtra("responseRequested", responseRequested);
-                intentEventDetails.putExtra("attendeesList", (Serializable) attendees);
-                intentEventDetails.putExtra("contentType", contentType);
+                intentEventDetails.putExtra("event", event);
+                intentEventDetails.putExtra("eventId", eventId);
 
                 startActivity(intentEventDetails);
 
@@ -677,17 +655,8 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
                             intentCalendar.putExtra("AccessToken", accessToken);
                             intentCalendar.putExtra("userName", userName);
                             intentCalendar.putExtra("userEmail", userEmail);
-                            intentCalendar.putExtra("subject", subject);
-                            intentCalendar.putExtra("location", location);
-                            intentCalendar.putExtra("startDate", startDate);
-                            intentCalendar.putExtra("displayAs", displayAs);
-                            intentCalendar.putExtra("notes", notes);
-                            intentCalendar.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
-                            intentCalendar.putExtra("id", id);
-                            intentCalendar.putExtra("sensitivity", sensitivity);
-                            intentCalendar.putExtra("responseRequested", responseRequested);
-                            intentCalendar.putExtra("attendeesList", (Serializable) attendees);
-                            intentCalendar.putExtra("contentType", contentType);
+                            intentCalendar.putExtra("event", updatedEvent);
+                            intentCalendar.putExtra("eventId", eventId);
 
                             startActivity(intentCalendar);
 
@@ -906,11 +875,11 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         RequestQueue queue = Volley.newRequestQueue(this);
 
 
-        Event event = new Event();
-        event.setSubject(eventInput.getText().toString());
+        updatedEvent = new Event();
+        updatedEvent.setSubject(eventInput.getText().toString());
         subject = eventInput.getText().toString();
 
-        event.setLocation(new Location(locationInput.getText().toString()));
+        updatedEvent.setLocation(new Location(locationInput.getText().toString()));
         location = locationInput.getText().toString();
 
         Calendar cal = Calendar.getInstance();
@@ -923,44 +892,44 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         String startTime = sdf.format(cal.getTime());
 
-        event.setStart(new DateTimeTimeZone(startTime, TimeZone.getDefault().getDisplayName()));
+        updatedEvent.setStart(new DateTimeTimeZone(startTime, TimeZone.getDefault().getDisplayName()));
 
         startDate = startTime;
 
         cal.add(Calendar.MINUTE, duration);
         String endTime = sdf.format(cal.getTime());
 
-        event.setEnd(new DateTimeTimeZone(endTime, TimeZone.getDefault().getDisplayName()));
+        updatedEvent.setEnd(new DateTimeTimeZone(endTime, TimeZone.getDefault().getDisplayName()));
 
-        event.setBody(new ItemBody("Text", personalNotes.getText().toString()));
+        updatedEvent.setBody(new ItemBody("Text", personalNotes.getText().toString()));
         notes = personalNotes.getText().toString();
 
-        event.setReminderMinutesBeforeStart(reminderMinutesBeforeStartValue);
-        event.setReminderOn(true);
+        updatedEvent.setReminderMinutesBeforeStart(reminderMinutesBeforeStartValue);
+        updatedEvent.setReminderOn(true);
 
-        event.setAttendees(attendees);
+        updatedEvent.setAttendees(attendees);
 
         reminderMinutesBeforeStart = reminderMinutesBeforeStartValue;
 
-        event.setShowAs(displayAsValue);
+        updatedEvent.setShowAs(displayAsValue);
 
         if(isPrivate){
 
-            event.setSensitivity("private");
+            updatedEvent.setSensitivity("private");
             sensitivity="private";
 
         } else {
 
-            event.setSensitivity("normal");
+            updatedEvent.setSensitivity("normal");
             sensitivity="normal";
 
         }
 
-        event.setResponseRequested(responseRequested);
+        updatedEvent.setResponseRequested(responseRequested);
 
-        String postAddress = URL_POSTADRESS + id;
+        String postAddress = URL_POSTADRESS + eventId;
 
-        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.PATCH, postAddress, new JSONObject(new Gson().toJson(event)),
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.PATCH, postAddress, new JSONObject(new Gson().toJson(updatedEvent)),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -1112,17 +1081,8 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         intentEventDetails.putExtra("AccessToken", accessToken);
         intentEventDetails.putExtra("userName", userName);
         intentEventDetails.putExtra("userEmail", userEmail);
-        intentEventDetails.putExtra("subject", subject);
-        intentEventDetails.putExtra("location", location);
-        intentEventDetails.putExtra("startDate", startDate);
-        intentEventDetails.putExtra("displayAs", displayAs);
-        intentEventDetails.putExtra("notes", notes);
-        intentEventDetails.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
-        intentEventDetails.putExtra("id", id);
-        intentEventDetails.putExtra("sensitivity", sensitivity);
-        intentEventDetails.putExtra("responseRequested", responseRequested);
-        intentEventDetails.putExtra("attendeesList", (Serializable) attendees);
-        intentEventDetails.putExtra("contentType", contentType);
+        intentEventDetails.putExtra("event", event);
+        intentEventDetails.putExtra("eventId", eventId);
 
         startActivity(intentEventDetails);
 

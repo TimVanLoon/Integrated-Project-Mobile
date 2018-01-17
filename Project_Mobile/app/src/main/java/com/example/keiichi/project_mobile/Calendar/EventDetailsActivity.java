@@ -65,9 +65,11 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
     private TextView locationTextView;
     private TextView startDateTextView;
     private TextView notesTextViewTitle;
+    private TextView attendeesTitle;
     private Spinner reminderSpinner;
     private Spinner displayAsSpinner;
     private CheckBox privateCheckbox;
+    private CheckBox responseCheckbox;
     private ListView attendeeList;
     private WebView notesWebView;
     private AttendeeAdapter attendeeAdapter;
@@ -83,7 +85,7 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
     private String notes;
     private String sensitivity;
     private String contentType;
-    private String contactId;
+    private String eventId;
     private int startingValueReminder;
     private int startingValueDisplayAs;
     private int reminderMinutesBeforeStart;
@@ -97,20 +99,20 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
         eventSubjectTextView = (TextView) findViewById(R.id.eventSubject);
         locationTextView = (TextView) findViewById(R.id.eventLocation);
         startDateTextView = (TextView) findViewById(R.id.startDate);
+        attendeesTitle = (TextView) findViewById(R.id.attendeesTitle);
         notesTextViewTitle = (TextView) findViewById(R.id.notesTextViewTitle);
         reminderSpinner = (Spinner) findViewById(R.id.reminderSpinner);
         displayAsSpinner = (Spinner) findViewById(R.id.displayAsSpinner);
         privateCheckbox = (CheckBox) findViewById(R.id.privateCheckbox);
+        responseCheckbox = (CheckBox) findViewById(R.id.responseCheckbox);
         attendeeList = (ListView) findViewById(R.id.attendeeList);
         notesWebView = (WebView) findViewById(R.id.notesWebView);
 
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
-        id= getIntent().getStringExtra("id");
-        contactId = getIntent().getStringExtra("contactId");
+        eventId = getIntent().getStringExtra("eventId");
         event = (Event) getIntent().getSerializableExtra("event");
-
         subject = event.getSubject();
         location = event.getLocation().getDisplayName();
         startDate = event.getStart().getDateTime();
@@ -122,7 +124,7 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
         reminderMinutesBeforeStart = event.getReminderMinutesBeforeStart();
         attendees = event.getAttendees();
 
-        if(notes != null){
+        if(notes != null && !notes.equals("")){
 
             notesWebView.setPadding(0,0,0,0);
 
@@ -152,6 +154,12 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
 
         }
 
+        if(responseRequested){
+            responseCheckbox.setChecked(true);
+        } else {
+            responseCheckbox.setChecked(false);
+        }
+
         switch(sensitivity){
             case "normal":
                 privateCheckbox.setChecked(false);
@@ -170,14 +178,22 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
                 break;
         }
 
+        if(attendees != null){
 
-        if(!attendees.isEmpty()){
+            if(!attendees.isEmpty()){
 
-            attendeeAdapter = new AttendeeAdapter(this, attendees);
-            attendeeList.setAdapter(attendeeAdapter);
-            Utility.setListViewHeightBasedOnChildren(attendeeList);
+                attendeeAdapter = new AttendeeAdapter(this, attendees);
+                attendeeList.setAdapter(attendeeAdapter);
+                Utility.setListViewHeightBasedOnChildren(attendeeList);
 
+            } else {
+                attendeesTitle.setVisibility(View.GONE);
+            }
+        } else {
+            attendeesTitle.setVisibility(View.GONE);
         }
+
+
 
         eventSubjectTextView.setText(subject);
         locationTextView.setText(location);
@@ -195,7 +211,9 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
         //startDateTextView.setText(startDate);
 
         reminderSpinner.setOnItemSelectedListener(this);
+        reminderSpinner.setClickable(false);
         displayAsSpinner.setOnItemSelectedListener(this);
+        displayAsSpinner.setClickable(false);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<String> adapterReminder = new ArrayAdapter<String>(this, R.layout.spinner_layout, REMINDERSPINNERLIST);
@@ -358,13 +376,6 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
                             intentListEvents.putExtra("AccessToken", accessToken);
                             intentListEvents.putExtra("userName", userName);
                             intentListEvents.putExtra("userEmail", userEmail);
-                            intentListEvents.putExtra("subject", subject);
-                            intentListEvents.putExtra("location", location);
-                            intentListEvents.putExtra("startDate", startDate);
-                            intentListEvents.putExtra("displayAs", displayAs);
-                            intentListEvents.putExtra("notes", notes);
-                            intentListEvents.putExtra("id", id);
-                            intentListEvents.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
 
                             startActivity(intentListEvents);
 
@@ -429,19 +440,8 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
                 intentEditEvent.putExtra("AccessToken", accessToken);
                 intentEditEvent.putExtra("userName", userName);
                 intentEditEvent.putExtra("userEmail", userEmail);
-                intentEditEvent.putExtra("subject", subject);
-                intentEditEvent.putExtra("location", location);
-                intentEditEvent.putExtra("startDate", startDate);
-                intentEditEvent.putExtra("displayAs", displayAs);
-                intentEditEvent.putExtra("notes", notes);
-                intentEditEvent.putExtra("id", id);
-                intentEditEvent.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
-                intentEditEvent.putExtra("sensitivity", sensitivity);
-                intentEditEvent.putExtra("attendeesList", (Serializable)attendees);
-                intentEditEvent.putExtra("fromEventDetails", "yes");
-                intentEditEvent.putExtra("responseRequested", responseRequested);
-                intentEditEvent.putExtra("fromEventDetails", "yes");
-                intentEditEvent.putExtra("contentType", contentType);
+                intentEditEvent.putExtra("eventId", eventId);
+                intentEditEvent.putExtra("event", event);
 
                 startActivity(intentEditEvent);
 
@@ -460,7 +460,7 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
     private void deleteEvent() throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        String postAddress = URL_POSTADRESS + id;
+        String postAddress = URL_POSTADRESS + eventId;
 
         StringRequest stringRequest = new StringRequest(Request.Method.DELETE, postAddress,
                 new Response.Listener<String>() {
@@ -514,14 +514,6 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
         intentListEvents.putExtra("AccessToken", accessToken);
         intentListEvents.putExtra("userName", userName);
         intentListEvents.putExtra("userEmail", userEmail);
-        intentListEvents.putExtra("subject", subject);
-        intentListEvents.putExtra("location", location);
-        intentListEvents.putExtra("startDate", startDate);
-        intentListEvents.putExtra("displayAs", displayAs);
-        intentListEvents.putExtra("notes", notes);
-        intentListEvents.putExtra("id", id);
-        intentListEvents.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
-        intentListEvents.putExtra("contentType", contentType);
 
         startActivity(intentListEvents);
 

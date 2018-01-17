@@ -67,7 +67,7 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
-    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/events?$orderby=start/dateTime&$top=500&$count=true";
+    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/events?$orderby=start/dateTime&$top=999&$count=true";
     final private String URL_DELETE = "https://graph.microsoft.com/beta/me/events/";
     private boolean multiSelect = false;
     private boolean actionModeEnabled = false;

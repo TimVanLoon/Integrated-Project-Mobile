@@ -215,6 +215,33 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/requestReponseLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="10dp"
+            android:layout_marginBottom="20dp">
+
+            <CheckBox
+                android:id="@+id/responseCheckbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:buttonTint="@color/darkGrey"
+                android:backgroundTint="@color/colorWhite"/>
+
+            <TextView
+                android:id="@+id/responseTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/responseTextView"
+                android:textColor="@color/black"
+                android:textSize="7pt">
+            </TextView>
+
+        </LinearLayout>
+
         <TextView
             android:id="@+id/notesTextViewTitle"
             android:layout_width="match_parent"

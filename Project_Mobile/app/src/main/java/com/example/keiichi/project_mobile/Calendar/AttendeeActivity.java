@@ -35,6 +35,7 @@ import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Attendee;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
+import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 import com.example.keiichi.project_mobile.Mail.RecyclerTouchListener;
 import com.example.keiichi.project_mobile.MainActivity;
@@ -84,6 +85,7 @@ public class AttendeeActivity extends AppCompatActivity {
     private String startDate;
     private String id;
     private String contentType;
+    private String eventId;
     private int eventDayOfMonth;
     private int eventMonth;
     private int eventYear;
@@ -95,6 +97,7 @@ public class AttendeeActivity extends AppCompatActivity {
     private boolean eventRequestResponses;
     private boolean responseRequested;
     private boolean isPrivate;
+    private Event event;
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -108,6 +111,8 @@ public class AttendeeActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         contactsRecyclerView = findViewById(R.id.contactsRecyclerView);
 
+        eventId = getIntent().getStringExtra("eventId");
+        event = (Event) getIntent().getSerializableExtra("event");
         fromContactDetailsActivity = getIntent().getStringExtra("fromContactDetailsActivity");
         fromRoomActivity = getIntent().getStringExtra("fromRoomActivity");
         fromUserActivity = getIntent().getStringExtra("fromUserActivity");
@@ -388,24 +393,8 @@ public class AttendeeActivity extends AppCompatActivity {
                             intentEditEvent.putExtra("AccessToken", accessToken);
                             intentEditEvent.putExtra("userName", userName);
                             intentEditEvent.putExtra("fromAttendeesActivity", "yes");
-                            intentEditEvent.putExtra("firstTime", firstTime);
-                            intentEditEvent.putExtra("subject", subject);
-                            intentEditEvent.putExtra("location", location);
-                            intentEditEvent.putExtra("eventDayOfMonth", eventDayOfMonth);
-                            intentEditEvent.putExtra("eventMonth", eventMonth);
-                            intentEditEvent.putExtra("eventYear", eventYear);
-                            intentEditEvent.putExtra("eventHour", eventHour);
-                            intentEditEvent.putExtra("eventMinute", eventMinute);
-                            intentEditEvent.putExtra("eventDuration", eventDuration);
-                            intentEditEvent.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
-                            intentEditEvent.putExtra("displayAs", displayAs);
-                            intentEditEvent.putExtra("notes", notes);
-                            intentEditEvent.putExtra("eventIsPrivate", isPrivate);
-                            intentEditEvent.putExtra("responseRequested", responseRequested);
-                            intentEditEvent.putExtra("sensitivity", sensitivity);
-                            intentEditEvent.putExtra("startDate", startDate);
-                            intentEditEvent.putExtra("id", id);
-                            intentEditEvent.putExtra("contentType", contentType);
+                            intentEditEvent.putExtra("event", event);
+                            intentEditEvent.putExtra("eventId", eventId);
 
                             if(contact.getEmailAddresses() != null){
 
@@ -496,24 +485,9 @@ public class AttendeeActivity extends AppCompatActivity {
             intentEditEvent.putExtra("userName", userName);
             intentEditEvent.putExtra("fromAttendeesActivity", "yes");
             intentEditEvent.putExtra("emailList",(Serializable) emailList);
-            intentEditEvent.putExtra("firstTime", firstTime);
-            intentEditEvent.putExtra("subject", subject);
-            intentEditEvent.putExtra("location", location);
-            intentEditEvent.putExtra("eventDayOfMonth", eventDayOfMonth);
-            intentEditEvent.putExtra("eventMonth", eventMonth);
-            intentEditEvent.putExtra("eventYear", eventYear);
-            intentEditEvent.putExtra("eventHour", eventHour);
-            intentEditEvent.putExtra("eventMinute", eventMinute);
-            intentEditEvent.putExtra("eventDuration", eventDuration);
-            intentEditEvent.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
-            intentEditEvent.putExtra("displayAs", displayAs);
-            intentEditEvent.putExtra("notes", notes);
-            intentEditEvent.putExtra("eventIsPrivate", isPrivate);
-            intentEditEvent.putExtra("responseRequested", responseRequested);
-            intentEditEvent.putExtra("sensitivity", sensitivity);
-            intentEditEvent.putExtra("startDate", startDate);
-            intentEditEvent.putExtra("id", id);
-            intentEditEvent.putExtra("contentType", contentType);
+            intentEditEvent.putExtra("event", event);
+            intentEditEvent.putExtra("eventId", eventId);
+
 
             startActivity(intentEditEvent);
 

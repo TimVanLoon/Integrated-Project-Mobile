@@ -100,7 +100,7 @@
             android:name=".Calendar.EditEventActivity"
             android:label="Edit Event"
             android:theme="@style/ContactsTheme"
-            android:windowSoftInputMode="adjustResize|adjustPan" />
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Mail.ReplyToMailActivity"
             android:label="Compose"
