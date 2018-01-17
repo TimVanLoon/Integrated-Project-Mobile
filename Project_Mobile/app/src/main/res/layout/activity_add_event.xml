@@ -268,31 +268,6 @@
             app:itemTextColor="@color/black"
             app:itemIconTint="@color/black"/>
 
-        <TextView
-            android:id="@+id/repeatTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/repeatTitle"
-            android:textColor="@color/black"
-            android:layout_marginLeft="15dp"
-            android:textSize="7pt">
-        </TextView>
-
-        <Spinner
-            android:id="@+id/repeatSpinner"
-            android:layout_width="fill_parent"
-            android:layout_height="37dp"
-            android:textSize="12dp"
-            android:textColor="@color/blue_selected"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/edit_text_style"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            app:itemTextColor="@color/black"
-            app:itemIconTint="@color/black"/>
-
         <LinearLayout
             android:id="@+id/privateLayout"
             android:layout_width="wrap_content"

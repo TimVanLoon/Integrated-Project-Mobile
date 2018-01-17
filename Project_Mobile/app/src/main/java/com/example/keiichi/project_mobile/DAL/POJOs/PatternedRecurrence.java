@@ -12,6 +12,10 @@ public class PatternedRecurrence implements Serializable {
         this.range = range;
     }
 
+    public PatternedRecurrence(){
+
+    }
+
     public RecurrencePattern getPattern() {
         return pattern;
     }

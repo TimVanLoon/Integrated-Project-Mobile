@@ -46,12 +46,16 @@ import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.DAL.POJOs.ItemBody;
 import com.example.keiichi.project_mobile.DAL.POJOs.Location;
+import com.example.keiichi.project_mobile.DAL.POJOs.PatternedRecurrence;
+import com.example.keiichi.project_mobile.DAL.POJOs.RecurrencePattern;
+import com.example.keiichi.project_mobile.DAL.POJOs.RecurrenceRange;
 import com.example.keiichi.project_mobile.DAL.POJOs.User;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 import com.example.keiichi.project_mobile.Mail.SendMailActivity;
 import com.example.keiichi.project_mobile.R;
 import com.example.keiichi.project_mobile.Utility;
 import com.google.gson.Gson;
+import com.microsoft.graph.extensions.DayOfWeek;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.json.JSONException;
@@ -81,7 +85,6 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private String [] DURATIONSPINNERLIST = {"0 Minutes", "15 Minutes", "30 Minutes", "45 Minutes", "1 Hour", "90 Minutes", " 2 Hours", "Entire day"};
     private String [] REMINDERSPINNERLIST = {"0 Minutes", "15 Minutes", "30 Minutes", "45 Minutes", "1 Hour", "90 Minutes", " 2 Hours", "3 Hours", "4 Hours", "8 Hours", "12 Hours", "1 Day", "2 Days", "3 Days", "1 Week", "2 Weeks"};
     private String [] DISPLAYASSPINNERLIST = {"Free", "Working elsewhere", "Tentative", "Busy", "Away"};
-    private String [] REPEATSPINNERLIST = {"Never", "Each day", "Every sunday", "Every workday", "Day 31 of every month", "Ever last sunday", "Every 31st of december"};
     private final Calendar c = Calendar.getInstance();
     private List<Attendee> attendees;
     private List<EmailAddress> emailList = new ArrayList<>();
@@ -128,13 +131,11 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private EditText personalNotes;
     private TextView reminderTitle;
     private TextView displayAsTitle;
-    private TextView repeatTitle;
     private TextView notesTitle;
     private TextView attendeesTitle;
     private Spinner durationSpinner;
     private Spinner reminderSpinner;
     private Spinner displayAsSpinner;
-    private Spinner repeatSpinner;
     private ImageView plusAttendeeIcon;
     private ListView attendeeList;
     private DatePickerDialog datePickerDialog;
@@ -145,11 +146,11 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private ArrayAdapter<String> adapterDuration;
     private ArrayAdapter<String> adapterReminder;
     private ArrayAdapter<String> adapterDisplayAs;
-    private ArrayAdapter<String> adapterRepeat;
     private MenuItem saveItem;
     private Contact contact;
     private EmailAddress room;
     private User user;
+    private Date startDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -190,12 +191,10 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         personalNotes = (EditText) findViewById(R.id.personalNotes);
         reminderTitle = (TextView) findViewById(R.id.reminderTitle);
         displayAsTitle = (TextView) findViewById(R.id.displayAsTitle);
-        repeatTitle = (TextView) findViewById(R.id.repeatTitle);
         attendeesTitle = (TextView) findViewById(R.id.attendeesTitle);
         notesTitle = (TextView) findViewById(R.id.notesTitle);
         durationSpinner = (Spinner) findViewById(R.id.durationSpinner);
         reminderSpinner = (Spinner) findViewById(R.id.reminderSpinner);
-        repeatSpinner = (Spinner) findViewById(R.id.repeatSpinner);
         displayAsSpinner = (Spinner) findViewById(R.id.displayAsSpinner);
         moreDetailsButton = (Button) findViewById(R.id.moreDetailsButton);
         plusAttendeeIcon = (ImageView) findViewById(R.id.plusAttendeeIcon);
@@ -210,16 +209,13 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         setEditTextOnFocusListener(personalNotes);
         setSpinnerOnFocusListener(durationSpinner);
         setSpinnerOnFocusListener(reminderSpinner);
-        setSpinnerOnFocusListener(repeatSpinner);
         setSpinnerOnFocusListener(durationSpinner);
 
         attendeesTitle.setVisibility(View.GONE);
         plusAttendeeIcon.setVisibility(View.GONE);
         reminderSpinner.setVisibility(View.GONE);
-        repeatSpinner.setVisibility(View.GONE);
         displayAsSpinner.setVisibility(View.GONE);
         notesTitle.setVisibility(View.GONE);
-        repeatTitle.setVisibility(View.GONE);
         displayAsTitle.setVisibility(View.GONE);
         reminderTitle.setVisibility(View.GONE);
         personalNotes.setVisibility(View.GONE);
@@ -267,7 +263,6 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         durationSpinner.setOnItemSelectedListener(this);
         reminderSpinner.setOnItemSelectedListener(this);
         displayAsSpinner.setOnItemSelectedListener(this);
-        repeatSpinner.setOnItemSelectedListener(this);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
         adapterDuration = new ArrayAdapter<String>(this, R.layout.spinner_layout, DURATIONSPINNERLIST);
@@ -296,20 +291,13 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
         startingValue = adapterDisplayAs.getPosition("Busy");
         displayAsSpinner.setSelection(startingValue);
 
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        adapterRepeat = new ArrayAdapter<String>(this,R.layout.spinner_layout, REPEATSPINNERLIST);
-        // Specify the layout to use when the list of choices appears
-        adapterRepeat.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        repeatSpinner.setAdapter(adapterRepeat);
-        startingValue = adapterRepeat.getPosition("Never");
-        repeatSpinner.setSelection(startingValue);
-
         currentDay = getDayInString(c.get(Calendar.DAY_OF_WEEK_IN_MONTH));
 
         dayOfMonth = c.get(Calendar.DAY_OF_MONTH);
         month = c.get(Calendar.MONTH) + 1;
         year = c.get(Calendar.YEAR);
+
+        startDate = new Date(dayOfMonth, month, year);
 
         if(month <10) {
             finalMonth = "0" + month;
@@ -491,6 +479,7 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
                                     finalDayOfMonth = String.valueOf(dayOfMonth);
                                 }
 
+                                startDate = new Date(dayOfMonth, month, year);
 
                                 dateEvent.setText(finalDayOfMonth + "-" + finalMonth + "-" + year);
 
@@ -850,29 +839,6 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
             }
         }
 
-        if(parent == repeatSpinner){
-            switch(pos){
-                case 0:
-
-                    break;
-
-                case 1:
-
-                    break;
-
-                case 2:
-
-                    break;
-
-                case 3:
-
-                    break;
-
-                case 4:
-
-                    break;
-            }
-        }
     }
 
     public void onNothingSelected(AdapterView<?> parent) {
@@ -918,10 +884,8 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
 
         moreDetailsButton.setVisibility(View.GONE);
         reminderSpinner.setVisibility(View.VISIBLE);
-        repeatSpinner.setVisibility(View.VISIBLE);
         displayAsSpinner.setVisibility(View.VISIBLE);
         notesTitle.setVisibility(View.VISIBLE);
-        repeatTitle.setVisibility(View.VISIBLE);
         displayAsTitle.setVisibility(View.VISIBLE);
         reminderTitle.setVisibility(View.VISIBLE);
         personalNotes.setVisibility(View.VISIBLE);
@@ -961,7 +925,6 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
                     responseRequested = false;
                 }
                 break;
-
 
         }
     }
@@ -1221,6 +1184,24 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
                 }
             }
         });
+
+    }
+
+    private PatternedRecurrence makeRecurrence(){
+
+        PatternedRecurrence patternedRecurrence = new PatternedRecurrence();
+        RecurrencePattern recurrencePattern = new RecurrencePattern();
+        RecurrenceRange recurrenceRange = new RecurrenceRange();
+
+        recurrenceRange.setType("noEnd");
+        recurrenceRange.setStartDate(startDate);
+
+        recurrencePattern.setFirstDayOfWeek("sunday");
+
+        patternedRecurrence.setPattern(recurrencePattern);
+        patternedRecurrence.setRange(recurrenceRange);
+
+        return patternedRecurrence;
 
     }
 

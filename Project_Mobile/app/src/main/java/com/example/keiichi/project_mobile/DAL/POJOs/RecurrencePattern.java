@@ -23,6 +23,10 @@ public class RecurrencePattern implements Serializable {
         this.index = index;
     }
 
+    public RecurrencePattern(){
+
+    }
+
     public String getType() {
         return type;
     }

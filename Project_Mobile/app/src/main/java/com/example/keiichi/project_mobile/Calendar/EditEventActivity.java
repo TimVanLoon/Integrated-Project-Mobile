@@ -65,7 +65,6 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
     private String [] DURATIONSPINNERLIST = {"0 Minutes", "15 Minutes", "30 Minutes", "45 Minutes", "1 Hour", "90 Minutes", " 2 Hours", "Entire day"};
     private String [] REMINDERSPINNERLIST = {"0 Minutes", "15 Minutes", "30 Minutes", "45 Minutes", "1 Hour", "90 Minutes", " 2 Hours", "3 Hours", "4 Hours", "8 Hours", "12 Hours", "1 Day", "2 Days", "3 Days", "1 Week", "2 Weeks"};
     private String [] DISPLAYASSPINNERLIST = {"Free", "Working elsewhere", "Tentative", "Busy", "Away"};
-    private String [] REPEATSPINNERLIST = {"Never", "Each day", "Every sunday", "Every workday", "Day 31 of every month", "Ever last sunday", "Every 31st of december"};
     private List<Attendee> attendees;
     private List<EmailAddress> emailList = new ArrayList<>();
     private Toolbar myToolbar;
@@ -78,12 +77,10 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
     private EditText personalNotes;
     private TextView reminderTitle;
     private TextView displayAsTitle;
-    private TextView repeatTitle;
     private TextView notesTitle;
     private Spinner durationSpinner;
     private Spinner reminderSpinner;
     private Spinner displayAsSpinner;
-    private Spinner repeatSpinner;
     private CheckBox privateCheckbox;
     private CheckBox responseCheckbox;
     private ListView attendeeList;
@@ -131,7 +128,6 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
     private ArrayAdapter<String> adapterDuration;
     private ArrayAdapter<String> adapterReminder;
     private ArrayAdapter<String> adapterDisplayAs;
-    private ArrayAdapter<String> adapterRepeat;
     private MenuItem saveItem;
 
     @Override
@@ -164,12 +160,10 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         personalNotes = (EditText) findViewById(R.id.personalNotes);
         reminderTitle = (TextView) findViewById(R.id.reminderTitle);
         displayAsTitle = (TextView) findViewById(R.id.displayAsTitle);
-        repeatTitle = (TextView) findViewById(R.id.repeatTitle);
         notesTitle = (TextView) findViewById(R.id.notesTitle);
         attendeeList = (ListView) findViewById(R.id.attendeeList);
         durationSpinner = (Spinner) findViewById(R.id.durationSpinner);
         reminderSpinner = (Spinner) findViewById(R.id.reminderSpinner);
-        repeatSpinner = (Spinner) findViewById(R.id.repeatSpinner);
         displayAsSpinner = (Spinner) findViewById(R.id.displayAsSpinner);
         privateCheckbox = (CheckBox) findViewById(R.id.privateCheckbox);
         responseCheckbox = (CheckBox) findViewById(R.id.responseCheckbox);
@@ -180,7 +174,6 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         setEditTextOnFocusListener(personalNotes);
         setSpinnerOnFocusListener(durationSpinner);
         setSpinnerOnFocusListener(reminderSpinner);
-        setSpinnerOnFocusListener(repeatSpinner);
         setSpinnerOnFocusListener(durationSpinner);
 
         plusAttendeeIcon.setOnClickListener(new View.OnClickListener() {
@@ -246,7 +239,6 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         durationSpinner.setOnItemSelectedListener(this);
         reminderSpinner.setOnItemSelectedListener(this);
         displayAsSpinner.setOnItemSelectedListener(this);
-        repeatSpinner.setOnItemSelectedListener(this);
 
         start = Calendar.getInstance();
 
@@ -354,15 +346,6 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         displayAsSpinner.setAdapter(adapterDisplayAs);
         //startingValue = adapterDisplayAs.getPosition("Busy");
         //displayAsSpinner.setSelection(startingValue);
-
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        adapterRepeat = new ArrayAdapter<String>(this,R.layout.spinner_layout, REPEATSPINNERLIST);
-        // Specify the layout to use when the list of choices appears
-        adapterRepeat.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        repeatSpinner.setAdapter(adapterRepeat);
-        //startingValue = adapterRepeat.getPosition("Never");
-        //repeatSpinner.setSelection(startingValue);
 
         switch(reminderMinutesBeforeStart){
             case 0:
@@ -909,26 +892,6 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
                 case 4:
                     displayAsValue = "Oof";
                     displayAs = "oof";
-                    break;
-            }
-        }
-
-        if(parent == repeatSpinner){
-            switch(pos){
-                case 0:
-                    break;
-
-                case 1:
-                    break;
-
-                case 2:
-
-                    break;
-
-                case 3:
-                    break;
-
-                case 4:
                     break;
             }
         }

@@ -18,6 +18,10 @@ public class RecurrenceRange implements Serializable {
         this.numberOfOccurrences = numberOfOccurrences;
     }
 
+    public RecurrenceRange(){
+
+    }
+
     public String getType() {
         return type;
     }
