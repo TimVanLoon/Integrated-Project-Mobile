@@ -514,6 +514,14 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
 
             }
         });
+
+        attendeeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                emailList.remove(i);
+            }
+        });
+
     }
 
     // VOEG ICONS TOE AAN DE ACTION BAR

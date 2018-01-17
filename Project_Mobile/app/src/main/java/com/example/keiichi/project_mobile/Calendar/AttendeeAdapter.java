@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
@@ -46,7 +47,7 @@ public class AttendeeAdapter extends BaseAdapter implements ListAdapter {
 
     @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
         LayoutInflater layoutInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -57,6 +58,19 @@ public class AttendeeAdapter extends BaseAdapter implements ListAdapter {
         TextView attendeeEmail = rowView.findViewById(R.id.attendee);
 
         attendeeEmail.setText(attendee.getEmailAddress().getName());
+
+        ImageView deleteIcon = rowView.findViewById(R.id.deleteIcon);
+
+        deleteIcon.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+
+                originalData.remove(position);
+                AttendeeAdapter.this.notifyDataSetChanged();
+
+            }
+        });
 
         return rowView;
     }
