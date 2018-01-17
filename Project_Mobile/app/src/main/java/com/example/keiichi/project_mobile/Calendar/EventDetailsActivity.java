@@ -132,20 +132,12 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
 
             //setupWebView();
 
-            if(contentType.equals("html")){
-
-                notesWebView.getSettings().setJavaScriptEnabled(true);
-                notesWebView.getSettings().setLoadWithOverviewMode(true);
-                notesWebView.getSettings().setUseWideViewPort(true);
-                notesWebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-                notesWebView.setScrollbarFadingEnabled(false);
-                notesWebView.loadDataWithBaseURL("", notes, "text/html", "utf-8","");
-
-            } else{
-
-                notesWebView.loadDataWithBaseURL("", notes, "text", "utf-8","");
-
-            }
+            notesWebView.getSettings().setJavaScriptEnabled(true);
+            notesWebView.getSettings().setLoadWithOverviewMode(true);
+            notesWebView.getSettings().setUseWideViewPort(true);
+            notesWebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+            notesWebView.setScrollbarFadingEnabled(false);
+            notesWebView.loadDataWithBaseURL("", notes, "text/html", "utf-8","");
 
         } else {
 
@@ -192,8 +184,6 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
         } else {
             attendeesTitle.setVisibility(View.GONE);
         }
-
-
 
         eventSubjectTextView.setText(subject);
         locationTextView.setText(location);
@@ -414,14 +404,6 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
                 intentListEvents.putExtra("AccessToken", accessToken);
                 intentListEvents.putExtra("userName", userName);
                 intentListEvents.putExtra("userEmail", userEmail);
-                intentListEvents.putExtra("subject", subject);
-                intentListEvents.putExtra("location", location);
-                intentListEvents.putExtra("startDate", startDate);
-                intentListEvents.putExtra("displayAs", displayAs);
-                intentListEvents.putExtra("notes", notes);
-                intentListEvents.putExtra("id", id);
-                intentListEvents.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
-                intentListEvents.putExtra("contentType", contentType);
 
                 startActivity(intentListEvents);
 

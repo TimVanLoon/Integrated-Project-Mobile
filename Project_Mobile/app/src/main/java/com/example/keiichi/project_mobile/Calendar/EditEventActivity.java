@@ -901,7 +901,6 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         updatedEvent.setEnd(new DateTimeTimeZone(endTime, TimeZone.getDefault().getDisplayName()));
 
         updatedEvent.setBody(new ItemBody("Text", personalNotes.getText().toString()));
-        notes = personalNotes.getText().toString();
 
         updatedEvent.setReminderMinutesBeforeStart(reminderMinutesBeforeStartValue);
         updatedEvent.setReminderOn(true);
