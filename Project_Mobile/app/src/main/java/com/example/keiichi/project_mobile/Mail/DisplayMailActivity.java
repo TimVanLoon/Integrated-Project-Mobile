@@ -34,6 +34,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -86,6 +87,7 @@ public class DisplayMailActivity extends AppCompatActivity {
     private WebView mailBodyWebView;
     private ImageView profilePicture;
     private ImageView replyIcon;
+    private ImageView moreIcon;
     private Toolbar myToolbar;
     private String ACCES_TOKEN;
     private String messageBody;
@@ -158,6 +160,7 @@ public class DisplayMailActivity extends AppCompatActivity {
         receiverMailTextView = findViewById(R.id.receiverMailTextView);
         mailBodyWebView = findViewById(R.id.mailBodyWebView);
         replyIcon = findViewById(R.id.replyIcon);
+        moreIcon = (ImageView) findViewById(R.id.moreIcon);
 
         replyIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,7 +168,6 @@ public class DisplayMailActivity extends AppCompatActivity {
                 goToReplyActivity();
             }
         });
-
 
         ColorGenerator generator = ColorGenerator.MATERIAL;
 
@@ -188,8 +190,6 @@ public class DisplayMailActivity extends AppCompatActivity {
             }
 
         }
-
-
 
         builder = new AlertDialog.Builder(DisplayMailActivity.this);
         builder.setCancelable(true);
@@ -235,7 +235,67 @@ public class DisplayMailActivity extends AppCompatActivity {
             }
         });
 
+        moreIcon.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
 
+                final PopupMenu popupMenu = new PopupMenu(getApplicationContext(), view);
+
+                popupMenu.inflate(R.menu.mail_options);
+
+                popupMenu.show();
+
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+
+                        Menu menu = popupMenu.getMenu();
+
+                        switch(menuItem.getItemId()){
+                            case R.id.action_markUnread:
+
+                                try {
+                                    updateMailToUnread(messageObject);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                break;
+
+                            case R.id.action_markJunk:
+
+                                try {
+                                    moveToJunk();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                break;
+
+                            case R.id.action_replyAll:
+
+                                goToReplyAllActivity();
+
+                                break;
+
+                            case R.id.action_forward:
+
+                                toForwardMail();
+
+                                break;
+
+                            case R.id.action_delete:
+                                builder.show();
+
+                                break;
+
+                        }
+
+                        return false;
+                    }
+                });
+            }
+        });
 
         displayMailData();
     }
@@ -271,10 +331,6 @@ public class DisplayMailActivity extends AppCompatActivity {
                                 //openAttachment(attachments.get(0).getName(), attachments.get(0).getContentType());
                             }
                         }
-
-
-
-
 
                     }
 
@@ -442,8 +498,6 @@ public class DisplayMailActivity extends AppCompatActivity {
             attachmentItem.setVisible(true);
         }
 
-
-
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -466,35 +520,9 @@ public class DisplayMailActivity extends AppCompatActivity {
 
                 return true;
 
-            case R.id.action_unread:
-                try {
-                    updateMailToUnread(messageObject);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                return true;
-
-            case R.id.action_junk:
-                try {
-                    moveToJunk();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                return true;
-
-            case R.id.action_replyAll:
-                goToReplyAllActivity();
-                return true;
-
             case R.id.action_delete:
 
                 builder.show();
-
-                return true;
-
-            case R.id.action_forward:
-
-                toForwardMail();
 
                 return true;
 

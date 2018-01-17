@@ -61,7 +61,7 @@
             android:layout_marginLeft="12.5dp"/>
 
         <LinearLayout
-            android:layout_width="243dp"
+            android:layout_width="195dp"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
@@ -94,12 +94,18 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginTop="15dp"
-            android:layout_marginLeft="15dp"
+            android:layout_marginLeft="25dp"
             android:src="@drawable/ic_reply_black"/>
 
+        <ImageView
+            android:id="@+id/moreIcon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/ic_more"/>
 
     </LinearLayout>
-
 
         <ScrollView
             android:layout_width="fill_parent"

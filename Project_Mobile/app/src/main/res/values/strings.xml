@@ -147,4 +147,10 @@
     <string name="homeAddressTitle">Home</string>
 
     <string name="addUser">Add user</string>
+
+    <string name="markUnread">Mark as unread</string>
+    <string name="forward">Forward</string>
+    <string name="replyAll">Reply all</string>
+    <string name="markJunk">Mark as junk</string>
+
 </resources>

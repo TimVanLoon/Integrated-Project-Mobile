@@ -101,8 +101,18 @@ public class UserDetailsActivity extends AppCompatActivity {
 
         profilePic.setImageDrawable(drawable1);
         headerDisplayName.setText(displayName);
-        firstName.setText(givenName);
-        lastName.setText(surName);
+
+        if(givenName != null){
+            firstName.setText(givenName);
+        } else {
+            firstName.setVisibility(View.GONE);
+        }
+
+        if(surName != null){
+            lastName.setText(surName);
+        } else {
+            lastName.setVisibility(View.GONE);
+        }
 
         if(mail != null){
             userMail.setText(mail);

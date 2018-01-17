@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/action_markUnread"
+        android:title="@string/markUnread"
+        />
+
+    <item android:id="@+id/action_markJunk"
+        android:title="@string/markJunk"
+        />
+
+    <item android:id="@+id/action_replyAll"
+        android:title="@string/replyAll"
+        />
+
+    <item android:id="@+id/action_forward"
+        android:title="@string/forward"
+        />
+
+
+    <item android:id="@+id/action_delete"
+        android:title="@string/action_delete"
+        />
+
+</menu>
