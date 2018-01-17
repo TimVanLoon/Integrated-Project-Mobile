@@ -191,6 +191,7 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
                 intentAttendees.putExtra("event", event);
                 intentAttendees.putExtra("eventId", eventId);
                 intentAttendees.putExtra("fromEdit", "yes");
+                intentAttendees.putExtra("firstTime", firstTime);
 
                 startActivity(intentAttendees);
 
@@ -572,8 +573,6 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
                     break;
 
             }
-
-            //refillFromAttendeeActivity();
 
             attendees = new ArrayList<>();
 
@@ -995,43 +994,6 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
 
 
         }
-    }
-
-    public void refillFromAttendeeActivity(){
-
-        dayOfMonth = getIntent().getIntExtra("eventDayOfMonth", 0);
-        month = getIntent().getIntExtra("eventMonth", 0);
-        year = getIntent().getIntExtra("eventYear", 0);
-        hourOfDay = getIntent().getIntExtra("eventHour", 0);
-        minuteOfHour = getIntent().getIntExtra("eventMinute", 0);
-
-        if(month <10) {
-            finalMonth = "0" + month;
-        } else {
-            finalMonth = String.valueOf(month);
-        }
-
-        if(dayOfMonth <10) {
-            finalDayOfMonth = "0" + dayOfMonth;
-        } else {
-            finalDayOfMonth = String.valueOf(dayOfMonth);
-        }
-
-        if(hourOfDay <10) {
-            finalHourOfDay = "0" + hourOfDay;
-        } else {
-            finalHourOfDay = String.valueOf(hourOfDay);
-        }
-
-        if(minuteOfHour<10){
-            finalMinuteOfHour = "0"+ minuteOfHour;
-        }  else {
-            finalMinuteOfHour = String.valueOf(minuteOfHour);
-        }
-
-        dateEvent.setText(finalDayOfMonth + "-" + finalMonth + "-" + year);
-        timeEvent.setText(finalHourOfDay + ":" + finalMinuteOfHour);
-
     }
 
     public void setEditTextOnFocusListener(EditText et){

@@ -442,6 +442,7 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
                 intentEditEvent.putExtra("userEmail", userEmail);
                 intentEditEvent.putExtra("eventId", eventId);
                 intentEditEvent.putExtra("event", event);
+                intentEditEvent.putExtra("fromEventDetails", "yes");
 
                 startActivity(intentEditEvent);
 
