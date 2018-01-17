@@ -210,24 +210,8 @@ public class AttendeeActivity extends AppCompatActivity {
                     intentEditEvent.putExtra("userName", userName);
                     intentEditEvent.putExtra("fromAttendeesActivity", "yes");
                     intentEditEvent.putExtra("emailList",(Serializable) emailList);
-                    intentEditEvent.putExtra("firstTime", firstTime);
-                    intentEditEvent.putExtra("subject", subject);
-                    intentEditEvent.putExtra("location", location);
-                    intentEditEvent.putExtra("eventDayOfMonth", eventDayOfMonth);
-                    intentEditEvent.putExtra("eventMonth", eventMonth);
-                    intentEditEvent.putExtra("eventYear", eventYear);
-                    intentEditEvent.putExtra("eventHour", eventHour);
-                    intentEditEvent.putExtra("eventMinute", eventMinute);
-                    intentEditEvent.putExtra("eventDuration", eventDuration);
-                    intentEditEvent.putExtra("reminderMinutesBeforeStart", reminderMinutesBeforeStart);
-                    intentEditEvent.putExtra("displayAs", displayAs);
-                    intentEditEvent.putExtra("notes", notes);
-                    intentEditEvent.putExtra("eventIsPrivate", isPrivate);
-                    intentEditEvent.putExtra("responseRequested", responseRequested);
-                    intentEditEvent.putExtra("sensitivity", sensitivity);
-                    intentEditEvent.putExtra("startDate", startDate);
-                    intentEditEvent.putExtra("id", id);
-                    intentEditEvent.putExtra("contentType", contentType);
+                    intentEditEvent.putExtra("event", event);
+                    intentEditEvent.putExtra("eventId", eventId);
 
                     startActivity(intentEditEvent);
 

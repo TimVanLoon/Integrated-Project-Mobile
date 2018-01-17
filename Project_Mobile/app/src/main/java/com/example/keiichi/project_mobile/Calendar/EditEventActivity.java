@@ -573,7 +573,7 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
 
             }
 
-            refillFromAttendeeActivity();
+            //refillFromAttendeeActivity();
 
             attendees = new ArrayList<>();
 
