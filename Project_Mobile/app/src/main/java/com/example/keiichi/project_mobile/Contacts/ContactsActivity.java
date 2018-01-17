@@ -111,6 +111,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
     final static String URL_CONTACTFOLDERS = "https://graph.microsoft.com/v1.0/me/contactFolders/";
     final static String URL_ROOMS = "https://graph.microsoft.com/beta/me/findRooms?$top=999&$count=true";
     final static String URL_USERS = "https://graph.microsoft.com/v1.0/users?$orderBy=displayName&$top=999&$count=true";
+    final static String USER_SEARCH = "https://graph.microsoft.com/v1.0/users?$filter=startswith(givenName,'";
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -710,7 +711,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                userAdapter.getFilter().filter(s);
+                searchUser(s);
 
                 return true;
             }
@@ -1010,6 +1011,64 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
         toolbar.setSubtitleTextColor(ContextCompat.getColor(this, R.color.white));
         // THIS LINE REMOVES ANNOYING LEFT MARGIN
         toolbar.setTitleMarginStart(30);
+
+    }
+
+    /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
+    private void searchUser(String name) {
+        Log.d(TAG, "Starting volley request to graph");
+        Log.d(TAG, accessToken);
+
+    /* Make sure we have a token to send to graph */
+        if (accessToken == null) {
+            return;
+        }
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        JSONObject parameters = new JSONObject();
+
+        try {
+            parameters.put("key", "value");
+        } catch (Exception e) {
+            Log.d(TAG, "Failed to put parameters: " + e.toString());
+        }
+
+        String searchUrl = USER_SEARCH + name + "')";
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, searchUrl,
+                parameters, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+            /* Successfully called graph, process data and send to UI */
+                Log.d(TAG, "Response: " + response.toString());
+
+                try {
+                    updateUsers(response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d(TAG, "Error: " + error.toString());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+                return headers;
+            }
+        };
+
+        Log.d(TAG, "Adding HTTP GET to Queue, Request: " + request.toString());
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                3000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(request);
 
     }
 
