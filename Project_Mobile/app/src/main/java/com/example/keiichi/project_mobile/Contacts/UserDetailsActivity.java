@@ -209,6 +209,20 @@ public class UserDetailsActivity extends AppCompatActivity {
 
                 return true;
 
+            case R.id.action_addUser:
+                Intent intentAddContact = new Intent(UserDetailsActivity.this, AddContactActivity.class);
+                intentAddContact.putExtra("AccessToken", accessToken);
+                intentAddContact.putExtra("userName", userName);
+                intentAddContact.putExtra("userEmail", userEmail);
+                intentAddContact.putExtra("user", user);
+                intentAddContact.putExtra("fromUserActivity", "yes");
+
+                startActivity(intentAddContact);
+
+                UserDetailsActivity.this.finish();
+
+                return true;
+
 
             default:
                 // If we got here, the user's action was not recognized.

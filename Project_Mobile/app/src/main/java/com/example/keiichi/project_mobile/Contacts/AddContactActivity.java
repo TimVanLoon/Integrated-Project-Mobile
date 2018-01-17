@@ -3,6 +3,7 @@ package com.example.keiichi.project_mobile.Contacts;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -25,12 +26,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.Calendar.AddEventActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.Phone;
 import com.example.keiichi.project_mobile.DAL.POJOs.PhysicalAddress;
+import com.example.keiichi.project_mobile.DAL.POJOs.User;
 import com.example.keiichi.project_mobile.Mail.DisplayMailActivity;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 import com.example.keiichi.project_mobile.R;
@@ -151,6 +154,13 @@ public class AddContactActivity extends AppCompatActivity {
     private String accessToken;
     private String finalMonth;
     private String finalDayOfMonth;
+    private String fromUserActivity;
+    private String userDisplayName;
+    private String userMobilePhone;
+    private String userGivenName;
+    private String userSurName;
+    private String userMail;
+    private String userDepartment;
     private int dayOfMonth;
     private int month;
     private int year;
@@ -163,6 +173,7 @@ public class AddContactActivity extends AppCompatActivity {
     private ImageView plusImIcon;
     private ImageView plusAddressIcon;
     private ImageView plusOtherIcon;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,6 +183,8 @@ public class AddContactActivity extends AppCompatActivity {
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
+        fromUserActivity = getIntent().getStringExtra("fromUserActivity");
+        user = (User) getIntent().getSerializableExtra("user");
 
         // INITIALISEER ACTION BAR
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -858,6 +871,53 @@ public class AddContactActivity extends AppCompatActivity {
 
         birthdayInput.setFocusable(false);
 
+        if(fromUserActivity != null){
+            userDisplayName = user.getDisplayName();
+            userMobilePhone = user.getMobilePhone();
+            userGivenName = user.getGivenName();
+            userSurName = user.getSurname();
+            userMail = user.getMail();
+            userDepartment = user.getDepartment();
+
+            if(userMail != null){
+                emailInput.setText(userMail);
+
+            }
+
+            if(userMobilePhone != null){
+
+                mobilePhoneInput.setText(userMobilePhone);
+            }
+
+            if(userDepartment != null){
+                department.setText("Department: " + userDepartment);
+
+                jobTitle.setVisibility(View.VISIBLE);
+                jobInput.setVisibility(View.VISIBLE);
+                departmentTitle.setVisibility(View.VISIBLE);
+                department.setVisibility(View.VISIBLE);
+                companyNameTitle.setVisibility(View.VISIBLE);
+                companyNameInput.setVisibility(View.VISIBLE);
+                officeLocationTitle.setVisibility(View.VISIBLE);
+                officeLocationInput.setVisibility(View.VISIBLE);
+                managerTitle.setVisibility(View.VISIBLE);
+                managerInput.setVisibility(View.VISIBLE);
+                assistantTitle.setVisibility(View.VISIBLE);
+                assistantNameInput.setVisibility(View.VISIBLE);
+                yomiCompanyTitle.setVisibility(View.VISIBLE);
+                yomiCompanyInput.setVisibility(View.VISIBLE);
+
+            }
+
+            if(userGivenName != null){
+                firstNameInput.setText(userGivenName);
+            }
+
+            if(userSurName != null){
+                lastNameInput.setText(userSurName);
+            }
+        }
+
     }
 
     // VOEG ICONS TOE AAN DE ACTION BAR
@@ -880,14 +940,29 @@ public class AddContactActivity extends AppCompatActivity {
 
             // WANNEER BACK BUTTON WORDT AANGEKLIKT (<-)
             case android.R.id.home:
-                Intent intentContacts = new Intent(AddContactActivity.this, ContactsActivity.class);
-                intentContacts.putExtra("AccessToken", accessToken);
-                intentContacts.putExtra("userName", userName);
-                intentContacts.putExtra("userEmail", userEmail);
 
-                startActivity(intentContacts);
+                if(fromUserActivity != null) {
+                    Intent intentUserDetails = new Intent(AddContactActivity.this, UserDetailsActivity.class);
+                    intentUserDetails.putExtra("AccessToken", accessToken);
+                    intentUserDetails.putExtra("userName", userName);
+                    intentUserDetails.putExtra("userEmail", userEmail);
+                    intentUserDetails.putExtra("user", user);
 
-                AddContactActivity.this.finish();
+                    startActivity(intentUserDetails);
+
+                    AddContactActivity.this.finish();
+
+                } else {
+                    Intent intentContacts = new Intent(AddContactActivity.this, ContactsActivity.class);
+                    intentContacts.putExtra("AccessToken", accessToken);
+                    intentContacts.putExtra("userName", userName);
+                    intentContacts.putExtra("userEmail", userEmail);
+
+                    startActivity(intentContacts);
+
+                    AddContactActivity.this.finish();
+                }
+
 
                 return true;
 
@@ -1221,7 +1296,21 @@ public class AddContactActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed(){
-        minimizeApp();
+
+        if(fromUserActivity != null){
+            Intent intentUserDetails = new Intent(AddContactActivity.this, UserDetailsActivity.class);
+            intentUserDetails.putExtra("AccessToken", accessToken);
+            intentUserDetails.putExtra("userName", userName);
+            intentUserDetails.putExtra("userEmail", userEmail);
+            intentUserDetails   .putExtra("user", user);
+
+            startActivity(intentUserDetails);
+
+            AddContactActivity.this.finish();
+        } else {
+            minimizeApp();
+        }
+
     }
 
     public void minimizeApp() {
