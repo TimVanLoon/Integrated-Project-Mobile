@@ -30,7 +30,7 @@
 
             <TextView
                 android:id="@+id/textView"
-                android:layout_width="30dp"
+                android:layout_width="32dp"
                 android:layout_height="47dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="15dp"
@@ -57,7 +57,55 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:id="@+id/plusContactIcon"
+                    android:id="@+id/plusContactIcon"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="25dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_add_black"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="1px"
+            android:background="@color/darkGrey"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/ccTextView"
+                android:layout_width="32dp"
+                android:layout_height="47dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="15dp"
+                android:text="CC:"
+                android:textSize="20dp"
+                android:textColor="@color/black"
+                app:layout_constraintEnd_toStartOf="@+id/TextMailAdress"
+                app:layout_constraintHorizontal_bias="0.53"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/ccMailInput"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="32dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/edit_text_style_sendmail"
+                android:ems="10"
+                android:textCursorDrawable="@null"
+                android:textColor="@color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/plusCCIcon"
                 android:layout_marginTop="15dp"
                 android:layout_marginLeft="25dp"
                 android:layout_width="30dp"

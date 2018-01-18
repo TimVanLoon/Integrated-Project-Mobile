@@ -185,7 +185,7 @@ public class SendMailActivity extends AppCompatActivity {
 
     private JsonArrayBuilder createCCArray() {
 
-        JsonArrayBuilder BaatsCC = Json.createArrayBuilder()
+        JsonArrayBuilder BaatsCC = Json.createArrayBuilder();
         for (String string :  MailAdress.getText().toString().split("\\s+")){
             BaatsCC.add(
                     Json.createObjectBuilder().
@@ -197,7 +197,7 @@ public class SendMailActivity extends AppCompatActivity {
     }
 
     private JsonArrayBuilder createToRecipientsArray() {
-        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder()
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
         for (String string :  MailAdress.getText().toString().split("\\s+")){
             arrayBuilder.add(
                     Json.createObjectBuilder().
