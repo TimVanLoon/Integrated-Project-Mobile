@@ -529,6 +529,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             roomAdapter = new RoomAdapter(this, rooms);
             contactsRecyclerView.setAdapter(roomAdapter);
 
+            saveRoomData();
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -756,6 +757,10 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             loadUserData();
 
         } else if(navIdentifier == 3){
+
+            rooms.add(new EmailAddress("", ""));
+
+            loadRoomData();
 
             getRooms();
 
@@ -1179,7 +1184,15 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
                             } else if(drawerItem.getIdentifier() == 3){
                                 navIdentifier = 3;
+                                rooms.add(new EmailAddress("", ""));
+
+                                roomAdapter = new RoomAdapter(getApplicationContext(), rooms);
+                                contactsRecyclerView.setAdapter(roomAdapter);
+                                roomAdapter.notifyDataSetChanged();
+
+                                loadRoomData();
                                 getRooms();
+                                
                                 setActionBarTitle("All Rooms", myToolbar);
 
                             }
@@ -1256,6 +1269,36 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
         if(users == null){
             users    = new ArrayList<>();
+        }
+
+    }
+
+    private void saveRoomData(){
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences rooms", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(rooms);
+
+        editor.putString("room list", json);
+        editor.apply();
+
+    }
+
+    private void loadRoomData(){
+
+        System.out.println("test rooms: " + rooms);
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences rooms", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("room list", null);
+        Type type = new TypeToken<ArrayList<EmailAddress>>() {}.getType();
+        rooms = gson.fromJson(json, type);
+
+        roomAdapter = new RoomAdapter(this, rooms);
+        contactsRecyclerView.setAdapter(roomAdapter);
+        roomAdapter.notifyDataSetChanged();
+
+        if(rooms == null){
+            rooms    = new ArrayList<>();
         }
 
     }
