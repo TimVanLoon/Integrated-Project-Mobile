@@ -1052,17 +1052,11 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                     break;
 
                 case "boxer":
-                    item.withName("Boxer");
-                    item.withTag(folder);
-                    item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
-                    drawerItems.add(item);
+
                     break;
 
                 case "concepten":
-                    item.withName("Drafts");
-                    item.withTag(folder);
-                    item.withBadge(String.valueOf(folder.getUnreadItemCount())).withTextColor(Color.BLACK);
-                    drawerItems.add(item);
+
                     break;
 
                 case "conversation history":
@@ -1180,6 +1174,16 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
                         } else if(drawerItem.getIdentifier() == 999){
                             //onSignOutClicked();
+
+                            Intent logout = new Intent(ListMailsActvity.this, MainActivity.class);
+                            logout.putExtra("AccessToken", accessToken);
+                            logout.putExtra("userName", userName);
+                            logout.putExtra("userEmail", userEmail);
+
+                            startActivity(logout);
+
+                            ListMailsActvity.this.finish();
+
                             Toast.makeText(getBaseContext(), "Signed Out!", Toast.LENGTH_SHORT).show();
                         }
 

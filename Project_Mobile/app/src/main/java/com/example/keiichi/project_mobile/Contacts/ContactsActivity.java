@@ -1335,6 +1335,15 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
                         } else if(drawerItem.getIdentifier() == 999){
                             //onSignOutClicked();
+                            Intent logout = new Intent(ContactsActivity.this, MainActivity.class);
+                            logout.putExtra("AccessToken", accessToken);
+                            logout.putExtra("userName", userName);
+                            logout.putExtra("userEmail", userEmail);
+
+                            startActivity(logout);
+
+                            ContactsActivity.this.finish();
+
                             Toast.makeText(getBaseContext(), "Signed Out!", Toast.LENGTH_SHORT).show();
                         }
                         return false;

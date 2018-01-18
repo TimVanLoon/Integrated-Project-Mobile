@@ -452,6 +452,15 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
 
                         } else if(drawerItem.getIdentifier() == 999){
                             //onSignOutClicked();
+                            Intent logout = new Intent(CalendarActivity.this, MainActivity.class);
+                            logout.putExtra("AccessToken", accessToken);
+                            logout.putExtra("userName", userName);
+                            logout.putExtra("userEmail", userEmail);
+
+                            startActivity(logout);
+
+                            CalendarActivity.this.finish();
+
                             Toast.makeText(getBaseContext(), "Signed Out!", Toast.LENGTH_SHORT).show();
                         }
                         return false;
