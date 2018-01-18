@@ -234,10 +234,22 @@ public class SendMailActivity extends AppCompatActivity {
                 try {
                     sendItem.setEnabled(false);
 
-                    SendMail();
-                    finish();
+                    if(!MailAdress.getText().toString().isEmpty()){
+                        SendMail();
 
-                    SendMailActivity.this.finish();
+                        Intent intentListMails = new Intent(SendMailActivity.this, ListMailsActvity.class);
+                        intentListMails.putExtra("AccessToken", accessToken);
+                        intentListMails.putExtra("userName", userName);
+                        intentListMails.putExtra("userEmail", userEmail);
+
+                        startActivity(intentListMails);
+
+                        SendMailActivity.this.finish();
+                        SendMailActivity.this.finish();
+                    } else {
+                        MailAdress.setError("Required field!");
+                    }
+
 
                 } catch (JSONException e) {
                     e.printStackTrace();
