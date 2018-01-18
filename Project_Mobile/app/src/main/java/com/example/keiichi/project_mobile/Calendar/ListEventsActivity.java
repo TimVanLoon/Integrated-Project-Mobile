@@ -57,7 +57,9 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,13 +70,14 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
-    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/events?$orderby=start/dateTime&$top=999&$count=true";
+    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/events?$orderby=start/dateTime&$top=999&$count=true&$filter=start/dateTime ge ";
     final private String URL_DELETE = "https://graph.microsoft.com/beta/me/events/";
     private boolean multiSelect = false;
     private boolean actionModeEnabled = false;
     private String accessToken;
     private String userName;
     private String userEmail;
+    private String formattedDate;
     private Toolbar myToolbar;
     private SearchView searchView;
     private ListView eventsListView;
@@ -102,6 +105,14 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
         Menu menu = mBottomNav.getMenu();
         MenuItem menuItem = menu.getItem(1);
         menuItem.setChecked(true);
+
+        Calendar c = Calendar.getInstance();
+        System.out.println("Current time => " + c.getTime());
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+        formattedDate = df.format(c.getTime());
+
+        System.out.println("format date: " + formattedDate);
 
         mBottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -319,7 +330,10 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
         } catch (Exception e) {
             Log.d(TAG, "Failed to put parameters: " + e.toString());
         }
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, MSGRAPH_URL,
+
+        String getUrl = MSGRAPH_URL + "'" + formattedDate + "'";
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, getUrl,
                 parameters, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
