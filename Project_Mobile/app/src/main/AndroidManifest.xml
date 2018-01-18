@@ -134,18 +134,24 @@
             android:theme="@style/ContactsTheme"
             android:windowSoftInputMode="adjustResize|adjustPan" />
 
+        <activity
+            android:name=".Mail.RecipientActivity"
+            android:label="Contacts"
+            android:theme="@style/ContactsTheme"
+            android:windowSoftInputMode="adjustResize|adjustPan"/>
+
         <service android:name=".FirebaseInstance">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+
         <service android:name=".MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
-        <activity android:name=".Mail.RecipientActivity"></activity>
     </application>
 
 </manifest>

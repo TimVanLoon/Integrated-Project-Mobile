@@ -65,14 +65,16 @@ public class RecipientActivity extends AppCompatActivity {
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        myToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
+        
         contactsRecyclerView = findViewById(R.id.contactsRecyclerView);
 
         // VOEG BACK BUTTON TOE AAN ACTION BAR
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        callGraphAPI();
     }
 
     @Override
