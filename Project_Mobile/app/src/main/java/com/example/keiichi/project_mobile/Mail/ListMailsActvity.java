@@ -759,8 +759,14 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                     showMail.putExtra("timeSent", message.getReceivedDateTime());
                     showMail.putExtra("junkID", JUNK_FOLDER_ID);
 
-                    showMail.putExtra("receiverName", message.getToRecipients().get(0).getEmailAddress().getName());
-                    showMail.putExtra("receiverMail", message.getToRecipients().get(0).getEmailAddress().getAddress());
+                    if(!message.getToRecipients().isEmpty()){
+                        showMail.putExtra("receiverName", message.getToRecipients().get(0).getEmailAddress().getName());
+                        showMail.putExtra("receiverMail", message.getToRecipients().get(0).getEmailAddress().getAddress());
+                    } else {
+                        showMail.putExtra("receiverName","");
+                        showMail.putExtra("receiverMail", "");
+                    }
+
                     showMail.putExtra("mail",message);
 
 
