@@ -443,8 +443,6 @@ public class DisplayMailActivity extends AppCompatActivity {
 
         JSONObject body = new JSONObject(buildupdateJsonMail());
 
-
-
         System.out.println(mail.toString());
 
         JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.PATCH, URL_DELETE + mailId, body,

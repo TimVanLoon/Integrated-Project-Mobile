@@ -1,12 +1,16 @@
 package com.example.keiichi.project_mobile.Contacts;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.LightingColorFilter;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -16,13 +20,19 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.ActionMode;
+import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
@@ -43,6 +53,7 @@ import com.example.keiichi.project_mobile.DAL.POJOs.ContactFolder;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.MailFolder;
 import com.example.keiichi.project_mobile.DAL.POJOs.Message;
+import com.example.keiichi.project_mobile.DAL.POJOs.PhysicalAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.User;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 import com.example.keiichi.project_mobile.Mail.MailAdapter;
@@ -68,12 +79,17 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
 
 public class ContactsActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, Serializable {
 
@@ -225,6 +241,39 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
                 startActivity(intentAddContact);
 
                 ContactsActivity.this.finish();
+
+                return true;
+
+            case R.id.action_more:
+
+                View menuItemView = findViewById(R.id.action_more);
+
+                Context wrapper = new ContextThemeWrapper(getApplicationContext(), R.style.YOURSTYLE);
+
+                final PopupMenu popupMenu = new PopupMenu(wrapper, menuItemView);
+
+                popupMenu.inflate(R.menu.contact_folder_options);
+
+                popupMenu.show();
+
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+
+                        Menu menu = popupMenu.getMenu();
+
+                        switch(menuItem.getItemId()){
+                            case R.id.action_create_folder:
+
+                                showInputDialog();
+
+                                break;
+
+                        }
+
+                        return false;
+                    }
+                });
 
                 return true;
 
@@ -808,7 +857,6 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
         }
 
-
         contactAdapter.notifyDataSetChanged();
 
         int DELAY_TIME=2000;
@@ -924,7 +972,6 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
 
     }
 
@@ -1084,6 +1131,105 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(request);
+
+    }
+
+    // POST REQUEST VOOR NIEWE CONTACTSPERSOON
+    private void createContactFolder(String name) throws JSONException {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        final JSONObject jsonObject = new JSONObject(buildJsonIsRead(name));
+
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_CONTACTFOLDERS, jsonObject,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Toast.makeText(getApplicationContext(), "Contact folder created!", Toast.LENGTH_SHORT).show();
+                        System.out.println(response.toString());
+                    }
+
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+
+                return headers;
+            }
+
+        };
+
+        queue.add(objectRequest);
+
+        int DELAY_TIME=2000;
+
+        //start your animation
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                //this code will run after the delay time which is 2 seconds.
+
+                getContactFolders();
+                
+            }
+        }, DELAY_TIME);
+
+    }
+
+    private String buildJsonIsRead(String name) {
+        JsonObjectBuilder factory = Json.createObjectBuilder()
+
+                .add("displayName", name);
+
+        return factory.build().toString();
+    }
+
+    protected void showInputDialog() {
+
+        // get prompts.xml view
+        LayoutInflater layoutInflater = LayoutInflater.from(ContactsActivity.this);
+        View promptView = layoutInflater.inflate(R.layout.input_dialog, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ContactsActivity.this);
+        alertDialogBuilder.setView(promptView);
+
+        final EditText editText = (EditText) promptView.findViewById(R.id.edittext);
+        // setup a dialog window
+        alertDialogBuilder.setCancelable(false)
+                .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        try {
+                            createContactFolder(editText.getText().toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create an alert dialog
+        final AlertDialog alert = alertDialogBuilder.create();
+
+        alert.setOnShowListener( new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                alert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK);
+                alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
+            }
+        });
+
+        alert.show();
+        alert.getWindow().getDecorView().getBackground().setColorFilter(new LightingColorFilter(0xFF000000, Color.WHITE));
 
     }
 

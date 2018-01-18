@@ -8,6 +8,13 @@
         app:actionViewClass="android.widget.SearchView" />
 
     <item
+        android:id="@+id/action_more"
+        android:icon="@drawable/ic_more_white"
+        android:title="@string/add"
+        app:showAsAction="always"
+        />
+
+    <item
         android:id="@+id/action_add"
         android:icon="@drawable/ic_add"
         android:title="@string/add"

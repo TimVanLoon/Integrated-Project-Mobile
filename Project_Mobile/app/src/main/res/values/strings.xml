@@ -153,4 +153,7 @@
     <string name="replyAll">Reply all</string>
     <string name="markJunk">Mark as junk</string>
 
+    <string name="createContactFolder">Create contact folder</string>
+    <string name="createMailFolder">Create mail folder</string>
+
 </resources>
