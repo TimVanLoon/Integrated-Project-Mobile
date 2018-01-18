@@ -1,6 +1,7 @@
 package com.example.keiichi.project_mobile.Calendar;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -150,8 +151,10 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
 
-
         getEvents();
+
+        loadData();
+
     }
 
     @Override
@@ -380,6 +383,8 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
             eventAdapter = new EventAdapter(this, events);
             eventsRecyclerView.setAdapter(eventAdapter);
 
+            saveData();
+
             eventsRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), eventsRecyclerView, new ListMailsActvity.ClickListener() {
                 @Override
                 public void onClick(View view, int position) {
@@ -596,6 +601,38 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
 
             }
         }, DELAY_TIME);
+    }
+
+    private void saveData(){
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences events", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(events);
+
+        editor.putString("event list", json);
+        editor.apply();
+
+    }
+
+    private void loadData(){
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences events", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("event list", null);
+        Type type = new TypeToken<ArrayList<Event>>() {}.getType();
+        events = gson.fromJson(json, type);
+
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(getApplicationContext());
+        eventsRecyclerView.setLayoutManager(manager);
+        eventsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        eventsRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+
+        eventAdapter = new EventAdapter(this, events);
+        eventsRecyclerView.setAdapter(eventAdapter);
+
+        if(events == null){
+            events = new ArrayList<>();
+        }
+
     }
 
     @Override

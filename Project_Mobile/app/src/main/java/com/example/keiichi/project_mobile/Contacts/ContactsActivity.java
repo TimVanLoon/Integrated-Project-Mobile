@@ -1,6 +1,7 @@
 package com.example.keiichi.project_mobile.Contacts;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -40,8 +41,10 @@ import com.example.keiichi.project_mobile.Calendar.CalendarActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.ContactFolder;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
+import com.example.keiichi.project_mobile.DAL.POJOs.Message;
 import com.example.keiichi.project_mobile.DAL.POJOs.User;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
+import com.example.keiichi.project_mobile.Mail.MailAdapter;
 import com.example.keiichi.project_mobile.Mail.RecyclerTouchListener;
 import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
@@ -141,6 +144,8 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
         Menu menu = mBottomNav.getMenu();
         MenuItem menuItem = menu.getItem(2);
         menuItem.setChecked(true);
+
+        loadContactData();
 
         getContacts();
 
@@ -379,6 +384,8 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
         contactAdapter = new ContactAdapter(this, contacts);
         contactsRecyclerView.setAdapter(contactAdapter);
+
+        saveContactData();
 
         contactsRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), contactsRecyclerView, new ListMailsActvity.ClickListener() {
             @Override
@@ -662,6 +669,8 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             contactsRecyclerView.setAdapter(userAdapter);
             userAdapter.notifyDataSetChanged();
 
+            saveUserData();
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -743,6 +752,8 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
         } else if(navIdentifier == 2){
 
             getUsers();
+
+            loadUserData();
 
         } else if(navIdentifier == 3){
 
@@ -1163,6 +1174,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
                             } else if(drawerItem.getIdentifier() == 2){
                                 navIdentifier = 2;
                                 getUsers();
+                                loadUserData();
                                 setActionBarTitle("All Users", myToolbar);
 
                             } else if(drawerItem.getIdentifier() == 3){
@@ -1182,6 +1194,72 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
                 .build();
 
     }
+
+    private void saveContactData(){
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences contacts", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(contacts);
+
+        editor.putString("contact list", json);
+        editor.apply();
+
+    }
+
+    private void loadContactData(){
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences contacts", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("contact list", null);
+        Type type = new TypeToken<ArrayList<Contact>>() {}.getType();
+        contacts = gson.fromJson(json, type);
+
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(getApplicationContext());
+        contactsRecyclerView.setLayoutManager(manager);
+        contactsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        contactsRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+
+        contactAdapter = new ContactAdapter(this, contacts);
+        contactsRecyclerView.setAdapter(contactAdapter);
+
+        if(contacts == null){
+            contacts = new ArrayList<>();
+        }
+
+    }
+
+    private void saveUserData(){
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences users", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(users);
+
+        editor.putString("user list", json);
+        editor.apply();
+
+    }
+
+    private void loadUserData(){
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences users", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("user list", null);
+        Type type = new TypeToken<ArrayList<User>>() {}.getType();
+        users = gson.fromJson(json, type);
+
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(getApplicationContext());
+        contactsRecyclerView.setLayoutManager(manager);
+        contactsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        contactsRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+
+        userAdapter = new UserAdapter(this, users);
+        contactsRecyclerView.setAdapter(userAdapter);
+        userAdapter.notifyDataSetChanged();
+
+        if(users == null){
+            users    = new ArrayList<>();
+        }
+
+    }
+
 
     @Override
     public void onBackPressed(){

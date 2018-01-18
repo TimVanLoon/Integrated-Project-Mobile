@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.os.Build;
@@ -51,9 +52,14 @@ import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -310,6 +316,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             }
         });
 
+        loadData();
 
         callGraphAPI();
 
@@ -715,6 +722,8 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
         mailAdapter = new MailAdapter(this, messages);
         recyclerView.setAdapter(mailAdapter);
+
+        saveData();
 
         RecyclerView.LayoutManager manager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(manager);
@@ -1196,5 +1205,53 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         return factory.build().toString();
     }
 
+    private void saveData(){
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences messages", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(messages);
+
+        editor.putString("message list", json);
+        editor.apply();
+
+    }
+
+    private void loadData(){
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences messages", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("message list", null);
+        Type type = new TypeToken<ArrayList<Message>>() {}.getType();
+        messages = gson.fromJson(json, type);
+
+        mailAdapter = new MailAdapter(this, messages);
+        recyclerView.setAdapter(mailAdapter);
+
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(manager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+
+        if(messages == null){
+            messages = new ArrayList<>();
+        }
+
+    }
+
+    public void onErrorResponse(VolleyError volleyError) {
+        String message = null;
+        if (volleyError instanceof NetworkError) {
+            message = "Cannot connect to Internet...Please check your connection!";
+        } else if (volleyError instanceof ServerError) {
+            message = "The server could not be found. Please try again after some time!!";
+        } else if (volleyError instanceof AuthFailureError) {
+            message = "Cannot connect to Internet...Please check your connection!";
+        } else if (volleyError instanceof ParseError) {
+            message = "Parsing error! Please try again after some time!!";
+        } else if (volleyError instanceof NoConnectionError) {
+            message = "Cannot connect to Internet...Please check your connection!";
+        } else if (volleyError instanceof TimeoutError) {
+            message = "Connection TimeOut! Please check your internet connection.";
+        }
+    }
 
 }

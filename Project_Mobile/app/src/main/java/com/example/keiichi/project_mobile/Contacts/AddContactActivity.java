@@ -668,6 +668,8 @@ public class AddContactActivity extends AppCompatActivity {
 
                 final PopupMenu popupMenu = new PopupMenu(wrapper, view);
 
+                popupMenu.inflate(R.menu.address_options);
+
                 popupMenu.show();
 
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -773,6 +775,8 @@ public class AddContactActivity extends AppCompatActivity {
                 Context wrapper = new ContextThemeWrapper(getApplicationContext(), R.style.YOURSTYLE);
 
                 final PopupMenu popupMenu = new PopupMenu(wrapper, view);
+
+                popupMenu.inflate(R.menu.other_options);
 
                 popupMenu.show();
 
