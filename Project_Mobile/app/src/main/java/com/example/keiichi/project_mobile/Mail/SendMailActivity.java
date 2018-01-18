@@ -161,13 +161,13 @@ public class SendMailActivity extends AppCompatActivity {
 
         final JSONObject jsonObject = new JSONObject(buildJsonMail());
 
-        System.out.println(jsonObject.toString());
+        System.out.println("papa auw: " + jsonObject.toString());
 
         JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_POSTADRESS, jsonObject,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Toast.makeText(getApplicationContext(), "Mail send!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Mail sent!", Toast.LENGTH_SHORT).show();
                         System.out.println(response.toString());
                     }
 
@@ -213,7 +213,7 @@ public class SendMailActivity extends AppCompatActivity {
     private JsonArrayBuilder createCCArray() {
 
         JsonArrayBuilder BaatsCC = Json.createArrayBuilder();
-        for (String string :  CCtje.getText().toString().split("\\s+")){
+        for (String string :  CCtje.getText().toString().split("//s+")){
             BaatsCC.add(
                     Json.createObjectBuilder().
                             add("emailAddress", Json.createObjectBuilder().
@@ -225,7 +225,7 @@ public class SendMailActivity extends AppCompatActivity {
 
     private JsonArrayBuilder createToRecipientsArray() {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        for (String string :  MailAdress.getText().toString().split("\\s+")){
+        for (String string :  MailAdress.getText().toString().split("//s+")){
             arrayBuilder.add(
                     Json.createObjectBuilder().
                             add("emailAddress", Json.createObjectBuilder().
@@ -308,10 +308,11 @@ public class SendMailActivity extends AppCompatActivity {
 
             case R.id.action_send:
                 try {
-                    sendItem.setEnabled(false);
 
                     if(!MailAdress.getText().toString().isEmpty()){
                         SendMail();
+
+                        sendItem.setEnabled(false);
 
                         Intent intentListMails = new Intent(SendMailActivity.this, ListMailsActvity.class);
                         intentListMails.putExtra("AccessToken", accessToken);
