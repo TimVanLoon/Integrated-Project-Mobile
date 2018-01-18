@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
@@ -145,18 +146,46 @@ public class SendMailActivity extends AppCompatActivity {
     }
 
     private String buildJsonMail() {
+
+        JsonArrayBuilder toRecipientsArray = createToRecipientsArray();
+        JsonArrayBuilder ccArray = createCCArray();
+
+
         JsonObjectBuilder factory = Json.createObjectBuilder()
                 .add("message", Json.createObjectBuilder().
                         add("subject", Subject.getText().toString()).
                         add("body", Json.createObjectBuilder().
                                 add("contentType", "Text").
                                 add("content", Html.fromHtml(MailBody.getHtml()).toString())).
-                        add("toRecipients", Json.createArrayBuilder().
-                                add(Json.createObjectBuilder().
-                                        add("emailAddress", Json.createObjectBuilder().
-                                                add("address", MailAdress.getText().toString()))))
+                        add("toRecipients", toRecipientsArray).
+                        add("ccRecipients", ccArray)
                 );
         return factory.build().toString();
+    }
+
+    private JsonArrayBuilder createCCArray() {
+
+        JsonArrayBuilder BaatsCC = Json.createArrayBuilder()
+        for (String string :  MailAdress.getText().toString().split("\\s+")){
+            BaatsCC.add(
+                    Json.createObjectBuilder().
+                            add("emailAddress", Json.createObjectBuilder().
+                                    add("address",string)));
+        }
+
+        return BaatsCC;
+    }
+
+    private JsonArrayBuilder createToRecipientsArray() {
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder()
+        for (String string :  MailAdress.getText().toString().split("\\s+")){
+            arrayBuilder.add(
+                    Json.createObjectBuilder().
+                            add("emailAddress", Json.createObjectBuilder().
+                                    add("address",string)));
+        }
+
+        return arrayBuilder;
     }
 
     @Override
