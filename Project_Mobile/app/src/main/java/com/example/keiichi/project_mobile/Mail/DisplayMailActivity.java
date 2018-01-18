@@ -65,7 +65,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -685,9 +688,18 @@ public class DisplayMailActivity extends AppCompatActivity {
 
         mailSubjectTextView.setText(mailSubject);
         senderNameTextView.setText(senderName);
-        senderTimeTextView.setText(timeSent);
         receiverNameTextView.setText(receiverName);
         receiverMailTextView.setText(receiverMail);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        SimpleDateFormat output = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        Date d = null;
+        try {
+            d = sdf.parse(timeSent);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        senderTimeTextView.setText(output.format(d));
 
         System.out.println("Content type: " + contentType);
 
