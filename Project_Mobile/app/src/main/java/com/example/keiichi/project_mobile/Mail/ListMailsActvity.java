@@ -1036,8 +1036,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
                             currentMailFolderId = folder.getId();
 
-                            getMailFolders();
-
                             getMailsFromFolder(currentMailFolderId);
 
                             String folderName = ((PrimaryDrawerItem) drawerItem).getName().getText().toString();
@@ -1344,41 +1342,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
         if(mailFolders == null){
             mailFolders = new ArrayList<>();
-        }
-
-    }
-
-    private void saveMailsFromFolderData(){
-        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences mails in folder", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(messages);
-
-        editor.putString("mailInFolder list", json);
-        editor.apply();
-
-    }
-
-    private void loadMailsFromFolderData(){
-
-        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences mails in folder", MODE_PRIVATE);
-
-        if(sharedPreferences.contains("mailInFolder list")){
-
-            Gson gson = new Gson();
-            String json = sharedPreferences.getString("mailfolder list", null);
-            Type type = new TypeToken<ArrayList<Message>>() {}.getType();
-            messages = gson.fromJson(json, type);
-
-            mailAdapter = new MailAdapter(this, messages);
-            recyclerView.setAdapter(mailAdapter);
-
-            mailAdapter.notifyDataSetChanged();
-
-        }
-
-        if(messages == null){
-            messages = new ArrayList<>();
         }
 
     }
