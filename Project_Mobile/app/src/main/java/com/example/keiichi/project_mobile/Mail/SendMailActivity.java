@@ -180,7 +180,14 @@ public class SendMailActivity extends AppCompatActivity {
 
                 if(fromContactDetailsActivity == null && fromRoomActivity == null && fromUserActivity == null){
 
-                    finish();
+                    Intent intentListMails = new Intent(SendMailActivity.this, ListMailsActvity.class);
+                    intentListMails.putExtra("AccessToken", accessToken);
+                    intentListMails.putExtra("userName", userName);
+                    intentListMails.putExtra("userEmail", userEmail);
+
+                    startActivity(intentListMails);
+
+                    SendMailActivity.this.finish();
 
                 } else if(fromRoomActivity == null && fromUserActivity == null) {
 
@@ -250,7 +257,14 @@ public class SendMailActivity extends AppCompatActivity {
 
         if(fromContactDetailsActivity == null && fromRoomActivity == null && fromUserActivity == null){
 
-            finish();
+            Intent intentListMails = new Intent(SendMailActivity.this, ListMailsActvity.class);
+            intentListMails.putExtra("AccessToken", accessToken);
+            intentListMails.putExtra("userName", userName);
+            intentListMails.putExtra("userEmail", userEmail);
+
+            startActivity(intentListMails);
+
+            SendMailActivity.this.finish();
 
         } else if(fromRoomActivity == null && fromUserActivity == null) {
 
