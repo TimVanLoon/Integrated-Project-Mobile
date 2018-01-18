@@ -75,6 +75,7 @@ public class SendMailActivity extends AppCompatActivity {
     private EmailAddress room;
     private User user;
     private ImageView plusContactIcon;
+    private TextView CCtje;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +93,7 @@ public class SendMailActivity extends AppCompatActivity {
         Subject = findViewById(R.id.TextMailSubject);
         MailBody = findViewById(R.id.editor);
         plusContactIcon = (ImageView) findViewById(R.id.plusContactIcon);
+        CCtje = findViewById(R.id.ccMailInput);
 
         myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
@@ -186,7 +188,7 @@ public class SendMailActivity extends AppCompatActivity {
     private JsonArrayBuilder createCCArray() {
 
         JsonArrayBuilder BaatsCC = Json.createArrayBuilder();
-        for (String string :  MailAdress.getText().toString().split("\\s+")){
+        for (String string :  CCtje.getText().toString().split("\\s+")){
             BaatsCC.add(
                     Json.createObjectBuilder().
                             add("emailAddress", Json.createObjectBuilder().
