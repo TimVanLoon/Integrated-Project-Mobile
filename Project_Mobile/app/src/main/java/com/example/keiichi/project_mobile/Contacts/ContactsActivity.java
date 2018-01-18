@@ -218,7 +218,6 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
         inflater.inflate(R.menu.my_action_bar_items_contacts, menu);
         MenuItem addItem = menu.findItem(R.id.action_add);
 
-
         searchItem = menu.findItem(R.id.action_search);
 
         return super.onCreateOptionsMenu(menu);
@@ -1381,6 +1380,27 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             contactAdapter = new ContactAdapter(this, contacts);
             contactsRecyclerView.setAdapter(contactAdapter);
 
+            searchView = (SearchView) searchItem.getActionView();
+
+            searchView.setQueryHint("Search: Inbox...");
+
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String s) {
+                    contactAdapter.getFilter().filter(s);
+
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String s) {
+                    contactAdapter.getFilter().filter(s);
+
+                    return true;
+                }
+
+            });
+
             contactsRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), contactsRecyclerView, new ListMailsActvity.ClickListener() {
                 @Override
                 public void onClick(View view, int position) {
@@ -1457,6 +1477,27 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             contactsRecyclerView.setAdapter(userAdapter);
             userAdapter.notifyDataSetChanged();
 
+            searchView = (SearchView) searchItem.getActionView();
+
+            searchView.setQueryHint("Search by name...");
+
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String s) {
+                    searchUser(s);
+
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String s) {
+                    userAdapter.getFilter().filter(s);
+
+                    return true;
+                }
+
+            });
+
             contactsRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), contactsRecyclerView, new ListMailsActvity.ClickListener() {
                 @Override
                 public void onClick(View view, int position) {
@@ -1527,6 +1568,27 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             roomAdapter = new RoomAdapter(this, rooms);
             contactsRecyclerView.setAdapter(roomAdapter);
             roomAdapter.notifyDataSetChanged();
+
+            searchView = (SearchView) searchItem.getActionView();
+
+            searchView.setQueryHint("Search by name...");
+
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String s) {
+                    roomAdapter.getFilter().filter(s);
+
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String s) {
+                    roomAdapter.getFilter().filter(s);
+
+                    return true;
+                }
+
+            });
 
             contactsRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), contactsRecyclerView, new ListMailsActvity.ClickListener() {
                 @Override
