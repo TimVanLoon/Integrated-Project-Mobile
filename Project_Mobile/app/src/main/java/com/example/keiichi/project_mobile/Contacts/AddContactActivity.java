@@ -175,6 +175,8 @@ public class AddContactActivity extends AppCompatActivity {
     private ImageView plusAddressIcon;
     private ImageView plusOtherIcon;
     private User user;
+    private PopupMenu namePopupMenu;
+    private Menu nameMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -348,20 +350,21 @@ public class AddContactActivity extends AppCompatActivity {
 
                 Context wrapper = new ContextThemeWrapper(getApplicationContext(), R.style.YOURSTYLE);
 
-                final PopupMenu popupMenu = new PopupMenu(wrapper, view);
+                namePopupMenu = new PopupMenu(wrapper, view);
 
-                popupMenu.inflate(R.menu.name_options);
+                namePopupMenu.inflate(R.menu.name_options);
 
-                popupMenu.show();
+                namePopupMenu.show();
 
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                namePopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
 
-                        Menu menu = popupMenu.getMenu();
+                        nameMenu = namePopupMenu.getMenu();
 
                         switch(menuItem.getItemId()){
                             case R.id.action_middleName:
+
                                 middleNameInput.setVisibility(View.VISIBLE);
                                 middleNameTitle.setVisibility(View.VISIBLE);
 

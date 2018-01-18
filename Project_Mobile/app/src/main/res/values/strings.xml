@@ -156,4 +156,7 @@
     <string name="createContactFolder">Create contact folder</string>
     <string name="createMailFolder">Create mail folder</string>
 
+    <string name="futureEvents">Only future events</string>
+    <string name="allEvents">All events</string>
+
 </resources>

@@ -1,5 +1,6 @@
 package com.example.keiichi.project_mobile.Calendar;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -16,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.view.ActionMode;
+import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,6 +27,7 @@ import android.view.animation.Animation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -56,7 +59,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -70,8 +77,9 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
-    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/events?$orderby=start/dateTime&$top=999&$count=true&$filter=start/dateTime ge ";
+    final static String UNFILTERED_EVENTS = "https://graph.microsoft.com/v1.0/me/events?$orderby=start/dateTime&$top=999&$count=true";
     final private String URL_DELETE = "https://graph.microsoft.com/beta/me/events/";
+    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/events?$orderby=start/dateTime&$top=999&$count=true&$filter=start/dateTime%20ge%20('";
     private boolean multiSelect = false;
     private boolean actionModeEnabled = false;
     private String accessToken;
@@ -90,6 +98,7 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
     private ArrayList<Integer> selectedItems = new ArrayList<>();
     private RecyclerView eventsRecyclerView;
     private ActionMode eventActionMode;
+    private URI uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,17 +173,15 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
 
         loadData();
 
-        getEvents();
+        getFilteredEvents();
 
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.my_action_bar_items_contacts, menu);
+        inflater.inflate(R.menu.my_action_bar_items_listevents, menu);
         MenuItem addItem = menu.findItem(R.id.action_add);
-
-
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) searchItem.getActionView();
@@ -228,6 +235,45 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
                 startActivity(intentAddEvent);
 
                 ListEventsActivity.this.finish();
+
+                return true;
+
+            case R.id.action_filter:
+
+                View menuItemView = findViewById(R.id.action_filter);
+
+                Context wrapper = new ContextThemeWrapper(getApplicationContext(), R.style.YOURSTYLE);
+
+                final PopupMenu popupMenu = new PopupMenu(wrapper, menuItemView);
+
+                popupMenu.inflate(R.menu.filter_events_options);
+
+                popupMenu.show();
+
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+
+                        Menu menu = popupMenu.getMenu();
+
+                        switch(menuItem.getItemId()){
+                            case R.id.action_allEvents:
+
+                                getUnfilteredEvents();
+
+                                break;
+
+                            case R.id.action_filterFuture:
+
+                                getFilteredEvents();
+
+                                break;
+
+                        }
+
+                        return false;
+                    }
+                });
 
                 return true;
 
@@ -313,7 +359,7 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
     };
 
     /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
-    private void getEvents() {
+    private void getFilteredEvents() {
         Log.d(TAG, "Starting volley request to graph");
         Log.d(TAG, accessToken);
 
@@ -331,9 +377,64 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
             Log.d(TAG, "Failed to put parameters: " + e.toString());
         }
 
-        String getUrl = MSGRAPH_URL + "'" + formattedDate + "'";
+        String getUrl = MSGRAPH_URL + formattedDate + "')";
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, getUrl,
+                parameters, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+            /* Successfully called graph, process data and send to UI */
+                Log.d(TAG, "Response: " + response.toString());
+
+                try {
+                    updateGraphUI(response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d(TAG, "Error: " + error.toString());
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+                return headers;
+            }
+        };
+
+        Log.d(TAG, "Adding HTTP GET to Queue, Request: " + request.toString());
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                3000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(request);
+    }
+
+    /* Use Volley to make an HTTP request to the /me endpoint from MS Graph using an access token */
+    private void getUnfilteredEvents() {
+        Log.d(TAG, "Starting volley request to graph");
+        Log.d(TAG, accessToken);
+
+    /* Make sure we have a token to send to graph */
+        if (accessToken == null) {
+            return;
+        }
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        JSONObject parameters = new JSONObject();
+
+        try {
+            parameters.put("key", "value");
+        } catch (Exception e) {
+            Log.d(TAG, "Failed to put parameters: " + e.toString());
+        }
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, UNFILTERED_EVENTS,
                 parameters, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -483,7 +584,7 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
     public void onRefresh() {
         swipeRefreshLayout.setRefreshing(true);
 
-        getEvents();
+        getFilteredEvents();
 
         swipeRefreshLayout.setRefreshing(false);
 
@@ -611,7 +712,7 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
             public void run() {
                 //this code will run after the delay time which is 2 seconds.
 
-                getEvents();
+                getFilteredEvents();
 
             }
         }, DELAY_TIME);
