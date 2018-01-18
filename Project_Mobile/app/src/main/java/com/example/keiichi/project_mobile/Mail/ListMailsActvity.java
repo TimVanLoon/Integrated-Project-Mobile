@@ -70,7 +70,9 @@ import com.example.keiichi.project_mobile.Contacts.AddContactActivity;
 import com.example.keiichi.project_mobile.Contacts.ContactAdapter;
 import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
 import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
+import com.example.keiichi.project_mobile.Contacts.RoomAdapter;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
+import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.MailFolder;
 import com.example.keiichi.project_mobile.DAL.POJOs.Message;
 import com.example.keiichi.project_mobile.MainActivity;
@@ -270,9 +272,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
-
         //addNotification();
-
 
         mBottomNav = findViewById(R.id.navigation);
 
@@ -1217,19 +1217,25 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     }
 
     private void loadData(){
+
         SharedPreferences sharedPreferences = getSharedPreferences("shared preferences messages", MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString("message list", null);
-        Type type = new TypeToken<ArrayList<Message>>() {}.getType();
-        messages = gson.fromJson(json, type);
 
-        mailAdapter = new MailAdapter(this, messages);
-        recyclerView.setAdapter(mailAdapter);
+        if(sharedPreferences.contains("shared preferences messages")){
 
-        RecyclerView.LayoutManager manager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(manager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+            Gson gson = new Gson();
+            String json = sharedPreferences.getString("message list", null);
+            Type type = new TypeToken<ArrayList<Message>>() {}.getType();
+            messages = gson.fromJson(json, type);
+
+            mailAdapter = new MailAdapter(this, messages);
+            recyclerView.setAdapter(mailAdapter);
+
+            RecyclerView.LayoutManager manager = new LinearLayoutManager(getApplicationContext());
+            recyclerView.setLayoutManager(manager);
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+
+        }
 
         if(messages == null){
             messages = new ArrayList<>();

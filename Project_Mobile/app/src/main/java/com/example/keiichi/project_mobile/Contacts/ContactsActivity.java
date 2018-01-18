@@ -752,9 +752,9 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
         } else if(navIdentifier == 2){
 
-            getUsers();
-
             loadUserData();
+
+            getUsers();
 
         } else if(navIdentifier == 3){
 
@@ -1178,8 +1178,8 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
                             } else if(drawerItem.getIdentifier() == 2){
                                 navIdentifier = 2;
-                                getUsers();
                                 loadUserData();
+                                getUsers();
                                 setActionBarTitle("All Users", myToolbar);
 
                             } else if(drawerItem.getIdentifier() == 3){
@@ -1192,7 +1192,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
                                 loadRoomData();
                                 getRooms();
-                                
+
                                 setActionBarTitle("All Rooms", myToolbar);
 
                             }
@@ -1221,18 +1221,21 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
     private void loadContactData(){
         SharedPreferences sharedPreferences = getSharedPreferences("shared preferences contacts", MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString("contact list", null);
-        Type type = new TypeToken<ArrayList<Contact>>() {}.getType();
-        contacts = gson.fromJson(json, type);
 
-        RecyclerView.LayoutManager manager = new LinearLayoutManager(getApplicationContext());
-        contactsRecyclerView.setLayoutManager(manager);
-        contactsRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        contactsRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        if(sharedPreferences.contains("shared preferences contacts")) {
+            Gson gson = new Gson();
+            String json = sharedPreferences.getString("contact list", null);
+            Type type = new TypeToken<ArrayList<Contact>>() {}.getType();
+            contacts = gson.fromJson(json, type);
 
-        contactAdapter = new ContactAdapter(this, contacts);
-        contactsRecyclerView.setAdapter(contactAdapter);
+            RecyclerView.LayoutManager manager = new LinearLayoutManager(getApplicationContext());
+            contactsRecyclerView.setLayoutManager(manager);
+            contactsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+            contactsRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+
+            contactAdapter = new ContactAdapter(this, contacts);
+            contactsRecyclerView.setAdapter(contactAdapter);
+        }
 
         if(contacts == null){
             contacts = new ArrayList<>();
@@ -1253,19 +1256,22 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
     private void loadUserData(){
         SharedPreferences sharedPreferences = getSharedPreferences("shared preferences users", MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString("user list", null);
-        Type type = new TypeToken<ArrayList<User>>() {}.getType();
-        users = gson.fromJson(json, type);
 
-        RecyclerView.LayoutManager manager = new LinearLayoutManager(getApplicationContext());
-        contactsRecyclerView.setLayoutManager(manager);
-        contactsRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        contactsRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        if(sharedPreferences.contains("shared preferences users")){
+            Gson gson = new Gson();
+            String json = sharedPreferences.getString("user list", null);
+            Type type = new TypeToken<ArrayList<User>>() {}.getType();
+            users = gson.fromJson(json, type);
 
-        userAdapter = new UserAdapter(this, users);
-        contactsRecyclerView.setAdapter(userAdapter);
-        userAdapter.notifyDataSetChanged();
+            RecyclerView.LayoutManager manager = new LinearLayoutManager(getApplicationContext());
+            contactsRecyclerView.setLayoutManager(manager);
+            contactsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+            contactsRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+
+            userAdapter = new UserAdapter(this, users);
+            contactsRecyclerView.setAdapter(userAdapter);
+            userAdapter.notifyDataSetChanged();
+        }
 
         if(users == null){
             users    = new ArrayList<>();
