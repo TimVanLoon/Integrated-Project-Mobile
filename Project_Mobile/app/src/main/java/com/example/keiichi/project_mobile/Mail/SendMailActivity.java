@@ -44,8 +44,10 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.json.Json;
@@ -58,6 +60,7 @@ import jp.wasabeef.richeditor.RichEditor;
 public class SendMailActivity extends AppCompatActivity {
 
     final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/sendMail";
+    private List<String> mailList = new ArrayList<>();
     private Toolbar myToolbar;
     private TextView MailAdress;
     private TextView Subject;
@@ -69,6 +72,7 @@ public class SendMailActivity extends AppCompatActivity {
     private String fromContactDetailsActivity;
     private String fromRoomActivity;
     private String fromUserActivity;
+    private String fromRecipientActivity;
     private RichEditor editor;
     private MenuItem sendItem;
     private Contact contact;
@@ -76,6 +80,7 @@ public class SendMailActivity extends AppCompatActivity {
     private User user;
     private ImageView plusContactIcon;
     private TextView CCtje;
+    private String allMails = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +93,7 @@ public class SendMailActivity extends AppCompatActivity {
         fromContactDetailsActivity = getIntent().getStringExtra("fromContactDetailsActivity");
         fromRoomActivity = getIntent().getStringExtra("fromRoomActivity");
         fromUserActivity = getIntent().getStringExtra("fromUserActivity");
+        fromRecipientActivity = getIntent().getStringExtra("fromRecipientActivity");
 
         MailAdress = findViewById(R.id.TextMailAdress);
         Subject = findViewById(R.id.TextMailSubject);
@@ -110,6 +116,8 @@ public class SendMailActivity extends AppCompatActivity {
 
         emailAddress = intent.getStringExtra("emailAddress");
 
+        mailList = (List<String>)getIntent().getSerializableExtra("mailList");
+
         if (emailAddress != null){
             MailAdress.setText(emailAddress);
         }
@@ -122,11 +130,28 @@ public class SendMailActivity extends AppCompatActivity {
                 intentAttendees.putExtra("userName", userName);
                 intentAttendees.putExtra("userEmail", userEmail);
 
+                if(!MailAdress.getText().toString().isEmpty()){
+                    mailList = new ArrayList<>();
+
+                    for (String string :  MailAdress.getText().toString().split("\\s+")){
+                        mailList.add(string);
+                    }
+                }
+
+                intentAttendees.putExtra("mailList",(Serializable) mailList);
+
                 startActivity(intentAttendees);
 
                 SendMailActivity.this.finish();
             }
         });
+
+        if(fromRecipientActivity != null){
+            for (String mail: mailList){
+                allMails += mail + " ";
+            }
+            MailAdress.setText(allMails);
+        }
 
     }
 

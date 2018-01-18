@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -35,6 +36,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,6 +46,7 @@ import java.util.Map;
 public class RecipientActivity extends AppCompatActivity {
 
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts?$orderBy=displayName&$top=500&$count=true";
+    private List<String> mailList = new ArrayList<>();
     private List<Contact> contacts = new ArrayList<>();
     private Toolbar myToolbar;
     private RecyclerView contactsRecyclerView;
@@ -64,10 +67,11 @@ public class RecipientActivity extends AppCompatActivity {
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
+        mailList = (List<String>)getIntent().getSerializableExtra("mailList");
 
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
-        
+
         contactsRecyclerView = findViewById(R.id.contactsRecyclerView);
 
         // VOEG BACK BUTTON TOE AAN ACTION BAR
@@ -119,6 +123,8 @@ public class RecipientActivity extends AppCompatActivity {
                 intentEditEvent.putExtra("userEmail", userEmail);
                 intentEditEvent.putExtra("AccessToken", accessToken);
                 intentEditEvent.putExtra("userName", userName);
+                intentEditEvent.putExtra("fromRecipientActivity", "yes");
+                intentEditEvent.putExtra("mailList",(Serializable) mailList);
 
                 startActivity(intentEditEvent);
 
@@ -237,6 +243,33 @@ public class RecipientActivity extends AppCompatActivity {
 
                     List<EmailAddress> email = contact.getEmailAddresses();
 
+                    if(email.isEmpty()){
+                        Toast.makeText(getApplicationContext(), "No email found for this contact!", Toast.LENGTH_SHORT).show();
+                    } else {
+
+                        Intent intentSendMail = new Intent(RecipientActivity.this, SendMailActivity.class);
+                        intentSendMail.putExtra("AccessToken", accessToken);
+                        intentSendMail.putExtra("userName", userName);
+                        intentSendMail.putExtra("userEmail", userEmail);
+                        intentSendMail.putExtra("fromRecipientActivity", "yes");
+
+                        String mailAddress = email.get(0).getAddress();
+
+                        if(mailList != null){
+                            mailList.add(mailAddress);
+                        } else {
+                            mailList = new ArrayList<>();
+                            mailList.add(mailAddress);
+                        }
+
+                        intentSendMail.putExtra("mailList",(Serializable) mailList);
+
+                        startActivity(intentSendMail);
+
+                        RecipientActivity.this.finish();
+
+                    }
+
                 }
 
             }
@@ -262,6 +295,8 @@ public class RecipientActivity extends AppCompatActivity {
         intentEditEvent.putExtra("userEmail", userEmail);
         intentEditEvent.putExtra("AccessToken", accessToken);
         intentEditEvent.putExtra("userName", userName);
+        intentEditEvent.putExtra("fromRecipientActivity", "yes");
+        intentEditEvent.putExtra("mailList",(Serializable) mailList);
 
         startActivity(intentEditEvent);
 
