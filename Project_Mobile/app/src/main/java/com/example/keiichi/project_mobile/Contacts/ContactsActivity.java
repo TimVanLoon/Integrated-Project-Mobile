@@ -237,6 +237,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
                 intentAddContact.putExtra("AccessToken", accessToken);
                 intentAddContact.putExtra("userName", userName);
                 intentAddContact.putExtra("userEmail", userEmail);
+                intentAddContact.putExtra("currentContactFolderId", currentContactFolderId);
 
                 startActivity(intentAddContact);
 

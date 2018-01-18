@@ -58,6 +58,7 @@ import java.util.regex.Pattern;
 public class AddContactActivity extends AppCompatActivity {
 
     final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/contacts";
+    final private String URL_POSTINFOLDER = "https://graph.microsoft.com/v1.0/me/contactFolders/";
     final private int DELAY_TIME = 100;
     private DatePickerDialog datePickerDialog;
     private List<String> homePhones = new ArrayList<>();
@@ -162,6 +163,7 @@ public class AddContactActivity extends AppCompatActivity {
     private String userSurName;
     private String userMail;
     private String userDepartment;
+    private String currentContactFolderId;
     private int dayOfMonth;
     private int month;
     private int year;
@@ -188,6 +190,7 @@ public class AddContactActivity extends AppCompatActivity {
         userEmail = getIntent().getStringExtra("userEmail");
         fromUserActivity = getIntent().getStringExtra("fromUserActivity");
         user = (User) getIntent().getSerializableExtra("user");
+        currentContactFolderId = getIntent().getStringExtra("currentContactFolderId");
 
         // INITIALISEER ACTION BAR
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -1035,7 +1038,14 @@ public class AddContactActivity extends AppCompatActivity {
                                     try {
                                         saveItem.setEnabled(false);
 
-                                        saveContact();
+                                        if(currentContactFolderId != null){
+
+                                            saveContactToFolder(currentContactFolderId);
+
+                                        } else {
+
+                                            saveContact();
+                                        }
 
                                         int DELAY_TIME = 2000;
 
@@ -1253,6 +1263,217 @@ public class AddContactActivity extends AppCompatActivity {
         }
 
         JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_POSTADRESS,new JSONObject(new Gson().toJson(contact)),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Toast.makeText(getApplicationContext(), "Contact saved!", Toast.LENGTH_SHORT).show();
+                        System.out.println(response.toString());
+                    }
+
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+
+                return headers;
+            }
+
+        };
+
+        queue.add(objectRequest);
+
+    }
+
+    // POST REQUEST VOOR NIEWE CONTACTSPERSOON
+    private void saveContactToFolder(String folderId) throws JSONException {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        Contact contact = new Contact();
+        contact.setGivenName(firstNameInput.getText().toString());
+        contact.setSurname(lastNameInput.getText().toString());
+
+        String displayName = firstNameInput.getText().toString() + " " + lastNameInput.getText().toString();
+        contact.setDisplayName(displayName);
+
+        if(!middleNameInput.getText().toString().isEmpty()){
+            contact.setMiddleName(middleNameInput.getText().toString());
+        }
+
+        if(!titleInput.getText().toString().isEmpty()){
+            contact.setTitle(titleInput.getText().toString());
+        }
+
+        if(!suffixInput.getText().toString().isEmpty()){
+            contact.setInitials(suffixInput.getText().toString());
+        }
+
+        if(!yomiFirstNameInput.getText().toString().isEmpty()){
+            contact.setYomiGivenName(yomiFirstNameInput.getText().toString());
+        }
+
+        if(!yomiLastNameInput.getText().toString().isEmpty()){
+            contact.setYomiSurname(yomiLastNameInput.getText().toString());
+        }
+
+        if (emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+" ) || emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+.[a-z]+")) {
+
+            List<EmailAddress> listEmails = new ArrayList<>();
+
+            if(!displayAsInput.getText().toString().isEmpty()){
+                EmailAddress contactEmail = new EmailAddress(emailInput.getText().toString(), displayAsInput.getText().toString());
+                listEmails.add(contactEmail);
+            } else {
+                EmailAddress contactEmail = new EmailAddress(emailInput.getText().toString(), displayName);
+                listEmails.add(contactEmail);
+            }
+
+            if(emailInput2.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+" ) || emailInput2.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+.[a-z]+")){
+
+                if(!displayAsInput2.getText().toString().isEmpty()){
+                    EmailAddress contactEmail = new EmailAddress(emailInput2.getText().toString(), displayAsInput2.getText().toString());
+                    listEmails.add(contactEmail);
+                } else {
+                    EmailAddress contactEmail = new EmailAddress(emailInput2.getText().toString(), displayName);
+                    listEmails.add(contactEmail);
+                }
+
+            }
+
+            if(emailInput3.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+" ) || emailInput3.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+.[a-z]+")){
+
+                if(!displayAsInput3.getText().toString().isEmpty()){
+                    EmailAddress contactEmail = new EmailAddress(emailInput3.getText().toString(), displayAsInput3.getText().toString());
+                    listEmails.add(contactEmail);
+                } else {
+                    EmailAddress contactEmail = new EmailAddress(emailInput3.getText().toString(), displayName);
+                    listEmails.add(contactEmail);
+                }
+
+            }
+
+            contact.setEmailAddresses(listEmails);
+
+        }
+
+        if(!mobilePhoneInput.getText().toString().isEmpty()){
+            contact.setMobilePhone(mobilePhoneInput.getText().toString());
+        }
+
+        if(!phoneInput.getText().toString().isEmpty()){
+
+            businessPhones.add(phoneInput.getText().toString());
+
+            contact.setBusinessPhones(businessPhones);
+        }
+
+        if(!businessPhoneInput2.getText().toString().isEmpty()){
+
+            businessPhones.add(businessPhoneInput2.getText().toString());
+
+            contact.setBusinessPhones(businessPhones);
+        }
+
+        if(!homePhoneInput.getText().toString().isEmpty()){
+
+            homePhones.add(homePhoneInput.getText().toString());
+
+            contact.setHomePhones(homePhones);
+        }
+
+        if(!homePhoneInput2.getText().toString().isEmpty()){
+
+            homePhones.add(homePhoneInput2.getText().toString());
+
+            contact.setHomePhones(homePhones);
+        }
+
+        if(!jobInput.getText().toString().isEmpty()){
+            contact.setJobTitle(jobInput.getText().toString());
+        }
+
+        if(!department.getText().toString().isEmpty()){
+            contact.setDepartment(department.getText().toString());
+        }
+
+        if(!companyNameInput.getText().toString().isEmpty()){
+            contact.setCompanyName(companyNameInput.getText().toString());
+        }
+
+        if(!officeLocationInput.getText().toString().isEmpty()){
+            contact.setOfficeLocation(officeLocationInput.getText().toString());
+        }
+
+        if(!managerInput.getText().toString().isEmpty()){
+            contact.setManager(managerInput.getText().toString());
+        }
+
+        if(!assistantNameInput.getText().toString().isEmpty()){
+            contact.setAssistantName(assistantNameInput.getText().toString());
+        }
+
+        if(!yomiCompanyInput.getText().toString().isEmpty()){
+            contact.setYomiCompanyName(yomiCompanyInput.getText().toString());
+        }
+
+        if(!businessStreetNameInput.getText().toString().isEmpty()){
+            PhysicalAddress contactBusinessPhysicalAddress = new PhysicalAddress(businessStreetNameInput.getText().toString(), businessCityNameInput.getText().toString(), businessStateNameInput.getText().toString(), businessCountryNameInput.getText().toString(), businessPostalCodeInput.getText().toString());
+            contact.setBusinessAddress(contactBusinessPhysicalAddress);
+        }
+
+        if(!homeStreetNameInput.getText().toString().isEmpty()){
+            PhysicalAddress contactHomePhysicalAddress = new PhysicalAddress(homeStreetNameInput.getText().toString(), homeCityNameInput.getText().toString(), homeStateNameInput.getText().toString(), homeCountryNameInput.getText().toString(), homePostalCodeInput.getText().toString());
+            contact.setHomeAddress(contactHomePhysicalAddress);
+        }
+
+        if(!otherStreetNameInput.getText().toString().isEmpty()){
+            PhysicalAddress contactOtherPhysicalAddress = new PhysicalAddress(otherStreetNameInput.getText().toString(), otherCityNameInput.getText().toString(), otherStateNameInput.getText().toString(), otherCountryNameInput.getText().toString(), otherPostalCodeInput.getText().toString());
+            contact.setOtherAddress(contactOtherPhysicalAddress);
+        }
+
+        if(!nickNameInput.getText().toString().isEmpty()){
+            contact.setNickName(nickNameInput.getText().toString());
+        }
+
+        if(!spouseNameInput.getText().toString().isEmpty()){
+            contact.setSpouseName(spouseNameInput.getText().toString());
+        }
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        cal.set(Calendar.MONTH, month - 1);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        String birthdayDate = sdf.format(cal.getTime());
+
+        if(!birthdayInput.getText().toString().isEmpty()){
+            contact.setBirthday(birthdayDate);
+        }
+
+        if(!imInput.getText().toString().isEmpty()){
+            List<String> imAddresses = new ArrayList<>();
+
+            imAddresses.add(imInput.getText().toString());
+
+            contact.setImAddresses(imAddresses);
+        }
+
+        if(!personalNotes.getText().toString().isEmpty()){
+            contact.setPersonalNotes(personalNotes.getText().toString());
+        }
+
+        String postUrl = URL_POSTINFOLDER + folderId + "/contacts";
+
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, postUrl,new JSONObject(new Gson().toJson(contact)),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
