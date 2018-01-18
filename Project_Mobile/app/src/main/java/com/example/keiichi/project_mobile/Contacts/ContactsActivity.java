@@ -1228,6 +1228,46 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
             contactAdapter = new ContactAdapter(this, contacts);
             contactsRecyclerView.setAdapter(contactAdapter);
+
+            contactsRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), contactsRecyclerView, new ListMailsActvity.ClickListener() {
+                @Override
+                public void onClick(View view, int position) {
+                    if (actionModeEnabled) {
+                        selectedItem(position);
+
+                    } else {
+
+                        if (contacts.size() != 0) {
+
+                            Contact contact = contactAdapter.getItemAtPosition(position);
+
+                            Intent showContactDetails = new Intent(ContactsActivity.this, ContactsDetailsActivity.class);
+
+                            showContactDetails.putExtra("userEmail", userEmail);
+                            showContactDetails.putExtra("AccessToken", accessToken);
+                            showContactDetails.putExtra("userName", userName);
+                            showContactDetails.putExtra("contact", contact);
+                            showContactDetails.putExtra("contactId", contact.getId());
+
+                            startActivity(showContactDetails);
+
+                            ContactsActivity.this.finish();
+
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Empty contact list!", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+
+                }
+
+                @Override
+                public void onLongClick(View view, int position) {
+                    view.startActionMode(actionModeCallback);
+                    selectedItem(position);
+                }
+            }));
+
         }
 
         if(contacts == null){
@@ -1264,6 +1304,45 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             userAdapter = new UserAdapter(this, users);
             contactsRecyclerView.setAdapter(userAdapter);
             userAdapter.notifyDataSetChanged();
+
+            contactsRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), contactsRecyclerView, new ListMailsActvity.ClickListener() {
+                @Override
+                public void onClick(View view, int position) {
+                    if (actionModeEnabled) {
+                        selectedItem(position);
+
+                    } else {
+
+                        if (users.size() != 0) {
+
+                            User user = userAdapter.getItemAtPosition(position);
+
+                            Intent showUserDetails = new Intent(ContactsActivity.this, UserDetailsActivity.class);
+
+                            showUserDetails.putExtra("userEmail", userEmail);
+                            showUserDetails.putExtra("AccessToken", accessToken);
+                            showUserDetails.putExtra("userName", userName);
+                            showUserDetails.putExtra("user", user);
+
+                            startActivity(showUserDetails);
+
+                            ContactsActivity.this.finish();
+
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Empty user list!", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+
+                }
+
+                @Override
+                public void onLongClick(View view, int position) {
+                    view.startActionMode(actionModeCallback);
+                    selectedItem(position);
+                }
+            }));
+
         }
 
         if(users == null){
@@ -1296,6 +1375,45 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             roomAdapter = new RoomAdapter(this, rooms);
             contactsRecyclerView.setAdapter(roomAdapter);
             roomAdapter.notifyDataSetChanged();
+
+            contactsRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), contactsRecyclerView, new ListMailsActvity.ClickListener() {
+                @Override
+                public void onClick(View view, int position) {
+                    if (actionModeEnabled) {
+                        selectedItem(position);
+
+                    } else {
+
+                        if (rooms.size() != 0) {
+
+                            EmailAddress room = roomAdapter.getItemAtPosition(position);
+
+                            Intent showRoomDetails = new Intent(ContactsActivity.this, RoomDetailsActivity.class);
+
+                            showRoomDetails.putExtra("userEmail", userEmail);
+                            showRoomDetails.putExtra("AccessToken", accessToken);
+                            showRoomDetails.putExtra("userName", userName);
+                            showRoomDetails.putExtra("room", room);
+
+                            startActivity(showRoomDetails);
+
+                            ContactsActivity.this.finish();
+
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Empty room list!", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+
+                }
+
+                @Override
+                public void onLongClick(View view, int position) {
+                    view.startActionMode(actionModeCallback);
+                    selectedItem(position);
+                }
+            }));
+
         }
 
         if(rooms == null){

@@ -1036,6 +1036,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
                             currentMailFolderId = folder.getId();
 
+                            getMailFolders();
 
                             getMailsFromFolder(currentMailFolderId);
 
@@ -1137,6 +1138,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
             mailAdapter.notifyDataSetChanged();
 
+            saveMailFolderData();
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -1234,6 +1236,79 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
 
+            recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new ClickListener() {
+                @Override
+                public void onClick(View view, int position) {
+                    if (actionModeEnabled) {
+                        selectedItem(position);
+
+                    } else {
+                        Message message = mailAdapter.getItemAtPosition(position);
+
+
+                        Intent showMail = new Intent(ListMailsActvity.this, DisplayMailActivity.class);
+
+                        if (!message.isRead()){
+
+                            System.out.println("KEVIN BECKWEE");
+
+                            String id = message.getId();
+                            message.setRead(true);
+
+                            showMail.putExtra("isRead", "yes");
+
+                            //updateMailIsRead(message, id);
+
+                        }
+
+                        showMail.putExtra("messageBody", message.getBody().getContent());
+                        showMail.putExtra("AccessToken", accessToken);
+                        showMail.putExtra("userName", userName);
+                        showMail.putExtra("userEmail", userEmail);
+                        showMail.putExtra("mailId", message.getId());
+                        showMail.putExtra("mailSubject", message.getSubject());
+                        showMail.putExtra("mailAddress", message.getFrom().getEmailAddress().getAddress());
+                        showMail.putExtra("senderName", message.getFrom().getEmailAddress().getName());
+                        showMail.putExtra("timeSent", message.getReceivedDateTime());
+                        showMail.putExtra("junkID", JUNK_FOLDER_ID);
+
+                        if(!message.getToRecipients().isEmpty()){
+                            showMail.putExtra("receiverName", message.getToRecipients().get(0).getEmailAddress().getName());
+                            showMail.putExtra("receiverMail", message.getToRecipients().get(0).getEmailAddress().getAddress());
+                        } else {
+                            showMail.putExtra("receiverName","");
+                            showMail.putExtra("receiverMail", "");
+                        }
+
+                        showMail.putExtra("mail",message);
+
+
+                        if(!message.getToRecipients().isEmpty()){
+                            showMail.putExtra("receiverName", message.getToRecipients().get(0).getEmailAddress().getName());
+                        }
+
+                        if(!message.getToRecipients().isEmpty()){
+                            showMail.putExtra("receiverMail", message.getToRecipients().get(0).getEmailAddress().getAddress());
+                        }
+
+                        showMail.putExtra("contentType", message.getBody().getContentType());
+                        showMail.putExtra("messageObject", message);
+
+                        startActivity(showMail);
+
+                        ListMailsActvity.this.finish();
+                    }
+
+                }
+
+                @Override
+                public void onLongClick(View view, int position) {
+                    view.startActionMode(actionModeCallback);
+                    selectedItem(position);
+
+                }
+            }));
+
         }
 
         if(messages == null){
@@ -1269,6 +1344,41 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
         if(mailFolders == null){
             mailFolders = new ArrayList<>();
+        }
+
+    }
+
+    private void saveMailsFromFolderData(){
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences mails in folder", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(messages);
+
+        editor.putString("mailInFolder list", json);
+        editor.apply();
+
+    }
+
+    private void loadMailsFromFolderData(){
+
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences mails in folder", MODE_PRIVATE);
+
+        if(sharedPreferences.contains("mailInFolder list")){
+
+            Gson gson = new Gson();
+            String json = sharedPreferences.getString("mailfolder list", null);
+            Type type = new TypeToken<ArrayList<Message>>() {}.getType();
+            messages = gson.fromJson(json, type);
+
+            mailAdapter = new MailAdapter(this, messages);
+            recyclerView.setAdapter(mailAdapter);
+
+            mailAdapter.notifyDataSetChanged();
+
+        }
+
+        if(messages == null){
+            messages = new ArrayList<>();
         }
 
     }

@@ -631,6 +631,45 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
 
             eventAdapter = new EventAdapter(this, events);
             eventsRecyclerView.setAdapter(eventAdapter);
+
+            eventsRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), eventsRecyclerView, new ListMailsActvity.ClickListener() {
+                @Override
+                public void onClick(View view, int position) {
+                    if (actionModeEnabled) {
+                        selectedItem(position);
+
+                    } else {
+
+                        if (events.size() != 0) {
+
+                            Event event = eventAdapter.getItemAtPosition(position);
+
+                            Intent showEventDetails = new Intent(ListEventsActivity.this, EventDetailsActivity.class);
+                            showEventDetails.putExtra("userEmail", userEmail);
+                            showEventDetails.putExtra("AccessToken", accessToken);
+                            showEventDetails.putExtra("userName", userName);
+                            showEventDetails.putExtra("eventId", event.getId());
+                            showEventDetails.putExtra("event", event);
+
+                            startActivity(showEventDetails);
+
+                            ListEventsActivity.this.finish();
+
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Empty event list!", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+
+                }
+
+                @Override
+                public void onLongClick(View view, int position) {
+                    view.startActionMode(actionModeCallback);
+                    selectedItem(position);
+                }
+            }));
+
         }
 
         if(events == null){
