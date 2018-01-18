@@ -23,6 +23,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
+import android.view.ContextThemeWrapper;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -78,7 +79,6 @@ public class DisplayMailActivity extends AppCompatActivity {
     final private String URL_MAIL_UPDATE = "https://graph.microsoft.com/v1.0/me/messages/";
     final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
     private static final String TAG = MainActivity.class.getSimpleName();
-
     private TextView mailSubjectTextView;
     private TextView senderTimeTextView;
     private TextView senderNameTextView;
@@ -104,20 +104,14 @@ public class DisplayMailActivity extends AppCompatActivity {
     private String receiverMail;
     private String junkID;
 
-
     private  AlertDialog.Builder builder;
 
     StrictMode.VmPolicy.Builder fileBuilder = new StrictMode.VmPolicy.Builder();
 
-
-
     private String contentType;
     private String isRead;
 
-
-
     private ArrayList<Attachment> attachments = new ArrayList<>();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -239,7 +233,9 @@ public class DisplayMailActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                final PopupMenu popupMenu = new PopupMenu(getApplicationContext(), view);
+                Context wrapper = new ContextThemeWrapper(getApplicationContext(), R.style.YOURSTYLE);
+
+                final PopupMenu popupMenu = new PopupMenu(wrapper, view);
 
                 popupMenu.inflate(R.menu.mail_options);
 
@@ -555,7 +551,7 @@ public class DisplayMailActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        System.out.println(response.toString());
+                        Toast.makeText(DisplayMailActivity.this, "Marked as junk!", Toast.LENGTH_SHORT).show();
                     }
 
                 }, new Response.ErrorListener() {
@@ -643,7 +639,7 @@ public class DisplayMailActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        System.out.println(response.toString());
+                        Toast.makeText(DisplayMailActivity.this, "Marked as unread!", Toast.LENGTH_SHORT).show();
                     }
 
                 }, new Response.ErrorListener() {

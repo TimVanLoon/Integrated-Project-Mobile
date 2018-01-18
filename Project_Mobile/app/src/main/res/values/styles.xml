@@ -10,6 +10,7 @@
         <item name="android:windowBackground">@color/colorWhite</item>
         <item name="spinnerStyle">@style/Widget.App.Spinner</item>
         <item name="android:spinnerStyle">@style/Widget.App.Spinner</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu</item>
     </style>
 
     <!-- Launch activity theme. -->
@@ -28,6 +29,8 @@
         <item name="spinnerStyle">@style/Widget.App.Spinner</item>
         <item name="android:spinnerStyle">@style/Widget.App.Spinner</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu</item>
+        <item name="android:panelFullBackground">@color/colorWhite</item>
     </style>
 
     <style name="Base.Widget.AppCompat.ActionMode" parent="">
@@ -44,12 +47,21 @@
         <item name="android:background">@drawable/spinner_background</item>
     </style>
 
+    <style name="YOURSTYLE" parent="Widget.AppCompat.PopupMenu">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:itemBackground">@color/colorWhite</item>
+    </style>
+
+    <style name="PopupMenu" parent="ThemeOverlay.AppCompat.Dark">
+        <item name="android:popupBackground">@color/colorWhite</item>
+    </style>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="android:actionModeBackground">@color/bg_action_mode</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

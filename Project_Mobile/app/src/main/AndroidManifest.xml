@@ -52,6 +52,7 @@
         <activity
             android:name=".Mail.SendMailActivity"
             android:label="Compose"
+            android:theme="@style/ContactsTheme"
             android:windowSoftInputMode="adjustResize|adjustPan" />
         <activity
             android:name=".Calendar.CalendarActivity"
@@ -81,6 +82,7 @@
         <activity
             android:name=".Contacts.ContactsDetailsActivity"
             android:label="Contact Details"
+            android:theme="@style/ContactsTheme"
             android:windowSoftInputMode="adjustResize|adjustPan" />
         <activity
             android:name=".Contacts.EditContactActivity"
@@ -90,6 +92,7 @@
         <activity
             android:name=".SettingsActivity"
             android:label="Settings"
+            android:theme="@style/ContactsTheme"
             android:windowSoftInputMode="adjustResize|adjustPan" />
         <activity
             android:name=".Calendar.EventDetailsActivity"
@@ -118,15 +121,18 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Mail.ReplyAllActivity"
+            android:theme="@style/ContactsTheme"
             android:windowSoftInputMode="adjustResize|adjustPan" />
         <activity
             android:name=".Contacts.UserDetailsActivity"
             android:label="User Details"
+            android:theme="@style/ContactsTheme"
             android:windowSoftInputMode="adjustResize|adjustPan" />
 
         <activity
             android:name=".Contacts.RoomDetailsActivity"
             android:label="Room Details"
+            android:theme="@style/ContactsTheme"
             android:windowSoftInputMode="adjustResize|adjustPan"/>
 
         <service android:name=".FirebaseInstance">

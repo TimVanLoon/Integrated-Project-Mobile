@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -345,7 +346,9 @@ public class AddContactActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                final PopupMenu popupMenu = new PopupMenu(getApplicationContext(), view);
+                Context wrapper = new ContextThemeWrapper(getApplicationContext(), R.style.YOURSTYLE);
+
+                final PopupMenu popupMenu = new PopupMenu(wrapper, view);
 
                 popupMenu.inflate(R.menu.name_options);
 
@@ -444,7 +447,9 @@ public class AddContactActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                final PopupMenu popupMenu = new PopupMenu(getApplicationContext(), view);
+                Context wrapper = new ContextThemeWrapper(getApplicationContext(), R.style.YOURSTYLE);
+
+                final PopupMenu popupMenu = new PopupMenu(wrapper, view);
 
                 popupMenu.inflate(R.menu.email_options);
 
@@ -509,7 +514,9 @@ public class AddContactActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                final PopupMenu popupMenu = new PopupMenu(getApplicationContext(), view);
+                Context wrapper = new ContextThemeWrapper(getApplicationContext(), R.style.YOURSTYLE);
+
+                final PopupMenu popupMenu = new PopupMenu(wrapper, view);
 
                 popupMenu.inflate(R.menu.phone_options);
 
@@ -657,9 +664,9 @@ public class AddContactActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                final PopupMenu popupMenu = new PopupMenu(getApplicationContext(), view);
+                Context wrapper = new ContextThemeWrapper(getApplicationContext(), R.style.YOURSTYLE);
 
-                popupMenu.inflate(R.menu.address_options);
+                final PopupMenu popupMenu = new PopupMenu(wrapper, view);
 
                 popupMenu.show();
 
@@ -763,9 +770,9 @@ public class AddContactActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                final PopupMenu popupMenu = new PopupMenu(getApplicationContext(), view);
+                Context wrapper = new ContextThemeWrapper(getApplicationContext(), R.style.YOURSTYLE);
 
-                popupMenu.inflate(R.menu.other_options);
+                final PopupMenu popupMenu = new PopupMenu(wrapper, view);
 
                 popupMenu.show();
 
