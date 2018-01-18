@@ -41,6 +41,7 @@ import com.example.keiichi.project_mobile.Calendar.CalendarActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.ContactFolder;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
+import com.example.keiichi.project_mobile.DAL.POJOs.MailFolder;
 import com.example.keiichi.project_mobile.DAL.POJOs.Message;
 import com.example.keiichi.project_mobile.DAL.POJOs.User;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
@@ -105,7 +106,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
     private ActionMode contactActionMode;
     private List<Contact> selectedContacts = new ArrayList<>();
     private ArrayList<Integer> selectedItems = new ArrayList<>();
-    private List<ContactFolder> contactFolders;
+    private List<ContactFolder> contactFolders = new ArrayList<>();
     List<String> navigationItems = new ArrayList<>();
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts?$orderBy=displayName&$top=500&$count=true";
     final static String MSGRAPH_URL_FOTO = "https://graph.microsoft.com/beta/me/contacts/";
@@ -137,17 +138,11 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
         userEmail = getIntent().getStringExtra("userEmail");
         id = getIntent().getStringExtra("id");
 
-        //getProfilePhotos();
-
         mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
 
         Menu menu = mBottomNav.getMenu();
         MenuItem menuItem = menu.getItem(2);
         menuItem.setChecked(true);
-
-        loadContactData();
-
-        getContacts();
 
         mBottomNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -187,10 +182,12 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             }
         });
 
-        contactFolders = new ArrayList<>();
         contactFolders.add(new ContactFolder("", "", ""));
-
         buildDrawer(userName, userEmail, myToolbar, contactFolders);
+
+        loadContactFolderData();
+        loadContactData();
+        getContacts();
 
     }
 
@@ -920,6 +917,8 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
             contactFolders = new Gson().fromJson(String.valueOf(folders), listType);
 
+            saveContactFolderData();
+
             buildDrawer(userName, userEmail, myToolbar, contactFolders);
 
         } catch (JSONException e) {
@@ -1185,14 +1184,8 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
                             } else if(drawerItem.getIdentifier() == 3){
                                 navIdentifier = 3;
                                 rooms.add(new EmailAddress("", ""));
-
-                                roomAdapter = new RoomAdapter(getApplicationContext(), rooms);
-                                contactsRecyclerView.setAdapter(roomAdapter);
-                                roomAdapter.notifyDataSetChanged();
-
                                 loadRoomData();
                                 getRooms();
-
                                 setActionBarTitle("All Rooms", myToolbar);
 
                             }
@@ -1222,7 +1215,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
     private void loadContactData(){
         SharedPreferences sharedPreferences = getSharedPreferences("shared preferences contacts", MODE_PRIVATE);
 
-        if(sharedPreferences.contains("shared preferences contacts")) {
+        if(sharedPreferences.contains("contact list")) {
             Gson gson = new Gson();
             String json = sharedPreferences.getString("contact list", null);
             Type type = new TypeToken<ArrayList<Contact>>() {}.getType();
@@ -1257,7 +1250,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
     private void loadUserData(){
         SharedPreferences sharedPreferences = getSharedPreferences("shared preferences users", MODE_PRIVATE);
 
-        if(sharedPreferences.contains("shared preferences users")){
+        if(sharedPreferences.contains("user list")){
             Gson gson = new Gson();
             String json = sharedPreferences.getString("user list", null);
             Type type = new TypeToken<ArrayList<User>>() {}.getType();
@@ -1292,16 +1285,18 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
     private void loadRoomData(){
 
-        System.out.println("test rooms: " + rooms);
         SharedPreferences sharedPreferences = getSharedPreferences("shared preferences rooms", MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString("room list", null);
-        Type type = new TypeToken<ArrayList<EmailAddress>>() {}.getType();
-        rooms = gson.fromJson(json, type);
 
-        roomAdapter = new RoomAdapter(this, rooms);
-        contactsRecyclerView.setAdapter(roomAdapter);
-        roomAdapter.notifyDataSetChanged();
+        if(sharedPreferences.contains("room list")){
+            Gson gson = new Gson();
+            String json = sharedPreferences.getString("room list", null);
+            Type type = new TypeToken<ArrayList<EmailAddress>>() {}.getType();
+            rooms = gson.fromJson(json, type);
+
+            roomAdapter = new RoomAdapter(this, rooms);
+            contactsRecyclerView.setAdapter(roomAdapter);
+            roomAdapter.notifyDataSetChanged();
+        }
 
         if(rooms == null){
             rooms    = new ArrayList<>();
@@ -1309,6 +1304,36 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
     }
 
+    private void saveContactFolderData(){
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences contactfolders", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(contactFolders);
+
+        editor.putString("contactfolder list", json);
+        editor.apply();
+
+    }
+
+    private void loadContactFolderData(){
+
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences contactfolders", MODE_PRIVATE);
+
+        if(sharedPreferences.contains("contactfolder list")){
+            Gson gson = new Gson();
+            String json = sharedPreferences.getString("contactfolder list", null);
+            Type type = new TypeToken<ArrayList<ContactFolder>>() {}.getType();
+            contactFolders = gson.fromJson(json, type);
+
+            buildDrawer(userName, userEmail, myToolbar, contactFolders);
+
+        }
+
+        if(contactFolders == null){
+            contactFolders    = new ArrayList<>();
+        }
+
+    }
 
     @Override
     public void onBackPressed(){

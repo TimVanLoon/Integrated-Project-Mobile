@@ -151,9 +151,9 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
 
-        getEvents();
-
         loadData();
+
+        getEvents();
 
     }
 
@@ -615,19 +615,23 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
     }
 
     private void loadData(){
+
         SharedPreferences sharedPreferences = getSharedPreferences("shared preferences events", MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString("event list", null);
-        Type type = new TypeToken<ArrayList<Event>>() {}.getType();
-        events = gson.fromJson(json, type);
 
-        RecyclerView.LayoutManager manager = new LinearLayoutManager(getApplicationContext());
-        eventsRecyclerView.setLayoutManager(manager);
-        eventsRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        eventsRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        if(sharedPreferences.contains("event list")){
+            Gson gson = new Gson();
+            String json = sharedPreferences.getString("event list", null);
+            Type type = new TypeToken<ArrayList<Event>>() {}.getType();
+            events = gson.fromJson(json, type);
 
-        eventAdapter = new EventAdapter(this, events);
-        eventsRecyclerView.setAdapter(eventAdapter);
+            RecyclerView.LayoutManager manager = new LinearLayoutManager(getApplicationContext());
+            eventsRecyclerView.setLayoutManager(manager);
+            eventsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+            eventsRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+
+            eventAdapter = new EventAdapter(this, events);
+            eventsRecyclerView.setAdapter(eventAdapter);
+        }
 
         if(events == null){
             events = new ArrayList<>();

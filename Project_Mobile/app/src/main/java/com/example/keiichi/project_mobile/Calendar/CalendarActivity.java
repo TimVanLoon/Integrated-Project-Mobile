@@ -1,6 +1,7 @@
 package com.example.keiichi.project_mobile.Calendar;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
@@ -11,6 +12,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -85,10 +90,8 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
     private TextView myDate;
     private BottomNavigationView mBottomNav;
     private SearchView searchView;
-
     private static final String LOG_TAG = CalendarActivity.class.getSimpleName();
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/events?$orderby=start/dateTime&$top=500&$count=true";
-
     private AgendaCalendarView mAgendaCalendarView;
     private Drawer drawer;
     private String accessToken;
@@ -97,8 +100,8 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
     private JSONArray eventsArray;
     private List<Event> events = new ArrayList<>();
     private List<CalendarEvent> eventList = new ArrayList<>();
-    private EventAdapter eventAdapter;
 
+    private EventAdapter eventAdapter;
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -124,13 +127,17 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
         minDate.set(Calendar.DAY_OF_MONTH, 1);
         maxDate.add(Calendar.YEAR, 1);
 
+        try {
+            loadData();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         callGraphAPI();
 
         calendarView = (CalendarView) findViewById(R.id.calendarView);
 
         mBottomNav = (BottomNavigationView) findViewById(R.id.navigation);
-
-        // callGraphAPI();
 
         Menu menu = mBottomNav.getMenu();
         MenuItem menuItem = menu.getItem(1);
@@ -220,7 +227,6 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
         switch(item.getItemId()){
 
             case R.id.action_listEvents:
-
 
                 Intent intentListEvents = new Intent(CalendarActivity.this, ListEventsActivity.class);
                 intentListEvents.putExtra("AccessToken", accessToken);
@@ -375,6 +381,8 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
 
             events = new Gson().fromJson(String.valueOf(eventArray), listType);
 
+            saveData();
+
             mockList(eventList);
 
         } catch (JSONException e) {
@@ -451,6 +459,36 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
                     }
                 })
                 .build();
+
+    }
+
+    private void saveData(){
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences events", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(events);
+
+        editor.putString("event list", json);
+        editor.apply();
+
+    }
+
+    private void loadData() throws ParseException {
+
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences events", MODE_PRIVATE);
+
+        if(sharedPreferences.contains("event list")){
+            Gson gson = new Gson();
+            String json = sharedPreferences.getString("event list", null);
+            Type type = new TypeToken<ArrayList<Event>>() {}.getType();
+            events = gson.fromJson(json, type);
+
+            mockList(eventList);
+        }
+
+        if(events == null){
+            events = new ArrayList<>();
+        }
 
     }
 
