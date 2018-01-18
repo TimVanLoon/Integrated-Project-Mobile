@@ -149,6 +149,10 @@ public class ContactsDetailsActivity extends AppCompatActivity {
     private TextView yomiNameTitle;
     private TextView yomiNameText;
     private TextView yomiCompany;
+    private TextView mailSub;
+    private TextView planSub;
+    private TextView callSub;
+    private TextView smsSub;
     private ImageView profilePic;
     private Toolbar myToolbar;
     private  AlertDialog.Builder builder;
@@ -212,6 +216,10 @@ public class ContactsDetailsActivity extends AppCompatActivity {
         yomiNameTitle = (TextView) findViewById(R.id.yomiNameTitle);
         yomiNameText = (TextView) findViewById(R.id.yomiNameText);
         yomiCompany = (TextView) findViewById(R.id.yomiCompany);
+        mailSub = (TextView) findViewById(R.id.mailSub);
+        planSub = (TextView) findViewById(R.id.planSub);
+        callSub = (TextView) findViewById(R.id.callSub);
+        smsSub = (TextView) findViewById(R.id.smsSub);
         profilePic = (ImageView) findViewById(R.id.profilePic);
 
         accessToken = getIntent().getStringExtra("AccessToken");
@@ -376,7 +384,9 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                 userEmail3.setVisibility(View.GONE);
 
                 mailButton.setColorFilter(Color.GRAY);
+                mailSub.setTextColor(Color.GRAY);
                 calendarButton.setColorFilter(Color.GRAY);
+                planSub.setTextColor(Color.GRAY);
 
                 mailButton.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
@@ -401,7 +411,9 @@ public class ContactsDetailsActivity extends AppCompatActivity {
             userEmail3.setVisibility(View.GONE);
 
             mailButton.setColorFilter(Color.GRAY);
+            mailSub.setTextColor(Color.GRAY);
             calendarButton.setColorFilter(Color.GRAY);
+            planSub.setTextColor(Color.GRAY);
 
             mailButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -420,7 +432,9 @@ public class ContactsDetailsActivity extends AppCompatActivity {
 
         if (phoneNumber == null && businessPhones.isEmpty() && homePhones.isEmpty()){
             smsButton.setColorFilter(Color.GRAY);
+            smsSub.setTextColor(Color.GRAY);
             phoneButton.setColorFilter(Color.GRAY);
+            callSub.setTextColor(Color.GRAY);
 
             System.out.println("papa auw 1");
 
@@ -442,6 +456,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
 
             if(phoneNumber == null){
                 smsButton.setColorFilter(Color.GRAY);
+                smsSub.setTextColor(Color.GRAY);
 
                 smsButton.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
@@ -503,6 +518,7 @@ public class ContactsDetailsActivity extends AppCompatActivity {
             System.out.println("papa auw!3");
 
             phoneButton.setColorFilter(Color.GRAY);
+            callSub.setTextColor(Color.GRAY);
 
             phoneButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {

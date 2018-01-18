@@ -37,6 +37,10 @@ public class RoomDetailsActivity extends AppCompatActivity {
     private ImageButton smsButton;
     private ImageView profilePic;
     private TextView headerDisplayName;
+    private TextView mailSub;
+    private TextView planSub;
+    private TextView callSub;
+    private TextView smsSub;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +53,10 @@ public class RoomDetailsActivity extends AppCompatActivity {
         smsButton = (ImageButton) findViewById(R.id.smsButton);
         profilePic = (ImageView) findViewById(R.id.profilePic);
         headerDisplayName = (TextView) findViewById(R.id.displayName);
+        mailSub = (TextView) findViewById(R.id.mailSub);
+        planSub = (TextView) findViewById(R.id.planSub);
+        callSub = (TextView) findViewById(R.id.callSub);
+        smsSub = (TextView) findViewById(R.id.smsSub);
 
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
@@ -74,7 +82,9 @@ public class RoomDetailsActivity extends AppCompatActivity {
         profilePic.setImageDrawable(drawable1);
 
         smsButton.setColorFilter(Color.GRAY);
+        smsSub.setTextColor(Color.GRAY);
         phoneButton.setColorFilter(Color.GRAY);
+        callSub.setTextColor(Color.GRAY);
 
         phoneButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -141,7 +151,9 @@ public class RoomDetailsActivity extends AppCompatActivity {
         if (roomMail == null) {
 
             mailButton.setColorFilter(Color.GRAY);
+            mailSub.setTextColor(Color.GRAY);
             calendarButton.setColorFilter(Color.GRAY);
+            planSub.setTextColor(Color.GRAY);
 
             mailButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
