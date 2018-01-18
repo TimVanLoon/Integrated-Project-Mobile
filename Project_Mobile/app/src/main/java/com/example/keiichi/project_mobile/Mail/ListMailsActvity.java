@@ -5,9 +5,11 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.LightingColorFilter;
 import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +22,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 // import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
@@ -35,6 +38,7 @@ import android.support.v7.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.ActionMode;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,8 +46,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -858,11 +864,141 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
                 return true;
 
+            case R.id.action_more:
+
+                View menuItemView = findViewById(R.id.action_more);
+
+                Context wrapper = new ContextThemeWrapper(getApplicationContext(), R.style.YOURSTYLE);
+
+                final PopupMenu popupMenu = new PopupMenu(wrapper, menuItemView);
+
+                popupMenu.inflate(R.menu.mail_folder_options);
+
+                popupMenu.show();
+
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+
+                        Menu menu = popupMenu.getMenu();
+
+                        switch(menuItem.getItemId()){
+                            case R.id.action_create_folder:
+
+                                showInputDialog();
+
+                                break;
+
+                        }
+
+                        return false;
+                    }
+                });
+
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    protected void showInputDialog() {
+
+        // get prompts.xml view
+        LayoutInflater layoutInflater = LayoutInflater.from(ListMailsActvity.this);
+        View promptView = layoutInflater.inflate(R.layout.mail_input_dialog, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ListMailsActvity.this);
+        alertDialogBuilder.setView(promptView);
+
+        final EditText editText = (EditText) promptView.findViewById(R.id.edittext);
+        // setup a dialog window
+        alertDialogBuilder.setCancelable(false)
+                .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        try {
+                            createMailFolder(editText.getText().toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create an alert dialog
+        final AlertDialog alert = alertDialogBuilder.create();
+
+        alert.setOnShowListener( new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface arg0) {
+                alert.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.BLACK);
+                alert.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.BLACK);
+            }
+        });
+
+        alert.show();
+        alert.getWindow().getDecorView().getBackground().setColorFilter(new LightingColorFilter(0xFF000000, Color.WHITE));
+
+    }
+
+    // POST REQUEST VOOR NIEWE CONTACTSPERSOON
+    private void createMailFolder(String name) throws JSONException {
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        final JSONObject jsonObject = new JSONObject(builJsonName(name));
+
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_MAILFOLDERS, jsonObject,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Toast.makeText(getApplicationContext(), "Mail folder created!", Toast.LENGTH_SHORT).show();
+                        System.out.println(response.toString());
+                    }
+
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " + accessToken);
+
+                return headers;
+            }
+
+        };
+
+        queue.add(objectRequest);
+
+        int DELAY_TIME=2000;
+
+        //start your animation
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                //this code will run after the delay time which is 2 seconds.
+
+                getMailFolders();
+
+            }
+        }, DELAY_TIME);
+
+    }
+
+    private String builJsonName(String name) {
+        JsonObjectBuilder factory = Json.createObjectBuilder()
+
+                .add("displayName", name);
+
+        return factory.build().toString();
     }
 
     public interface ClickListener {

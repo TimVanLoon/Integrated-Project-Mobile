@@ -1138,7 +1138,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
     private void createContactFolder(String name) throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        final JSONObject jsonObject = new JSONObject(buildJsonIsRead(name));
+        final JSONObject jsonObject = new JSONObject(builJsonName(name));
 
         JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_CONTACTFOLDERS, jsonObject,
                 new Response.Listener<JSONObject>() {
@@ -1176,13 +1176,13 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
                 //this code will run after the delay time which is 2 seconds.
 
                 getContactFolders();
-                
+
             }
         }, DELAY_TIME);
 
     }
 
-    private String buildJsonIsRead(String name) {
+    private String builJsonName(String name) {
         JsonObjectBuilder factory = Json.createObjectBuilder()
 
                 .add("displayName", name);
