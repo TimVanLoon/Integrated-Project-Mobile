@@ -127,12 +127,6 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
         minDate.set(Calendar.DAY_OF_MONTH, 1);
         maxDate.add(Calendar.YEAR, 1);
 
-        try {
-            loadData();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
         callGraphAPI();
 
         calendarView = (CalendarView) findViewById(R.id.calendarView);
@@ -342,6 +336,11 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d(TAG, "Error: " + error.toString());
+                try {
+                    loadData();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
         }) {
             @Override

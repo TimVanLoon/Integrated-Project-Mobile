@@ -201,8 +201,6 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
         contactFolders.add(new ContactFolder("", "", ""));
         buildDrawer(userName, userEmail, myToolbar, contactFolders);
 
-        loadContactFolderData();
-        loadContactData();
         getContacts();
 
     }
@@ -373,6 +371,8 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d(TAG, "Error: " + error.toString());
+                loadContactData();
+                loadContactFolderData();
             }
         }) {
             @Override
@@ -538,6 +538,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d(TAG, "Error: " + error.toString());
+                loadRoomData();
             }
         }) {
             @Override
@@ -678,6 +679,7 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d(TAG, "Error: " + error.toString());
+                loadUserData();
             }
         }) {
             @Override
@@ -799,15 +801,11 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
         } else if(navIdentifier == 2){
 
-            loadUserData();
-
             getUsers();
 
         } else if(navIdentifier == 3){
 
             rooms.add(new EmailAddress("", ""));
-
-            loadRoomData();
 
             getRooms();
 
@@ -1324,14 +1322,12 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
                             } else if(drawerItem.getIdentifier() == 2){
                                 navIdentifier = 2;
-                                loadUserData();
                                 getUsers();
                                 setActionBarTitle("All Users", myToolbar);
 
                             } else if(drawerItem.getIdentifier() == 3){
                                 navIdentifier = 3;
                                 rooms.add(new EmailAddress("", ""));
-                                loadRoomData();
                                 getRooms();
                                 setActionBarTitle("All Rooms", myToolbar);
 

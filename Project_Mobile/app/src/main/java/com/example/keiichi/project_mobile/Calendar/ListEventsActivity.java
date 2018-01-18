@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -88,7 +89,6 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
     private String formattedDate;
     private Toolbar myToolbar;
     private SearchView searchView;
-    private ListView eventsListView;
     private List<Event> events = new ArrayList<>();
     private EventAdapter eventAdapter;
     private  BottomNavigationView mBottomNav;
@@ -170,8 +170,6 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
-
-        loadData();
 
         getFilteredEvents();
 
@@ -387,7 +385,7 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
                 Log.d(TAG, "Response: " + response.toString());
 
                 try {
-                    updateGraphUI(response);
+                    updateFiltered(response);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -396,6 +394,8 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d(TAG, "Error: " + error.toString());
+
+                loadFilteredData();
             }
         }) {
             @Override
@@ -442,7 +442,7 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
                 Log.d(TAG, "Response: " + response.toString());
 
                 try {
-                    updateGraphUI(response);
+                    updateUnfiltered(response);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -451,6 +451,7 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d(TAG, "Error: " + error.toString());
+                loadUnfilteredData();
             }
         }) {
             @Override
@@ -471,7 +472,7 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
     }
 
     /* Sets the Graph response */
-    private void updateGraphUI(JSONObject graphResponse) throws JSONException {
+    private void updateFiltered(JSONObject graphResponse) throws JSONException {
 
         // Test de response
         JSONArray eventsJsonArray = null;
@@ -498,7 +499,82 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
             eventAdapter = new EventAdapter(this, events);
             eventsRecyclerView.setAdapter(eventAdapter);
 
-            saveData();
+            saveFilteredData();
+
+            eventsRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), eventsRecyclerView, new ListMailsActvity.ClickListener() {
+                @Override
+                public void onClick(View view, int position) {
+                    if (actionModeEnabled) {
+                        selectedItem(position);
+
+                    } else {
+
+                        if (events.size() != 0) {
+
+                            Event event = eventAdapter.getItemAtPosition(position);
+
+                            Intent showEventDetails = new Intent(ListEventsActivity.this, EventDetailsActivity.class);
+                            showEventDetails.putExtra("userEmail", userEmail);
+                            showEventDetails.putExtra("AccessToken", accessToken);
+                            showEventDetails.putExtra("userName", userName);
+                            showEventDetails.putExtra("eventId", event.getId());
+                            showEventDetails.putExtra("event", event);
+
+                            startActivity(showEventDetails);
+
+                            ListEventsActivity.this.finish();
+
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Empty event list!", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+
+                }
+
+                @Override
+                public void onLongClick(View view, int position) {
+                    view.startActionMode(actionModeCallback);
+                    selectedItem(position);
+                }
+            }));
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /* Sets the Graph response */
+    private void updateUnfiltered(JSONObject graphResponse) throws JSONException {
+
+        // Test de response
+        JSONArray eventsJsonArray = null;
+
+        // Haal de events binnen
+        try {
+
+            JSONObject eventList = graphResponse;
+
+            JSONArray eventArray = eventList.getJSONArray("value");
+
+
+            // VUL POJO
+            Type listType = new TypeToken<List<Event>>() {
+            }.getType();
+
+            events = new Gson().fromJson(String.valueOf(eventArray), listType);
+
+            RecyclerView.LayoutManager manager = new LinearLayoutManager(getApplicationContext());
+            eventsRecyclerView.setLayoutManager(manager);
+            eventsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+            eventsRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+
+            eventAdapter = new EventAdapter(this, events);
+            eventsRecyclerView.setAdapter(eventAdapter);
+
+            saveUnfilteredData();
 
             eventsRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), eventsRecyclerView, new ListMailsActvity.ClickListener() {
                 @Override
@@ -660,7 +736,7 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
         }
     }
 
-    // PATCH REQUEST VOOR DELETEN CONTACTPERSOON
+    // PATCH REQUEST VOOR DELETEN EVENTS
     private void deleteEvents(ArrayList<Integer> selectedItems) throws JSONException {
 
         this.selectedItems = selectedItems;
@@ -718,7 +794,7 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
         }, DELAY_TIME);
     }
 
-    private void saveData(){
+    private void saveFilteredData(){
         SharedPreferences sharedPreferences = getSharedPreferences("shared preferences events", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
@@ -729,13 +805,88 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
 
     }
 
-    private void loadData(){
+    private void loadFilteredData(){
 
         SharedPreferences sharedPreferences = getSharedPreferences("shared preferences events", MODE_PRIVATE);
 
         if(sharedPreferences.contains("event list")){
             Gson gson = new Gson();
             String json = sharedPreferences.getString("event list", null);
+            Type type = new TypeToken<ArrayList<Event>>() {}.getType();
+            events = gson.fromJson(json, type);
+
+            RecyclerView.LayoutManager manager = new LinearLayoutManager(getApplicationContext());
+            eventsRecyclerView.setLayoutManager(manager);
+            eventsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+            eventsRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+
+            eventAdapter = new EventAdapter(this, events);
+            eventsRecyclerView.setAdapter(eventAdapter);
+
+            eventsRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), eventsRecyclerView, new ListMailsActvity.ClickListener() {
+                @Override
+                public void onClick(View view, int position) {
+                    if (actionModeEnabled) {
+                        selectedItem(position);
+
+                    } else {
+
+                        if (events.size() != 0) {
+
+                            Event event = eventAdapter.getItemAtPosition(position);
+
+                            Intent showEventDetails = new Intent(ListEventsActivity.this, EventDetailsActivity.class);
+                            showEventDetails.putExtra("userEmail", userEmail);
+                            showEventDetails.putExtra("AccessToken", accessToken);
+                            showEventDetails.putExtra("userName", userName);
+                            showEventDetails.putExtra("eventId", event.getId());
+                            showEventDetails.putExtra("event", event);
+
+                            startActivity(showEventDetails);
+
+                            ListEventsActivity.this.finish();
+
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Empty event list!", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+
+                }
+
+                @Override
+                public void onLongClick(View view, int position) {
+                    view.startActionMode(actionModeCallback);
+                    selectedItem(position);
+                }
+            }));
+
+        }
+
+        if(events == null){
+            events = new ArrayList<>();
+        }
+
+    }
+
+    private void saveUnfilteredData(){
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences unfilteredevents", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(events);
+
+        editor.putString("unfilteredevent list", json);
+        editor.apply();
+
+    }
+
+    private void loadUnfilteredData(){
+
+        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences unfilteredevents", MODE_PRIVATE);
+
+        if(sharedPreferences.contains("unfilteredevent list")){
+            Gson gson = new Gson();
+            String json = sharedPreferences.getString("unfilteredevent list", null);
             Type type = new TypeToken<ArrayList<Event>>() {}.getType();
             events = gson.fromJson(json, type);
 

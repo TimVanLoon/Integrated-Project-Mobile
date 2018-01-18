@@ -325,8 +325,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
         mailFolders.add(new MailFolder("1", "Not found", 0, 0));
         buildDrawer(userName, userEmail, myToolbar, mailFolders);
 
-        loadMailData();
-        loadMailFolderData();
         callGraphAPI();
 
     }
@@ -379,6 +377,8 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d(TAG, "Error: " + error.toString());
+                loadMailData();
+                loadMailFolderData();
             }
         }) {
             @Override
