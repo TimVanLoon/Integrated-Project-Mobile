@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +27,8 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.Calendar.AddEventActivity;
+import com.example.keiichi.project_mobile.Calendar.AttendeeActivity;
 import com.example.keiichi.project_mobile.Calendar.CalendarActivity;
 import com.example.keiichi.project_mobile.Calendar.ListEventsActivity;
 import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
@@ -39,6 +42,7 @@ import com.example.keiichi.project_mobile.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -69,6 +73,7 @@ public class SendMailActivity extends AppCompatActivity {
     private Contact contact;
     private EmailAddress room;
     private User user;
+    private ImageView plusContactIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +90,7 @@ public class SendMailActivity extends AppCompatActivity {
         MailAdress = findViewById(R.id.TextMailAdress);
         Subject = findViewById(R.id.TextMailSubject);
         MailBody = findViewById(R.id.editor);
+        plusContactIcon = (ImageView) findViewById(R.id.plusContactIcon);
 
         myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
@@ -104,6 +110,20 @@ public class SendMailActivity extends AppCompatActivity {
         if (emailAddress != null){
             MailAdress.setText(emailAddress);
         }
+
+        plusContactIcon.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                Intent intentAttendees = new Intent(SendMailActivity.this, RecipientActivity.class);
+                intentAttendees.putExtra("AccessToken", accessToken);
+                intentAttendees.putExtra("userName", userName);
+                intentAttendees.putExtra("userEmail", userEmail);
+
+                startActivity(intentAttendees);
+
+                SendMailActivity.this.finish();
+            }
+        });
 
     }
 

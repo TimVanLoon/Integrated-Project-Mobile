@@ -128,12 +128,11 @@
             android:label="User Details"
             android:theme="@style/ContactsTheme"
             android:windowSoftInputMode="adjustResize|adjustPan" />
-
         <activity
             android:name=".Contacts.RoomDetailsActivity"
             android:label="Room Details"
             android:theme="@style/ContactsTheme"
-            android:windowSoftInputMode="adjustResize|adjustPan"/>
+            android:windowSoftInputMode="adjustResize|adjustPan" />
 
         <service android:name=".FirebaseInstance">
             <intent-filter>
@@ -142,9 +141,11 @@
         </service>
         <service android:name=".MyFirebaseMessagingService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <activity android:name=".Mail.RecipientActivity"></activity>
     </application>
 
 </manifest>

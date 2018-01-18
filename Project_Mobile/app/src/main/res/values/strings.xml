@@ -158,5 +158,6 @@
 
     <string name="futureEvents">Only future events</string>
     <string name="allEvents">All events</string>
+    <string name="title_activity_recipient_from_contacts">RecipientFromContactsActivity</string>
 
 </resources>

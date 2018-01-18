@@ -176,7 +176,13 @@ public class DisplayMailActivity extends AppCompatActivity {
 
         profilePicture.setImageDrawable(drawable1);
 
+        try {
+            updateMailIsRead(messageObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
+        /*
         if(isRead != null){
 
             messageObject.setRead(true);
@@ -188,6 +194,7 @@ public class DisplayMailActivity extends AppCompatActivity {
             }
 
         }
+        */
 
         builder = new AlertDialog.Builder(DisplayMailActivity.this);
         builder.setCancelable(true);
