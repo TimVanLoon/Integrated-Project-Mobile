@@ -765,7 +765,7 @@ public class DisplayMailActivity extends AppCompatActivity {
                     downloadAttachment(attachments.get(0));
                     //openAttachment(attachments.get(0).getName(), attachments.get(0).getContentType());
                 } else {
-                    Toast.makeText(DisplayMailActivity.this, "attachement error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DisplayMailActivity.this, "Attachement error", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }
@@ -785,10 +785,10 @@ public class DisplayMailActivity extends AppCompatActivity {
                     os.close();
                     Uri path = Uri.fromFile(filePath);
 
-                   addNotification("attachments downloaded", "attachments downloaded to download folder");
+                   addNotification("Attachments downloaded", "Attachments downloaded to download folder");
                 }
             } catch (IOException e) {
-                Toast.makeText(DisplayMailActivity.this, "save fail", Toast.LENGTH_SHORT).show();
+                Toast.makeText(DisplayMailActivity.this, "Save fail", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
 
@@ -875,9 +875,6 @@ public class DisplayMailActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-
-
-
 
         Intent notificationIntent = new Intent();
         notificationIntent.setAction(Intent.ACTION_GET_CONTENT);
