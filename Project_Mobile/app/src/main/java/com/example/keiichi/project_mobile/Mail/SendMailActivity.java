@@ -213,7 +213,7 @@ public class SendMailActivity extends AppCompatActivity {
     private JsonArrayBuilder createCCArray() {
 
         JsonArrayBuilder BaatsCC = Json.createArrayBuilder();
-        for (String string :  CCtje.getText().toString().split("//s+")){
+        for (String string :  CCtje.getText().toString().split("\\s+")){
             BaatsCC.add(
                     Json.createObjectBuilder().
                             add("emailAddress", Json.createObjectBuilder().
@@ -225,7 +225,7 @@ public class SendMailActivity extends AppCompatActivity {
 
     private JsonArrayBuilder createToRecipientsArray() {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        for (String string :  MailAdress.getText().toString().split("//s+")){
+        for (String string :  MailAdress.getText().toString().split("\\s+")){
             arrayBuilder.add(
                     Json.createObjectBuilder().
                             add("emailAddress", Json.createObjectBuilder().
