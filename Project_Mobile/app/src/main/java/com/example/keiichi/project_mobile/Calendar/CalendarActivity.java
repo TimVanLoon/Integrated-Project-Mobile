@@ -89,7 +89,6 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
     private CalendarView calendarView;
     private TextView myDate;
     private BottomNavigationView mBottomNav;
-    private SearchView searchView;
     private static final String LOG_TAG = CalendarActivity.class.getSimpleName();
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/events?$orderby=start/dateTime&$top=500&$count=true";
     private AgendaCalendarView mAgendaCalendarView;
@@ -195,21 +194,6 @@ public class CalendarActivity extends AppCompatActivity implements CalendarPicke
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.my_action_bar_items_calendar, menu);
 
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        searchView = (SearchView) searchItem.getActionView();
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                //contactAdapter.getFilter().filter(s);
-                return false;
-            }
-        });
 
         return super.onCreateOptionsMenu(menu);
     }

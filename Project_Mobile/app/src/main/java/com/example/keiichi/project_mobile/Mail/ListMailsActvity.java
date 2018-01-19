@@ -133,7 +133,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     final private String URL_MAIL_UPDATE = "https://graph.microsoft.com/beta/me/messages/";
     final private String PHOTO_REQUEST = "https://graph.microsoft.com/v1.0/me/photo/$value";
     final private String URL_DELETE = "https://graph.microsoft.com/v1.0/me/messages/";
-    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/mailFolders('Inbox')/messages?$top=25";
+    final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/mailFolders('Inbox')/messages?$top=100";
     final static String CHANNEL_ID = "my_channel_01";
     final static String URL_MAILFOLDERS = "https://graph.microsoft.com/v1.0/me/mailFolders";
     final static String URL_MAILFOLDER = "https://graph.microsoft.com/v1.0/me/mailFolders/";
@@ -187,7 +187,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
 
                 return true;
             } else if(menuItem.getItemId() == R.id.actionn_junk){

@@ -838,27 +838,27 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
         if(parent == displayAsSpinner){
             switch(pos){
                 case 0:
-                    displayAsValue = "Free";
+                    displayAsValue = "free";
                     displayAs = "free";
                     break;
 
                 case 1:
-                    displayAsValue = "WorkingElsewhere";
+                    displayAsValue = "workingElsewhere";
                     displayAs = "workingElsewhere";
                     break;
 
                 case 2:
-                    displayAsValue = "Tentative";
+                    displayAsValue = "tentative";
                     displayAs = "tentative";
                     break;
 
                 case 3:
-                    displayAsValue = "Busy";
+                    displayAsValue = "busy";
                     displayAs = "busy";
                     break;
 
                 case 4:
-                    displayAsValue = "Oof";
+                    displayAsValue = "oof";
                     displayAs = "oof";
                     break;
             }
