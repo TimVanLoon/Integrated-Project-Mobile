@@ -716,17 +716,14 @@ public class DisplayMailActivity extends AppCompatActivity {
 
         //setupWebView();
 
-
-            mailBodyWebView.getSettings().setJavaScriptEnabled(true);
-            mailBodyWebView.getSettings().setLoadWithOverviewMode(true);
-            mailBodyWebView.getSettings().setUseWideViewPort(true);
-            mailBodyWebView.getSettings().setBuiltInZoomControls(true);
-            mailBodyWebView.getSettings().setDisplayZoomControls(false);
-            mailBodyWebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-            mailBodyWebView.setScrollbarFadingEnabled(false);
-            mailBodyWebView.loadDataWithBaseURL("", messageBody, "text/html", "utf-8","");
-
-
+        mailBodyWebView.getSettings().setJavaScriptEnabled(true);
+        mailBodyWebView.getSettings().setLoadWithOverviewMode(true);
+        mailBodyWebView.getSettings().setUseWideViewPort(true);
+        mailBodyWebView.getSettings().setBuiltInZoomControls(true);
+        mailBodyWebView.getSettings().setDisplayZoomControls(false);
+        mailBodyWebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+        mailBodyWebView.setScrollbarFadingEnabled(false);
+        mailBodyWebView.loadDataWithBaseURL("", messageBody, "text/html", "utf-8","");
 
         //mailBodyWebView.loadDataWithBaseURL("", messageBody, "text/html", "utf-8","");
         //mailBodyWebView.getSettings().setLoadWithOverviewMode(true);

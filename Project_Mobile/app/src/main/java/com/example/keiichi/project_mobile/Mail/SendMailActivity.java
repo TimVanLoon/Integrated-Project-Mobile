@@ -61,6 +61,7 @@ public class SendMailActivity extends AppCompatActivity {
 
     final private String URL_POSTADRESS = "https://graph.microsoft.com/v1.0/me/sendMail";
     private List<String> mailList = new ArrayList<>();
+    private List<String> ccMailList = new ArrayList<>();
     private Toolbar myToolbar;
     private TextView MailAdress;
     private TextView Subject;
@@ -79,10 +80,12 @@ public class SendMailActivity extends AppCompatActivity {
     private EmailAddress room;
     private User user;
     private ImageView plusContactIcon;
+    private ImageView plusCCIcon;
     private TextView CCtje;
     private String allMails = "";
+    private String allCCMails = "";
     private JsonArrayBuilder toRecipientsArray;
-    private  JsonArrayBuilder ccArray;
+    private JsonArrayBuilder ccArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +104,7 @@ public class SendMailActivity extends AppCompatActivity {
         Subject = findViewById(R.id.TextMailSubject);
         MailBody = findViewById(R.id.editor);
         plusContactIcon = (ImageView) findViewById(R.id.plusContactIcon);
+        plusCCIcon = (ImageView) findViewById(R.id.plusCCIcon);
         CCtje = findViewById(R.id.ccMailInput);
 
         myToolbar = findViewById(R.id.toolbar);
@@ -119,6 +123,7 @@ public class SendMailActivity extends AppCompatActivity {
         emailAddress = intent.getStringExtra("emailAddress");
 
         mailList = (List<String>)getIntent().getSerializableExtra("mailList");
+        ccMailList = (List<String>)getIntent().getSerializableExtra("ccMailList");
 
         if (emailAddress != null){
             MailAdress.setText(emailAddress);
@@ -127,22 +132,66 @@ public class SendMailActivity extends AppCompatActivity {
         plusContactIcon.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                Intent intentAttendees = new Intent(SendMailActivity.this, RecipientActivity.class);
-                intentAttendees.putExtra("AccessToken", accessToken);
-                intentAttendees.putExtra("userName", userName);
-                intentAttendees.putExtra("userEmail", userEmail);
+                Intent intentRecipient = new Intent(SendMailActivity.this, RecipientActivity.class);
+                intentRecipient.putExtra("AccessToken", accessToken);
+                intentRecipient.putExtra("userName", userName);
+                intentRecipient.putExtra("userEmail", userEmail);
+                intentRecipient.putExtra("plusReceiver", "yes");
 
                 if(!MailAdress.getText().toString().isEmpty()){
                     mailList = new ArrayList<>();
 
-                    for (String string :  MailAdress.getText().toString().split("\\s+")){
+                    for (String string : MailAdress.getText().toString().split("\\s+")){
                         mailList.add(string);
                     }
                 }
 
-                intentAttendees.putExtra("mailList",(Serializable) mailList);
+                if(!CCtje.getText().toString().isEmpty()){
+                    ccMailList = new ArrayList<>();
 
-                startActivity(intentAttendees);
+                    for (String string : CCtje.getText().toString().split("\\s+")){
+                        ccMailList.add(string);
+                    }
+                }
+
+                intentRecipient.putExtra("mailList",(Serializable) mailList);
+                intentRecipient.putExtra("ccMailList",(Serializable) ccMailList);
+
+                startActivity(intentRecipient);
+
+                SendMailActivity.this.finish();
+            }
+        });
+
+        plusCCIcon.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                Intent intentRecipient = new Intent(SendMailActivity.this, RecipientActivity.class);
+                intentRecipient.putExtra("AccessToken", accessToken);
+                intentRecipient.putExtra("userName", userName);
+                intentRecipient.putExtra("userEmail", userEmail);
+                intentRecipient.putExtra("plusCC", "yes");
+
+                if(!MailAdress.getText().toString().isEmpty()){
+                    mailList = new ArrayList<>();
+
+                    for (String string : MailAdress.getText().toString().split("\\s+")){
+                        mailList.add(string);
+                    }
+                }
+
+                if(!CCtje.getText().toString().isEmpty()){
+                    ccMailList = new ArrayList<>();
+
+                    for (String string : CCtje.getText().toString().split("\\s+")){
+                        ccMailList.add(string);
+                    }
+                }
+
+                intentRecipient.putExtra("mailList",(Serializable) mailList);
+                intentRecipient.putExtra("ccMailList",(Serializable) ccMailList);
+
+                startActivity(intentRecipient);
 
                 SendMailActivity.this.finish();
             }
@@ -153,6 +202,14 @@ public class SendMailActivity extends AppCompatActivity {
                 allMails += mail + " ";
             }
             MailAdress.setText(allMails);
+
+            if(ccMailList != null){
+                for (String mail: ccMailList){
+                    allCCMails += mail + " ";
+                }
+                CCtje.setText(allCCMails);
+            }
+
         }
 
     }

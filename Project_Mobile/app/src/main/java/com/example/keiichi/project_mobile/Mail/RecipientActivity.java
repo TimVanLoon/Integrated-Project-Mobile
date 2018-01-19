@@ -48,6 +48,7 @@ public class RecipientActivity extends AppCompatActivity {
     final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me/contacts?$orderBy=displayName&$top=500&$count=true";
     private List<String> mailList = new ArrayList<>();
     private List<Contact> contacts = new ArrayList<>();
+    private List<String> ccMailList = new ArrayList<>();
     private Toolbar myToolbar;
     private RecyclerView contactsRecyclerView;
     private SearchView searchView;
@@ -55,6 +56,8 @@ public class RecipientActivity extends AppCompatActivity {
     private String accessToken;
     private String userName;
     private String userEmail;
+    private String plusCC;
+    private String plusReceiver;
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -67,7 +70,10 @@ public class RecipientActivity extends AppCompatActivity {
         accessToken = getIntent().getStringExtra("AccessToken");
         userName = getIntent().getStringExtra("userName");
         userEmail = getIntent().getStringExtra("userEmail");
+        plusCC = getIntent().getStringExtra("plusCC");
+        plusReceiver = getIntent().getStringExtra("plusReceiver");
         mailList = (List<String>)getIntent().getSerializableExtra("mailList");
+        ccMailList = (List<String>)getIntent().getSerializableExtra("ccMailList");
 
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
@@ -255,14 +261,24 @@ public class RecipientActivity extends AppCompatActivity {
 
                         String mailAddress = email.get(0).getAddress();
 
-                        if(mailList != null){
-                            mailList.add(mailAddress);
+                        if(plusReceiver != null){
+                            if(mailList != null){
+                                mailList.add(mailAddress);
+                            } else {
+                                mailList = new ArrayList<>();
+                                mailList.add(mailAddress);
+                            }
                         } else {
-                            mailList = new ArrayList<>();
-                            mailList.add(mailAddress);
+                            if(ccMailList != null){
+                                ccMailList.add(mailAddress);
+                            } else {
+                                ccMailList = new ArrayList<>();
+                                ccMailList.add(mailAddress);
+                            }
                         }
 
                         intentSendMail.putExtra("mailList",(Serializable) mailList);
+                        intentSendMail.putExtra("ccMailList",(Serializable) ccMailList);
 
                         startActivity(intentSendMail);
 
