@@ -81,20 +81,7 @@ public class ForwardMailActivity extends AppCompatActivity {
         TextMailSubject = findViewById(R.id.TextMailSubject);
 
         TextMailSubject.setText("forward: " + mailSubject);
-        /*ForwardButton = findViewById(R.id.ForwardButton);
-        Editor = findViewById(R.id.editor);
 
-        ForwardButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    forwardMail();
-                    finish();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });*/
 
         Editor = findViewById(R.id.editor);
 

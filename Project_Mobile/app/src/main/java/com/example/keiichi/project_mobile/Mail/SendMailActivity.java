@@ -410,7 +410,7 @@ public class SendMailActivity extends AppCompatActivity {
                         startActivity(intentListMails);
 
                         SendMailActivity.this.finish();
-                        SendMailActivity.this.finish();
+                        //SendMailActivity.this.finish();
                     } else {
                         MailAdress.setError("Required field!");
                     }
