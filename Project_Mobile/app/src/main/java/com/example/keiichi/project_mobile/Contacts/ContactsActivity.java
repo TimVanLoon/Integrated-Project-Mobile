@@ -1004,7 +1004,6 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
                 try {
                     updateWithContactFolder(response);
 
-                    System.out.println("hey bootjes! " + response);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -1050,8 +1049,6 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
             }.getType();
 
             contacts = new Gson().fromJson(String.valueOf(contactArray), listType);
-
-            System.out.println("papa je doet me pijn :(");
 
             contactAdapter = new ContactAdapter(this, contacts);
             contactsRecyclerView.setAdapter(contactAdapter);

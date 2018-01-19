@@ -436,8 +436,6 @@ public class ContactsDetailsActivity extends AppCompatActivity {
             phoneButton.setColorFilter(Color.GRAY);
             callSub.setTextColor(Color.GRAY);
 
-            System.out.println("papa auw 1");
-
             phoneButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
 
@@ -515,8 +513,6 @@ public class ContactsDetailsActivity extends AppCompatActivity {
 
         } else if(phoneNumber!= null && businessPhones.isEmpty() && homePhones.isEmpty()){
 
-            System.out.println("papa auw!3");
-
             phoneButton.setColorFilter(Color.GRAY);
             callSub.setTextColor(Color.GRAY);
 
@@ -548,7 +544,6 @@ public class ContactsDetailsActivity extends AppCompatActivity {
                 }
             });
 
-            System.out.println("papa auw!4");
 
             smsButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {

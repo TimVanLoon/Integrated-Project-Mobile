@@ -223,8 +223,6 @@ public class SendMailActivity extends AppCompatActivity {
 
         final JSONObject jsonObject = new JSONObject(buildJsonMail());
 
-        System.out.println("papa auw: " + jsonObject.toString());
-
         JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.POST, URL_POSTADRESS, jsonObject,
                 new Response.Listener<JSONObject>() {
                     @Override

@@ -153,7 +153,6 @@ public class AttendeeActivity extends AppCompatActivity {
         if(firstTime != null){
             emailList = (List<EmailAddress>)getIntent().getSerializableExtra("emailList");
 
-            System.out.println("auw papa ;(");
         }
 
         // VOEG BACK BUTTON TOE AAN ACTION BAR

@@ -301,8 +301,6 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
                 break;
         }
 
-        System.out.println("hey boo: " + displayAs);
-
         switch(displayAs){
             case "free":
                 startingValueDisplayAs = adapterDisplayAs.getPosition("Free");
