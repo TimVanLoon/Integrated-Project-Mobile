@@ -873,6 +873,7 @@ public class DisplayMailActivity extends AppCompatActivity {
                 new NotificationCompat.Builder(this)
                         .setContentTitle(title)
                         .setContentText(text)
+                        .setSmallIcon(R.drawable.attachmentvector)
                         .setVibrate(new long[]{100, 200, 300})
                         .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
 
