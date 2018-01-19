@@ -64,6 +64,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -236,6 +237,7 @@ public class DisplayMailActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
 
             }
         });
@@ -806,7 +808,8 @@ public class DisplayMailActivity extends AppCompatActivity {
                 filename);
 
         fileBuilder.detectFileUriExposure();
-        Uri path = Uri.fromFile(file);
+       // Uri path = Uri.fromFile(file);
+        Uri path = Uri.fromFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS));
         Intent pdfOpenintent = new Intent(Intent.ACTION_VIEW);
         pdfOpenintent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         pdfOpenintent.setDataAndType(path, contentType);
@@ -877,9 +880,22 @@ public class DisplayMailActivity extends AppCompatActivity {
                         .setVibrate(new long[]{100, 200, 300})
                         .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
 
+        if(Build.VERSION.SDK_INT>=24){
+            try{
+                Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
+                m.invoke(null);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
 
 
-        Intent notificationIntent = new Intent(this, MainActivity.class);
+
+
+        Intent notificationIntent = new Intent();
+        notificationIntent.setAction(Intent.ACTION_GET_CONTENT);
+        notificationIntent.setDataAndType(Uri.fromFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)), "file/*");
+
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
         notification.setContentIntent(contentIntent);
