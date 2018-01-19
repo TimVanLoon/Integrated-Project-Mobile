@@ -198,10 +198,13 @@ public class SendMailActivity extends AppCompatActivity {
         });
 
         if(fromRecipientActivity != null){
-            for (String mail: mailList){
-                allMails += mail + " ";
+
+            if(mailList != null){
+                for (String mail: mailList){
+                    allMails += mail + " ";
+                }
+                MailAdress.setText(allMails);
             }
-            MailAdress.setText(allMails);
 
             if(ccMailList != null){
                 for (String mail: ccMailList){
