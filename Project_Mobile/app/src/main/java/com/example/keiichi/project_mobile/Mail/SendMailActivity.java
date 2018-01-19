@@ -81,6 +81,8 @@ public class SendMailActivity extends AppCompatActivity {
     private ImageView plusContactIcon;
     private TextView CCtje;
     private String allMails = "";
+    private JsonArrayBuilder toRecipientsArray;
+    private  JsonArrayBuilder ccArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -194,20 +196,36 @@ public class SendMailActivity extends AppCompatActivity {
 
     private String buildJsonMail() {
 
-        JsonArrayBuilder toRecipientsArray = createToRecipientsArray();
-        JsonArrayBuilder ccArray = createCCArray();
+        if(!CCtje.getText().toString().isEmpty()){
+            toRecipientsArray = createToRecipientsArray();
+            ccArray = createCCArray();
 
+            JsonObjectBuilder factory = Json.createObjectBuilder()
+                    .add("message", Json.createObjectBuilder().
+                            add("subject", Subject.getText().toString()).
+                            add("body", Json.createObjectBuilder().
+                                    add("contentType", "Text").
+                                    add("content", Html.fromHtml(MailBody.getHtml()).toString())).
+                            add("toRecipients", toRecipientsArray).
+                            add("ccRecipients", ccArray)
+                    );
+            return factory.build().toString();
 
-        JsonObjectBuilder factory = Json.createObjectBuilder()
-                .add("message", Json.createObjectBuilder().
-                        add("subject", Subject.getText().toString()).
-                        add("body", Json.createObjectBuilder().
-                                add("contentType", "Text").
-                                add("content", Html.fromHtml(MailBody.getHtml()).toString())).
-                        add("toRecipients", toRecipientsArray).
-                        add("ccRecipients", ccArray)
-                );
-        return factory.build().toString();
+        } else {
+            toRecipientsArray = createToRecipientsArray();
+
+            JsonObjectBuilder factory = Json.createObjectBuilder()
+                    .add("message", Json.createObjectBuilder().
+                            add("subject", Subject.getText().toString()).
+                            add("body", Json.createObjectBuilder().
+                                    add("contentType", "Text").
+                                    add("content", Html.fromHtml(MailBody.getHtml()).toString())).
+                            add("toRecipients", toRecipientsArray)
+                    );
+            return factory.build().toString();
+
+        }
+
     }
 
     private JsonArrayBuilder createCCArray() {
