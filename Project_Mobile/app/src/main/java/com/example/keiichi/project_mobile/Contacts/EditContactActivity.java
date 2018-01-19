@@ -1014,8 +1014,16 @@ public class EditContactActivity extends AppCompatActivity {
                         emailInput.setError("Invalid Email Address!");
                     }
 
-                    if(!mobilePhoneInput.getText().toString().isEmpty() && !isValidMobile(mobilePhoneInput.getText().toString())){
-                        mobilePhoneInput.setError("Invalid phone number!");
+                    if (!emailInput2.getText().toString().isEmpty() && (!emailInput2.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+") && !emailInput2.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+.[a-z]+"))) {
+                        emailInput2.setError("Invalid Email Address!");
+                    }
+
+                    if (!emailInput3.getText().toString().isEmpty() && (!emailInput3.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+") && !emailInput3.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+.[a-z]+"))) {
+                        emailInput3.setError("Invalid Email Address!");
+                    }
+
+                    if(!phoneInput.getText().toString().isEmpty() && !isValidMobile(phoneInput.getText().toString())){
+                        phoneInput.setError("Invalid phone number!");
                     }
 
                     if(firstNameInput.getText().toString().isEmpty()){
@@ -1029,18 +1037,27 @@ public class EditContactActivity extends AppCompatActivity {
                 }
                 else {
 
-                    if (!emailInput.getText().toString().isEmpty() && !emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+")) {
+                    if (!emailInput2.getText().toString().isEmpty() && (!emailInput2.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+") && !emailInput2.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+.[a-z]+"))) {
+                        emailInput2.setError("Invalid Email Address!");
+                    }
+
+                    if (!emailInput3.getText().toString().isEmpty() && (!emailInput3.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+") && !emailInput3.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+.[a-z]+"))) {
+                        emailInput3.setError("Invalid Email Address!");
+                    }
+
+                    if (!emailInput.getText().toString().isEmpty() && (!emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+") && !emailInput.getText().toString().matches("[a-zA-Z0-9._-]+@[a-z]+.[a-z]+.[a-z]+"))) {
                         emailInput.setError("Invalid Email Address!");
 
-                        if(!mobilePhoneInput.getText().toString().isEmpty() && !isValidMobile(mobilePhoneInput.getText().toString())){
-                            mobilePhoneInput.setError("Invalid phone number!");
+                        if (!phoneInput.getText().toString().isEmpty() && !isValidMobile(phoneInput.getText().toString())) {
+                            phoneInput.setError("Invalid phone number!");
                         }
 
                     } else {
 
-                        if(!mobilePhoneInput.getText().toString().isEmpty() && !isValidMobile(mobilePhoneInput.getText().toString())){
-                            mobilePhoneInput.setError("Invalid phone number!");
-                        }else {
+                        if (!phoneInput.getText().toString().isEmpty() && !isValidMobile(phoneInput.getText().toString())) {
+                            phoneInput.setError("Invalid phone number!");
+
+                        } else {
                             try {
                                 saveItem.setEnabled(false);
 
