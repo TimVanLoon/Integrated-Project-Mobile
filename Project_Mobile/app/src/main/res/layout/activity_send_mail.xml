@@ -145,6 +145,7 @@
                 android:layout_marginEnd="32dp"
                 android:layout_marginTop="10dp"
                 android:ems="10"
+                android:inputType="textCapSentences|textPersonName"
                 android:background="@drawable/edit_text_style_sendmail"
                 android:textCursorDrawable="@null"
                 android:textColor="@color/black"
