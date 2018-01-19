@@ -37,6 +37,7 @@ import com.example.keiichi.project_mobile.Contacts.UserDetailsActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.User;
+import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONException;
@@ -220,6 +221,17 @@ public class SendMailActivity extends AppCompatActivity {
     private void SendMail() throws JSONException {
         System.out.println(MailBody.getHtml());
         RequestQueue queue = Volley.newRequestQueue(this);
+
+        if(accessToken == null){
+            Intent logout = new Intent(SendMailActivity.this, MainActivity.class);
+            logout.putExtra("AccessToken", accessToken);
+            logout.putExtra("userName", userName);
+            logout.putExtra("userEmail", userEmail);
+
+            startActivity(logout);
+
+            SendMailActivity.this.finish();
+        }
 
         final JSONObject jsonObject = new JSONObject(buildJsonMail());
 

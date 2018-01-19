@@ -34,6 +34,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.Contacts.AddContactActivity;
 import com.example.keiichi.project_mobile.Contacts.ContactAdapter;
 import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
 import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
@@ -52,6 +53,7 @@ import com.example.keiichi.project_mobile.DAL.POJOs.RecurrenceRange;
 import com.example.keiichi.project_mobile.DAL.POJOs.User;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 import com.example.keiichi.project_mobile.Mail.SendMailActivity;
+import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
 import com.example.keiichi.project_mobile.Utility;
 import com.google.gson.Gson;
@@ -640,6 +642,16 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
     private void saveEvent() throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
 
+        if (accessToken == null){
+            Intent logout = new Intent(AddEventActivity.this, MainActivity.class);
+            logout.putExtra("AccessToken", accessToken);
+            logout.putExtra("userName", userName);
+            logout.putExtra("userEmail", userEmail);
+
+            startActivity(logout);
+
+            AddEventActivity.this.finish();
+        }
 
         Event event = new Event();
         event.setSubject(eventInput.getText().toString());

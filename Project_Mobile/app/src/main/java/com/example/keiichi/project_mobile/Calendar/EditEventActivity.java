@@ -31,6 +31,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.Contacts.AddContactActivity;
+import com.example.keiichi.project_mobile.Contacts.EditContactActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Attendee;
 import com.example.keiichi.project_mobile.DAL.POJOs.DateTimeTimeZone;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
@@ -38,6 +40,7 @@ import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.DAL.POJOs.ItemBody;
 import com.example.keiichi.project_mobile.DAL.POJOs.Location;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
+import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
 import com.example.keiichi.project_mobile.Utility;
 import com.google.gson.Gson;
@@ -873,6 +876,16 @@ public class EditEventActivity extends AppCompatActivity implements AdapterView.
     private void updateEvent() throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
 
+        if (accessToken == null){
+            Intent logout = new Intent(EditEventActivity.this, MainActivity.class);
+            logout.putExtra("AccessToken", accessToken);
+            logout.putExtra("userName", userName);
+            logout.putExtra("userEmail", userEmail);
+
+            startActivity(logout);
+
+            EditEventActivity.this.finish();
+        }
 
         updatedEvent = new Event();
         updatedEvent.setSubject(eventInput.getText().toString());

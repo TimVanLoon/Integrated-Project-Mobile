@@ -589,8 +589,9 @@ public class DisplayMailActivity extends AppCompatActivity {
 
     private void goToReplyAllActivity() {
         Intent replyAllIntent = new Intent(DisplayMailActivity.this,ReplyAllActivity.class);
-        replyAllIntent.putExtra("mail",messageObject );
-        replyAllIntent.putExtra("accestoken",accessToken);
+        replyAllIntent.putExtra("AccessToken", accessToken);
+        replyAllIntent.putExtra("userName", userName);
+        replyAllIntent.putExtra("userEmail", userEmail);
 
         startActivity(replyAllIntent);
     }

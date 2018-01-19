@@ -31,6 +31,7 @@ import com.example.keiichi.project_mobile.Calendar.AddEventActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.Mail.SendMailActivity;
+import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONException;
@@ -973,6 +974,17 @@ public class ContactsDetailsActivity extends AppCompatActivity {
     // PATCH REQUEST VOOR DELETEN CONTACTPERSOON
     private void deleteContact() throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
+
+        if (accessToken == null){
+            Intent logout = new Intent(ContactsDetailsActivity.this, MainActivity.class);
+            logout.putExtra("AccessToken", accessToken);
+            logout.putExtra("userName", userName);
+            logout.putExtra("userEmail", userEmail);
+
+            startActivity(logout);
+
+            ContactsDetailsActivity.this.finish();
+        }
 
         String postAddress = URL_POSTADRESS + id;
 

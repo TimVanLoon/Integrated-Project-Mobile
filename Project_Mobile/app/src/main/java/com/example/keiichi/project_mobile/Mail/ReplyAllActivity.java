@@ -19,7 +19,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.Calendar.ListEventsActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Message;
+import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONException;
@@ -36,6 +38,9 @@ import jp.wasabeef.richeditor.RichEditor;
 
 public class ReplyAllActivity extends AppCompatActivity {
     private String accestoken;
+    private String accessToken;
+    private String userName;
+    private String userEmail;
     private Message message;
     private RichEditor Editor;
     private MenuItem sendItem;
@@ -49,7 +54,9 @@ public class ReplyAllActivity extends AppCompatActivity {
 
         accestoken = intent.getStringExtra("accestoken");
         message = (Message) intent.getSerializableExtra("mail");
-
+        accessToken = getIntent().getStringExtra("AccessToken");
+        userName = getIntent().getStringExtra("userName");
+        userEmail = getIntent().getStringExtra("userEmail");
 
         Editor = findViewById(R.id.editor);
         EditText textMailAdress = findViewById(R.id.TextMailAdress);
@@ -69,6 +76,17 @@ public class ReplyAllActivity extends AppCompatActivity {
 
     private void ReplyToMail() throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
+
+        if(accestoken == null){
+            Intent logout = new Intent(ReplyAllActivity.this, MainActivity.class);
+            logout.putExtra("AccessToken", accessToken);
+            logout.putExtra("userName", userName);
+            logout.putExtra("userEmail", userEmail);
+
+            startActivity(logout);
+
+            ReplyAllActivity.this.finish();
+        }
 
         final JSONObject jsonObject = new JSONObject(buildJsonMail());
 

@@ -30,6 +30,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.PhysicalAddress;
+import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
 import com.google.gson.Gson;
 
@@ -1103,6 +1104,17 @@ public class EditContactActivity extends AppCompatActivity {
     // PATCH REQUEST VOOR UPDATE CONTACTPERSOON
     private void updateContact() throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
+
+        if (accessToken == null){
+            Intent logout = new Intent(EditContactActivity.this, MainActivity.class);
+            logout.putExtra("AccessToken", accessToken);
+            logout.putExtra("userName", userName);
+            logout.putExtra("userEmail", userEmail);
+
+            startActivity(logout);
+
+            EditContactActivity.this.finish();
+        }
 
         updatedContact = new Contact();
 

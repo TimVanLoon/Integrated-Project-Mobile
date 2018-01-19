@@ -37,6 +37,7 @@ import com.example.keiichi.project_mobile.DAL.POJOs.PhysicalAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.User;
 import com.example.keiichi.project_mobile.Mail.DisplayMailActivity;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
+import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
 import com.google.gson.Gson;
 
@@ -1086,6 +1087,17 @@ public class AddContactActivity extends AppCompatActivity {
     private void saveContact() throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
 
+        if (accessToken == null){
+            Intent logout = new Intent(AddContactActivity.this, MainActivity.class);
+            logout.putExtra("AccessToken", accessToken);
+            logout.putExtra("userName", userName);
+            logout.putExtra("userEmail", userEmail);
+
+            startActivity(logout);
+
+            AddContactActivity.this.finish();
+        }
+
         Contact contact = new Contact();
         contact.setGivenName(firstNameInput.getText().toString());
         contact.setSurname(lastNameInput.getText().toString());
@@ -1294,6 +1306,17 @@ public class AddContactActivity extends AppCompatActivity {
     // POST REQUEST VOOR NIEWE CONTACTSPERSOON
     private void saveContactToFolder(String folderId) throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
+
+        if (accessToken == null){
+            Intent logout = new Intent(AddContactActivity.this, MainActivity.class);
+            logout.putExtra("AccessToken", accessToken);
+            logout.putExtra("userName", userName);
+            logout.putExtra("userEmail", userEmail);
+
+            startActivity(logout);
+
+            AddContactActivity.this.finish();
+        }
 
         Contact contact = new Contact();
         contact.setGivenName(firstNameInput.getText().toString());

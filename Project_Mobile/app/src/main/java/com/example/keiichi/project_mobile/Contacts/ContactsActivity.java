@@ -342,7 +342,14 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
     /* Make sure we have a token to send to graph */
         if (accessToken == null) {
-            return;
+            Intent logout = new Intent(ContactsActivity.this, MainActivity.class);
+            logout.putExtra("AccessToken", accessToken);
+            logout.putExtra("userName", userName);
+            logout.putExtra("userEmail", userEmail);
+
+            startActivity(logout);
+
+            ContactsActivity.this.finish();
         }
 
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -509,7 +516,14 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
     /* Make sure we have a token to send to graph */
         if (accessToken == null) {
-            return;
+            Intent logout = new Intent(ContactsActivity.this, MainActivity.class);
+            logout.putExtra("AccessToken", accessToken);
+            logout.putExtra("userName", userName);
+            logout.putExtra("userEmail", userEmail);
+
+            startActivity(logout);
+
+            ContactsActivity.this.finish();
         }
 
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -650,7 +664,14 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
     /* Make sure we have a token to send to graph */
         if (accessToken == null) {
-            return;
+            Intent logout = new Intent(ContactsActivity.this, MainActivity.class);
+            logout.putExtra("AccessToken", accessToken);
+            logout.putExtra("userName", userName);
+            logout.putExtra("userEmail", userEmail);
+
+            startActivity(logout);
+
+            ContactsActivity.this.finish();
         }
 
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -898,7 +919,14 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
     /* Make sure we have a token to send to graph */
         if (accessToken == null) {
-            return;
+            Intent logout = new Intent(ContactsActivity.this, MainActivity.class);
+            logout.putExtra("AccessToken", accessToken);
+            logout.putExtra("userName", userName);
+            logout.putExtra("userEmail", userEmail);
+
+            startActivity(logout);
+
+            ContactsActivity.this.finish();
         }
 
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -980,7 +1008,14 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
     /* Make sure we have a token to send to graph */
         if (accessToken == null) {
-            return;
+            Intent logout = new Intent(ContactsActivity.this, MainActivity.class);
+            logout.putExtra("AccessToken", accessToken);
+            logout.putExtra("userName", userName);
+            logout.putExtra("userEmail", userEmail);
+
+            startActivity(logout);
+
+            ContactsActivity.this.finish();
         }
 
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -1078,7 +1113,14 @@ public class ContactsActivity extends AppCompatActivity implements SwipeRefreshL
 
     /* Make sure we have a token to send to graph */
         if (accessToken == null) {
-            return;
+            Intent logout = new Intent(ContactsActivity.this, MainActivity.class);
+            logout.putExtra("AccessToken", accessToken);
+            logout.putExtra("userName", userName);
+            logout.putExtra("userEmail", userEmail);
+
+            startActivity(logout);
+
+            ContactsActivity.this.finish();
         }
 
         RequestQueue queue = Volley.newRequestQueue(this);

@@ -72,6 +72,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.keiichi.project_mobile.Calendar.CalendarActivity;
+import com.example.keiichi.project_mobile.Calendar.ListEventsActivity;
 import com.example.keiichi.project_mobile.Contacts.AddContactActivity;
 import com.example.keiichi.project_mobile.Contacts.ContactAdapter;
 import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
@@ -348,7 +349,14 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
     /* Make sure we have a token to send to graph */
         if (accessToken == null) {
-            return;
+            Intent logout = new Intent(ListMailsActvity.this, MainActivity.class);
+            logout.putExtra("AccessToken", accessToken);
+            logout.putExtra("userName", userName);
+            logout.putExtra("userEmail", userEmail);
+
+            startActivity(logout);
+
+            ListMailsActvity.this.finish();
         }
 
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -575,7 +583,14 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
     /* Make sure we have a token to send to graph */
         if (accessToken == null) {
-            return;
+            Intent logout = new Intent(ListMailsActvity.this, MainActivity.class);
+            logout.putExtra("AccessToken", accessToken);
+            logout.putExtra("userName", userName);
+            logout.putExtra("userEmail", userEmail);
+
+            startActivity(logout);
+
+            ListMailsActvity.this.finish();
         }
 
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -658,7 +673,14 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
     /* Make sure we have a token to send to graph */
         if (accessToken == null) {
-            return;
+            Intent logout = new Intent(ListMailsActvity.this, MainActivity.class);
+            logout.putExtra("AccessToken", accessToken);
+            logout.putExtra("userName", userName);
+            logout.putExtra("userEmail", userEmail);
+
+            startActivity(logout);
+
+            ListMailsActvity.this.finish();
         }
 
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -1190,7 +1212,14 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
     /* Make sure we have a token to send to graph */
         if (accessToken == null) {
-            return;
+            Intent logout = new Intent(ListMailsActvity.this, MainActivity.class);
+            logout.putExtra("AccessToken", accessToken);
+            logout.putExtra("userName", userName);
+            logout.putExtra("userEmail", userEmail);
+
+            startActivity(logout);
+
+            ListMailsActvity.this.finish();
         }
 
         RequestQueue queue = Volley.newRequestQueue(this);

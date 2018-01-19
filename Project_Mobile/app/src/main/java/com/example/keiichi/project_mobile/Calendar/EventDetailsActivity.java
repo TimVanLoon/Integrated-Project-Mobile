@@ -28,6 +28,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.Contacts.AddContactActivity;
 import com.example.keiichi.project_mobile.Contacts.ContactsActivity;
 import com.example.keiichi.project_mobile.Contacts.ContactsDetailsActivity;
 import com.example.keiichi.project_mobile.Contacts.EditContactActivity;
@@ -36,6 +37,7 @@ import com.example.keiichi.project_mobile.DAL.POJOs.Contact;
 import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
+import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
 import com.example.keiichi.project_mobile.Utility;
 
@@ -442,6 +444,17 @@ public class EventDetailsActivity extends AppCompatActivity implements AdapterVi
     // PATCH REQUEST VOOR DELETEN EVENT
     private void deleteEvent() throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
+
+        if (accessToken == null){
+            Intent logout = new Intent(EventDetailsActivity.this, MainActivity.class);
+            logout.putExtra("AccessToken", accessToken);
+            logout.putExtra("userName", userName);
+            logout.putExtra("userEmail", userEmail);
+
+            startActivity(logout);
+
+            EventDetailsActivity.this.finish();
+        }
 
         String postAddress = URL_POSTADRESS + eventId;
 

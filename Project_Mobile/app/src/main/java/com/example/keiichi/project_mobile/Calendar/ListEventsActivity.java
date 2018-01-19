@@ -363,7 +363,16 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
 
     /* Make sure we have a token to send to graph */
         if (accessToken == null) {
-            return;
+            if (accessToken == null){
+                Intent logout = new Intent(ListEventsActivity.this, MainActivity.class);
+                logout.putExtra("AccessToken", accessToken);
+                logout.putExtra("userName", userName);
+                logout.putExtra("userEmail", userEmail);
+
+                startActivity(logout);
+
+                ListEventsActivity.this.finish();
+            }
         }
 
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -422,7 +431,14 @@ public class ListEventsActivity extends AppCompatActivity implements SwipeRefres
 
     /* Make sure we have a token to send to graph */
         if (accessToken == null) {
-            return;
+            Intent logout = new Intent(ListEventsActivity.this, MainActivity.class);
+            logout.putExtra("AccessToken", accessToken);
+            logout.putExtra("userName", userName);
+            logout.putExtra("userEmail", userEmail);
+
+            startActivity(logout);
+
+            ListEventsActivity.this.finish();
         }
 
         RequestQueue queue = Volley.newRequestQueue(this);

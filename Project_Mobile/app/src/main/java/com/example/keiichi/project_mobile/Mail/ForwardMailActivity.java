@@ -21,7 +21,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.keiichi.project_mobile.Calendar.ListEventsActivity;
 import com.example.keiichi.project_mobile.DAL.POJOs.Message;
+import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
 
 import org.json.JSONException;
@@ -108,6 +110,17 @@ public class ForwardMailActivity extends AppCompatActivity {
 
     private void forwardMail() throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
+
+        if(accessToken == null){
+            Intent logout = new Intent(ForwardMailActivity.this, MainActivity.class);
+            logout.putExtra("AccessToken", accessToken);
+            logout.putExtra("userName", userName);
+            logout.putExtra("userEmail", userEmail);
+
+            startActivity(logout);
+
+            ForwardMailActivity.this.finish();
+        }
 
         final JSONObject jsonObject = new JSONObject(buildJsonMail());
 

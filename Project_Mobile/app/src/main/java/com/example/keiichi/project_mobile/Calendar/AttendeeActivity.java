@@ -38,6 +38,7 @@ import com.example.keiichi.project_mobile.DAL.POJOs.EmailAddress;
 import com.example.keiichi.project_mobile.DAL.POJOs.Event;
 import com.example.keiichi.project_mobile.Mail.ListMailsActvity;
 import com.example.keiichi.project_mobile.Mail.RecyclerTouchListener;
+import com.example.keiichi.project_mobile.Mail.ReplyToMailActivity;
 import com.example.keiichi.project_mobile.MainActivity;
 import com.example.keiichi.project_mobile.R;
 import com.google.gson.Gson;
@@ -267,7 +268,14 @@ public class AttendeeActivity extends AppCompatActivity {
 
     /* Make sure we have a token to send to graph */
         if (accessToken == null) {
-            return;
+            Intent logout = new Intent(AttendeeActivity.this, MainActivity.class);
+            logout.putExtra("AccessToken", accessToken);
+            logout.putExtra("userName", userName);
+            logout.putExtra("userEmail", userEmail);
+
+            startActivity(logout);
+
+            AttendeeActivity.this.finish();
         }
 
         RequestQueue queue = Volley.newRequestQueue(this);
