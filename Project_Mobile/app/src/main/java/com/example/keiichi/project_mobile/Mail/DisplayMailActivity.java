@@ -714,7 +714,6 @@ public class DisplayMailActivity extends AppCompatActivity {
 
         //setupWebView();
 
-        if(contentType.equals("html")){
 
             mailBodyWebView.getSettings().setJavaScriptEnabled(true);
             mailBodyWebView.getSettings().setLoadWithOverviewMode(true);
@@ -725,20 +724,12 @@ public class DisplayMailActivity extends AppCompatActivity {
             mailBodyWebView.setScrollbarFadingEnabled(false);
             mailBodyWebView.loadDataWithBaseURL("", messageBody, "text/html", "utf-8","");
 
-        } else{
-
-            mailBodyWebView.loadDataWithBaseURL("", messageBody, "text", "utf-8","");
-
-        }
-
 
 
         //mailBodyWebView.loadDataWithBaseURL("", messageBody, "text/html", "utf-8","");
         //mailBodyWebView.getSettings().setLoadWithOverviewMode(true);
 
     }
-
-
 
     private boolean checkAndRequestPermissions() {
         int storageWritePermission = ContextCompat.checkSelfPermission(this,
@@ -817,10 +808,6 @@ public class DisplayMailActivity extends AppCompatActivity {
 
         }
     }
-
-
-
-
 
     private int getScale(){
         Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
