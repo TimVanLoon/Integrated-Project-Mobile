@@ -886,7 +886,6 @@ public class AddEventActivity extends AppCompatActivity implements AdapterView.O
             default:
                 return "";
 
-
         }
     }
 

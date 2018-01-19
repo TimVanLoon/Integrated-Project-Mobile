@@ -400,7 +400,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
     /* Sets the Graph response */
     private void updateGraphUI(JSONObject graphResponse) throws JSONException {
 
-        //beetje kloten met mails
         System.out.println(graphResponse);
         this.graphResponse = graphResponse;
         getMails(graphResponse);
@@ -530,7 +529,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                         @Override
                         public void onResponse(String response) {
                             Toast.makeText(getApplicationContext(), "Mails deleted!", Toast.LENGTH_SHORT).show();
-                            System.out.println(response);
                         }
 
 
@@ -556,7 +554,7 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
         mailAdapter.notifyDataSetChanged();
 
-        int DELAY_TIME=2000;
+        int DELAY_TIME=3000;
 
         //start your animation
         new Timer().schedule(new TimerTask() {
@@ -681,7 +679,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                         @Override
                         public void onResponse(JSONObject response) {
                             Toast.makeText(getApplicationContext(), "Mail updated!", Toast.LENGTH_SHORT).show();
-                            System.out.println(response.toString());
                         }
 
                     }, new Response.ErrorListener() {
@@ -716,8 +713,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
         JSONArray messagesArray = messageList.getJSONArray("value");
 
-        System.out.println("test response: " + messagesArray);
-
         // VUL POJO
         Type listType = new TypeToken<List<Message>>() {
         }.getType();
@@ -750,14 +745,10 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
                     if (!message.isRead()){
 
-                        System.out.println("KEVIN BECKWEE");
-
                         String id = message.getId();
                         message.setRead(true);
 
                         showMail.putExtra("isRead", "yes");
-
-                        //updateMailIsRead(message, id);
 
                     }
 
@@ -955,7 +946,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                     @Override
                     public void onResponse(JSONObject response) {
                         Toast.makeText(getApplicationContext(), "Mail folder created!", Toast.LENGTH_SHORT).show();
-                        System.out.println(response.toString());
                     }
 
                 }, new Response.ErrorListener() {
@@ -1224,7 +1214,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
                 try {
                     updateWithMailFolder(response);
 
-                    System.out.println("hey bootjes! " + response);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -1261,8 +1250,6 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
             JSONObject messageList = graphResponse;
 
             JSONArray messagesArray = messageList.getJSONArray("value");
-
-            System.out.println("test response: " + messagesArray);
 
             // VUL POJO
             Type listType = new TypeToken<List<Message>>() {
@@ -1387,14 +1374,10 @@ public class ListMailsActvity extends AppCompatActivity implements SwipeRefreshL
 
                         if (!message.isRead()){
 
-                            System.out.println("KEVIN BECKWEE");
-
                             String id = message.getId();
                             message.setRead(true);
 
                             showMail.putExtra("isRead", "yes");
-
-                            //updateMailIsRead(message, id);
 
                         }
 
